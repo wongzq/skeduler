@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/screens/authentication/auth_info.dart';
+import 'package:skeduler/models/auth_info.dart';
 import 'package:skeduler/shared/text_input_decoration.dart';
 
 class FormName extends StatefulWidget {
