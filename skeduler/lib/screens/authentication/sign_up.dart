@@ -10,13 +10,6 @@ import 'package:skeduler/screens/authentication/form_password.dart';
 import 'package:skeduler/services/auth_service.dart';
 
 class SignUp extends StatefulWidget {
-  // properties
-  final Function toggleView;
-
-  // constructor
-  SignUp({this.toggleView});
-
-  // methods
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -34,12 +27,13 @@ class _SignUpState extends State<SignUp> {
   // methods
   // callback for setState()
   void refresh() => setState(() {});
-  
+
   @override
   Widget build(BuildContext context) {
     // get Authentication Info using provider
-    final authInfo = Provider.of<AuthenticationInfo>(context);
-    
+    final AuthInfo authInfo =
+        Provider.of<AuthInfo>(context);
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -62,7 +56,7 @@ class _SignUpState extends State<SignUp> {
             SizedBox(height: 20.0),
 
             // Form: Email
-            FormEmail(formKeyEmail: _formKeyEmail,refresh: refresh),
+            FormEmail(formKeyEmail: _formKeyEmail, refresh: refresh),
             SizedBox(height: 20.0),
 
             // Form: Password
@@ -85,7 +79,9 @@ class _SignUpState extends State<SignUp> {
                 // Function: onPressed:
                 // enable when email and password are valid
                 // disable when email and password are invalid
-                onPressed: authInfo.nameValid && authInfo.emailValid && authInfo.passwordValid
+                onPressed: authInfo.nameValid &&
+                        authInfo.emailValid &&
+                        authInfo.passwordValid
                     ? () async {
                         setState(() {
                           authInfo.name = authInfo.name.trim();
@@ -107,7 +103,10 @@ class _SignUpState extends State<SignUp> {
                                 // sign up with email and password
                                 dynamic authResult = await _authService
                                     .signUpWithEmailAndPassword(
-                                        authInfo.email, authInfo.password);
+                                  authInfo.email,
+                                  authInfo.password,
+                                  authInfo.name,
+                                );
 
                                 if (authResult == null) {
                                   // display error message

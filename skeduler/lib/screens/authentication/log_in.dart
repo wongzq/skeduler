@@ -9,13 +9,6 @@ import 'package:skeduler/screens/authentication/form_password.dart';
 import 'package:skeduler/services/auth_service.dart';
 
 class LogIn extends StatefulWidget {
-  // properties
-  final Function toggleView;
-
-  // constructor
-  LogIn({this.toggleView});
-
-  // methods
   @override
   _LogInState createState() => _LogInState();
 }
@@ -37,7 +30,8 @@ class _LogInState extends State<LogIn> {
   @override
   Widget build(BuildContext context) {
     // get Authentication Info using provider
-    final authInfo = Provider.of<AuthenticationInfo>(context);
+    final AuthInfo authInfo =
+        Provider.of<AuthInfo>(context);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:skeduler/models/user.dart';
+import 'package:skeduler/services/database_service.dart';
 
 class AuthService {
   final FirebaseAuth _authService = FirebaseAuth.instance;
@@ -28,13 +29,20 @@ class AuthService {
     }
   }
 
-  Future signUpWithEmailAndPassword(String email, String password) async {
+  // Function: sign up with email & password
+  // returns User if successful
+  // returns null if unsuccessful
+  Future signUpWithEmailAndPassword(
+      String email, String password, String name) async {
     try {
       AuthResult result = await _authService.createUserWithEmailAndPassword(
           email: email, password: password);
-      
+
       // create a new document for the user with the uid
-      // await DatabaseService(uid: result.user.uid).updateUserData();
+      await DatabaseService(uid: result.user.uid)
+          .updateUserData(email: email, name: name);
+
+      return _userFromFirebaseUser(result.user);
     } catch (e) {
       print(e.toString());
       return null;

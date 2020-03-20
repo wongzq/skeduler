@@ -1,4 +1,4 @@
-class AuthenticationInfo {
+class AuthInfo {
   // properties
   bool nameValid = false;
   bool emailValid = false;

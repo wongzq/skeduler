@@ -21,8 +21,8 @@ class _FormNameState extends State<FormName> {
   @override
   Widget build(BuildContext context) {
     // Provider for Authentication Info
-    final AuthenticationInfo authInfo =
-        Provider.of<AuthenticationInfo>(context);
+    final AuthInfo authInfo =
+        Provider.of<AuthInfo>(context);
 
     return SizedBox(
       height: 80.0,

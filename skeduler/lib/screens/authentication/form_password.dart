@@ -20,8 +20,8 @@ class _FormPasswordState extends State<FormPassword> {
   @override
   Widget build(BuildContext context) {
     // Provider for Authentication Info
-    final AuthenticationInfo authInfo =
-        Provider.of<AuthenticationInfo>(context);
+    final AuthInfo authInfo =
+        Provider.of<AuthInfo>(context);
 
     return SizedBox(
       height: 80.0,
@@ -31,7 +31,7 @@ class _FormPasswordState extends State<FormPassword> {
           obscureText: true,
           initialValue: null,
           style: TextStyle(fontSize: 14.0),
-          decoration: Provider.of<AuthenticationInfo>(context).passwordValid
+          decoration: Provider.of<AuthInfo>(context).passwordValid
               ? textInputDecorationValid(context)
               : textInputDecoration(context).copyWith(hintText: 'Password'),
           onChanged: (val) {
