@@ -104,22 +104,29 @@ class _SignUpState extends State<SignUp> {
                                   await InternetAddress.lookup('google.com');
                               if (result.isNotEmpty &&
                                   result[0].rawAddress.isNotEmpty) {
-                                // log in with email and password
+                                // sign up with email and password
                                 dynamic authResult = await _authService
                                     .signUpWithEmailAndPassword(
                                         authInfo.email, authInfo.password);
 
                                 if (authResult == null) {
+                                  // display error message
                                   setState(() {
-                                    Authentication.of(context).setState(() {
-                                      Authentication.of(context).loading =
-                                          false;
-                                    });
-                                    _error = 'Please provide a valid email';
-                                    currentFocus = FocusScope.of(context);
-                                    if (!currentFocus.hasPrimaryFocus) {
-                                      currentFocus.unfocus();
-                                    }
+                                    _error =
+                                        'Please check your email or password';
+                                    print(authInfo.emailValid);
+                                    print(authInfo.passwordValid);
+                                  });
+
+                                  // unfocus text form field
+                                  currentFocus = FocusScope.of(context);
+                                  if (!currentFocus.hasPrimaryFocus) {
+                                    currentFocus.unfocus();
+                                  }
+
+                                  // remove loading screen
+                                  Authentication.of(context).setState(() {
+                                    Authentication.of(context).loading = false;
                                   });
                                 } else {
                                   // log in account and go to dashboard
@@ -127,15 +134,19 @@ class _SignUpState extends State<SignUp> {
                               }
                             } on SocketException catch (_) {
                               setState(() {
-                                Authentication.of(context).setState(() {
-                                  Authentication.of(context).loading = false;
-                                });
                                 _error =
                                     'Please check your internet connection';
-                                currentFocus = FocusScope.of(context);
-                                if (!currentFocus.hasPrimaryFocus) {
-                                  currentFocus.unfocus();
-                                }
+                              });
+
+                              // unfocus text form field
+                              currentFocus = FocusScope.of(context);
+                              if (!currentFocus.hasPrimaryFocus) {
+                                currentFocus.unfocus();
+                              }
+
+                              // remove loading screen
+                              Authentication.of(context).setState(() {
+                                Authentication.of(context).loading = false;
                               });
                             }
                           });
