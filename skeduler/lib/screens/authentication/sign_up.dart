@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/screens/authentication/authentication.dart';
-import 'package:skeduler/screens/authentication/authentication_info.dart';
+import 'package:skeduler/screens/authentication/auth_info.dart';
 import 'package:skeduler/screens/authentication/form_email.dart';
 import 'package:skeduler/screens/authentication/form_name.dart';
 import 'package:skeduler/screens/authentication/form_password.dart';
@@ -31,8 +31,7 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     // get Authentication Info using provider
-    final AuthInfo authInfo =
-        Provider.of<AuthInfo>(context);
+    final AuthInfo authInfo = Provider.of<AuthInfo>(context);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -89,66 +88,65 @@ class _SignUpState extends State<SignUp> {
 
                         if (_formKeyEmail.currentState.validate() &&
                             _formKeyPassword.currentState.validate()) {
-                          setState(() async {
+                          setState(() {
                             Authentication.of(context).setState(() {
                               Authentication.of(context).loading = true;
                             });
-
-                            // check internet connection
-                            try {
-                              final result =
-                                  await InternetAddress.lookup('google.com');
-                              if (result.isNotEmpty &&
-                                  result[0].rawAddress.isNotEmpty) {
-                                // sign up with email and password
-                                dynamic authResult = await _authService
-                                    .signUpWithEmailAndPassword(
-                                  authInfo.email,
-                                  authInfo.password,
-                                  authInfo.name,
-                                );
-
-                                if (authResult == null) {
-                                  // display error message
-                                  setState(() {
-                                    _error =
-                                        'Please check your email or password';
-                                    print(authInfo.emailValid);
-                                    print(authInfo.passwordValid);
-                                  });
-
-                                  // unfocus text form field
-                                  currentFocus = FocusScope.of(context);
-                                  if (!currentFocus.hasPrimaryFocus) {
-                                    currentFocus.unfocus();
-                                  }
-
-                                  // remove loading screen
-                                  Authentication.of(context).setState(() {
-                                    Authentication.of(context).loading = false;
-                                  });
-                                } else {
-                                  // log in account and go to dashboard
-                                }
-                              }
-                            } on SocketException catch (_) {
-                              setState(() {
-                                _error =
-                                    'Please check your internet connection';
-                              });
-
-                              // unfocus text form field
-                              currentFocus = FocusScope.of(context);
-                              if (!currentFocus.hasPrimaryFocus) {
-                                currentFocus.unfocus();
-                              }
-
-                              // remove loading screen
-                              Authentication.of(context).setState(() {
-                                Authentication.of(context).loading = false;
-                              });
-                            }
                           });
+
+                          // check internet connection
+                          try {
+                            final result =
+                                await InternetAddress.lookup('google.com');
+                            if (result.isNotEmpty &&
+                                result[0].rawAddress.isNotEmpty) {
+                              // sign up with email and password
+                              dynamic authResult =
+                                  await _authService.signUpWithEmailAndPassword(
+                                authInfo.email,
+                                authInfo.password,
+                                authInfo.name,
+                              );
+
+                              if (authResult == null) {
+                                // display error message
+                                setState(() {
+                                  _error =
+                                      'Please provide a valid email';
+                                  print(authInfo.emailValid);
+                                  print(authInfo.passwordValid);
+                                });
+
+                                // unfocus text form field
+                                currentFocus = FocusScope.of(context);
+                                if (!currentFocus.hasPrimaryFocus) {
+                                  currentFocus.unfocus();
+                                }
+
+                                // remove loading screen
+                                Authentication.of(context).setState(() {
+                                  Authentication.of(context).loading = false;
+                                });
+                              } else {
+                                // log in account and go to dashboard
+                              }
+                            }
+                          } on SocketException catch (_) {
+                            setState(() {
+                              _error = 'Please check your internet connection';
+                            });
+
+                            // unfocus text form field
+                            currentFocus = FocusScope.of(context);
+                            if (!currentFocus.hasPrimaryFocus) {
+                              currentFocus.unfocus();
+                            }
+
+                            // remove loading screen
+                            Authentication.of(context).setState(() {
+                              Authentication.of(context).loading = false;
+                            });
+                          }
                         }
                       }
                     : null,

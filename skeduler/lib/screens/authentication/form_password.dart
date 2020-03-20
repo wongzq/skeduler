@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/screens/authentication/authentication_info.dart';
+import 'package:skeduler/screens/authentication/auth_info.dart';
 import 'package:skeduler/shared/text_input_decoration.dart';
 
 class FormPassword extends StatefulWidget {

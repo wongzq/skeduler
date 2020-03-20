@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/screens/authentication/auth_info.dart';
 import 'package:skeduler/screens/authentication/log_in.dart';
 import 'package:skeduler/screens/authentication/sign_up.dart';
 import 'package:skeduler/shared/loading.dart';
 
-import 'authentication_info.dart';
 
 class Authentication extends StatefulWidget {
   static _AuthenticationState of(BuildContext context) =>
