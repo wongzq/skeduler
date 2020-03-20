@@ -24,6 +24,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.teal,
           accentColor: Colors.tealAccent,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
         ),
         home: Wrapper(),
       ),

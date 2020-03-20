@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/user.dart';
-import 'package:skeduler/screens/authentication/authenticate.dart';
+import 'package:skeduler/screens/authentication/authentication.dart';
 import 'package:skeduler/screens/home/dashboard.dart';
 
 class Wrapper extends StatelessWidget {

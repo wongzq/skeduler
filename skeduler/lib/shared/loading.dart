@@ -5,7 +5,7 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).primaryColor,
+      color: Colors.black.withOpacity(0.75),
       child: SpinKitFadingCube(
         color: Colors.white,
         size: 60.0,
