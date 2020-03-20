@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:skeduler/services/auth_service.dart';
 
 class Dashboard extends StatelessWidget {
-  AuthService _authService = AuthService();
+  // properties
+  final AuthService _authService = AuthService();
+
+  // methods
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,10 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:skeduler/screens/authentication/authentication.dart';
+import 'package:skeduler/screens/authentication/authentication_info.dart';
+import 'package:skeduler/screens/authentication/form_email.dart';
+import 'package:skeduler/screens/authentication/form_name.dart';
+import 'package:skeduler/screens/authentication/form_password.dart';
 import 'package:skeduler/services/auth_service.dart';
-import 'package:skeduler/shared/text_input_decoration.dart';
 
 class SignUp extends StatefulWidget {
   // properties
@@ -21,24 +24,22 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   // properties
   final AuthService _authService = AuthService();
-  final _formKeyName = GlobalKey<FormState>();
-  final _formKeyEmail = GlobalKey<FormState>();
-  final _formKeyPassword = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKeyName = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKeyEmail = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKeyPassword = GlobalKey<FormState>();
 
   FocusScopeNode currentFocus;
-
-  bool _nameValid = false;
-  bool _emailValid = false;
-  bool _passwordValid = false;
-
-  String _name = '';
-  String _email = '';
-  String _password = '';
   String _error = '';
 
   // methods
+  // callback for setState()
+  void refresh() => setState(() {});
+  
   @override
   Widget build(BuildContext context) {
+    // get Authentication Info using provider
+    final authInfo = Provider.of<AuthenticationInfo>(context);
+    
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -57,149 +58,18 @@ class _SignUpState extends State<SignUp> {
         child: Column(
           children: <Widget>[
             // Form: Name
-            SizedBox(
-              height: 80.0,
-              child: Form(
-                key: _formKeyName,
-                child: TextFormField(
-                  inputFormatters: [
-                    new WhitelistingTextInputFormatter(RegExp(r"^[a-zA-Z,.'-]{1}[a-zA-Z ,.'-]*$"))
-                  ],
-                  initialValue: null,
-                  style: TextStyle(fontSize: 14.0),
-                  decoration: _nameValid
-                      ? textInputDecorationValid(context)
-                      : textInputDecoration(context).copyWith(hintText: 'Name'),
-                  onChanged: (val) {
-                    _name = val;
-                    if (val.isNotEmpty) {
-                      _formKeyName.currentState.validate();
-                    } else {
-                      setState(() {
-                        _nameValid = false;
-                        _formKeyName.currentState.reset();
-                      });
-                    }
-                  },
-                  validator: (val) {
-                    RegExp regExp = RegExp(r"([a-zA-Z]+.*$)");
-                    if (regExp.hasMatch(_name)) {
-                      setState(() {
-                        _nameValid = true;
-                      });
-                      return null;
-                    } else {
-                      setState(() {
-                        _nameValid = false;
-                      });
-                      return 'Name must contain letters';
-                    }
-                  },
-                ),
-              ),
-            ),
+            FormName(formKeyName: _formKeyName, refresh: refresh),
             SizedBox(height: 20.0),
 
             // Form: Email
-            SizedBox(
-              height: 80.0,
-              child: Form(
-                key: _formKeyEmail,
-                child: TextFormField(
-                  initialValue: null,
-                  style: TextStyle(fontSize: 14.0),
-                  decoration: _emailValid
-                      ? textInputDecorationValid(context)
-                      : textInputDecoration(context)
-                          .copyWith(hintText: 'Email'),
-                  onChanged: (val) {
-                    _email = val;
-                    if (val.isNotEmpty) {
-                      _formKeyEmail.currentState.validate();
-                    } else {
-                      setState(() {
-                        _emailValid = false;
-                        _formKeyEmail.currentState.reset();
-                      });
-                    }
-                  },
-                  validator: (val) {
-                    RegExp regExp = RegExp(
-                        r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)");
-                    if (regExp.hasMatch(_email)) {
-                      setState(() {
-                        _emailValid = true;
-                      });
-                      return null;
-                    } else {
-                      setState(() {
-                        _emailValid = false;
-                      });
-                      return 'Invalid email address';
-                    }
-                  },
-                ),
-              ),
-            ),
+            FormEmail(formKeyEmail: _formKeyEmail,refresh: refresh),
             SizedBox(height: 20.0),
 
             // Form: Password
-            SizedBox(
-              height: 80.0,
-              child: Form(
-                key: _formKeyPassword,
-                child: TextFormField(
-                  obscureText: true,
-                  initialValue: null,
-                  style: TextStyle(fontSize: 14.0),
-                  decoration: _passwordValid
-                      ? textInputDecorationValid(context)
-                      : textInputDecoration(context)
-                          .copyWith(hintText: 'Password'),
-                  onChanged: (val) {
-                    _password = val;
-                    if (val.isNotEmpty) {
-                      _formKeyPassword.currentState.validate();
-                    } else {
-                      setState(() {
-                        _passwordValid = false;
-                        _formKeyPassword.currentState.reset();
-                      });
-                    }
-                  },
-                  validator: (val) {
-                    if (_password.length >= 8) {
-                      RegExp regExp =
-                          RegExp(r'^(?=.*?[a-zA-Z])(?=.*?[0-9]).{8,128}$');
-                      if (regExp.hasMatch(_password)) {
-                        setState(() {
-                          _passwordValid = true;
-                        });
-                        return null;
-                      } else {
-                        setState(() {
-                          _passwordValid = false;
-                        });
-                        return 'Password must contain letters and numbers';
-                      }
-                    } else if (_password.length > 128) {
-                      setState(() {
-                        _passwordValid = false;
-                      });
-                      return 'Password myst be less than 128 characters';
-                    } else {
-                      setState(() {
-                        _passwordValid = false;
-                      });
-                      return 'Password must contain 8 characters or more';
-                    }
-                  },
-                ),
-              ),
-            ),
+            FormPassword(formKeyPassword: _formKeyPassword, refresh: refresh),
             SizedBox(height: 20.0),
 
-            // RaisedButton: Log In
+            // RaisedButton: Sign Up
             ButtonTheme(
               height: 50.0,
               minWidth: MediaQuery.of(context).size.width,
@@ -208,17 +78,17 @@ class _SignUpState extends State<SignUp> {
                 disabledColor: Colors.grey[400],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
-                    _emailValid && _passwordValid ? 50.0 : 5.0,
+                    authInfo.emailValid && authInfo.passwordValid ? 50.0 : 5.0,
                   ),
                 ),
 
                 // Function: onPressed:
                 // enable when email and password are valid
                 // disable when email and password are invalid
-                onPressed: _nameValid && _emailValid && _passwordValid
+                onPressed: authInfo.nameValid && authInfo.emailValid && authInfo.passwordValid
                     ? () async {
                         setState(() {
-                          _name = _name.trim();
+                          authInfo.name = authInfo.name.trim();
                         });
 
                         if (_formKeyEmail.currentState.validate() &&
@@ -237,7 +107,7 @@ class _SignUpState extends State<SignUp> {
                                 // log in with email and password
                                 dynamic authResult = await _authService
                                     .signUpWithEmailAndPassword(
-                                        _email, _password);
+                                        authInfo.email, authInfo.password);
 
                                 if (authResult == null) {
                                   setState(() {
@@ -245,8 +115,7 @@ class _SignUpState extends State<SignUp> {
                                       Authentication.of(context).loading =
                                           false;
                                     });
-                                    _error =
-                                        'Please provide a valid email';
+                                    _error = 'Please provide a valid email';
                                     currentFocus = FocusScope.of(context);
                                     if (!currentFocus.hasPrimaryFocus) {
                                       currentFocus.unfocus();
@@ -278,7 +147,7 @@ class _SignUpState extends State<SignUp> {
                 child: Text(
                   'Sign Up',
                   style: TextStyle(
-                    color: _emailValid && _passwordValid
+                    color: authInfo.emailValid && authInfo.passwordValid
                         ? Colors.white
                         : Colors.grey[200],
                     fontSize: 18.0,

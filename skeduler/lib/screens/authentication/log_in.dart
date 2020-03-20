@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:skeduler/screens/authentication/authentication.dart';
+import 'package:skeduler/screens/authentication/authentication_info.dart';
+import 'package:skeduler/screens/authentication/form_email.dart';
+import 'package:skeduler/screens/authentication/form_password.dart';
 import 'package:skeduler/services/auth_service.dart';
-import 'package:skeduler/shared/text_input_decoration.dart';
 
 class LogIn extends StatefulWidget {
   // properties
@@ -20,21 +23,22 @@ class LogIn extends StatefulWidget {
 class _LogInState extends State<LogIn> {
   // properties
   final AuthService _authService = AuthService();
-  final _formKeyEmail = GlobalKey<FormState>();
-  final _formKeyPassword = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKeyEmail = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKeyPassword = GlobalKey<FormState>();
 
   FocusScopeNode currentFocus;
-
-  bool _emailValid = false;
-  bool _passwordValid = false;
-
-  String _email = '';
-  String _password = '';
   String _error = '';
 
   // methods
+  // callback for setState()
+  void refresh() => setState(() {});
+
+  // build
   @override
   Widget build(BuildContext context) {
+    // get Authentication Info using provider
+    final authInfo = Provider.of<AuthenticationInfo>(context);
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -53,102 +57,11 @@ class _LogInState extends State<LogIn> {
         child: Column(
           children: <Widget>[
             // Form: Email
-            SizedBox(
-              height: 80.0,
-              child: Form(
-                key: _formKeyEmail,
-                child: TextFormField(
-                  initialValue: null,
-                  style: TextStyle(fontSize: 14.0),
-                  decoration: _emailValid
-                      ? textInputDecorationValid(context)
-                      : textInputDecoration(context)
-                          .copyWith(hintText: 'Email'),
-                  onChanged: (val) {
-                    _email = val;
-                    if (val.isNotEmpty) {
-                      _formKeyEmail.currentState.validate();
-                    } else {
-                      setState(() {
-                        _emailValid = false;
-                        _formKeyEmail.currentState.reset();
-                      });
-                    }
-                  },
-                  validator: (val) {
-                    RegExp regExp = RegExp(
-                        r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)");
-                    if (regExp.hasMatch(_email)) {
-                      setState(() {
-                        _emailValid = true;
-                      });
-                      return null;
-                    } else {
-                      setState(() {
-                        _emailValid = false;
-                      });
-                      return 'Invalid email address';
-                    }
-                  },
-                ),
-              ),
-            ),
+            FormEmail(refresh: refresh, formKeyEmail: _formKeyEmail),
             SizedBox(height: 20.0),
 
             // Form: Password
-            SizedBox(
-              height: 80.0,
-              child: Form(
-                key: _formKeyPassword,
-                child: TextFormField(
-                  obscureText: true,
-                  initialValue: null,
-                  style: TextStyle(fontSize: 14.0),
-                  decoration: _passwordValid
-                      ? textInputDecorationValid(context)
-                      : textInputDecoration(context)
-                          .copyWith(hintText: 'Password'),
-                  onChanged: (val) {
-                    _password = val;
-                    if (val.isNotEmpty) {
-                      _formKeyPassword.currentState.validate();
-                    } else {
-                      setState(() {
-                        _passwordValid = false;
-                        _formKeyPassword.currentState.reset();
-                      });
-                    }
-                  },
-                  validator: (val) {
-                    if (_password.length >= 8) {
-                      RegExp regExp =
-                          RegExp(r'^(?=.*?[a-zA-Z])(?=.*?[0-9]).{8,128}$');
-                      if (regExp.hasMatch(_password)) {
-                        setState(() {
-                          _passwordValid = true;
-                        });
-                        return null;
-                      } else {
-                        setState(() {
-                          _passwordValid = false;
-                        });
-                        return 'Password must contain letters and numbers';
-                      }
-                    } else if (_password.length > 128) {
-                      setState(() {
-                        _passwordValid = false;
-                      });
-                      return 'Password myst be less than 128 characters';
-                    } else {
-                      setState(() {
-                        _passwordValid = false;
-                      });
-                      return 'Password must contain 8 characters or more';
-                    }
-                  },
-                ),
-              ),
-            ),
+            FormPassword(refresh: refresh, formKeyPassword: _formKeyPassword),
             SizedBox(height: 20.0),
 
             // RaisedButton: Log In
@@ -160,15 +73,18 @@ class _LogInState extends State<LogIn> {
                 disabledColor: Colors.grey[400],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
-                    _emailValid && _passwordValid ? 50.0 : 5.0,
+                    authInfo.emailValid && authInfo.passwordValid ? 50.0 : 5.0,
                   ),
                 ),
 
                 // Function: onPressed:
                 // enable when email and password are valid
                 // disable when email and password are invalid
-                onPressed: _emailValid && _passwordValid
+                onPressed: authInfo.emailValid && authInfo.passwordValid
                     ? () async {
+                        print(authInfo.emailValid.toString() +
+                            authInfo.passwordValid.toString());
+
                         if (_formKeyEmail.currentState.validate() &&
                             _formKeyPassword.currentState.validate()) {
                           setState(() async {
@@ -185,37 +101,45 @@ class _LogInState extends State<LogIn> {
                                 // log in with email and password
                                 dynamic authResult = await _authService
                                     .logInWithEmailAndPassword(
-                                        _email, _password);
+                                        authInfo.email, authInfo.password);
 
                                 if (authResult == null) {
+                                  // display error message
                                   setState(() {
-                                    Authentication.of(context).setState(() {
-                                      Authentication.of(context).loading =
-                                          false;
-                                    });
                                     _error =
                                         'Please check your email or password';
-                                    currentFocus = FocusScope.of(context);
-                                    if (!currentFocus.hasPrimaryFocus) {
-                                      currentFocus.unfocus();
-                                    }
+                                    print(authInfo.emailValid);
+                                    print(authInfo.passwordValid);
                                   });
-                                } else {
-                                  print('Logged in');
-                                  // log in account and go to dashboard
+
+                                  // unfocus text form field
+                                  currentFocus = FocusScope.of(context);
+                                  if (!currentFocus.hasPrimaryFocus) {
+                                    currentFocus.unfocus();
+                                  }
+
+                                  // remove loading screen
+                                  Authentication.of(context).setState(() {
+                                    Authentication.of(context).loading = false;
+                                  });
                                 }
                               }
                             } on SocketException catch (_) {
+                              // display error message
                               setState(() {
-                                Authentication.of(context).setState(() {
-                                  Authentication.of(context).loading = false;
-                                });
                                 _error =
                                     'Please check your internet connection';
-                                currentFocus = FocusScope.of(context);
-                                if (!currentFocus.hasPrimaryFocus) {
-                                  currentFocus.unfocus();
-                                }
+                              });
+
+                              // unfocus text form field
+                              currentFocus = FocusScope.of(context);
+                              if (!currentFocus.hasPrimaryFocus) {
+                                currentFocus.unfocus();
+                              }
+
+                              // remove loading screen
+                              Authentication.of(context).setState(() {
+                                Authentication.of(context).loading = false;
                               });
                             }
                           });
@@ -227,7 +151,7 @@ class _LogInState extends State<LogIn> {
                 child: Text(
                   'Log In',
                   style: TextStyle(
-                    color: _emailValid && _passwordValid
+                    color: authInfo.emailValid && authInfo.passwordValid
                         ? Colors.white
                         : Colors.grey[200],
                     fontSize: 18.0,
