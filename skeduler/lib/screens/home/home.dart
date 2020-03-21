@@ -27,6 +27,7 @@ class _HomeState extends State<Home> {
   final AuthService _authService = AuthService();
   DrawerEnum _selected = DrawerEnum.dashboard;
 
+  // methods
   @override
   Widget build(BuildContext context) {
     User user = Provider.of<User>(context);
@@ -203,24 +204,28 @@ class _HomeState extends State<Home> {
                         title: Text('Logout'),
                         selected: _selected == DrawerEnum.logout ? true : false,
                         onTap: () {
-                          setState(() => _selected = DrawerEnum.logout);
+                          //setState(() => _selected = DrawerEnum.logout);
                           showDialog(
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
                                   content: Text('Do you want to logout?'),
                                   actions: <Widget>[
+                                    // CANCEL button
                                     FlatButton(
                                       child: Text('CANCEL'),
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
                                     ),
+                                    // OK button
                                     FlatButton(
                                       child: Text('OK'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        _authService.logOut();
+                                      onPressed: () async {
+                                        await _authService.logOut().then((val) {
+                                          Navigator.of(context).pop(); // pop AlertDialog
+                                          Navigator.of(context).pop(); // pop Drawer
+                                        });
                                       },
                                     )
                                   ],
