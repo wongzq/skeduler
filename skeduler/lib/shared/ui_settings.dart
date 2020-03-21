@@ -68,3 +68,6 @@ InputDecoration textInputDecorationValid(BuildContext context) {
     ),
   );
 }
+
+// Text style: for drawer list tile
+TextStyle textStyle = TextStyle(fontSize: 15.0);

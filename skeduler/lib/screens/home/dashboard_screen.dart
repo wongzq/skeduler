@@ -4,7 +4,7 @@ import 'package:skeduler/models/user.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/services/database_service.dart';
 
-class Dashboard extends StatelessWidget {
+class DashboardScreen extends StatelessWidget {
   // properties
   final AuthService _authService = AuthService();
 
