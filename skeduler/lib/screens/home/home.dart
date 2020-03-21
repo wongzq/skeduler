@@ -11,6 +11,7 @@ import 'package:skeduler/screens/home/settings_screen.dart';
 import 'package:skeduler/screens/home/timetable_screen.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/loading.dart';
 
 class Home extends StatefulWidget {
   static _HomeState of(BuildContext context) =>
@@ -235,33 +236,40 @@ class _HomeState extends State<Home> {
           ),
 
           // Scaffold - body
-          body: (() {
+          body: () {
             switch (_selected) {
               case DrawerEnum.dashboard:
-                DashboardScreen();
+                return DashboardScreen();
                 break;
+
               case DrawerEnum.groups:
-                GroupsScreen();
+                return GroupsScreen();
                 break;
+
               case DrawerEnum.people:
-                PeopleScreen();
+                return PeopleScreen();
                 break;
+
               case DrawerEnum.classes:
-                ClassesScreen();
+                return ClassesScreen();
                 break;
+
               case DrawerEnum.timetable:
-                TimetableScreen();
+                return TimetableScreen();
                 break;
+
               case DrawerEnum.profile:
-                ProfileScreen();
+                return ProfileScreen();
                 break;
+
               case DrawerEnum.settings:
-                SettingsScreen();
+                return SettingsScreen();
                 break;
+
               default:
-                Container();
+                return Loading();
             }
-          }()),
+          }(),
         );
       },
     );
