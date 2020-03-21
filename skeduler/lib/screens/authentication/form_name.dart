@@ -20,8 +20,6 @@ class FormName extends StatefulWidget {
 class _FormNameState extends State<FormName> {
   @override
   Widget build(BuildContext context) {
-    print('RESET?');
-
     // Provider for Authentication Info
     final AuthInfo authInfo = Provider.of<AuthInfo>(context);
 
@@ -40,21 +38,16 @@ class _FormNameState extends State<FormName> {
               ? textInputDecorationValid(context)
               : textInputDecoration(context).copyWith(hintText: 'Name'),
           onChanged: (val) {
-            print('onchanged');
             authInfo.name = val;
             if (val.isNotEmpty) {
-              print('onchanged if');
               widget.formKeyName.currentState.validate();
-              print(authInfo.nameValid);
             } else {
-              print('onchanged else');
               authInfo.nameValid = false;
               widget.formKeyName.currentState.reset();
               widget.refresh();
             }
           },
           validator: (val) {
-            print('validate');
             RegExp regExp = RegExp(r"([a-zA-Z]+.*$)");
             if (regExp.hasMatch(authInfo.name)) {
               authInfo.nameValid = true;

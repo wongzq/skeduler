@@ -8,6 +8,7 @@ import 'package:skeduler/screens/authentication/form_email.dart';
 import 'package:skeduler/screens/authentication/form_name.dart';
 import 'package:skeduler/screens/authentication/form_password.dart';
 import 'package:skeduler/services/auth_service.dart';
+import 'package:skeduler/shared/methods.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -28,6 +29,7 @@ class _SignUpState extends State<SignUp> {
   // callback for setState()
   void refresh() => setState(() {});
 
+  // build
   @override
   Widget build(BuildContext context) {
     // get Authentication Info using provider
@@ -36,12 +38,7 @@ class _SignUpState extends State<SignUp> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        setState(() {
-          currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-        });
+        setState(() => unfocus(context));
       },
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -111,17 +108,11 @@ class _SignUpState extends State<SignUp> {
                               if (authResult == null) {
                                 // display error message
                                 setState(() {
-                                  _error =
-                                      'Please provide a valid email';
-                                  print(authInfo.emailValid);
-                                  print(authInfo.passwordValid);
+                                  _error = 'Please provide a valid email';
                                 });
 
                                 // unfocus text form field
-                                currentFocus = FocusScope.of(context);
-                                if (!currentFocus.hasPrimaryFocus) {
-                                  currentFocus.unfocus();
-                                }
+                                unfocus(context);
 
                                 // remove loading screen
                                 Authentication.of(context).setState(() {
@@ -137,10 +128,7 @@ class _SignUpState extends State<SignUp> {
                             });
 
                             // unfocus text form field
-                            currentFocus = FocusScope.of(context);
-                            if (!currentFocus.hasPrimaryFocus) {
-                              currentFocus.unfocus();
-                            }
+                            unfocus(context);
 
                             // remove loading screen
                             Authentication.of(context).setState(() {

@@ -7,6 +7,7 @@ import 'package:skeduler/screens/authentication/authentication.dart';
 import 'package:skeduler/screens/authentication/form_email.dart';
 import 'package:skeduler/screens/authentication/form_password.dart';
 import 'package:skeduler/services/auth_service.dart';
+import 'package:skeduler/shared/methods.dart';
 
 class LogIn extends StatefulWidget {
   @override
@@ -35,12 +36,7 @@ class _LogInState extends State<LogIn> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        setState(() {
-          currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-        });
+        setState(() => unfocus(context));
       },
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -75,9 +71,6 @@ class _LogInState extends State<LogIn> {
                 // disable when email and password are invalid
                 onPressed: authInfo.emailValid && authInfo.passwordValid
                     ? () async {
-                        print(authInfo.emailValid.toString() +
-                            authInfo.passwordValid.toString());
-
                         if (_formKeyEmail.currentState.validate() &&
                             _formKeyPassword.currentState.validate()) {
                           setState(() {
@@ -102,15 +95,10 @@ class _LogInState extends State<LogIn> {
                                 setState(() {
                                   _error =
                                       'Please check your email or password';
-                                  print(authInfo.emailValid);
-                                  print(authInfo.passwordValid);
                                 });
 
                                 // unfocus text form field
-                                currentFocus = FocusScope.of(context);
-                                if (!currentFocus.hasPrimaryFocus) {
-                                  currentFocus.unfocus();
-                                }
+                                unfocus(context);
 
                                 // remove loading screen
                                 Authentication.of(context).setState(() {
@@ -125,10 +113,7 @@ class _LogInState extends State<LogIn> {
                             });
 
                             // unfocus text form field
-                            currentFocus = FocusScope.of(context);
-                            if (!currentFocus.hasPrimaryFocus) {
-                              currentFocus.unfocus();
-                            }
+                            unfocus(context);
 
                             // remove loading screen
                             Authentication.of(context).setState(() {

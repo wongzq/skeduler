@@ -20,8 +20,7 @@ class _FormPasswordState extends State<FormPassword> {
   @override
   Widget build(BuildContext context) {
     // Provider for Authentication Info
-    final AuthInfo authInfo =
-        Provider.of<AuthInfo>(context);
+    final AuthInfo authInfo = Provider.of<AuthInfo>(context);
 
     return SizedBox(
       height: 80.0,
