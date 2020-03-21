@@ -221,11 +221,12 @@ class _HomeState extends State<Home> {
                                     // OK button
                                     FlatButton(
                                       child: Text('OK'),
-                                      onPressed: () async {
-                                        await _authService.logOut().then((val) {
-                                          Navigator.of(context).pop(); // pop AlertDialog
-                                          Navigator.of(context).pop(); // pop Drawer
-                                        });
+                                      onPressed: () {
+                                        // pop AlertDialog
+                                        Navigator.of(context).pop();
+                                        // pop Drawer
+                                        Navigator.of(context).pop();
+                                        _authService.logOut();
                                       },
                                     )
                                   ],
