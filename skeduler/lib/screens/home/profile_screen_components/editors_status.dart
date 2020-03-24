@@ -19,10 +19,10 @@ class EditorsStatus extends ChangeNotifier {
   double _dayEditorHeight;
   double _timeEditorHeight;
 
-  // height values when the editors are collapsed
-  double _monthEditorCollapsedHeight;
-  double _dayEditorCollapsedHeight;
-  double _timeEditorCollapsedHeight;
+  // height values when the editors are selected
+  double _monthEditorSelectedHeight;
+  double _dayEditorSelectedHeight;
+  double _timeEditorSelectedHeight;
 
   // general values of the editors
   double _totalHeight;
@@ -30,6 +30,8 @@ class EditorsStatus extends ChangeNotifier {
   double _dividerHeight;
   double _defaultPrimaryHeight;
   double _defaultSecondaryHeight;
+  final Duration _duration = Duration(milliseconds: 500);
+  final Curve _curve = Curves.easeOutCubic;
 
   // constructor
   EditorsStatus({
@@ -37,9 +39,9 @@ class EditorsStatus extends ChangeNotifier {
     double monthEditorHeight,
     double dayEditorHeight,
     double timeEditorHeight,
-    double monthEditorCollapsedHeight,
-    double dayEditorCollapsedHeight,
-    double timeEditorCollapsedHeight,
+    double monthEditorSelectedHeight,
+    double dayEditorSelectedHeight,
+    double timeEditorSelectedHeight,
     double totalHeight,
     double totalWidth,
     double dividerHeight,
@@ -52,9 +54,9 @@ class EditorsStatus extends ChangeNotifier {
     _dayEditorHeight = dayEditorHeight;
     _timeEditorHeight = timeEditorHeight;
 
-    _monthEditorCollapsedHeight = monthEditorCollapsedHeight;
-    _dayEditorCollapsedHeight = dayEditorCollapsedHeight;
-    _timeEditorCollapsedHeight = timeEditorCollapsedHeight;
+    _monthEditorSelectedHeight = monthEditorSelectedHeight;
+    _dayEditorSelectedHeight = dayEditorSelectedHeight;
+    _timeEditorSelectedHeight = timeEditorSelectedHeight;
 
     _totalHeight = totalHeight;
     _totalWidth = totalWidth;
@@ -75,20 +77,23 @@ class EditorsStatus extends ChangeNotifier {
   double get monthEditorHeight => _monthEditorHeight;
   double get dayEditorHeight => _dayEditorHeight;
   double get timeEditorHeight => _timeEditorHeight;
-  double get monthEditorCollapsedHeight => _monthEditorCollapsedHeight;
-  double get dayEditorCollapsedHeight => _dayEditorCollapsedHeight;
-  double get timeEditorCollapsedHeight => _timeEditorCollapsedHeight;
+  double get monthEditorSelectedHeight => _monthEditorSelectedHeight;
+  double get dayEditorSelectedHeight => _dayEditorSelectedHeight;
+  double get timeEditorSelectedHeight => _timeEditorSelectedHeight;
+
+  Duration get duration => _duration;
+  Curve get curve => _curve;
 
   // setter methods
   set currentEditor(CurrentEditor value) {
     _currentEditor = value;
     if (value == CurrentEditor.month || value == CurrentEditor.monthSelected) {
-      switchToMonthEditor();
+      _switchToMonthEditor();
     } else if (value == CurrentEditor.day ||
         value == CurrentEditor.daySelected) {
-      switchToDayEditor();
+      _switchToDayEditor();
     } else if (value == CurrentEditor.time) {
-      switchToTimeEditor();
+      _switchToTimeEditor();
     }
     notifyListeners();
   }
@@ -133,23 +138,23 @@ class EditorsStatus extends ChangeNotifier {
     notifyListeners();
   }
 
-  set monthEditorCollapsedHeight(double value) {
-    _monthEditorCollapsedHeight = value;
+  set monthEditorSelectedHeight(double value) {
+    _monthEditorSelectedHeight = value;
     notifyListeners();
   }
 
-  set dayEditorCollapsedHeight(double value) {
-    _dayEditorCollapsedHeight = value;
+  set dayEditorSelectedHeight(double value) {
+    _dayEditorSelectedHeight = value;
     notifyListeners();
   }
 
-  set timeEditorCollapsedHeight(double value) {
-    _timeEditorCollapsedHeight = value;
+  set timeEditorSelectedHeight(double value) {
+    _timeEditorSelectedHeight = value;
     notifyListeners();
   }
 
   // class methods
-  void switchToMonthEditor() {
+  void _switchToMonthEditor() {
     _dayEditorHeight = _defaultSecondaryHeight;
     _timeEditorHeight = _defaultSecondaryHeight;
     _monthEditorHeight = _totalHeight -
@@ -160,8 +165,8 @@ class EditorsStatus extends ChangeNotifier {
     notifyListeners();
   }
 
-  void switchToDayEditor() {
-    _monthEditorHeight = _monthEditorCollapsedHeight ?? _defaultSecondaryHeight;
+  void _switchToDayEditor() {
+    _monthEditorHeight = _monthEditorSelectedHeight ?? _defaultSecondaryHeight;
     _timeEditorHeight = _defaultSecondaryHeight;
     _dayEditorHeight = _totalHeight -
         2 * _dividerHeight -
@@ -171,9 +176,9 @@ class EditorsStatus extends ChangeNotifier {
     notifyListeners();
   }
 
-  void switchToTimeEditor() {
-    _monthEditorHeight = _monthEditorCollapsedHeight ?? _defaultSecondaryHeight;
-    _dayEditorHeight = _defaultSecondaryHeight;
+  void _switchToTimeEditor() {
+    _monthEditorHeight = _monthEditorSelectedHeight ?? _defaultSecondaryHeight;
+    _dayEditorHeight = _dayEditorSelectedHeight ?? _defaultSecondaryHeight;
     _timeEditorHeight = _totalHeight -
         2 * _dividerHeight -
         _monthEditorHeight -

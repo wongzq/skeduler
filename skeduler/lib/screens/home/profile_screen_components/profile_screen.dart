@@ -18,32 +18,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   DayEditor _dayEditor;
   TimeEditor _timeEditor;
 
-  final Duration _duration = Duration(milliseconds: 500);
-  final Curve _curve = Curves.easeOutCubic;
-
   // methods
-  void switchToMonthEditor({bool selected = false}) {
-    setState(() {
-      _editorsStatus.currentEditor =
-          selected ? CurrentEditor.month : CurrentEditor.monthSelected;
-    });
-  }
-
-  void switchToDayEditor() {
-    setState(() {
-      _editorsStatus.currentEditor = CurrentEditor.day;
-    });
-  }
-
-  void switchToTimeEditor() {
-    setState(() {
-      _editorsStatus.currentEditor = CurrentEditor.time;
-    });
-  }
-
   @override
   void initState() {
-    _monthEditor = MonthEditor(switchEditor: switchToMonthEditor);
+    // _monthEditor = MonthEditor(switchEditor: switchToMonthEditor);
+    _monthEditor = MonthEditor();
     _dayEditor = DayEditor();
     _timeEditor = TimeEditor();
 
@@ -58,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _editorsStatus.totalWidth = constraints.maxWidth;
 
         _editorsStatus.dividerHeight = 16.0;
-        _editorsStatus.defaultSecondaryHeight = 60.0;
+        _editorsStatus.defaultSecondaryHeight = 55.0;
         _editorsStatus.defaultPrimaryHeight = _editorsStatus.totalHeight -
             2 * _editorsStatus.defaultSecondaryHeight -
             2 * _editorsStatus.dividerHeight;
@@ -68,50 +47,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             children: <Widget>[
               // Month Editor
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => switchToMonthEditor(),
-                child: AnimatedContainer(
-                  duration: _duration,
-                  height: _editorsStatus.monthEditorHeight ??
-                      _editorsStatus.defaultPrimaryHeight,
-                  width: _editorsStatus.totalWidth,
-                  curve: _curve,
-                  child: _monthEditor,
-                ),
-              ),
-
+              _monthEditor,
               Divider(thickness: 1.0, height: _editorsStatus.dividerHeight),
-
               // Day Editor
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => switchToDayEditor(),
-                child: AnimatedContainer(
-                  duration: _duration,
-                  height: _editorsStatus.dayEditorHeight ??
-                      _editorsStatus.defaultSecondaryHeight,
-                  width: _editorsStatus.totalWidth,
-                  curve: _curve,
-                  child: _dayEditor,
-                ),
-              ),
-
+              _dayEditor,
               Divider(thickness: 1.0, height: _editorsStatus.dividerHeight),
-
               // Time Editor
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => switchToTimeEditor(),
-                child: AnimatedContainer(
-                  duration: _duration,
-                  height: _editorsStatus.timeEditorHeight ??
-                      _editorsStatus.defaultSecondaryHeight,
-                  width: _editorsStatus.totalWidth,
-                  curve: _curve,
-                  child: _timeEditor,
-                ),
-              ),
+              _timeEditor,
             ],
           ),
         );

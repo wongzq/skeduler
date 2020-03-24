@@ -5,13 +5,6 @@ import 'package:skeduler/screens/home/profile_screen_components/editors_status.d
 import 'package:skeduler/shared/ui_settings.dart';
 
 class MonthEditor extends StatefulWidget {
-  // properties
-  final Function switchEditor;
-
-  // constructor
-  const MonthEditor({this.switchEditor});
-
-  // methods
   @override
   _MonthEditorState createState() => _MonthEditorState();
 }
@@ -26,39 +19,41 @@ class _MonthEditorState extends State<MonthEditor> {
   EditorsStatus _editorsStatus;
 
   List<String> _months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
+    'Jan 2020',
+    'Feb 2020',
+    'Mar 2020',
+    'Apr 2020',
+    'May 2020',
+    'Jun 2020',
+    'Jul 2020',
+    'Aug 2020',
+    'Sep 2020',
+    'Oct 2020',
+    'Nov 2020',
+    'Dec 2020'
   ];
 
   Set<int> _monthsSelected = Set<int>();
 
   static const double _bodyPadding = 10.0;
+  static const double _sizedBoxPadding = 8.0;
   static const double _chipPadding = 5.0;
   static const double _chipLabelHoriPadding = 10.0;
   static const double _chipLabelVertPadding = 5.0;
   double _chipWidth;
 
   // methods
-  // set the collapsed height of month editor
-  setMonthEditorCollapsedHeight() {
+  // set the selected height of month editor
+  setMonthEditorSelectedHeight() {
     RenderBox text = _textKey.currentContext.findRenderObject();
     RenderBox sizedBox = _sizedBoxKey.currentContext.findRenderObject();
     RenderBox wrapSelected = _wrapSelectedKey.currentContext.findRenderObject();
 
-    _editorsStatus.monthEditorCollapsedHeight = text.size.height +
+    _editorsStatus.monthEditorSelectedHeight = text.size.height +
         sizedBox.size.height +
         wrapSelected.size.height +
-        2 * _bodyPadding;
+        2 * _bodyPadding +
+        _sizedBoxPadding;
   }
 
   // generate List<Widget> for months
@@ -67,19 +62,26 @@ class _MonthEditorState extends State<MonthEditor> {
       return Visibility(
         visible: () {
           if (_key == _wrapKey) {
-            return _editorsStatus.currentEditor != CurrentEditor.month &&
-                    _editorsStatus.currentEditor !=
-                        CurrentEditor.monthSelected &&
-                    !_monthsSelected.contains(item.key)
-                ? false
-                : true;
+            // Chips are visible when:
+            // CurrentEditor is month (visible when in MonthEditor) OR
+            // CurrentEditor is monthSelected (visible when in MonthEditor) OR
+            // Chip is selected (visible when not in MonthEditor)
+            return _editorsStatus.currentEditor == CurrentEditor.month ||
+                    _editorsStatus.currentEditor ==
+                        CurrentEditor.monthSelected ||
+                    _monthsSelected.contains(item.key)
+                ? true
+                : false;
           } else if (_key == _wrapSelectedKey) {
-            return _editorsStatus.currentEditor != CurrentEditor.month &&
-                    !_monthsSelected.contains(item.key)
-                ? false
-                : true;
+            // Chips are visible when:
+            // CurrentEditor is monthSelected AND Chip is selected
+            return _editorsStatus.currentEditor ==
+                        CurrentEditor.monthSelected &&
+                    _monthsSelected.contains(item.key)
+                ? true
+                : false;
           } else {
-            return null;
+            return false;
           }
         }(),
         child: Padding(
@@ -103,19 +105,21 @@ class _MonthEditorState extends State<MonthEditor> {
               ),
             ),
             onPressed: () {
+              // modify Wrap Selected
               setState(() {
                 _editorsStatus.currentEditor = CurrentEditor.monthSelected;
                 _monthsSelected.contains(item.key)
                     ? _monthsSelected.remove(item.key)
                     : _monthsSelected.add(item.key);
               });
+
+              // get Size of Wrap Selected
               SchedulerBinding.instance.addPostFrameCallback((_) {
-                setMonthEditorCollapsedHeight();
+                setMonthEditorSelectedHeight();
                 setState(() {
                   _editorsStatus.currentEditor = CurrentEditor.month;
                 });
               });
-              widget.switchEditor(selected: false);
             },
           ),
         ),
@@ -124,55 +128,74 @@ class _MonthEditorState extends State<MonthEditor> {
   }
 
   @override
+  void initState() {
+    SchedulerBinding.instance
+        .addPostFrameCallback((_) => setMonthEditorSelectedHeight());
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // note: 4 px on each side is the default Action chip padding
-    _chipWidth = (MediaQuery.of(context).size.width - 2 * _bodyPadding) / 4 -
+    _editorsStatus = Provider.of<EditorsStatus>(context);
+
+    // note: 4 px on each side is the default ActionChip padding
+    _chipWidth = (MediaQuery.of(context).size.width - 2 * _bodyPadding) / 3 -
         (2 * _chipPadding) -
         (2 * _chipLabelHoriPadding) -
         8;
-    print(MediaQuery.of(context).size.width);
-    print(_bodyPadding);
-    print(_chipPadding);
-    print(_chipLabelHoriPadding);
-    print(_chipWidth);
-    _editorsStatus = Provider.of<EditorsStatus>(context);
 
-    return Stack(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(_bodyPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Align(
-                alignment: Alignment.topCenter,
-                child: Text('Month', key: _textKey, style: textStyleHeader),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () =>
+          setState(() => _editorsStatus.currentEditor = CurrentEditor.month),
+      child: AnimatedContainer(
+        duration: _editorsStatus.duration,
+        curve: _editorsStatus.curve,
+        height: _editorsStatus.monthEditorHeight ??
+            _editorsStatus.defaultPrimaryHeight,
+        width: _editorsStatus.totalWidth,
+        child: Stack(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(_bodyPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: _sizedBoxPadding),
+                      child:
+                          Text('Month', key: _textKey, style: textStyleHeader),
+                    ),
+                  ),
+                  SizedBox(key: _sizedBoxKey, height: _sizedBoxPadding),
+                  Expanded(
+                    child: Stack(
+                      children: <Widget>[
+                        Wrap(
+                          key: _wrapKey,
+                          children: _generateMonths(_wrapKey),
+                        ),
+                        Visibility(
+                          visible: false,
+                          maintainSize: true,
+                          maintainState: true,
+                          maintainAnimation: true,
+                          child: Wrap(
+                            key: _wrapSelectedKey,
+                            children: _generateMonths(_wrapSelectedKey),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
               ),
-              SizedBox(key: _sizedBoxKey, height: 20.0),
-              Expanded(
-                child: Stack(
-                  children: <Widget>[
-                    Wrap(
-                      key: _wrapKey,
-                      children: _generateMonths(_wrapKey),
-                    ),
-                    Visibility(
-                      visible: false,
-                      maintainSize: true,
-                      maintainState: true,
-                      maintainAnimation: true,
-                      child: Wrap(
-                        key: _wrapSelectedKey,
-                        children: _generateMonths(_wrapSelectedKey),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
