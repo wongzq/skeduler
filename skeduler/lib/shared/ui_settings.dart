@@ -70,4 +70,21 @@ InputDecoration textInputDecorationValid(BuildContext context) {
 }
 
 // Text style: for drawer list tile
-TextStyle textStyle = TextStyle(fontSize: 15.0);
+const TextStyle textStyleHeader = TextStyle(
+  fontSize: 16.0,
+  fontWeight: FontWeight.w600,
+  letterSpacing: 1.0,
+);
+
+const TextStyle textStyleBody = TextStyle(
+  fontSize: 14.0,
+  fontWeight: FontWeight.w400,
+  letterSpacing: 1.0,
+);
+
+const TextStyle textStyleBodyLight = TextStyle(
+  fontSize: 14.0,
+  fontWeight: FontWeight.w400,
+  letterSpacing: 1.0,
+  color: Color(0xFFBBBBBB),
+);

@@ -6,7 +6,7 @@ import 'package:skeduler/screens/home/classes_screen.dart';
 import 'package:skeduler/screens/home/dashboard_screen.dart';
 import 'package:skeduler/screens/home/groups_screen.dart';
 import 'package:skeduler/screens/home/people_screen.dart';
-import 'package:skeduler/screens/home/profile_screen.dart';
+import 'package:skeduler/screens/home/profile_screen_components/profile_screen.dart';
 import 'package:skeduler/screens/home/settings_screen.dart';
 import 'package:skeduler/screens/home/timetable_screen.dart';
 import 'package:skeduler/services/auth_service.dart';
@@ -25,7 +25,15 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   // properties
   final AuthService _authService = AuthService();
-  DrawerEnum _selected = DrawerEnum.dashboard;
+  // DrawerEnum _selected = DrawerEnum.dashboard;
+  DrawerEnum _selected = DrawerEnum.profile;
+  DashboardScreen _dashboardScreen = DashboardScreen();
+  GroupsScreen _groupsScreen = GroupsScreen();
+  TimetableScreen _timetableScreen = TimetableScreen();
+  ClassesScreen _classesScreen = ClassesScreen();
+  PeopleScreen _peopleScreen = PeopleScreen();
+  ProfileScreen _profileScreen = ProfileScreen();
+  SettingsScreen _settingsScreen = SettingsScreen();
 
   // methods
   @override
@@ -206,32 +214,33 @@ class _HomeState extends State<Home> {
                         onTap: () {
                           //setState(() => _selected = DrawerEnum.logout);
                           showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  content: Text('Do you want to logout?'),
-                                  actions: <Widget>[
-                                    // CANCEL button
-                                    FlatButton(
-                                      child: Text('CANCEL'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    // OK button
-                                    FlatButton(
-                                      child: Text('OK'),
-                                      onPressed: () {
-                                        // pop AlertDialog
-                                        Navigator.of(context).pop();
-                                        // pop Drawer
-                                        Navigator.of(context).pop();
-                                        _authService.logOut();
-                                      },
-                                    )
-                                  ],
-                                );
-                              });
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                content: Text('Do you want to logout?'),
+                                actions: <Widget>[
+                                  // CANCEL button
+                                  FlatButton(
+                                    child: Text('CANCEL'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  // OK button
+                                  FlatButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      // pop AlertDialog
+                                      Navigator.of(context).pop();
+                                      // pop Drawer
+                                      Navigator.of(context).pop();
+                                      _authService.logOut();
+                                    },
+                                  )
+                                ],
+                              );
+                            },
+                          );
                         },
                       ),
                     ),
@@ -245,31 +254,32 @@ class _HomeState extends State<Home> {
           body: () {
             switch (_selected) {
               case DrawerEnum.dashboard:
-                return DashboardScreen();
+                return _dashboardScreen;
                 break;
 
               case DrawerEnum.groups:
-                return GroupsScreen();
+                return _groupsScreen;
                 break;
 
               case DrawerEnum.people:
-                return PeopleScreen();
+                return _peopleScreen;
                 break;
 
               case DrawerEnum.classes:
-                return ClassesScreen();
+                return _classesScreen;
                 break;
 
               case DrawerEnum.timetable:
-                return TimetableScreen();
+                return _timetableScreen;
                 break;
 
               case DrawerEnum.profile:
-                return ProfileScreen();
+              print('Profile Screen');
+                return _profileScreen;
                 break;
 
               case DrawerEnum.settings:
-                return SettingsScreen();
+                return _settingsScreen;
                 break;
 
               default:
