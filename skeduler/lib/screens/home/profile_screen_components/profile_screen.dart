@@ -21,7 +21,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // methods
   @override
   void initState() {
-    // _monthEditor = MonthEditor(switchEditor: switchToMonthEditor);
     _monthEditor = MonthEditor();
     _dayEditor = DayEditor();
     _timeEditor = TimeEditor();
@@ -44,7 +43,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         return ChangeNotifierProvider(
           create: (context) => _editorsStatus,
-          child: Column(
+          child: ListView(
+            controller: ScrollController(),
+            physics: const AlwaysScrollableScrollPhysics(),
+            scrollDirection: Axis.vertical,
             children: <Widget>[
               // Month Editor
               _monthEditor,

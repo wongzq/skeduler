@@ -161,6 +161,7 @@ class _MonthEditorState extends State<MonthEditor> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  // Title
                   Align(
                     alignment: Alignment.topCenter,
                     child: Padding(
@@ -169,7 +170,10 @@ class _MonthEditorState extends State<MonthEditor> {
                           Text('Month', key: _textKey, style: textStyleHeader),
                     ),
                   ),
+
                   SizedBox(key: _sizedBoxKey, height: _sizedBoxPadding),
+
+                  // Body: month ActionChips
                   Expanded(
                     child: Stack(
                       children: <Widget>[

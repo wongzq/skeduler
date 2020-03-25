@@ -179,10 +179,7 @@ class EditorsStatus extends ChangeNotifier {
   void _switchToTimeEditor() {
     _monthEditorHeight = _monthEditorSelectedHeight ?? _defaultSecondaryHeight;
     _dayEditorHeight = _dayEditorSelectedHeight ?? _defaultSecondaryHeight;
-    _timeEditorHeight = _totalHeight -
-        2 * _dividerHeight -
-        _monthEditorHeight -
-        _dayEditorHeight;
+    _timeEditorHeight = _timeEditorSelectedHeight;
 
     notifyListeners();
   }

@@ -144,11 +144,15 @@ class _DayEditorState extends State<DayEditor> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  // Title
                   Align(
                     alignment: Alignment.topCenter,
                     child: Text('Day', key: _textKey, style: textStyleHeader),
                   ),
+
                   SizedBox(key: _sizedBoxKey, height: 8.0),
+                  
+                  // Body: Day ActionChips
                   Expanded(
                     child: Stack(
                       children: <Widget>[
