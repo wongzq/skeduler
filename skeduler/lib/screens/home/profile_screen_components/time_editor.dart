@@ -43,14 +43,10 @@ class _TimeEditorState extends State<TimeEditor> {
         sizedBox.size.height +
         buttons.size.height +
         2 * _bodyPadding;
-    print(_editorsStatus.timeEditorSelectedHeight);
   }
 
   // validate time
   void _validateTime() {
-    print('Start ${_startTime.hour} ${_startTime.minute}');
-    print('End ${_endTime.hour} ${_endTime.minute}');
-
     if (_endTime.isAfter(_startTime)) {
       _validTime = true;
     } else {
