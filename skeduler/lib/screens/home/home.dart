@@ -15,6 +15,7 @@ import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/loading.dart';
 import 'package:skeduler/models/theme_changer.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class Home extends StatefulWidget {
   static _HomeState of(BuildContext context) =>
@@ -30,8 +31,6 @@ class _HomeState extends State<Home> {
   final AuthService _authService = AuthService();
 
   DrawerEnum _selected = DrawerEnum.dashboard;
-
-  bool _loading = true;
 
   // Map of screens
   Map<DrawerEnum, Map<String, Object>> _screens = {
@@ -49,7 +48,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     User user = Provider.of<User>(context);
-    ThemeChanger theme = Provider.of<ThemeChanger>(context);
     DatabaseService _databaseService = DatabaseService(uid: user.uid);
 
     return StreamBuilder<UserData>(
@@ -57,16 +55,7 @@ class _HomeState extends State<Home> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         UserData userData = snapshot.data ?? UserData();
 
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          theme.setTheme(dark: userData.dark, color: userData.color);
-          setState(() {
-            _loading = false;
-          });
-        });
-
-        return _loading
-            ? Loading()
-            : Scaffold(
+        return Scaffold(
                 // Scaffold - appBar
                 appBar: AppBar(
                   backgroundColor: Theme.of(context).primaryColor,
@@ -279,10 +268,9 @@ class _HomeState extends State<Home> {
                                             // pop Drawer
                                             Navigator.of(context).pop();
 
-                                            theme.setTheme(
-                                                dark: false, color: null);
-
                                             _authService.logOut();
+
+                                            // ThemeProvider.controllerOf(context).setTheme('default');
                                           },
                                         )
                                       ],

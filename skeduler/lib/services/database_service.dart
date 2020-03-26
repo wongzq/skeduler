@@ -13,12 +13,10 @@ class DatabaseService {
       Firestore.instance.collection('users');
 
   // update user data
-  Future updateUserData({String email, String name, bool dark, String color}) async {
+  Future updateUserData({String email, String name}) async {
     return await usersCollection.document(uid).setData({
       'email': email,
       'name': name,
-      'dark': dark,
-      'color': color,
     });
   }
 
@@ -33,8 +31,6 @@ class DatabaseService {
       uid: uid,
       email: snapshot.data['email'],
       name: snapshot.data['name'],
-      color: snapshot.data['color'],
-      dark: snapshot.data['dark'],
     );
   }
 }
