@@ -70,15 +70,11 @@ class _ChangeThemeState extends State<ChangeTheme> {
                     child: GestureDetector(
                       onTap: () {
                         _nativeThemeId = myAppThemes[index].id;
-                        print(_nativeThemeId);
 
                         if (_darkMode) {
-                          print('set dark');
                           ThemeProvider.controllerOf(context)
                               .setTheme(_nativeThemeId + '_dark');
-
                         } else {
-                          print('set light');
                           ThemeProvider.controllerOf(context)
                               .setTheme(_nativeThemeId);
                         }
