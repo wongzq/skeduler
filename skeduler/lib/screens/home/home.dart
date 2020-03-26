@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/drawer_enum.dart';
@@ -13,9 +12,6 @@ import 'package:skeduler/screens/home/settings_screen_components/settings_screen
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_screen.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/loading.dart';
-import 'package:skeduler/models/theme_changer.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class Home extends StatefulWidget {
   static _HomeState of(BuildContext context) =>
@@ -30,7 +26,7 @@ class _HomeState extends State<Home> {
   // properties
   final AuthService _authService = AuthService();
 
-  DrawerEnum _selected = DrawerEnum.dashboard;
+  DrawerEnum _selected = DrawerEnum.settings;
 
   // Map of screens
   Map<DrawerEnum, Map<String, Object>> _screens = {
@@ -70,7 +66,7 @@ class _HomeState extends State<Home> {
                 ),
 
                 // Scaffold - drawer
-                drawer: Container(
+                endDrawer: Container(
                   width: MediaQuery.of(context).size.width * 0.75,
                   child: Drawer(
                     child: ListTileTheme(
