@@ -28,7 +28,7 @@ class _FormEmailState extends State<FormEmail> {
         key: widget.formKeyEmail,
         child: TextFormField(
           initialValue: null,
-          style: TextStyle(fontSize: 14.0),
+          style: TextStyle(color: Colors.black, fontSize: 14.0),
           decoration: authInfo.emailValid
               ? textInputDecorationValid(context)
               : textInputDecoration(context).copyWith(hintText: 'Email'),

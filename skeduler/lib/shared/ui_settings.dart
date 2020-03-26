@@ -53,7 +53,7 @@ InputDecoration textInputDecorationValid(BuildContext context) {
     enabledBorder: OutlineInputBorder(
       borderRadius: const BorderRadius.all(const Radius.circular(30.0)),
       borderSide: BorderSide(
-        color: Theme.of(context).primaryColor,
+        color: Colors.teal,
         width: 1.0,
       ),
     ),
@@ -62,7 +62,7 @@ InputDecoration textInputDecorationValid(BuildContext context) {
     focusedBorder: OutlineInputBorder(
       borderRadius: const BorderRadius.all(const Radius.circular(30.0)),
       borderSide: BorderSide(
-        color: Theme.of(context).primaryColor,
+        color: Colors.teal,
         width: 1.0,
       ),
     ),

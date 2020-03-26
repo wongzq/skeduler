@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/drawer_enum.dart';
 import 'package:skeduler/models/user.dart';
-import 'package:skeduler/screens/home/classes_screen.dart';
-import 'package:skeduler/screens/home/dashboard_screen.dart';
-import 'package:skeduler/screens/home/groups_screen.dart';
-import 'package:skeduler/screens/home/people_screen.dart';
+import 'package:skeduler/screens/home/classes_screen_components/classes_screen.dart';
+import 'package:skeduler/screens/home/dashboard_screen_components/dashboard_screen.dart';
+import 'package:skeduler/screens/home/group_screen_components/group_screen.dart';
+import 'package:skeduler/screens/home/people_screen_components/people_screen.dart';
 import 'package:skeduler/screens/home/profile_screen_components/profile_screen.dart';
-import 'package:skeduler/screens/home/settings_screen.dart';
-import 'package:skeduler/screens/home/timetable_screen.dart';
+import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_screen.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/loading.dart';
+import 'package:skeduler/models/theme_changer.dart';
 
 class Home extends StatefulWidget {
   static _HomeState of(BuildContext context) =>
@@ -25,268 +28,280 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   // properties
   final AuthService _authService = AuthService();
-  // DrawerEnum _selected = DrawerEnum.dashboard;
-  DrawerEnum _selected = DrawerEnum.profile;
-  DashboardScreen _dashboardScreen = DashboardScreen();
-  GroupsScreen _groupsScreen = GroupsScreen();
-  TimetableScreen _timetableScreen = TimetableScreen();
-  ClassesScreen _classesScreen = ClassesScreen();
-  PeopleScreen _peopleScreen = PeopleScreen();
-  ProfileScreen _profileScreen = ProfileScreen();
-  SettingsScreen _settingsScreen = SettingsScreen();
+
+  DrawerEnum _selected = DrawerEnum.dashboard;
+
+  bool _loading = true;
+
+  // Map of screens
+  Map<DrawerEnum, Map<String, Object>> _screens = {
+    DrawerEnum.dashboard: {'title': 'Dashboard', 'screen': DashboardScreen()},
+    DrawerEnum.group: {'title': 'Group', 'screen': GroupScreen()},
+    DrawerEnum.timetable: {'title': 'Timetable', 'screen': TimetableScreen()},
+    DrawerEnum.classes: {'title': 'Classes', 'screen': ClassesScreen()},
+    DrawerEnum.people: {'title': 'People', 'screen': PeopleScreen()},
+    DrawerEnum.profile: {'title': 'Profile', 'screen': ProfileScreen()},
+    DrawerEnum.settings: {'title': 'Settings', 'screen': SettingsScreen()},
+    DrawerEnum.logout: {'title': 'Logout', 'screen': null},
+  };
 
   // methods
   @override
   Widget build(BuildContext context) {
     User user = Provider.of<User>(context);
+    ThemeChanger theme = Provider.of<ThemeChanger>(context);
     DatabaseService _databaseService = DatabaseService(uid: user.uid);
 
     return StreamBuilder<UserData>(
       stream: _databaseService.userData,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         UserData userData = snapshot.data ?? null;
-        return Scaffold(
-          // Scaffold - appBar
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
 
-          // Scaffold - drawer
-          drawer: Container(
-            width: MediaQuery.of(context).size.width * 0.75,
-            child: Drawer(
-              child: ListTileTheme(
-                child: Column(
-                  children: <Widget>[
-                    // User data display
-                    UserAccountsDrawerHeader(
-                      currentAccountPicture: CircleAvatar(
-                        child: Icon(Icons.person),
-                      ),
-                      accountName: Text(
-                        userData != null ? userData.name : 'Name',
-                        style: TextStyle(fontSize: 24.0),
-                      ),
-                      accountEmail: Text(
-                        userData != null ? userData.email : 'email',
-                        style: TextStyle(fontSize: 13.0),
-                      ),
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          theme.setTheme(userData.dark, userData.color);
+          setState(() {
+            _loading = false;
+          });
+        });
+
+        return _loading
+            ? Loading()
+            : Scaffold(
+                // Scaffold - appBar
+                appBar: AppBar(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  title: Text(
+                    _screens[_selected]['title'],
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 2.0,
                     ),
-
-                    // Dashboard
-                    Container(
-                      color: _selected == DrawerEnum.dashboard
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.dashboard),
-                        title: Text('Dashboard'),
-                        selected:
-                            _selected == DrawerEnum.dashboard ? true : false,
-                        onTap: () {
-                          setState(() => _selected = DrawerEnum.dashboard);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    Divider(thickness: 1.0),
-
-                    // Groups
-                    Container(
-                      color: _selected == DrawerEnum.groups
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.group_work),
-                        title: Text('Groups'),
-                        selected: _selected == DrawerEnum.groups ? true : false,
-                        onTap: () {
-                          setState(() => _selected = DrawerEnum.groups);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    // Timetable
-                    Container(
-                      color: _selected == DrawerEnum.timetable
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.table_chart),
-                        title: Text('Timetable'),
-                        selected:
-                            _selected == DrawerEnum.timetable ? true : false,
-                        onTap: () {
-                          setState(() => _selected = DrawerEnum.timetable);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    // Classes
-                    Container(
-                      color: _selected == DrawerEnum.classes
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.school),
-                        title: Text('Classes'),
-                        selected:
-                            _selected == DrawerEnum.classes ? true : false,
-                        onTap: () {
-                          setState(() => _selected = DrawerEnum.classes);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    // People
-                    Container(
-                      color: _selected == DrawerEnum.people
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.people),
-                        title: Text('People'),
-                        selected: _selected == DrawerEnum.people ? true : false,
-                        onTap: () {
-                          setState(() => _selected = DrawerEnum.people);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    // Profile
-                    Container(
-                      color: _selected == DrawerEnum.profile
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.person),
-                        title: Text('Profile'),
-                        selected:
-                            _selected == DrawerEnum.profile ? true : false,
-                        onTap: () {
-                          setState(() => _selected = DrawerEnum.profile);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    Divider(thickness: 1.0),
-
-                    // Settings
-                    Container(
-                      color: _selected == DrawerEnum.settings
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.settings),
-                        title: Text('Settings'),
-                        selected:
-                            _selected == DrawerEnum.settings ? true : false,
-                        onTap: () {
-                          setState(() => _selected = DrawerEnum.settings);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    // Logout
-                    Container(
-                      color: _selected == DrawerEnum.logout
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.exit_to_app),
-                        title: Text('Logout'),
-                        selected: _selected == DrawerEnum.logout ? true : false,
-                        onTap: () {
-                          //setState(() => _selected = DrawerEnum.logout);
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                content: Text('Do you want to logout?'),
-                                actions: <Widget>[
-                                  // CANCEL button
-                                  FlatButton(
-                                    child: Text('CANCEL'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  // OK button
-                                  FlatButton(
-                                    child: Text('OK'),
-                                    onPressed: () {
-                                      // pop AlertDialog
-                                      Navigator.of(context).pop();
-                                      // pop Drawer
-                                      Navigator.of(context).pop();
-                                      _authService.logOut();
-                                    },
-                                  )
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ),
 
-          // Scaffold - body
-          body: () {
-            switch (_selected) {
-              case DrawerEnum.dashboard:
-                return _dashboardScreen;
-                break;
+                // Scaffold - drawer
+                drawer: Container(
+                  width: MediaQuery.of(context).size.width * 0.75,
+                  child: Drawer(
+                    child: ListTileTheme(
+                      child: Column(
+                        children: <Widget>[
+                          // User data display
+                          UserAccountsDrawerHeader(
+                            currentAccountPicture: CircleAvatar(
+                              child: Icon(Icons.person),
+                            ),
+                            accountName: Text(
+                              userData != null ? userData.name : 'Name',
+                              style: TextStyle(fontSize: 24.0),
+                            ),
+                            accountEmail: Text(
+                              userData != null ? userData.email : 'email',
+                              style: TextStyle(fontSize: 13.0),
+                            ),
+                          ),
 
-              case DrawerEnum.groups:
-                return _groupsScreen;
-                break;
+                          // Dashboard
+                          Container(
+                            color: _selected == DrawerEnum.dashboard
+                                ? Theme.of(context).primaryColorLight
+                                : null,
+                            child: ListTile(
+                              dense: true,
+                              leading: Icon(Icons.dashboard),
+                              title:
+                                  Text(_screens[DrawerEnum.dashboard]['title']),
+                              selected: _selected == DrawerEnum.dashboard
+                                  ? true
+                                  : false,
+                              onTap: () {
+                                setState(
+                                    () => _selected = DrawerEnum.dashboard);
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
 
-              case DrawerEnum.people:
-                return _peopleScreen;
-                break;
+                          Divider(thickness: 1.0),
 
-              case DrawerEnum.classes:
-                return _classesScreen;
-                break;
+                          // Group
+                          Container(
+                            color: _selected == DrawerEnum.group
+                                ? Theme.of(context).primaryColorLight
+                                : null,
+                            child: ListTile(
+                              dense: true,
+                              leading: Icon(FontAwesomeIcons.users),
+                              title: Text(_screens[DrawerEnum.group]['title']),
+                              selected:
+                                  _selected == DrawerEnum.group ? true : false,
+                              onTap: () {
+                                setState(() => _selected = DrawerEnum.group);
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
 
-              case DrawerEnum.timetable:
-                return _timetableScreen;
-                break;
+                          // Timetable
+                          Container(
+                            color: _selected == DrawerEnum.timetable
+                                ? Theme.of(context).primaryColorLight
+                                : null,
+                            child: ListTile(
+                              dense: true,
+                              leading: Icon(Icons.table_chart),
+                              title:
+                                  Text(_screens[DrawerEnum.timetable]['title']),
+                              selected: _selected == DrawerEnum.timetable
+                                  ? true
+                                  : false,
+                              onTap: () {
+                                setState(
+                                    () => _selected = DrawerEnum.timetable);
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
 
-              case DrawerEnum.profile:
-              print('Profile Screen');
-                return _profileScreen;
-                break;
+                          // Classes
+                          Container(
+                            color: _selected == DrawerEnum.classes
+                                ? Theme.of(context).primaryColorLight
+                                : null,
+                            child: ListTile(
+                              dense: true,
+                              leading: Icon(Icons.school),
+                              title:
+                                  Text(_screens[DrawerEnum.classes]['title']),
+                              selected: _selected == DrawerEnum.classes
+                                  ? true
+                                  : false,
+                              onTap: () {
+                                setState(() => _selected = DrawerEnum.classes);
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
 
-              case DrawerEnum.settings:
-                return _settingsScreen;
-                break;
+                          // People
+                          Container(
+                            color: _selected == DrawerEnum.people
+                                ? Theme.of(context).primaryColorLight
+                                : null,
+                            child: ListTile(
+                              dense: true,
+                              leading: Icon(Icons.people),
+                              title: Text(_screens[DrawerEnum.people]['title']),
+                              selected:
+                                  _selected == DrawerEnum.people ? true : false,
+                              onTap: () {
+                                setState(() => _selected = DrawerEnum.people);
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
 
-              default:
-                return Loading();
-            }
-          }(),
-        );
+                          // Profile
+                          Container(
+                            color: _selected == DrawerEnum.profile
+                                ? Theme.of(context).primaryColorLight
+                                : null,
+                            child: ListTile(
+                              dense: true,
+                              leading: Icon(Icons.person),
+                              title:
+                                  Text(_screens[DrawerEnum.profile]['title']),
+                              selected: _selected == DrawerEnum.profile
+                                  ? true
+                                  : false,
+                              onTap: () {
+                                setState(() => _selected = DrawerEnum.profile);
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
+
+                          Divider(thickness: 1.0),
+
+                          // Settings
+                          Container(
+                            color: _selected == DrawerEnum.settings
+                                ? Theme.of(context).primaryColorLight
+                                : null,
+                            child: ListTile(
+                              dense: true,
+                              leading: Icon(Icons.settings),
+                              title:
+                                  Text(_screens[DrawerEnum.settings]['title']),
+                              selected: _selected == DrawerEnum.settings
+                                  ? true
+                                  : false,
+                              onTap: () {
+                                setState(() => _selected = DrawerEnum.settings);
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ),
+
+                          // Logout
+                          Container(
+                            color: _selected == DrawerEnum.logout
+                                ? Theme.of(context).primaryColorLight
+                                : null,
+                            child: ListTile(
+                              dense: true,
+                              leading: Icon(Icons.exit_to_app),
+                              title: Text(_screens[DrawerEnum.logout]['title']),
+                              selected:
+                                  _selected == DrawerEnum.logout ? true : false,
+                              onTap: () {
+                                //setState(() => _selected = DrawerEnum.logout);
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      content: Text('Do you want to logout?'),
+                                      actions: <Widget>[
+                                        // CANCEL button
+                                        FlatButton(
+                                          child: Text('CANCEL'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        // OK button
+                                        FlatButton(
+                                          child: Text('OK'),
+                                          onPressed: () {
+                                            // pop AlertDialog
+                                            Navigator.of(context).pop();
+                                            // pop Drawer
+                                            Navigator.of(context).pop();
+
+                                            theme.setTheme(null, null);
+                                            
+                                            _authService.logOut();
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Scaffold - body
+                body: () {
+                  return _screens[_selected]['screen'];
+                }(),
+              );
       },
     );
   }

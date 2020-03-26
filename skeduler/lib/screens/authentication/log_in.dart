@@ -58,7 +58,7 @@ class _LogInState extends State<LogIn> {
               height: 50.0,
               minWidth: MediaQuery.of(context).size.width,
               child: FlatButton(
-                color: Theme.of(context).primaryColor,
+                color: Colors.teal,
                 disabledColor: Colors.grey[400],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(

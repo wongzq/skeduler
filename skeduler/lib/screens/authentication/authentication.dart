@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auth_info.dart';
+import 'package:skeduler/models/theme_changer.dart';
 import 'package:skeduler/screens/authentication/log_in.dart';
 import 'package:skeduler/screens/authentication/sign_up.dart';
 import 'package:skeduler/shared/loading.dart';
@@ -66,6 +67,7 @@ class _AuthenticationState extends State<Authentication>
               title: Text(
                 'Skeduler',
                 style: TextStyle(
+                  color: Colors.white,
                   fontSize: 24.0,
                   fontWeight: FontWeight.w400,
                   letterSpacing: 2.0,
@@ -84,6 +86,7 @@ class _AuthenticationState extends State<Authentication>
                     child: Text(
                       'Log in',
                       style: TextStyle(
+                        color: Colors.white,
                         fontSize: 16.0,
                         fontWeight: FontWeight.w400,
                       ),
@@ -95,6 +98,7 @@ class _AuthenticationState extends State<Authentication>
                     child: Text(
                       'Sign up',
                       style: TextStyle(
+                        color: Colors.white,
                         fontSize: 16.0,
                         fontWeight: FontWeight.w400,
                       ),

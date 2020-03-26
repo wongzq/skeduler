@@ -1,6 +1,6 @@
 enum DrawerEnum {
   dashboard,
-  groups,
+  group,
   people,
   classes,
   timetable,

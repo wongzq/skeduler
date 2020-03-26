@@ -33,7 +33,7 @@ class _FormNameState extends State<FormName> {
                 RegExp(r"^[a-zA-Z,.'-][a-zA-Z ,.'-]*"))
           ],
           initialValue: null,
-          style: TextStyle(fontSize: 14.0),
+          style: TextStyle(color: Colors.black, fontSize: 14.0),
           decoration: authInfo.nameValid
               ? textInputDecorationValid(context)
               : textInputDecoration(context).copyWith(hintText: 'Name'),

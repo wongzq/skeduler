@@ -29,7 +29,7 @@ class _FormPasswordState extends State<FormPassword> {
         child: TextFormField(
           obscureText: true,
           initialValue: null,
-          style: TextStyle(fontSize: 14.0),
+          style: TextStyle(color: Colors.black, fontSize: 14.0),
           decoration: Provider.of<AuthInfo>(context).passwordValid
               ? textInputDecorationValid(context)
               : textInputDecoration(context).copyWith(hintText: 'Password'),
