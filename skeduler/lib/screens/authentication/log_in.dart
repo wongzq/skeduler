@@ -7,7 +7,7 @@ import 'package:skeduler/screens/authentication/authentication.dart';
 import 'package:skeduler/screens/authentication/form_email.dart';
 import 'package:skeduler/screens/authentication/form_password.dart';
 import 'package:skeduler/services/auth_service.dart';
-import 'package:skeduler/shared/methods.dart';
+import 'package:skeduler/shared/functions.dart';
 
 class LogIn extends StatefulWidget {
   @override
@@ -36,7 +36,7 @@ class _LogInState extends State<LogIn> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        setState(() => unfocus(context));
+        setState(() => unfocus());
       },
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -98,7 +98,7 @@ class _LogInState extends State<LogIn> {
                                 });
 
                                 // unfocus text form field
-                                unfocus(context);
+                                unfocus();
 
                                 // remove loading screen
                                 Authentication.of(context).setState(() {
@@ -113,7 +113,7 @@ class _LogInState extends State<LogIn> {
                             });
 
                             // unfocus text form field
-                            unfocus(context);
+                            unfocus();
 
                             // remove loading screen
                             Authentication.of(context).setState(() {

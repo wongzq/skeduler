@@ -4,7 +4,7 @@ import 'package:skeduler/models/auth_info.dart';
 import 'package:skeduler/screens/authentication/log_in.dart';
 import 'package:skeduler/screens/authentication/sign_up.dart';
 import 'package:skeduler/shared/loading.dart';
-import 'package:skeduler/shared/methods.dart';
+import 'package:skeduler/shared/functions.dart';
 
 class Authentication extends StatefulWidget {
   static _AuthenticationState of(BuildContext context) =>
@@ -31,6 +31,8 @@ class _AuthenticationState extends State<Authentication>
 
   // methods
   void _switchTab() {
+    WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+
     setState(() {
       _logIn = LogIn();
       _signUp = SignUp();
@@ -59,7 +61,7 @@ class _AuthenticationState extends State<Authentication>
     return Stack(
       children: <Widget>[
         GestureDetector(
-          onTap: () => unfocus(context),
+          onTap: () => unfocus(),
           child: Scaffold(
             backgroundColor: Colors.grey[200],
             appBar: AppBar(
