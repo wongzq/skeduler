@@ -14,10 +14,10 @@ class UserData {
   final String color;
 
   UserData({
-    this.uid,
-    this.email,
-    this.name,
-    this.dark,
-    this.color,
+    this.uid = '',
+    this.email = '',
+    this.name = '',
+    this.dark = false,
+    this.color = '',
   });
 }

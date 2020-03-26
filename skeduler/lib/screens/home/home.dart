@@ -55,10 +55,10 @@ class _HomeState extends State<Home> {
     return StreamBuilder<UserData>(
       stream: _databaseService.userData,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        UserData userData = snapshot.data ?? null;
+        UserData userData = snapshot.data ?? UserData();
 
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          theme.setTheme(userData.dark, userData.color);
+          theme.setTheme(dark: userData.dark, color: userData.color);
           setState(() {
             _loading = false;
           });
@@ -279,8 +279,9 @@ class _HomeState extends State<Home> {
                                             // pop Drawer
                                             Navigator.of(context).pop();
 
-                                            theme.setTheme(null, null);
-                                            
+                                            theme.setTheme(
+                                                dark: false, color: null);
+
                                             _authService.logOut();
                                           },
                                         )

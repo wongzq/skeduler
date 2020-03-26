@@ -8,14 +8,14 @@ class ThemeChanger with ChangeNotifier {
   MaterialAccentColor _accentColor;
 
   ThemeChanger({this.dark = false, this.color = ''}) {
-    setTheme(dark, color);
+    setTheme(dark: dark, color: color);
   }
 
   get brightness => _brightness;
   get primarySwatch => _primarySwatch;
   get accentColor => _accentColor;
 
-  setTheme(bool dark, String color) {
+  setTheme({bool dark = false, String color = ''}) {
     // set brightness
     if (dark == true) {
       _brightness = Brightness.dark;

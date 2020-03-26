@@ -130,7 +130,6 @@ class _TimeEditorState extends State<TimeEditor> {
                                 } else {
                                   return 'Not set';
                                 }
-                                ;
                               }(),
                               style: () {
                                 if ((start && _startTimeStr != null) ||

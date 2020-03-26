@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:random_color/random_color.dart';
 import 'package:skeduler/screens/home/profile_screen_components/editors_status.dart';
 import 'package:skeduler/screens/home/profile_screen_components/day_editor.dart';
 import 'package:skeduler/screens/home/profile_screen_components/month_editor.dart';
