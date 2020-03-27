@@ -2,7 +2,7 @@ import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/my_app_themes.dart';
-import 'package:skeduler/screens/home/native_theme.dart';
+import 'package:skeduler/models/native_theme.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class ChangeTheme extends StatefulWidget {

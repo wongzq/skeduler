@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/my_app_themes.dart';
 import 'package:skeduler/models/user.dart';
-import 'package:skeduler/screens/home/native_theme.dart';
+import 'package:skeduler/models/native_theme.dart';
 import 'package:skeduler/screens/wrapper.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:theme_provider/theme_provider.dart';
