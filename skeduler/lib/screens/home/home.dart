@@ -26,7 +26,7 @@ class _HomeState extends State<Home> {
   // properties
   final AuthService _authService = AuthService();
 
-  DrawerEnum _selected = DrawerEnum.dashboard;
+  DrawerEnum _selected = DrawerEnum.settings;
 
   // Map of screens
   Map<DrawerEnum, Map<String, Object>> _screens = {

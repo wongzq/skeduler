@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/screens/home/native_theme.dart';
 import 'package:skeduler/screens/home/profile_screen_components/custom_time_picker.dart';
 import 'package:skeduler/screens/home/profile_screen_components/editors_status.dart';
 import 'package:skeduler/shared/ui_settings.dart';
@@ -174,6 +175,7 @@ class _TimeEditorState extends State<TimeEditor> {
 
   @override
   Widget build(BuildContext context) {
+    NativeTheme _nativeTheme = Provider.of<NativeTheme>(context);
     _editorsStatus = Provider.of<EditorsStatus>(context);
 
     return GestureDetector(
@@ -241,10 +243,10 @@ class _TimeEditorState extends State<TimeEditor> {
                         height: _buttonHeight,
                         width: MediaQuery.of(context).size.width - 2,
                         child: RaisedButton(
-                          color: Theme.of(context).primaryColorLight,
+                          color: _nativeTheme.primaryColorLight,
                           disabledColor: Colors.grey[200],
                           disabledTextColor: Color(0xFFBBBBBB),
-                          highlightColor: Theme.of(context).primaryColor,
+                          highlightColor: _nativeTheme.primaryColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
                           ),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/my_app_themes.dart';
 import 'package:skeduler/models/user.dart';
+import 'package:skeduler/screens/home/native_theme.dart';
 import 'package:skeduler/screens/wrapper.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:theme_provider/theme_provider.dart';
@@ -18,14 +19,61 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
 
+    NativeTheme _nativeTheme = NativeTheme();
+
     return ThemeProvider(
       themes: myAppThemes + myAppDarkThemes,
       defaultThemeId: 'teal',
       loadThemeOnInit: true,
       saveThemesOnChange: true,
+      onThemeChanged: (AppTheme oldTheme, AppTheme newTheme) {
+        print(oldTheme.id.toString() + ' ' + newTheme.id.toString());
+        int _themeIndex;
+        bool _themeDarkMode =
+            newTheme.data.brightness == Brightness.dark ? true : false;
+
+        if (_themeDarkMode) {
+          _themeIndex = myAppDarkThemes
+              .indexWhere((AppTheme theme) => theme.id == newTheme.id);
+        } else {
+          _themeIndex = myAppThemes
+              .indexWhere((AppTheme theme) => theme.id == newTheme.id);
+        }
+
+        _nativeTheme.primaryColor = myAppThemes[_themeIndex].data.primaryColor;
+        _nativeTheme.primaryColorLight =
+            myAppThemes[_themeIndex].data.primaryColorLight;
+        _nativeTheme.primaryColorDark =
+            myAppThemes[_themeIndex].data.primaryColorDark;
+        _nativeTheme.accentColor = myAppThemes[_themeIndex].data.accentColor;
+      },
       child: ThemeConsumer(
         child: Builder(
           builder: (themeContext) {
+            int _themeIndex;
+            bool _themeDarkMode =
+                ThemeProvider.themeOf(themeContext).data.brightness ==
+                        Brightness.dark
+                    ? true
+                    : false;
+
+            if (_themeDarkMode) {
+              _themeIndex = myAppDarkThemes.indexWhere((AppTheme theme) =>
+                  theme.id == ThemeProvider.themeOf(themeContext).id);
+            } else {
+              _themeIndex = myAppThemes.indexWhere((AppTheme theme) =>
+                  theme.id == ThemeProvider.themeOf(themeContext).id);
+            }
+
+            _nativeTheme.primaryColor =
+                myAppThemes[_themeIndex].data.primaryColor;
+            _nativeTheme.primaryColorLight =
+                myAppThemes[_themeIndex].data.primaryColorLight;
+            _nativeTheme.primaryColorDark =
+                myAppThemes[_themeIndex].data.primaryColorDark;
+            _nativeTheme.accentColor =
+                myAppThemes[_themeIndex].data.accentColor;
+
             return StreamProvider<User>.value(
               value: AuthService().user,
               child: MaterialApp(
@@ -36,7 +84,10 @@ class MyApp extends StatelessWidget {
                       highlightColor: Colors.transparent,
                       splashFactory: InkRipple.splashFactory,
                     ),
-                home: Wrapper(),
+                home: ChangeNotifierProvider.value(
+                  value: _nativeTheme,
+                  child: Wrapper(),
+                ),
               ),
             );
           },

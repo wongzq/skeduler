@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/screens/home/native_theme.dart';
 import 'package:skeduler/screens/home/profile_screen_components/editors_status.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
@@ -43,6 +44,8 @@ class _DayEditorState extends State<DayEditor> {
 
   // generate List<Widget> for days
   List<Widget> _generateDays(GlobalKey _key) {
+    NativeTheme _nativeTheme = Provider.of<NativeTheme>(context);
+
     return _days.asMap().entries.map((MapEntry item) {
       return Visibility(
         visible: () {
@@ -71,7 +74,7 @@ class _DayEditorState extends State<DayEditor> {
           padding: const EdgeInsets.all(_chipPadding),
           child: ActionChip(
             backgroundColor: _daysSelected.contains(item.key)
-                ? Theme.of(context).primaryColorLight
+                ? _nativeTheme.primaryColorLight
                 : Colors.grey[200],
             elevation: 3.0,
             labelPadding: EdgeInsets.symmetric(
@@ -83,7 +86,7 @@ class _DayEditorState extends State<DayEditor> {
               child: Text(
                 item.value,
                 style: _daysSelected.contains(item.key)
-                    ? textStyleBody
+                    ? textStyleBody.copyWith(color: Colors.black)
                     : textStyleBodyLight,
               ),
             ),

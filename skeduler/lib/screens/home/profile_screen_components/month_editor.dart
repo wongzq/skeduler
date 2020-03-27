@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/screens/home/native_theme.dart';
 import 'package:skeduler/screens/home/profile_screen_components/editors_status.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
@@ -35,11 +36,11 @@ class _MonthEditorState extends State<MonthEditor> {
 
   Set<int> _monthsSelected = Set<int>();
 
-  static const double _bodyPadding = 10.0;
-  static const double _sizedBoxPadding = 8.0;
-  static const double _chipPadding = 5.0;
-  static const double _chipLabelHoriPadding = 10.0;
-  static const double _chipLabelVertPadding = 5.0;
+  double _bodyPadding = 10.0;
+  double _sizedBoxPadding = 8.0;
+  double _chipPadding = 5.0;
+  double _chipLabelHoriPadding = 10.0;
+  double _chipLabelVertPadding = 5.0;
   double _chipWidth;
 
   // methods
@@ -58,6 +59,8 @@ class _MonthEditorState extends State<MonthEditor> {
 
   // generate List<Widget> for months
   List<Widget> _generateMonths(GlobalKey _key) {
+    NativeTheme _nativeTheme = Provider.of<NativeTheme>(context);
+
     return _months.asMap().entries.map((MapEntry item) {
       return Visibility(
         visible: () {
@@ -85,10 +88,10 @@ class _MonthEditorState extends State<MonthEditor> {
           }
         }(),
         child: Padding(
-          padding: const EdgeInsets.all(_chipPadding),
+          padding: EdgeInsets.all(_chipPadding),
           child: ActionChip(
             backgroundColor: _monthsSelected.contains(item.key)
-                ? Theme.of(context).primaryColorLight
+                ? _nativeTheme.primaryColorLight
                 : Colors.grey[200],
             elevation: 3.0,
             labelPadding: EdgeInsets.symmetric(
@@ -100,7 +103,7 @@ class _MonthEditorState extends State<MonthEditor> {
               child: Text(
                 item.value,
                 style: _monthsSelected.contains(item.key)
-                    ? textStyleBody
+                    ? textStyleBody.copyWith(color: Colors.black)
                     : textStyleBodyLight,
               ),
             ),
@@ -140,8 +143,8 @@ class _MonthEditorState extends State<MonthEditor> {
 
     // note: 4 px on each side is the default ActionChip padding
     _chipWidth = (MediaQuery.of(context).size.width - 2 * _bodyPadding) / 3 -
-        (2 * _chipPadding) -
         (2 * _chipLabelHoriPadding) -
+        (2 * _chipPadding) -
         8;
 
     return GestureDetector(
@@ -157,7 +160,7 @@ class _MonthEditorState extends State<MonthEditor> {
         child: Stack(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.all(_bodyPadding),
+              padding: EdgeInsets.all(_bodyPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -165,7 +168,7 @@ class _MonthEditorState extends State<MonthEditor> {
                   Align(
                     alignment: Alignment.topCenter,
                     child: Padding(
-                      padding: const EdgeInsets.only(top: _sizedBoxPadding),
+                      padding: EdgeInsets.only(top: _sizedBoxPadding),
                       child:
                           Text('Month', key: _textKey, style: textStyleHeader),
                     ),

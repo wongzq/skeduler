@@ -1,6 +1,8 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:skeduler/models/my_app_themes.dart';
+import 'package:skeduler/screens/home/native_theme.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class ChangeTheme extends StatefulWidget {
@@ -9,11 +11,19 @@ class ChangeTheme extends StatefulWidget {
 }
 
 class _ChangeThemeState extends State<ChangeTheme> {
-  final _controller = ScrollController();
   List<bool> _themePressed = List.generate(myAppThemes.length, (i) => false);
+  double _bodyPadding = 20.0;
+  double _chipPadding = 5;
+  double _chipLabelHoriPadding = 10;
+  double _chipLabelVertPadding = 5;
+  double _chipWidth;
 
   @override
   Widget build(BuildContext context) {
+    NativeTheme _nativeTheme = Provider.of<NativeTheme>(context);
+
+    final _controller = ScrollController();
+
     bool _darkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;
 
@@ -22,9 +32,14 @@ class _ChangeThemeState extends State<ChangeTheme> {
     String _nativeThemeId =
         _indexOfDark != -1 ? _themeId.substring(0, _indexOfDark) : _themeId;
 
+    _chipWidth = (MediaQuery.of(context).size.width - 2 * _bodyPadding) / 4 -
+        (2 * _chipLabelHoriPadding) -
+        (2 * _chipPadding) -
+        8;
+
     return Container(
-      padding: const EdgeInsets.all(20.0),
-      height: 400,
+      padding: EdgeInsets.all(_bodyPadding),
+      height: 600,
       child: Column(
         children: <Widget>[
           // Switch: Dark mode
@@ -52,68 +67,75 @@ class _ChangeThemeState extends State<ChangeTheme> {
             ],
           ),
 
-          Expanded(
+          SizedBox(height: 20.0),
+
+          // Chip: Selected theme
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text('Theme colour'),
+              Padding(
+                padding: EdgeInsets.all(_chipPadding),
+                child: Chip(
+                  labelPadding: EdgeInsets.symmetric(
+                    horizontal: _chipLabelHoriPadding,
+                    vertical: _chipLabelVertPadding,
+                  ),
+                  backgroundColor: _nativeTheme.primaryColor,
+                  elevation: 3.0,
+                  label: Container(
+                    width: _chipWidth,
+                    child: Text(''),
+                  ),
+                ),
+              )
+            ],
+          ),
+
+          SizedBox(height: 20.0),
+
+          // ActionChips: Theme options
+          Container(
+            height: 50.0,
             child: FadingEdgeScrollView.fromScrollView(
-              gradientFractionOnStart: 0.1,
-              gradientFractionOnEnd: 0.1,
+              gradientFractionOnStart: 0.05,
+              gradientFractionOnEnd: 0.05,
               child: ListView.builder(
+                scrollDirection: Axis.horizontal,
                 controller: _controller,
-                scrollDirection: Axis.vertical,
-                physics: BouncingScrollPhysics(),
                 itemCount: myAppThemes.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 5.0,
-                      horizontal: _themePressed[index] ? 5.0 : 25.0,
-                    ),
-                    child: GestureDetector(
-                      onTap: () {
-                        _nativeThemeId = myAppThemes[index].id;
-
-                        if (_darkMode) {
-                          ThemeProvider.controllerOf(context)
-                              .setTheme(_nativeThemeId + '_dark');
-                        } else {
-                          ThemeProvider.controllerOf(context)
-                              .setTheme(_nativeThemeId);
-                        }
-
-                        setState(() {
-                          _themePressed =
-                              List.generate(myAppThemes.length, (i) => false);
-                          _themePressed[index] = true;
-                        });
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: _themePressed[index] ? 60.0 : 50.0,
-                        decoration: BoxDecoration(
-                          color: _themePressed[index]
-                              ? myAppThemes[index].data.primaryColor
-                              : myAppThemes[index].data.primaryColor,
-                          borderRadius: BorderRadius.circular(
-                              _themePressed[index] ? 12.0 : 10.0),
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 2.0,
-                              offset: Offset(0.0, 2.0),
-                            )
-                          ],
+                  return Visibility(
+                    child: Padding(
+                      padding: EdgeInsets.all(_chipPadding),
+                      child: ActionChip(
+                        backgroundColor: myAppThemes[index].data.primaryColor,
+                        elevation: 3.0,
+                        labelPadding: EdgeInsets.symmetric(
+                          horizontal: _chipLabelHoriPadding,
+                          vertical: _chipLabelVertPadding,
                         ),
-                        child: Text(
-                          myAppThemes[index].description,
-                          style: TextStyle(
-                            shadows: [
-                              Shadow(blurRadius: 2.0, offset: Offset(0.0, 1.0))
-                            ],
-                            color: Colors.white,
-                            fontSize: _themePressed[index] ? 20.0 : 16.0,
-                            fontWeight: _themePressed[index]
-                                ? FontWeight.w800
-                                : FontWeight.w600,
-                          ),
+                        label: Container(
+                          width: _chipWidth,
+                          child: Text(''),
                         ),
+                        onPressed: () {
+                          _nativeThemeId = myAppThemes[index].id;
+
+                          if (_darkMode) {
+                            ThemeProvider.controllerOf(context)
+                                .setTheme(_nativeThemeId + '_dark');
+                          } else {
+                            ThemeProvider.controllerOf(context)
+                                .setTheme(_nativeThemeId);
+                          }
+
+                          setState(() {
+                            _themePressed =
+                                List.generate(myAppThemes.length, (i) => false);
+                            _themePressed[index] = true;
+                          });
+                        },
                       ),
                     ),
                   );
