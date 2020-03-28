@@ -14,6 +14,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
   List<bool> _themePressed = List.generate(myAppThemes.length, (i) => false);
   double _bodyPadding = 20.0;
   double _chipPadding = 5;
+  double _chipPaddingExtra = 5;
   double _chipLabelHoriPadding = 10;
   double _chipLabelVertPadding = 5;
   double _chipWidth;
@@ -75,7 +76,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
             children: <Widget>[
               Text('Theme colour'),
               Padding(
-                padding: EdgeInsets.all(_chipPadding),
+                padding: EdgeInsets.all(_chipPadding + _chipPaddingExtra),
                 child: Chip(
                   labelPadding: EdgeInsets.symmetric(
                     horizontal: _chipLabelHoriPadding,
@@ -96,7 +97,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
 
           // ActionChips: Theme options
           Container(
-            height: 50.0,
+            height: 70.0,
             child: FadingEdgeScrollView.fromScrollView(
               gradientFractionOnStart: 0.05,
               gradientFractionOnEnd: 0.05,
@@ -107,7 +108,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
                 itemBuilder: (BuildContext context, int index) {
                   return Visibility(
                     child: Padding(
-                      padding: EdgeInsets.all(_chipPadding),
+                      padding: EdgeInsets.all(_chipPadding + _chipPaddingExtra),
                       child: ActionChip(
                         backgroundColor: myAppThemes[index].data.primaryColor,
                         elevation: 3.0,
