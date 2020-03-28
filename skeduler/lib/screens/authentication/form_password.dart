@@ -31,8 +31,8 @@ class _FormPasswordState extends State<FormPassword> {
           initialValue: null,
           style: TextStyle(color: Colors.black, fontSize: 14.0),
           decoration: Provider.of<AuthInfo>(context).passwordValid
-              ? textInputDecorationValid(context)
-              : textInputDecoration(context).copyWith(
+              ? textInputDecorationValid
+              : textInputDecoration.copyWith(
                   hintText: 'Password',
                   hintStyle: TextStyle(
                     color: Colors.grey,

@@ -1,4 +1,3 @@
-import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/change_colour.dart';
 import 'package:skeduler/shared/ui_settings.dart';

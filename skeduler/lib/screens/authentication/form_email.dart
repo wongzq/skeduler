@@ -30,8 +30,8 @@ class _FormEmailState extends State<FormEmail> {
           initialValue: null,
           style: TextStyle(color: Colors.black, fontSize: 14.0),
           decoration: authInfo.emailValid
-              ? textInputDecorationValid(context)
-              : textInputDecoration(context).copyWith(
+              ? textInputDecorationValid
+              : textInputDecoration.copyWith(
                   hintText: 'Email',
                   hintStyle: TextStyle(
                     color: Colors.grey,
