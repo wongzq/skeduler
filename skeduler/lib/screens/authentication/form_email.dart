@@ -31,7 +31,12 @@ class _FormEmailState extends State<FormEmail> {
           style: TextStyle(color: Colors.black, fontSize: 14.0),
           decoration: authInfo.emailValid
               ? textInputDecorationValid(context)
-              : textInputDecoration(context).copyWith(hintText: 'Email'),
+              : textInputDecoration(context).copyWith(
+                  hintText: 'Email',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
           onChanged: (val) {
             authInfo.email = val;
             if (val.isNotEmpty) {

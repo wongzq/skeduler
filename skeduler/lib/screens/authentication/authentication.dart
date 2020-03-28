@@ -5,6 +5,7 @@ import 'package:skeduler/screens/authentication/log_in.dart';
 import 'package:skeduler/screens/authentication/sign_up.dart';
 import 'package:skeduler/shared/loading.dart';
 import 'package:skeduler/shared/functions.dart';
+import 'package:skeduler/shared/ui_settings.dart';
 
 class Authentication extends StatefulWidget {
   static _AuthenticationState of(BuildContext context) =>
@@ -67,12 +68,7 @@ class _AuthenticationState extends State<Authentication>
             appBar: AppBar(
               title: Text(
                 'Skeduler',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 2.0,
-                ),
+                style: appBarTitleTextStyle,
               ),
               backgroundColor: Colors.black,
 

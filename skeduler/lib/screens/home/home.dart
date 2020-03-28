@@ -12,6 +12,7 @@ import 'package:skeduler/screens/home/settings_screen_components/settings_screen
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_screen.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/ui_settings.dart';
 
 class Home extends StatefulWidget {
   static _HomeState of(BuildContext context) =>
@@ -26,7 +27,7 @@ class _HomeState extends State<Home> {
   // properties
   final AuthService _authService = AuthService();
 
-  DrawerEnum _selected = DrawerEnum.settings;
+  DrawerEnum _selected = DrawerEnum.dashboard;
 
   // Map of screens
   Map<DrawerEnum, Map<String, Object>> _screens = {
@@ -57,11 +58,7 @@ class _HomeState extends State<Home> {
             backgroundColor: Theme.of(context).primaryColor,
             title: Text(
               _screens[_selected]['title'],
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 2.0,
-              ),
+              style: appBarTitleTextStyle,
             ),
           ),
 

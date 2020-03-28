@@ -88,3 +88,9 @@ const TextStyle textStyleBodyLight = TextStyle(
   letterSpacing: 1.0,
   color: Color(0xFFBBBBBB),
 );
+
+const TextStyle appBarTitleTextStyle = TextStyle(
+  fontSize: 20.0,
+  fontWeight: FontWeight.w400,
+  letterSpacing: 2.0,
+);

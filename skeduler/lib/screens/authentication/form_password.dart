@@ -32,7 +32,12 @@ class _FormPasswordState extends State<FormPassword> {
           style: TextStyle(color: Colors.black, fontSize: 14.0),
           decoration: Provider.of<AuthInfo>(context).passwordValid
               ? textInputDecorationValid(context)
-              : textInputDecoration(context).copyWith(hintText: 'Password'),
+              : textInputDecoration(context).copyWith(
+                  hintText: 'Password',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
           onChanged: (val) {
             authInfo.password = val;
             if (val.isNotEmpty) {

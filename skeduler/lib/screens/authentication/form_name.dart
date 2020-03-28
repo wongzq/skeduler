@@ -36,7 +36,12 @@ class _FormNameState extends State<FormName> {
           style: TextStyle(color: Colors.black, fontSize: 14.0),
           decoration: authInfo.nameValid
               ? textInputDecorationValid(context)
-              : textInputDecoration(context).copyWith(hintText: 'Name'),
+              : textInputDecoration(context).copyWith(
+                  hintText: 'Name',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
           onChanged: (val) {
             authInfo.name = val;
             if (val.isNotEmpty) {
