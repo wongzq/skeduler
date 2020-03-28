@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
       loadThemeOnInit: true,
       saveThemesOnChange: true,
       onThemeChanged: (AppTheme oldTheme, AppTheme newTheme) {
-        print(oldTheme.id.toString() + ' ' + newTheme.id.toString());
         int _themeIndex;
         bool _themeDarkMode =
             newTheme.data.brightness == Brightness.dark ? true : false;

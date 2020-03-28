@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/my_app_themes.dart';
 import 'package:skeduler/models/native_theme.dart';
+import 'package:skeduler/shared/functions.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class ChangeTheme extends StatefulWidget {
@@ -28,10 +29,8 @@ class _ChangeThemeState extends State<ChangeTheme> {
     bool _darkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;
 
-    String _themeId = ThemeProvider.themeOf(context).id;
-    int _indexOfDark = _themeId.lastIndexOf('_dark');
     String _nativeThemeId =
-        _indexOfDark != -1 ? _themeId.substring(0, _indexOfDark) : _themeId;
+        getNativeThemeId(ThemeProvider.themeOf(context).id);
 
     _chipWidth = (MediaQuery.of(context).size.width - 2 * _bodyPadding) / 4 -
         (2 * _chipLabelHoriPadding) -
@@ -92,8 +91,6 @@ class _ChangeThemeState extends State<ChangeTheme> {
               )
             ],
           ),
-
-          SizedBox(height: 20.0),
 
           // ActionChips: Theme options
           Container(

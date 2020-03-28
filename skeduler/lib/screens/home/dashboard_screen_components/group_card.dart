@@ -40,7 +40,7 @@ class GroupCard extends StatelessWidget {
                 child: Stack(
                   children: <Widget>[
                     // Image: Group image
-                    Image.asset(''),
+                    // Image.asset(''),
 
                     // Title: Group name
                     Container(
