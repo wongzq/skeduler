@@ -16,6 +16,7 @@ class DashboardScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(_bodyPadding),
           child: GridView.count(
+            physics: BouncingScrollPhysics(),
             crossAxisCount: 2,
             scrollDirection: Axis.vertical,
             children: <Widget>[

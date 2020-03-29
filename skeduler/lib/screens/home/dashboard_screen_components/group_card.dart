@@ -64,7 +64,9 @@ class GroupCard extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(_padding),
                           child: Text(
-                            groupName ?? 'Pusat Tuisyen Seri Cerdik Intelek',
+                            groupName != null && groupName != ''
+                                ? groupName
+                                : 'Group name',
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -139,7 +141,7 @@ class GroupCard extends StatelessWidget {
                         width: (_dimension - 2 * _padding) * 0.7,
                         alignment: Alignment.bottomLeft,
                         child: Text(
-                          ownerName ?? 'Sharon Leong Boo Mun',
+                          ownerName ?? 'Owner\'s name',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(

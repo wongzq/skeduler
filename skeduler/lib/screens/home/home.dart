@@ -58,7 +58,7 @@ class _HomeState extends State<Home> {
       ),
 
       // Scaffold - drawer
-      endDrawer: Container(
+      drawer: Container(
         width: MediaQuery.of(context).size.width * 0.75,
         child: Drawer(
           child: ListTileTheme(

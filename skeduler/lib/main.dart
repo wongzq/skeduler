@@ -87,8 +87,9 @@ class MyApp extends StatelessWidget {
                   return MultiProvider(
                     providers: [
                       StreamProvider<UserData>.value(
-                          value: _databaseService.userData),
-                      ChangeNotifierProvider.value(
+                        value: _databaseService.userData,
+                      ),
+                      ChangeNotifierProvider<NativeTheme>.value(
                         value: _nativeTheme,
                       )
                     ],

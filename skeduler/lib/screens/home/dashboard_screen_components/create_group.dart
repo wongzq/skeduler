@@ -31,7 +31,6 @@ class _CreateGroupState extends State<CreateGroup> {
         leading: IconButton(
           icon: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
           onPressed: () {
-            print('pop');
             Navigator.pop(context);
           },
         ),
