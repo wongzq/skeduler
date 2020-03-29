@@ -24,7 +24,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
   Widget build(BuildContext context) {
     NativeTheme _nativeTheme = Provider.of<NativeTheme>(context);
 
-    final _controller = ScrollController();
+    ScrollController _controller = ScrollController();
 
     bool _darkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;

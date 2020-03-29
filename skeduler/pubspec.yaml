@@ -29,7 +29,6 @@ dependencies:
   fading_edge_scrollview: ^1.1.0
   firebase_auth: ^0.15.5+2
   flutter_datetime_picker: ^1.3.5
-  flutter_speed_dial: ^1.2.5
   flutter_spinkit: ^4.1.2
   font_awesome_flutter: ^8.7.0
   google_fonts: ^0.3.10
@@ -37,6 +36,11 @@ dependencies:
   provider: ^4.0.4
   random_color: ^1.0.3
   theme_provider: ^0.3.3
+
+  # flutter_speed_dial: ^1.2.5
+  flutter_speed_dial:
+    git:
+      url: https://github.com/wongzhengquan/flutter_speed_dial
 
 dev_dependencies:
   flutter_test:

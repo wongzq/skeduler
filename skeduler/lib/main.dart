@@ -6,6 +6,7 @@ import 'package:skeduler/models/user.dart';
 import 'package:skeduler/models/native_theme.dart';
 import 'package:skeduler/screens/wrapper.dart';
 import 'package:skeduler/services/auth_service.dart';
+import 'package:skeduler/services/database_service.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 void main() => runApp(MyApp());
@@ -73,20 +74,36 @@ class MyApp extends StatelessWidget {
             _nativeTheme.accentColor =
                 myAppThemes[_themeIndex].data.accentColor;
 
+            // Provide User from Firebase
             return StreamProvider<User>.value(
               value: AuthService().user,
-              child: MaterialApp(
-                title: 'Skeduler',
-                debugShowCheckedModeBanner: false,
-                theme: ThemeProvider.themeOf(themeContext).data.copyWith(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      splashFactory: InkRipple.splashFactory,
+              child: Consumer<User>(
+                builder: (_, user, __) {
+                  DatabaseService _databaseService;
+                  _databaseService =
+                      DatabaseService(uid: user != null ? user.uid : '');
+
+                  // Provide UserData from User
+                  return MultiProvider(
+                    providers: [
+                      StreamProvider<UserData>.value(
+                          value: _databaseService.userData),
+                      ChangeNotifierProvider.value(
+                        value: _nativeTheme,
+                      )
+                    ],
+                    child: MaterialApp(
+                      title: 'Skeduler',
+                      debugShowCheckedModeBanner: false,
+                      theme: ThemeProvider.themeOf(themeContext).data.copyWith(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            splashFactory: InkRipple.splashFactory,
+                          ),
+                      home: Wrapper(),
                     ),
-                home: ChangeNotifierProvider.value(
-                  value: _nativeTheme,
-                  child: Wrapper(),
-                ),
+                  );
+                },
               ),
             );
           },

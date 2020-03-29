@@ -28,9 +28,9 @@ class DatabaseService {
   // snapshot user data
   UserData _userFromSnapshot(DocumentSnapshot snapshot) {
     return UserData(
-      uid: uid,
-      email: snapshot.data['email'],
-      name: snapshot.data['name'],
+      uid: uid ?? '',
+      email: snapshot.data['email'] ?? '',
+      name: snapshot.data['name'] ?? '',
     );
   }
 }

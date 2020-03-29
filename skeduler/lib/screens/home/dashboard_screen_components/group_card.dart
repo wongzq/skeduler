@@ -2,8 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:random_color/random_color.dart';
 
 class GroupCard extends StatelessWidget {
+  final String groupName;
+  final String ownerName;
+  final Color groupColour;
+  final int numOfMembers;
+  final bool hasNotification;
+
   static const _radius = 10.0;
   static const _padding = 10.0;
+
+  const GroupCard({
+    this.groupName,
+    this.ownerName,
+    this.groupColour,
+    this.numOfMembers,
+    this.hasNotification = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +41,7 @@ class GroupCard extends StatelessWidget {
                 width: _dimension,
                 decoration: BoxDecoration(
                   // color: Colors.white,
-                  color: _randomColor.randomColor(),
+                  color: groupColour ?? _randomColor.randomColor(),
                   borderRadius: BorderRadius.circular(_radius),
                   boxShadow: [
                     BoxShadow(
@@ -50,7 +64,7 @@ class GroupCard extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(_padding),
                           child: Text(
-                            'Pusat Tuisyen Seri Cerdik Intelek',
+                            groupName ?? 'Pusat Tuisyen Seri Cerdik Intelek',
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -72,7 +86,7 @@ class GroupCard extends StatelessWidget {
 
                     // Container: Notifications
                     Visibility(
-                      visible: true,
+                      visible: hasNotification,
                       child: Align(
                         alignment: Alignment.topRight,
                         child: Padding(
@@ -115,7 +129,6 @@ class GroupCard extends StatelessWidget {
                     bottomRight: Radius.circular(_radius),
                   ),
                 ),
-
                 child: Padding(
                   padding: const EdgeInsets.all(_padding),
                   child: Stack(
@@ -126,7 +139,7 @@ class GroupCard extends StatelessWidget {
                         width: (_dimension - 2 * _padding) * 0.7,
                         alignment: Alignment.bottomLeft,
                         child: Text(
-                          'Sharon Leong Boo Mun',
+                          ownerName ?? 'Sharon Leong Boo Mun',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(

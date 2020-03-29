@@ -4,13 +4,21 @@ import 'package:skeduler/models/my_app_themes.dart';
 import 'package:skeduler/shared/functions.dart';
 
 class ChangeColour extends StatefulWidget {
+  // properties
+  final ValueSetter<Color> valueSetter;
+
+  // constructor
+  const ChangeColour({this.valueSetter});
+
   @override
   _ChangeColourState createState() => _ChangeColourState();
 }
 
 class _ChangeColourState extends State<ChangeColour> {
-  List<bool> _colourPressed = List.generate(myAppThemes.length * 4, (i) => false);
-  double _bodyPadding = 20.0;
+  List<bool> _colourPressed =
+      List.generate(myAppThemes.length * 4, (i) => false);
+  double _bodyHoriPadding = 20.0;
+  double _bodyVertPadding = 20.0;
   double _chipPadding = 5;
   double _chipPaddingExtra = 2;
   double _chipLabelHoriPadding = 5;
@@ -22,23 +30,31 @@ class _ChangeColourState extends State<ChangeColour> {
 
   @override
   Widget build(BuildContext context) {
-    final _controller = ScrollController();
+    ScrollController _controller = ScrollController();
 
-    _chipWidth = (MediaQuery.of(context).size.width - 2 * _bodyPadding) / 5 -
-        (2 * _chipLabelHoriPadding) -
-        (2 * _chipPadding) -
-        8;
+    _chipWidth =
+        (MediaQuery.of(context).size.width - 2 * _bodyHoriPadding) / 5 -
+            (2 * _chipLabelHoriPadding) -
+            (2 * _chipPadding) -
+            8;
 
     return Container(
-      padding: EdgeInsets.all(_bodyPadding),
-      height: 600,
+      padding: EdgeInsets.symmetric(
+        horizontal: _bodyHoriPadding,
+        vertical: _bodyVertPadding,
+      ),
       child: Column(
         children: <Widget>[
           // Chip: Selected colour
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text('Group colour'),
+              Text(
+                'Colour',
+                style: TextStyle(
+                  fontSize: 15.0,
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.all(_chipPadding + _chipPaddingExtra),
                 child: Chip(
@@ -133,6 +149,23 @@ class _ChangeColourState extends State<ChangeColour> {
                             _colourPressed =
                                 List.generate(myAppThemes.length, (i) => false);
                             _colourPressed[newIndex] = true;
+
+                            Color _selectedColour;
+                            if (index % 4 == 0) {
+                              _selectedColour =
+                                  myAppThemes[newIndex].data.primaryColorDark;
+                            } else if (index % 4 == 1) {
+                              _selectedColour =
+                                  myAppThemes[newIndex].data.primaryColor;
+                            } else if (index % 4 == 2) {
+                              _selectedColour =
+                                  myAppThemes[newIndex].data.accentColor;
+                            } else {
+                              _selectedColour =
+                                  myAppThemes[newIndex].data.primaryColorLight;
+                            }
+
+                            widget.valueSetter(_selectedColour);
                           });
                         },
                       ),

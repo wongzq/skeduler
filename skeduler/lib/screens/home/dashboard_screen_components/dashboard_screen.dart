@@ -47,6 +47,8 @@ class DashboardScreen extends StatelessWidget {
                 size: 30.0,
                 color: Colors.white,
               ),
+
+              // Join button
               children: <SpeedDialChild>[
                 SpeedDialChild(
                   backgroundColor: Theme.of(context).primaryColorDark,
@@ -82,6 +84,8 @@ class DashboardScreen extends StatelessWidget {
                   ),
                   onTap: () {},
                 ),
+
+                // Create button
                 SpeedDialChild(
                   backgroundColor: Theme.of(context).primaryColorDark,
                   foregroundColor: Colors.white,
@@ -89,38 +93,28 @@ class DashboardScreen extends StatelessWidget {
                     FontAwesomeIcons.users,
                     size: 25.0,
                   ),
-                  labelWidget: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CreateGroup(),
+                  labelWidget: Container(
+                    height: 40.0,
+                    width: 100.0,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColorDark,
+                      borderRadius: BorderRadius.circular(20.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          offset: Offset(0.0, 5.0),
+                          blurRadius: 10.0,
                         ),
-                      );
-                    },
-                    child: Container(
-                      height: 40.0,
-                      width: 100.0,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColorDark,
-                        borderRadius: BorderRadius.circular(20.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            offset: Offset(0.0, 5.0),
-                            blurRadius: 10.0,
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        'CREATE',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: 1.5,
-                        ),
+                      ],
+                    ),
+                    child: Text(
+                      'CREATE',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 1.5,
                       ),
                     ),
                   ),

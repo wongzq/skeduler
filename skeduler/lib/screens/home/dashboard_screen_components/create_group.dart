@@ -1,5 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:skeduler/models/native_theme.dart';
+import 'package:skeduler/models/user.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/change_colour.dart';
+import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
+import 'package:skeduler/screens/home/dashboard_screen_components/label_text_input.dart';
+import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class CreateGroup extends StatefulWidget {
@@ -9,11 +17,24 @@ class CreateGroup extends StatefulWidget {
 
 class _CreateGroupState extends State<CreateGroup> {
   bool _valid = false;
+  String _groupName;
+  String _groupDescription;
+  Color _groupColour;
+  String _ownerName;
 
   @override
   Widget build(BuildContext context) {
+    _ownerName = Provider.of<UserData>(context).name;
+
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
+          onPressed: () {
+            print('pop');
+            Navigator.pop(context);
+          },
+        ),
         title: Text(
           'Create group',
           style: appBarTitleTextStyle,
@@ -28,20 +49,63 @@ class _CreateGroupState extends State<CreateGroup> {
           ),
         ],
       ),
-      body: Column(
-        children: <Widget>[
-          Text(''),
-          ChangeColour(),
-        ],
-          // Name
-          // Color
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => unfocus(),
+        child: Column(
+          children: <Widget>[
+            // Required fields
+            // Name
+            LabelTextInput(
+              hintText: 'Required',
+              label: 'Name',
+              valueSetter: (value) {
+                setState(() {
+                  _groupName = value;
+                });
+              },
+            ),
 
-          // Description: optional
-          // Timetable settings: Custom time settings
-            // Timetable settings: Days per week
-            // Timetable settings: Classes per day
-            // Timetable settings: Add custom time
-          ),
+            // Description
+            LabelTextInput(
+              hintText: 'Optional',
+              label: 'Description',
+              valueSetter: (value) {
+                setState(() {
+                  _groupDescription = value;
+                });
+              },
+            ),
+
+            // Colour
+            ChangeColour(valueSetter: (value) {
+              setState(() {
+                _groupColour = value;
+              });
+            }),
+
+            Divider(thickness: 1.0),
+            SizedBox(height: 10.0),
+            Text(
+              'Preview in dashboard',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 15.0,
+                letterSpacing: 1.5,
+              ),
+            ),
+            SizedBox(height: 10.0),
+            // Preview
+            GroupCard(
+              groupName: _groupName,
+              ownerName: _ownerName,
+              groupColour: _groupColour ?? Provider.of<NativeTheme>(context).primaryColor,
+              hasNotification: false,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
