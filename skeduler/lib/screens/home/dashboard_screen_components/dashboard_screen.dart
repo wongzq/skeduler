@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:skeduler/models/group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/create_group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
+import 'package:skeduler/services/database_service.dart';
 
 class DashboardScreen extends StatelessWidget {
   /// properties
@@ -11,25 +14,36 @@ class DashboardScreen extends StatelessWidget {
   /// methods
   @override
   Widget build(BuildContext context) {
+    DatabaseService _dbs = Provider.of<DatabaseService>(context);
+
     return Stack(
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(_bodyPadding),
-          child: GridView.count(
-            physics: BouncingScrollPhysics(),
-            crossAxisCount: 2,
-            scrollDirection: Axis.vertical,
-            children: <Widget>[
-              GroupCard(),
-              GroupCard(),
-              GroupCard(),
-              GroupCard(),
-              GroupCard(),
-              GroupCard(),
-              GroupCard(),
-              GroupCard(),
-              GroupCard(),
-            ],
+          child: StreamBuilder<List<Group>>(
+            stream: _dbs.groups,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              List<Group> _groups = snapshot.data;
+              return GridView.builder(
+                itemCount: _groups.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                itemBuilder: (BuildContext context, int index) {
+                  if (_groups[index] != null) {
+                    return GroupCard(
+                      groupName: _groups[index].name,
+                      groupColor: _groups[index].color,
+                      numOfMembers: _groups[index].numOfMembers,
+                      ownerName: _groups[index].ownerName,
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+                physics: BouncingScrollPhysics(),
+                scrollDirection: Axis.vertical,
+              );
+            },
           ),
         ),
 

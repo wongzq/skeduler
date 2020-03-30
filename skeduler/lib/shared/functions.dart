@@ -8,6 +8,60 @@ void unfocus() {
   WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
 }
 
+String getColorStr(Color color) {
+  int index = myAppThemes.indexWhere((AppTheme theme) {
+    return theme.data.primaryColorDark == color ||
+        theme.data.primaryColor == color ||
+        theme.data.accentColor == color ||
+        theme.data.primaryColorLight == color;
+  });
+
+  return index != -1 ? myAppThemes[index].id : '';
+}
+
+int getColorInt(Color color) {
+  int colorInt = -1;
+
+  myAppThemes.forEach((theme) {
+    if (theme.data.primaryColorDark == color) {
+      colorInt = 0;
+    } else if (theme.data.primaryColor == color) {
+      colorInt = 1;
+    } else if (theme.data.accentColor == color) {
+      colorInt = 2;
+    } else if (theme.data.primaryColorLight == color) {
+      colorInt = 3;
+    }
+  });
+
+  return colorInt;
+}
+
+Color getColorFromStrInt(String colorStr, int colorInt) {
+  int index = getNativeThemeIndex(colorStr);
+  if (colorInt == 0) {
+    return myAppThemes[index].data.primaryColorDark;
+  } else if (colorInt == 1) {
+    return myAppThemes[index].data.primaryColor;
+  } else if (colorInt == 2) {
+    return myAppThemes[index].data.accentColor;
+  } else if (colorInt == 3) {
+    return myAppThemes[index].data.primaryColorLight;
+  } else {
+    return null;
+  }
+}
+
+int getNativeThemeIndex(String themeId) {
+  themeId = getNativeThemeId(themeId);
+
+  int index = myAppThemes.indexWhere((AppTheme theme) {
+    return theme.id == themeId;
+  });
+
+  return index;
+}
+
 String getNativeThemeId(String themeId) {
   int _indexOfDark = themeId.lastIndexOf('_dark');
   return _indexOfDark != -1 ? themeId.substring(0, _indexOfDark) : themeId;

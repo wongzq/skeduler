@@ -161,9 +161,11 @@ class GroupCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               Text(
-                                35.toString(),
+                                numOfMembers != null
+                                    ? numOfMembers.toString()
+                                    : 35.toString(),
                                 style: TextStyle(
-                                  fontSize: 13.0,
+                                  fontSize: 10.0,
                                   color: Colors.black45,
                                 ),
                               ),

@@ -5,10 +5,12 @@ import 'package:skeduler/shared/functions.dart';
 
 class ChangeColor extends StatefulWidget {
   /// properties
-  final ValueSetter<Color> valueSetter;
+  final ValueSetter<Color> valueSetterColor;
+  final ValueSetter<String> valueSetterString;
+  final ValueSetter<int> valueSetterInt;
 
   /// constructor
-  const ChangeColor({this.valueSetter});
+  const ChangeColor({this.valueSetterColor, this.valueSetterString, this.valueSetterInt});
 
   @override
   _ChangeColorState createState() => _ChangeColorState();
@@ -17,6 +19,7 @@ class ChangeColor extends StatefulWidget {
 class _ChangeColorState extends State<ChangeColor> {
   List<bool> _colorPressed =
       List.generate(myAppThemes.length * 4, (i) => false);
+
   double _bodyHoriPadding = 20.0;
   double _bodyVertPadding = 20.0;
   double _chipPadding = 5;
@@ -141,7 +144,9 @@ class _ChangeColorState extends State<ChangeColor> {
                         ),
                         onPressed: () {
                           setState(() {
+                            int _selectedColorIndex;
                             int newIndex = index ~/ 4;
+
                             _colorType = index % 4;
 
                             _colorId = myAppThemes[newIndex].id;
@@ -152,20 +157,26 @@ class _ChangeColorState extends State<ChangeColor> {
 
                             Color _selectedColor;
                             if (index % 4 == 0) {
+                              _selectedColorIndex = 0;
                               _selectedColor =
                                   myAppThemes[newIndex].data.primaryColorDark;
                             } else if (index % 4 == 1) {
+                              _selectedColorIndex = 1;
                               _selectedColor =
                                   myAppThemes[newIndex].data.primaryColor;
                             } else if (index % 4 == 2) {
+                              _selectedColorIndex = 2;
                               _selectedColor =
                                   myAppThemes[newIndex].data.accentColor;
                             } else {
+                              _selectedColorIndex = 3;
                               _selectedColor =
                                   myAppThemes[newIndex].data.primaryColorLight;
                             }
 
-                            widget.valueSetter(_selectedColor);
+                            widget.valueSetterColor(_selectedColor);
+                            widget.valueSetterString(myAppThemes[newIndex].id);
+                            widget.valueSetterInt(_selectedColorIndex);
                           });
                         },
                       ),

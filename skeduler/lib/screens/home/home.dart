@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/drawer_enum.dart';
@@ -27,7 +26,7 @@ class _HomeState extends State<Home> {
   /// properties
   final AuthService _authService = AuthService();
 
-  DrawerEnum _selected = DrawerEnum.settings;
+  DrawerEnum _selected = DrawerEnum.dashboard;
 
   /// Map of screens
   Map<DrawerEnum, Map<String, Object>> _screens = {

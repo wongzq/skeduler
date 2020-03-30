@@ -124,7 +124,8 @@ class _AuthenticationState extends State<Authentication>
 
         /// Loading: display
         Visibility(
-          child: loading ? Loading() : Container(),
+          visible: loading,
+          child: Loading(),
         )
       ],
     );
