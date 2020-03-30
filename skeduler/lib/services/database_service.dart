@@ -1,14 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:skeduler/models/group.dart';
-import 'package:skeduler/models/my_app_themes.dart';
 import 'package:skeduler/models/user.dart';
 
 class DatabaseService {
   /// properties
   final String uid;
-
-  /// constructor
-  DatabaseService({this.uid});
 
   /// collection reference
   final CollectionReference usersCollection =
@@ -16,48 +12,34 @@ class DatabaseService {
   final CollectionReference groupsCollection =
       Firestore.instance.collection('groups');
 
+  /// constructor method
+  DatabaseService({this.uid});
+
   /// getter methods
-  /// get user data
+  /// get [User] data
   Stream<User> get user {
-    return usersCollection.document(uid).snapshots().map(_userFromSnapshot);
+    return usersCollection
+        .document(uid)
+        .snapshots()
+        .map(_currentUserFromSnapshot);
   }
 
-  /// convert snapshot to [AuthUser]
-  User _userFromSnapshot(DocumentSnapshot snapshot) {
-    return User(
-      uid: uid ?? '',
-      email: snapshot.data['email'] ?? '',
-      name: snapshot.data['name'] ?? '',
-    );
-  }
-
-  /// get groups
-  Stream<List<Group>> get groups {
-    return groupsCollection.snapshots().map(_groupsFromSnapshot);
-  }
-
-  /// convert document snapshots into [Group]s
-  List<Group> _groupsFromSnapshot(QuerySnapshot query) {
-    return query.documents.map(_groupFromSnapshot).toList();
-  }
-
-  /// get group data
-  Stream<Group> getGroupData(String groupId) {
+  /// get [Group] data
+  Stream<Group> getGroup(String groupId) {
     return groupsCollection
         .document(groupId)
         .snapshots()
         .map(_groupFromSnapshot);
   }
 
-  /// convert snapshot to [Group]
-  Group _groupFromSnapshot(DocumentSnapshot snapshot) {
-    return Group(
-      name: snapshot.data['name'] ?? '',
-      colorStr: snapshot.data['color'] ?? '',
-      colorInt: snapshot.data['colorType'] ?? 0,
-      ownerEmail: snapshot.data['ownerEmail'] ?? '',
-      ownerName: snapshot.data['ownerName'] ?? '',
-    );
+  /// get ['users'] collection
+  Stream<List<User>> get users {
+    return usersCollection.snapshots().map(_usersFromSnapshot);
+  }
+
+  /// get ['groups'] collection
+  Stream<List<Group>> get groups {
+    return groupsCollection.snapshots().map(_groupsFromSnapshot);
   }
 
   /// setter methods
@@ -107,14 +89,56 @@ class DatabaseService {
     String description,
     String color,
     int colorType,
-    String groupOwnerEmail,
+    String ownerEmail,
+    String ownerName,
   }) async {
     return await groupsCollection.document(groupId).updateData({
       'name': name,
       'description': description,
       'color': color,
       'colorType': colorType,
-      'owner': groupOwnerEmail,
+      'ownerEmail': ownerEmail,
+      'ownerName': ownerName,
     });
+  }
+
+  /// auxiliary methods
+  /// convert snapshot of [currentUser] to [User]
+  User _currentUserFromSnapshot(DocumentSnapshot snapshot) {
+    return User(
+      uid: uid ?? '',
+      email: snapshot.data['email'] ?? '',
+      name: snapshot.data['name'] ?? '',
+    );
+  }
+
+  /// convert snapshot to [User]
+  User _userFromSnapshot(DocumentSnapshot snapshot) {
+    return User(
+      uid: snapshot.data['uid'] ?? '',
+      email: snapshot.data['email'] ?? '',
+      name: snapshot.data['name'] ?? '',
+    );
+  }
+
+  /// convert snapshot to [Group]
+  Group _groupFromSnapshot(DocumentSnapshot snapshot) {
+    return Group(
+      name: snapshot.data['name'] ?? '',
+      colorStr: snapshot.data['color'] ?? '',
+      colorInt: snapshot.data['colorType'] ?? 0,
+      ownerEmail: snapshot.data['ownerEmail'] ?? '',
+      ownerName: snapshot.data['ownerName'] ?? '',
+    );
+  }
+
+  /// convert document snapshots into [User]s
+  List<User> _usersFromSnapshot(QuerySnapshot query) {
+    return query.documents.map(_userFromSnapshot).toList();
+  }
+
+  /// convert document snapshots into [Group]s
+  List<Group> _groupsFromSnapshot(QuerySnapshot query) {
+    return query.documents.map(_groupFromSnapshot).toList();
   }
 }

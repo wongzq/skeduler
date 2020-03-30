@@ -30,7 +30,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
     bool _darkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;
 
-    String _nativeThemeId = getNativeThemeId(ThemeProvider.themeOf(context).id);
+    String _nativeThemeId = getNativeThemeIdFromId(ThemeProvider.themeOf(context).id);
 
     _chipWidth =
         (MediaQuery.of(context).size.width - 2 * _bodyHoriPadding) / 4 -

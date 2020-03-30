@@ -40,7 +40,8 @@ class Group {
   String get description => _description;
   String get colorStr => _colorStr;
   int get colorInt => _colorInt;
-  Color get color => getColorFromStrInt(_colorStr, _colorInt) ?? defaultColor;
+  Color get color =>
+      getColorFromStrInt(_colorStr, colorInt: _colorInt) ?? defaultColor;
   String get ownerEmail => _ownerEmail;
   String get ownerName => _ownerName;
   int get numOfMembers => 1;
