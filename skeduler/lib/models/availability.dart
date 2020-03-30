@@ -1,5 +1,5 @@
 class Availability {
-  // properties
+  /// properties
   Set<DateTime> _dateTimes;
 }
 

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 // Text input decoration: default
-const textInputDecoration = InputDecoration(
+const InputDecoration authTextInputDecoration = InputDecoration(
   errorStyle: TextStyle(fontSize: 12.0),
   fillColor: Colors.white,
   filled: true,
 
-  // On Enabled
+  /// On Enabled
   enabledBorder: OutlineInputBorder(
     borderSide: BorderSide(
       color: Colors.white,
@@ -14,7 +14,7 @@ const textInputDecoration = InputDecoration(
     ),
   ),
 
-  // On Focused
+  /// On Focused
   focusedBorder: OutlineInputBorder(
     borderRadius: const BorderRadius.all(const Radius.circular(30.0)),
     borderSide: BorderSide(
@@ -23,7 +23,7 @@ const textInputDecoration = InputDecoration(
     ),
   ),
 
-  // On Error
+  /// On Error
   errorBorder: OutlineInputBorder(
     borderSide: BorderSide(
       color: Colors.red,
@@ -31,7 +31,7 @@ const textInputDecoration = InputDecoration(
     ),
   ),
 
-  // On Focused Error
+  /// On Focused Error
   focusedErrorBorder: OutlineInputBorder(
     borderRadius: const BorderRadius.all(const Radius.circular(30.0)),
     borderSide: BorderSide(
@@ -42,11 +42,11 @@ const textInputDecoration = InputDecoration(
 );
 
 // Text input decoration: valid
-const textInputDecorationValid = InputDecoration(
+const InputDecoration authTextInputDecorationValid = InputDecoration(
   fillColor: Colors.white,
   filled: true,
 
-  // On Enabled
+  /// On Enabled
   enabledBorder: OutlineInputBorder(
     borderRadius: const BorderRadius.all(const Radius.circular(30.0)),
     borderSide: BorderSide(
@@ -55,7 +55,7 @@ const textInputDecorationValid = InputDecoration(
     ),
   ),
 
-  // On Focused
+  /// On Focused
   focusedBorder: OutlineInputBorder(
     borderRadius: const BorderRadius.all(const Radius.circular(30.0)),
     borderSide: BorderSide(

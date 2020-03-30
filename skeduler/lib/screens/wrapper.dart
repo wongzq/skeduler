@@ -7,7 +7,7 @@ import 'package:skeduler/screens/home/home.dart';
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final user = Provider.of<AuthUser>(context);
 
     return user == null ? Authentication() : Home();
   }

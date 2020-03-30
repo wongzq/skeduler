@@ -1,10 +1,10 @@
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class CustomTimePicker extends CommonPickerModel {
-  // properties
+  /// properties
   int interval = 1;
 
-  // methods
+  /// methods
   String digits(int value, int length) {
     return '$value'.padLeft(length, "0");
   }

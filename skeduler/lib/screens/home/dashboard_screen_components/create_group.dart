@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/native_theme.dart';
 import 'package:skeduler/models/user.dart';
-import 'package:skeduler/screens/home/dashboard_screen_components/change_colour.dart';
+import 'package:skeduler/screens/home/dashboard_screen_components/change_color.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
-import 'package:skeduler/screens/home/dashboard_screen_components/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
+import 'package:skeduler/shared/label_text_input.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class CreateGroup extends StatefulWidget {
@@ -19,12 +19,13 @@ class _CreateGroupState extends State<CreateGroup> {
   bool _valid = false;
   String _groupName;
   String _groupDescription;
-  Color _groupColour;
+  Color _groupColor;
   String _ownerName;
 
   @override
   Widget build(BuildContext context) {
-    _ownerName = Provider.of<UserData>(context).name;
+    _ownerName = Provider.of<User>(context).name;
+    TextEditingController _controller = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -53,8 +54,8 @@ class _CreateGroupState extends State<CreateGroup> {
         onTap: () => unfocus(),
         child: Column(
           children: <Widget>[
-            // Required fields
-            // Name
+            /// Required fields
+            /// Name
             LabelTextInput(
               hintText: 'Required',
               label: 'Name',
@@ -65,7 +66,7 @@ class _CreateGroupState extends State<CreateGroup> {
               },
             ),
 
-            // Description
+            /// Description
             LabelTextInput(
               hintText: 'Optional',
               label: 'Description',
@@ -76,10 +77,10 @@ class _CreateGroupState extends State<CreateGroup> {
               },
             ),
 
-            // Colour
-            ChangeColour(valueSetter: (value) {
+            /// Color
+            ChangeColor(valueSetter: (value) {
               setState(() {
-                _groupColour = value;
+                _groupColor = value;
               });
             }),
 
@@ -95,11 +96,13 @@ class _CreateGroupState extends State<CreateGroup> {
               ),
             ),
             SizedBox(height: 10.0),
-            // Preview
+
+            /// Preview
             GroupCard(
               groupName: _groupName,
               ownerName: _ownerName,
-              groupColour: _groupColour ?? Provider.of<NativeTheme>(context).primaryColor,
+              groupColor:
+                  _groupColor ?? Provider.of<NativeTheme>(context).primaryColor,
               hasNotification: false,
             ),
           ],

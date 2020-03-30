@@ -14,7 +14,7 @@ class TimeEditor extends StatefulWidget {
 }
 
 class _TimeEditorState extends State<TimeEditor> {
-  // properties
+  /// properties
   GlobalKey _textKey = GlobalKey();
   GlobalKey _sizedBoxKey = GlobalKey();
   GlobalKey _buttonsKey = GlobalKey();
@@ -33,8 +33,8 @@ class _TimeEditorState extends State<TimeEditor> {
   static const double _centerWidth = 20.0;
   static const double _buttonHeight = 45.0;
 
-  // methods
-  // set the selected height of time editor
+  /// methods
+  /// set the selected height of time editor
   setTimeEditorSelectedHeight() {
     RenderBox text = _textKey.currentContext.findRenderObject();
     RenderBox sizedBox = _sizedBoxKey.currentContext.findRenderObject();
@@ -46,7 +46,7 @@ class _TimeEditorState extends State<TimeEditor> {
         2 * _bodyPadding;
   }
 
-  // validate time
+  /// validate time
   void _validateTime() {
     if (_endTime.isAfter(_startTime)) {
       _validTime = true;
@@ -55,7 +55,7 @@ class _TimeEditorState extends State<TimeEditor> {
     }
   }
 
-  // generate TimePicker widget for Start Time and End Time
+  /// generate TimePicker widget for Start Time and End Time
   Widget generateTimePicker({bool start = false, bool end = false}) {
     if ((start && !end) || (!start && end)) {
       return Container(
@@ -192,7 +192,7 @@ class _TimeEditorState extends State<TimeEditor> {
           padding: const EdgeInsets.all(_bodyPadding),
           child: Column(
             children: <Widget>[
-              // Title
+              /// Title
               Align(
                 alignment: Alignment.topCenter,
                 child: Text('Time', key: _textKey, style: textStyleHeader),
@@ -200,7 +200,7 @@ class _TimeEditorState extends State<TimeEditor> {
 
               SizedBox(key: _sizedBoxKey, height: _spacing),
 
-              // Body: Set Time Buttons
+              /// Body: Set Time Buttons
               Visibility(
                 visible: _editorsStatus.currentEditor == CurrentEditor.time,
                 maintainSize: true,
@@ -212,7 +212,7 @@ class _TimeEditorState extends State<TimeEditor> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
-                        // Button: Start Time
+                        /// Button: Start Time
                         generateTimePicker(start: true),
 
                         SizedBox(width: _spacing),
@@ -229,14 +229,14 @@ class _TimeEditorState extends State<TimeEditor> {
                         ),
                         SizedBox(width: _spacing),
 
-                        // Button: End Time
+                        /// Button: End Time
                         generateTimePicker(end: true),
                       ],
                     ),
 
                     SizedBox(height: _spacing),
 
-                    // Button: Save
+                    /// Button: Save
                     Padding(
                       padding: const EdgeInsets.all(_spacing),
                       child: Container(
@@ -266,7 +266,7 @@ class _TimeEditorState extends State<TimeEditor> {
 
                     SizedBox(height: _spacing),
 
-                    // Button: Reset
+                    /// Button: Reset
                     Padding(
                       padding: const EdgeInsets.all(_spacing),
                       child: Container(

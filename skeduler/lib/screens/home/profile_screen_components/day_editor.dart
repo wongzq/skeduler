@@ -11,7 +11,7 @@ class DayEditor extends StatefulWidget {
 }
 
 class _DayEditorState extends State<DayEditor> {
-  // properties
+  /// properties
   GlobalKey _textKey = GlobalKey();
   GlobalKey _sizedBoxKey = GlobalKey();
   GlobalKey _wrapKey = GlobalKey();
@@ -29,8 +29,8 @@ class _DayEditorState extends State<DayEditor> {
   static const double _chipLabelVertPadding = 5.0;
   double _chipWidth;
 
-  // methods
-  // set the selected height of day editor
+  /// methods
+  /// set the selected height of day editor
   setDayEditorSelectedHeight() {
     RenderBox text = _textKey.currentContext.findRenderObject();
     RenderBox sizedBox = _sizedBoxKey.currentContext.findRenderObject();
@@ -42,7 +42,7 @@ class _DayEditorState extends State<DayEditor> {
         2 * _bodyPadding;
   }
 
-  // generate List<Widget> for days
+  /// generate List<Widget> for days
   List<Widget> _generateDays(GlobalKey _key) {
     NativeTheme _nativeTheme = Provider.of<NativeTheme>(context);
 
@@ -50,18 +50,18 @@ class _DayEditorState extends State<DayEditor> {
       return Visibility(
         visible: () {
           if (_key == _wrapKey) {
-            // Chips are visible when:
-            // CurrentEditor is day (visible when in DayEditor) OR
-            // CurrentEditor is daySelected (visible when in DayEditor) OR
-            // Chip is selected (visible when not in DayEditor)
+            /// Chips are visible when:
+            /// CurrentEditor is day (visible when in DayEditor) OR
+            /// CurrentEditor is daySelected (visible when in DayEditor) OR
+            /// Chip is selected (visible when not in DayEditor)
             return _editorsStatus.currentEditor == CurrentEditor.day ||
                     _editorsStatus.currentEditor == CurrentEditor.daySelected ||
                     _daysSelected.contains(item.key)
                 ? true
                 : false;
           } else if (_key == _wrapSelectedKey) {
-            // Chips are visible when:
-            // CurrentEditor is daySelected AND Chip is selected
+            /// Chips are visible when:
+            /// CurrentEditor is daySelected AND Chip is selected
             return _editorsStatus.currentEditor == CurrentEditor.daySelected &&
                     _daysSelected.contains(item.key)
                 ? true
@@ -91,7 +91,7 @@ class _DayEditorState extends State<DayEditor> {
               ),
             ),
             onPressed: () {
-              // modify Wrap Selected
+              /// modify Wrap Selected
               setState(() {
                 _editorsStatus.currentEditor = CurrentEditor.daySelected;
                 _daysSelected.contains(item.key)
@@ -99,7 +99,7 @@ class _DayEditorState extends State<DayEditor> {
                     : _daysSelected.add(item.key);
               });
 
-              // get Size of Wrap Selected
+              /// get Size of Wrap Selected
               SchedulerBinding.instance.addPostFrameCallback((_) {
                 setDayEditorSelectedHeight();
                 setState(() {
@@ -124,7 +124,7 @@ class _DayEditorState extends State<DayEditor> {
   Widget build(BuildContext context) {
     _editorsStatus = Provider.of<EditorsStatus>(context);
 
-    // note: 4px on each side is the default ActionChip padding
+    /// note: 4px on each side is the default ActionChip padding
     _chipWidth = (MediaQuery.of(context).size.width - 2 * _bodyPadding) / 4 -
         (2 * _chipPadding) -
         (2 * _chipLabelHoriPadding) -
@@ -147,7 +147,7 @@ class _DayEditorState extends State<DayEditor> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  // Title
+                  /// Title
                   Align(
                     alignment: Alignment.topCenter,
                     child: Text('Day', key: _textKey, style: textStyleHeader),
@@ -155,7 +155,7 @@ class _DayEditorState extends State<DayEditor> {
 
                   SizedBox(key: _sizedBoxKey, height: 8.0),
                   
-                  // Body: Day ActionChips
+                  /// Body: Day ActionChips
                   Expanded(
                     child: Stack(
                       children: <Widget>[

@@ -4,14 +4,14 @@ import 'package:skeduler/models/auth_info.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class FormEmail extends StatefulWidget {
-  // properties
+  /// properties
   final GlobalKey<FormState> formKeyEmail;
   final Function refresh;
 
-  // constructor
+  /// constructor
   FormEmail({this.formKeyEmail, this.refresh});
 
-  // methods
+  /// methods
   @override
   _FormEmailState createState() => _FormEmailState();
 }
@@ -19,7 +19,7 @@ class FormEmail extends StatefulWidget {
 class _FormEmailState extends State<FormEmail> {
   @override
   Widget build(BuildContext context) {
-    // Provider for Authentication Info
+    /// Provider for Authentication Info
     final AuthInfo authInfo = Provider.of<AuthInfo>(context);
 
     return SizedBox(
@@ -30,8 +30,8 @@ class _FormEmailState extends State<FormEmail> {
           initialValue: null,
           style: TextStyle(color: Colors.black, fontSize: 14.0),
           decoration: authInfo.emailValid
-              ? textInputDecorationValid
-              : textInputDecoration.copyWith(
+              ? authTextInputDecorationValid
+              : authTextInputDecoration.copyWith(
                   hintText: 'Email',
                   hintStyle: TextStyle(
                     color: Colors.grey,

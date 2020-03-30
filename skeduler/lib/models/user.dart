@@ -1,17 +1,15 @@
-import 'package:flutter/material.dart';
-
-class User {
+class AuthUser {
   final String uid;
 
-  User({this.uid});
+  AuthUser({this.uid});
 }
 
-class UserData {
+class User {
   String _uid;
   String _email;
   String _name;
 
-  UserData({
+  User({
     uid = '',
     email = '',
     name = '',
@@ -21,23 +19,23 @@ class UserData {
     _name = name;
   }
 
-  // getter methods
+  /// getter methods
   String get uid => _uid;
   String get email => _email;
   String get name => _name;
 
-  // // setter methods
-  // void update({
-  //   uid,
-  //   email,
-  //   name,
-  // }) {
-  //   if (uid != null) _uid = uid;
-  //   if (email != null) _email = email;
-  //   if (name != null) _name = name;
-  // }
+  /// // setter methods
+  /// void update({
+  ///   uid,
+  ///   email,
+  ///   name,
+  /// }) {
+  ///   if (uid != null) _uid = uid;
+  ///   if (email != null) _email = email;
+  ///   if (name != null) _name = name;
+  /// }
 
-  // set uid(String value) => _uid = value;
-  // set email(String value) => _email = value;
-  // set name(String value) => _name = value;
+  /// set uid(String value) => _uid = value;
+  /// set email(String value) => _email = value;
+  /// set name(String value) => _name = value;
 }

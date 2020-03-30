@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:skeduler/models/availability.dart';
 
 class Person {
-  // properties
+  /// properties
   String _uid;
   String _email;
   String _name;

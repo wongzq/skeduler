@@ -11,20 +11,20 @@ enum CurrentEditor {
 
 class EditorsStatus extends ChangeNotifier {
   //properties
-  // show status of current editor
+  /// show status of current editor
   CurrentEditor _currentEditor = CurrentEditor.month;
 
-  // height values for display
+  /// height values for display
   double _monthEditorHeight;
   double _dayEditorHeight;
   double _timeEditorHeight;
 
-  // height values when the editors are selected
+  /// height values when the editors are selected
   double _monthEditorSelectedHeight;
   double _dayEditorSelectedHeight;
   double _timeEditorSelectedHeight;
 
-  // general values of the editors
+  /// general values of the editors
   double _totalHeight;
   double _totalWidth;
   double _dividerHeight;
@@ -33,7 +33,7 @@ class EditorsStatus extends ChangeNotifier {
   final Duration _duration = Duration(milliseconds: 500);
   final Curve _curve = Curves.easeOutCubic;
 
-  // constructor
+  /// constructor
   EditorsStatus({
     CurrentEditor currentEditor,
     double monthEditorHeight,
@@ -65,8 +65,8 @@ class EditorsStatus extends ChangeNotifier {
     _defaultSecondaryHeight = defaultSecondaryHeight;
   }
 
-  // methods
-  // getter methods
+  /// methods
+  /// getter methods
   CurrentEditor get currentEditor => _currentEditor;
   double get totalHeight => _totalHeight;
   double get totalWidth => _totalWidth;
@@ -84,7 +84,7 @@ class EditorsStatus extends ChangeNotifier {
   Duration get duration => _duration;
   Curve get curve => _curve;
 
-  // setter methods
+  /// setter methods
   set currentEditor(CurrentEditor value) {
     _currentEditor = value;
     if (value == CurrentEditor.month || value == CurrentEditor.monthSelected) {
@@ -153,7 +153,7 @@ class EditorsStatus extends ChangeNotifier {
     notifyListeners();
   }
 
-  // class methods
+  /// class methods
   void _switchToMonthEditor() {
     _dayEditorHeight = _defaultSecondaryHeight;
     _timeEditorHeight = _defaultSecondaryHeight;

@@ -12,7 +12,7 @@ import 'package:theme_provider/theme_provider.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  /// This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -74,20 +74,23 @@ class MyApp extends StatelessWidget {
             _nativeTheme.accentColor =
                 myAppThemes[_themeIndex].data.accentColor;
 
-            // Provide User from Firebase
-            return StreamProvider<User>.value(
+            /// Provide User from Firebase
+            return StreamProvider<AuthUser>.value(
               value: AuthService().user,
-              child: Consumer<User>(
+              child: Consumer<AuthUser>(
                 builder: (_, user, __) {
                   DatabaseService _databaseService;
                   _databaseService =
                       DatabaseService(uid: user != null ? user.uid : '');
 
-                  // Provide UserData from User
+                  /// Provide UserData from User
                   return MultiProvider(
                     providers: [
-                      StreamProvider<UserData>.value(
-                        value: _databaseService.userData,
+                      Provider<DatabaseService>.value(
+                        value: _databaseService,
+                      ),
+                      StreamProvider<User>.value(
+                        value: _databaseService.user,
                       ),
                       ChangeNotifierProvider<NativeTheme>.value(
                         value: _nativeTheme,

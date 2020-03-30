@@ -11,14 +11,14 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // properties
+  /// properties
   EditorsStatus _editorsStatus =
       EditorsStatus(currentEditor: CurrentEditor.month);
   MonthEditor _monthEditor;
   DayEditor _dayEditor;
   TimeEditor _timeEditor;
 
-  // methods
+  /// methods
   @override
   void initState() {
     _monthEditor = MonthEditor();
@@ -48,13 +48,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             physics: const AlwaysScrollableScrollPhysics(),
             scrollDirection: Axis.vertical,
             children: <Widget>[
-              // Month Editor
+              /// Month Editor
               _monthEditor,
               Divider(thickness: 1.0, height: _editorsStatus.dividerHeight),
-              // Day Editor
+              /// Day Editor
               _dayEditor,
               Divider(thickness: 1.0, height: _editorsStatus.dividerHeight),
-              // Time Editor
+              /// Time Editor
               _timeEditor,
             ],
           ),

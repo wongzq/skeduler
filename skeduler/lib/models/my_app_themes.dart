@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:theme_provider/theme_provider.dart';
 
-List<AppTheme> myAppThemes = [
+const Color defaultColor = Colors.teal;
+
+final List<AppTheme> myAppThemes = [
   AppTheme(
       id: 'pink',
       description: 'Pink',

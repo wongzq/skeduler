@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:skeduler/models/my_app_themes.dart';
 import 'package:skeduler/shared/functions.dart';
 
-class ChangeColour extends StatefulWidget {
-  // properties
+class ChangeColor extends StatefulWidget {
+  /// properties
   final ValueSetter<Color> valueSetter;
 
-  // constructor
-  const ChangeColour({this.valueSetter});
+  /// constructor
+  const ChangeColor({this.valueSetter});
 
   @override
-  _ChangeColourState createState() => _ChangeColourState();
+  _ChangeColorState createState() => _ChangeColorState();
 }
 
-class _ChangeColourState extends State<ChangeColour> {
-  List<bool> _colourPressed =
+class _ChangeColorState extends State<ChangeColor> {
+  List<bool> _colorPressed =
       List.generate(myAppThemes.length * 4, (i) => false);
   double _bodyHoriPadding = 20.0;
   double _bodyVertPadding = 20.0;
@@ -25,8 +25,8 @@ class _ChangeColourState extends State<ChangeColour> {
   double _chipLabelVertPadding = 5;
   double _chipWidth;
 
-  String _colourId;
-  int _colourType = 0;
+  String _colorId;
+  int _colorType = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +45,12 @@ class _ChangeColourState extends State<ChangeColour> {
       ),
       child: Column(
         children: <Widget>[
-          // Chip: Selected colour
+          /// Chip: Selected color
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                'Colour',
+                'Color',
                 style: TextStyle(
                   fontSize: 15.0,
                 ),
@@ -63,31 +63,31 @@ class _ChangeColourState extends State<ChangeColour> {
                     vertical: _chipLabelVertPadding,
                   ),
                   backgroundColor: () {
-                    if (_colourType != null) {
-                      if (_colourType == 0) {
+                    if (_colorType != null) {
+                      if (_colorType == 0) {
                         return getNativeThemeData(
-                          _colourId,
+                          _colorId,
                           defaultThemeOfContext: context,
                         ).primaryColorDark;
-                      } else if (_colourType == 1) {
+                      } else if (_colorType == 1) {
                         return getNativeThemeData(
-                          _colourId,
+                          _colorId,
                           defaultThemeOfContext: context,
                         ).primaryColor;
-                      } else if (_colourType == 2) {
+                      } else if (_colorType == 2) {
                         return getNativeThemeData(
-                          _colourId,
+                          _colorId,
                           defaultThemeOfContext: context,
                         ).accentColor;
                       } else {
                         return getNativeThemeData(
-                          _colourId,
+                          _colorId,
                           defaultThemeOfContext: context,
                         ).primaryColorLight;
                       }
                     } else {
                       return getNativeThemeData(
-                        _colourId,
+                        _colorId,
                         defaultThemeOfContext: context,
                       ).primaryColor;
                     }
@@ -102,7 +102,7 @@ class _ChangeColourState extends State<ChangeColour> {
             ],
           ),
 
-          // ActionChips: Colour options
+          /// ActionChips: Color options
           Container(
             height: 70.0,
             child: FadingEdgeScrollView.fromScrollView(
@@ -142,30 +142,30 @@ class _ChangeColourState extends State<ChangeColour> {
                         onPressed: () {
                           setState(() {
                             int newIndex = index ~/ 4;
-                            _colourType = index % 4;
+                            _colorType = index % 4;
 
-                            _colourId = myAppThemes[newIndex].id;
+                            _colorId = myAppThemes[newIndex].id;
 
-                            _colourPressed =
+                            _colorPressed =
                                 List.generate(myAppThemes.length, (i) => false);
-                            _colourPressed[newIndex] = true;
+                            _colorPressed[newIndex] = true;
 
-                            Color _selectedColour;
+                            Color _selectedColor;
                             if (index % 4 == 0) {
-                              _selectedColour =
+                              _selectedColor =
                                   myAppThemes[newIndex].data.primaryColorDark;
                             } else if (index % 4 == 1) {
-                              _selectedColour =
+                              _selectedColor =
                                   myAppThemes[newIndex].data.primaryColor;
                             } else if (index % 4 == 2) {
-                              _selectedColour =
+                              _selectedColor =
                                   myAppThemes[newIndex].data.accentColor;
                             } else {
-                              _selectedColour =
+                              _selectedColor =
                                   myAppThemes[newIndex].data.primaryColorLight;
                             }
 
-                            widget.valueSetter(_selectedColour);
+                            widget.valueSetter(_selectedColor);
                           });
                         },
                       ),

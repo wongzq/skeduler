@@ -5,10 +5,10 @@ import 'package:skeduler/screens/home/dashboard_screen_components/create_group.d
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
 
 class DashboardScreen extends StatelessWidget {
-  // properties
+  /// properties
   static const double _bodyPadding = 5.0;
 
-  // methods
+  /// methods
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -33,7 +33,7 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
 
-        // SpeedDial: Create or Join group
+        /// SpeedDial: Create or Join group
         Align(
           alignment: Alignment.bottomRight,
           child: Padding(
@@ -49,7 +49,7 @@ class DashboardScreen extends StatelessWidget {
                 color: Colors.white,
               ),
 
-              // Join button
+              /// Join button
               children: <SpeedDialChild>[
                 SpeedDialChild(
                   backgroundColor: Theme.of(context).primaryColorDark,
@@ -86,7 +86,7 @@ class DashboardScreen extends StatelessWidget {
                   onTap: () {},
                 ),
 
-                // Create button
+                /// Create button
                 SpeedDialChild(
                   backgroundColor: Theme.of(context).primaryColorDark,
                   foregroundColor: Colors.white,

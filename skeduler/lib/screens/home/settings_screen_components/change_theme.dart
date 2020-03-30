@@ -13,7 +13,8 @@ class ChangeTheme extends StatefulWidget {
 
 class _ChangeThemeState extends State<ChangeTheme> {
   List<bool> _themePressed = List.generate(myAppThemes.length, (i) => false);
-  double _bodyPadding = 20.0;
+  double _bodyHoriPadding = 20.0;
+  double _bodyVertPadding = 10.0;
   double _chipPadding = 5;
   double _chipPaddingExtra = 5;
   double _chipLabelHoriPadding = 10;
@@ -29,24 +30,29 @@ class _ChangeThemeState extends State<ChangeTheme> {
     bool _darkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;
 
-    String _nativeThemeId =
-        getNativeThemeId(ThemeProvider.themeOf(context).id);
+    String _nativeThemeId = getNativeThemeId(ThemeProvider.themeOf(context).id);
 
-    _chipWidth = (MediaQuery.of(context).size.width - 2 * _bodyPadding) / 4 -
-        (2 * _chipLabelHoriPadding) -
-        (2 * _chipPadding) -
-        8;
+    _chipWidth =
+        (MediaQuery.of(context).size.width - 2 * _bodyHoriPadding) / 4 -
+            (2 * _chipLabelHoriPadding) -
+            (2 * _chipPadding) -
+            8;
 
     return Container(
-      padding: EdgeInsets.all(_bodyPadding),
-      height: 600,
+      padding: EdgeInsets.symmetric(
+        horizontal: _bodyHoriPadding,
+        vertical: _bodyVertPadding,
+      ),
       child: Column(
         children: <Widget>[
-          // Switch: Dark mode
+          /// Switch: Dark mode
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text('Dark mode'),
+              Text(
+                'Dark mode',
+                style: TextStyle(fontSize: 15.0),
+              ),
               Switch(
                 activeColor: Theme.of(context).accentColor,
                 onChanged: (bool isDark) {
@@ -67,13 +73,16 @@ class _ChangeThemeState extends State<ChangeTheme> {
             ],
           ),
 
-          SizedBox(height: 20.0),
+          SizedBox(height: 10.0),
 
-          // Chip: Selected theme
+          /// Chip: Selected theme
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text('Theme colour'),
+              Text(
+                'Theme color',
+                style: TextStyle(fontSize: 15.0),
+              ),
               Padding(
                 padding: EdgeInsets.all(_chipPadding + _chipPaddingExtra),
                 child: Chip(
@@ -92,7 +101,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
             ],
           ),
 
-          // ActionChips: Theme options
+          /// ActionChips: Theme options
           Container(
             height: 70.0,
             child: FadingEdgeScrollView.fromScrollView(

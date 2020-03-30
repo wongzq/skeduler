@@ -11,7 +11,7 @@ class MonthEditor extends StatefulWidget {
 }
 
 class _MonthEditorState extends State<MonthEditor> {
-  // properties
+  /// properties
   GlobalKey _textKey = GlobalKey();
   GlobalKey _sizedBoxKey = GlobalKey();
   GlobalKey _wrapKey = GlobalKey();
@@ -43,8 +43,8 @@ class _MonthEditorState extends State<MonthEditor> {
   double _chipLabelVertPadding = 5.0;
   double _chipWidth;
 
-  // methods
-  // set the selected height of month editor
+  /// methods
+  /// set the selected height of month editor
   setMonthEditorSelectedHeight() {
     RenderBox text = _textKey.currentContext.findRenderObject();
     RenderBox sizedBox = _sizedBoxKey.currentContext.findRenderObject();
@@ -57,7 +57,7 @@ class _MonthEditorState extends State<MonthEditor> {
         _sizedBoxPadding;
   }
 
-  // generate List<Widget> for months
+  /// generate List<Widget> for months
   List<Widget> _generateMonths(GlobalKey _key) {
     NativeTheme _nativeTheme = Provider.of<NativeTheme>(context);
 
@@ -65,10 +65,10 @@ class _MonthEditorState extends State<MonthEditor> {
       return Visibility(
         visible: () {
           if (_key == _wrapKey) {
-            // Chips are visible when:
-            // CurrentEditor is month (visible when in MonthEditor) OR
-            // CurrentEditor is monthSelected (visible when in MonthEditor) OR
-            // Chip is selected (visible when not in MonthEditor)
+            /// Chips are visible when:
+            /// CurrentEditor is month (visible when in MonthEditor) OR
+            /// CurrentEditor is monthSelected (visible when in MonthEditor) OR
+            /// Chip is selected (visible when not in MonthEditor)
             return _editorsStatus.currentEditor == CurrentEditor.month ||
                     _editorsStatus.currentEditor ==
                         CurrentEditor.monthSelected ||
@@ -76,8 +76,8 @@ class _MonthEditorState extends State<MonthEditor> {
                 ? true
                 : false;
           } else if (_key == _wrapSelectedKey) {
-            // Chips are visible when:
-            // CurrentEditor is monthSelected AND Chip is selected
+            /// Chips are visible when:
+            /// CurrentEditor is monthSelected AND Chip is selected
             return _editorsStatus.currentEditor ==
                         CurrentEditor.monthSelected &&
                     _monthsSelected.contains(item.key)
@@ -108,7 +108,7 @@ class _MonthEditorState extends State<MonthEditor> {
               ),
             ),
             onPressed: () {
-              // modify Wrap Selected
+              /// modify Wrap Selected
               setState(() {
                 _editorsStatus.currentEditor = CurrentEditor.monthSelected;
                 _monthsSelected.contains(item.key)
@@ -116,7 +116,7 @@ class _MonthEditorState extends State<MonthEditor> {
                     : _monthsSelected.add(item.key);
               });
 
-              // get Size of Wrap Selected
+              /// get Size of Wrap Selected
               SchedulerBinding.instance.addPostFrameCallback((_) {
                 setMonthEditorSelectedHeight();
                 setState(() {
@@ -141,7 +141,7 @@ class _MonthEditorState extends State<MonthEditor> {
   Widget build(BuildContext context) {
     _editorsStatus = Provider.of<EditorsStatus>(context);
 
-    // note: 4 px on each side is the default ActionChip padding
+    /// note: 4 px on each side is the default ActionChip padding
     _chipWidth = (MediaQuery.of(context).size.width - 2 * _bodyPadding) / 3 -
         (2 * _chipLabelHoriPadding) -
         (2 * _chipPadding) -
@@ -164,7 +164,7 @@ class _MonthEditorState extends State<MonthEditor> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  // Title
+                  /// Title
                   Align(
                     alignment: Alignment.topCenter,
                     child: Padding(
@@ -176,7 +176,7 @@ class _MonthEditorState extends State<MonthEditor> {
 
                   SizedBox(key: _sizedBoxKey, height: _sizedBoxPadding),
 
-                  // Body: month ActionChips
+                  /// Body: month ActionChips
                   Expanded(
                     child: Stack(
                       children: <Widget>[

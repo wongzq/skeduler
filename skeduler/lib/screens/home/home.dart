@@ -12,25 +12,24 @@ import 'package:skeduler/screens/home/profile_screen_components/profile_screen.d
 import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_screen.dart';
 import 'package:skeduler/services/auth_service.dart';
-import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class Home extends StatefulWidget {
   static _HomeState of(BuildContext context) =>
       context.findAncestorStateOfType<_HomeState>();
 
-  // methods
+  /// methods
   @override
   State<StatefulWidget> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  // properties
+  /// properties
   final AuthService _authService = AuthService();
 
-  DrawerEnum _selected = DrawerEnum.dashboard;
+  DrawerEnum _selected = DrawerEnum.settings;
 
-  // Map of screens
+  /// Map of screens
   Map<DrawerEnum, Map<String, Object>> _screens = {
     DrawerEnum.dashboard: {'title': 'Dashboard', 'screen': DashboardScreen()},
     DrawerEnum.group: {'title': 'Group', 'screen': GroupScreen()},
@@ -42,13 +41,13 @@ class _HomeState extends State<Home> {
     DrawerEnum.logout: {'title': 'Logout', 'screen': null},
   };
 
-  // methods
+  /// methods
   @override
   Widget build(BuildContext context) {
-    UserData userData = Provider.of<UserData>(context);
+    User user = Provider.of<User>(context);
 
     return Scaffold(
-      // Scaffold - appBar
+      /// Scaffold - appBar
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         title: Text(
@@ -57,29 +56,29 @@ class _HomeState extends State<Home> {
         ),
       ),
 
-      // Scaffold - drawer
+      /// Scaffold - drawer
       drawer: Container(
         width: MediaQuery.of(context).size.width * 0.75,
         child: Drawer(
           child: ListTileTheme(
             child: Column(
               children: <Widget>[
-                // User data display
+                /// User data display
                 UserAccountsDrawerHeader(
                   currentAccountPicture: CircleAvatar(
                     child: Icon(Icons.person),
                   ),
                   accountName: Text(
-                    userData != null ? userData.name : 'Name',
+                    user != null ? user.name : 'Name',
                     style: TextStyle(fontSize: 24.0),
                   ),
                   accountEmail: Text(
-                    userData != null ? userData.email : 'email',
+                    user != null ? user.email : 'email',
                     style: TextStyle(fontSize: 13.0),
                   ),
                 ),
 
-                // Dashboard
+                /// Dashboard
                 Container(
                   color: _selected == DrawerEnum.dashboard
                       ? Theme.of(context).primaryColorLight
@@ -98,7 +97,7 @@ class _HomeState extends State<Home> {
 
                 Divider(thickness: 1.0),
 
-                // Group
+                /// Group
                 Container(
                   color: _selected == DrawerEnum.group
                       ? Theme.of(context).primaryColorLight
@@ -115,7 +114,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
 
-                // Timetable
+                /// Timetable
                 Container(
                   color: _selected == DrawerEnum.timetable
                       ? Theme.of(context).primaryColorLight
@@ -132,7 +131,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
 
-                // Classes
+                /// Classes
                 Container(
                   color: _selected == DrawerEnum.classes
                       ? Theme.of(context).primaryColorLight
@@ -149,7 +148,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
 
-                // People
+                /// People
                 Container(
                   color: _selected == DrawerEnum.people
                       ? Theme.of(context).primaryColorLight
@@ -166,7 +165,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
 
-                // Profile
+                /// Profile
                 Container(
                   color: _selected == DrawerEnum.profile
                       ? Theme.of(context).primaryColorLight
@@ -185,7 +184,7 @@ class _HomeState extends State<Home> {
 
                 Divider(thickness: 1.0),
 
-                // Settings
+                /// Settings
                 Container(
                   color: _selected == DrawerEnum.settings
                       ? Theme.of(context).primaryColorLight
@@ -202,7 +201,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
 
-                // Logout
+                /// Logout
                 Container(
                   color: _selected == DrawerEnum.logout
                       ? Theme.of(context).primaryColorLight
@@ -220,25 +219,27 @@ class _HomeState extends State<Home> {
                           return AlertDialog(
                             content: Text('Do you want to logout?'),
                             actions: <Widget>[
-                              // CANCEL button
+                              /// CANCEL button
                               FlatButton(
                                 child: Text('CANCEL'),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
                               ),
-                              // OK button
+
+                              /// OK button
                               FlatButton(
                                 child: Text('OK'),
                                 onPressed: () {
-                                  // pop AlertDialog
+                                  /// pop AlertDialog
                                   Navigator.of(context).pop();
-                                  // pop Drawer
+
+                                  /// pop Drawer
                                   Navigator.of(context).pop();
 
                                   _authService.logOut();
 
-                                  // ThemeProvider.controllerOf(context).setTheme('default');
+                                  /// ThemeProvider.controllerOf(context).setTheme('default');
                                 },
                               )
                             ],
@@ -254,7 +255,7 @@ class _HomeState extends State<Home> {
         ),
       ),
 
-      // Scaffold - body
+      /// Scaffold - body
       body: () {
         return _screens[_selected]['screen'];
       }(),
