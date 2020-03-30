@@ -49,6 +49,7 @@ class _LabelTextInputState extends State<LabelTextInput> {
                   ),
                 ),
                 style: TextStyle(fontSize: 15.0),
+                onChanged: (value) => widget.valueSetter(value),
                 validator: (value) {
                   if (widget.validator != null) {
                     return widget.validator(value);
