@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/native_theme.dart';
+import 'package:skeduler/models/color_shade.dart';
 import 'package:skeduler/models/user.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/change_color.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
@@ -10,6 +10,7 @@ import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/label_text_input.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class CreateGroup extends StatefulWidget {
   @override
@@ -22,11 +23,11 @@ class _CreateGroupState extends State<CreateGroup> {
 
   String _groupName;
   String _groupDescription;
-  Color _groupColor;
-  String _groupColorStr;
-  int _groupColorInt;
-  String _ownerEmail;
-  String _ownerName;
+
+  ColorShade _groupColorShade = ColorShade();
+
+  String _groupOwnerEmail;
+  String _groupOwnerName;
 
   DatabaseService _dbs;
 
@@ -34,9 +35,9 @@ class _CreateGroupState extends State<CreateGroup> {
   @override
   Widget build(BuildContext context) {
     User _owner = Provider.of<User>(context);
-    _ownerEmail = _owner.email;
-    _ownerName = _owner.name;
     _dbs = Provider.of<DatabaseService>(context);
+    _groupOwnerEmail = _owner.email;
+    _groupOwnerName = _owner.name;
 
     return Scaffold(
       appBar: AppBar(
@@ -63,10 +64,9 @@ class _CreateGroupState extends State<CreateGroup> {
                     _dbs.setGroupData(
                       _groupName,
                       _groupDescription,
-                      _groupColorStr,
-                      _groupColorInt,
-                      _ownerEmail,
-                      _ownerName,
+                      _groupColorShade,
+                      _groupOwnerEmail,
+                      _groupOwnerName,
                     );
                   }
                 : null,
@@ -106,19 +106,9 @@ class _CreateGroupState extends State<CreateGroup> {
 
             /// Color
             ChangeColor(
-              valueSetterColor: (value) {
+              valueSetterColorShade: (value) {
                 setState(() {
-                  _groupColor = value;
-                });
-              },
-              valueSetterString: (value) {
-                setState(() {
-                  _groupColorStr = value;
-                });
-              },
-              valueSetterInt: (value) {
-                setState(() {
-                  _groupColorInt = value;
+                  _groupColorShade = value;
                 });
               },
             ),
@@ -139,9 +129,15 @@ class _CreateGroupState extends State<CreateGroup> {
             /// Preview
             GroupCard(
               groupName: _groupName,
-              ownerName: _ownerName,
-              groupColor:
-                  _groupColor ?? Provider.of<NativeTheme>(context).primaryColor,
+              ownerName: _groupOwnerName,
+              groupColor: () {
+                if (_groupColorShade.color == null) {
+                  _groupColorShade.color =
+                      getNativeThemeData(ThemeProvider.themeOf(context).id)
+                          .primaryColor;
+                }
+                return _groupColorShade.color;
+              }(),
               hasNotification: false,
             ),
           ],

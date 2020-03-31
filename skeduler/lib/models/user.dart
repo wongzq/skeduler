@@ -23,19 +23,4 @@ class User {
   String get uid => _uid;
   String get email => _email;
   String get name => _name;
-
-  /// // setter methods
-  /// void update({
-  ///   uid,
-  ///   email,
-  ///   name,
-  /// }) {
-  ///   if (uid != null) _uid = uid;
-  ///   if (email != null) _email = email;
-  ///   if (name != null) _name = name;
-  /// }
-
-  /// set uid(String value) => _uid = value;
-  /// set email(String value) => _email = value;
-  /// set name(String value) => _name = value;
 }

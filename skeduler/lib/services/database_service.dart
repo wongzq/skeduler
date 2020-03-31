@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:skeduler/models/color_shade.dart';
 import 'package:skeduler/models/group.dart';
 import 'package:skeduler/models/user.dart';
 
@@ -67,16 +68,15 @@ class DatabaseService {
   Future setGroupData(
     String name,
     String description,
-    String color,
-    int colorType,
+    ColorShade colorShade,
     String ownerEmail,
     String ownerName,
   ) async {
     return await groupsCollection.document().setData({
       'name': name,
       'description': description,
-      'color': color,
-      'colorType': colorType,
+      'themeId': colorShade.themeId,
+      'shade': colorShade.shadeIndex,
       'ownerEmail': ownerEmail,
       'ownerName': ownerName,
     });
@@ -87,16 +87,15 @@ class DatabaseService {
     String groupId, {
     String name,
     String description,
-    String color,
-    int colorType,
+    ColorShade colorShade,
     String ownerEmail,
     String ownerName,
   }) async {
     return await groupsCollection.document(groupId).updateData({
       'name': name,
       'description': description,
-      'color': color,
-      'colorType': colorType,
+      'themeId': colorShade.themeId,
+      'shade': colorShade.shade,
       'ownerEmail': ownerEmail,
       'ownerName': ownerName,
     });
@@ -125,8 +124,11 @@ class DatabaseService {
   Group _groupFromSnapshot(DocumentSnapshot snapshot) {
     return Group(
       name: snapshot.data['name'] ?? '',
-      colorStr: snapshot.data['color'] ?? '',
-      colorInt: snapshot.data['colorType'] ?? 0,
+      description: snapshot.data['description'] ?? '',
+      colorShade: ColorShade(
+        themeId: snapshot.data['themeId'],
+        shade: Shade.values[snapshot.data['shade'] as int],
+      ),
       ownerEmail: snapshot.data['ownerEmail'] ?? '',
       ownerName: snapshot.data['ownerName'] ?? '',
     );

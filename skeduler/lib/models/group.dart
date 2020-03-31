@@ -1,16 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:skeduler/models/class.dart';
-import 'package:skeduler/models/my_app_themes.dart';
+import 'package:skeduler/models/color_shade.dart';
 import 'package:skeduler/models/person.dart';
 import 'package:skeduler/models/timetable.dart';
-import 'package:skeduler/shared/functions.dart';
 
 class Group {
   /// properties
   String _name;
   String _description;
-  String _colorStr;
-  int _colorInt;
+  ColorShade _colorShade;
   String _ownerEmail;
   String _ownerName;
 
@@ -22,15 +19,13 @@ class Group {
   Group({
     String name = '',
     String description = '',
-    String colorStr = '',
-    int colorInt = 0,
+    ColorShade colorShade,
     String ownerEmail = '',
     String ownerName = '',
   }) {
     _name = name;
     _description = description;
-    _colorStr = colorStr;
-    _colorInt = colorInt;
+    _colorShade = colorShade;
     _ownerEmail = ownerEmail;
     _ownerName = ownerName;
   }
@@ -38,10 +33,7 @@ class Group {
   /// getter methods
   String get name => _name;
   String get description => _description;
-  String get colorStr => _colorStr;
-  int get colorInt => _colorInt;
-  Color get color =>
-      getColorFromStrInt(_colorStr, colorInt: _colorInt) ?? defaultColor;
+  ColorShade get colorShade => _colorShade;
   String get ownerEmail => _ownerEmail;
   String get ownerName => _ownerName;
   int get numOfMembers => 1;

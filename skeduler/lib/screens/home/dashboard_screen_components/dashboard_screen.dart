@@ -25,14 +25,14 @@ class DashboardScreen extends StatelessWidget {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               List<Group> _groups = snapshot.data;
               return GridView.builder(
-                itemCount: _groups.length,
+                itemCount: _groups != null ? _groups.length : 0,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2),
                 itemBuilder: (BuildContext context, int index) {
                   if (_groups[index] != null) {
                     return GroupCard(
                       groupName: _groups[index].name,
-                      groupColor: _groups[index].color,
+                      groupColor: _groups[index].colorShade.color,
                       numOfMembers: _groups[index].numOfMembers,
                       ownerName: _groups[index].ownerName,
                     );

@@ -1,25 +1,22 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
+import 'package:skeduler/models/color_shade.dart';
 import 'package:skeduler/models/my_app_themes.dart';
 import 'package:skeduler/shared/functions.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class ChangeColor extends StatefulWidget {
   /// properties
-  final ValueSetter<Color> valueSetterColor;
-  final ValueSetter<String> valueSetterString;
-  final ValueSetter<int> valueSetterInt;
+  final ValueSetter<ColorShade> valueSetterColorShade;
 
   /// constructor
-  const ChangeColor({this.valueSetterColor, this.valueSetterString, this.valueSetterInt});
+  const ChangeColor({this.valueSetterColorShade});
 
   @override
   _ChangeColorState createState() => _ChangeColorState();
 }
 
 class _ChangeColorState extends State<ChangeColor> {
-  List<bool> _colorPressed =
-      List.generate(myAppThemes.length * 4, (i) => false);
-
   double _bodyHoriPadding = 20.0;
   double _bodyVertPadding = 20.0;
   double _chipPadding = 5;
@@ -28,8 +25,9 @@ class _ChangeColorState extends State<ChangeColor> {
   double _chipLabelVertPadding = 5;
   double _chipWidth;
 
-  String _colorId;
-  int _colorType = 0;
+  static final int _shades = 4;
+
+  ColorShade _colorShade = ColorShade();
 
   @override
   Widget build(BuildContext context) {
@@ -66,34 +64,12 @@ class _ChangeColorState extends State<ChangeColor> {
                     vertical: _chipLabelVertPadding,
                   ),
                   backgroundColor: () {
-                    if (_colorType != null) {
-                      if (_colorType == 0) {
-                        return getNativeThemeData(
-                          _colorId,
-                          defaultThemeOfContext: context,
-                        ).primaryColorDark;
-                      } else if (_colorType == 1) {
-                        return getNativeThemeData(
-                          _colorId,
-                          defaultThemeOfContext: context,
-                        ).primaryColor;
-                      } else if (_colorType == 2) {
-                        return getNativeThemeData(
-                          _colorId,
-                          defaultThemeOfContext: context,
-                        ).accentColor;
-                      } else {
-                        return getNativeThemeData(
-                          _colorId,
-                          defaultThemeOfContext: context,
-                        ).primaryColorLight;
-                      }
-                    } else {
-                      return getNativeThemeData(
-                        _colorId,
-                        defaultThemeOfContext: context,
-                      ).primaryColor;
+                    if (_colorShade.color == null) {
+                      _colorShade.color =
+                          getNativeThemeData(ThemeProvider.themeOf(context).id)
+                              .primaryColor;
                     }
+                    return _colorShade.color;
                   }(),
                   elevation: 3.0,
                   label: Container(
@@ -114,23 +90,33 @@ class _ChangeColorState extends State<ChangeColor> {
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 controller: _controller,
-                itemCount: myAppThemes.length * 4,
+                itemCount: myAppThemes.length * _shades,
                 itemBuilder: (BuildContext context, int index) {
                   return Visibility(
                     child: Padding(
                       padding: EdgeInsets.all(_chipPadding + _chipPaddingExtra),
                       child: ActionChip(
                         backgroundColor: () {
-                          int newIndex = index ~/ 4;
+                          int themeIndex = index ~/ _shades;
+                          Shade shade = Shade.values[index % _shades];
+                          ThemeData theme = myAppThemes[themeIndex].data;
 
-                          if (index % 4 == 0) {
-                            return myAppThemes[newIndex].data.primaryColorDark;
-                          } else if (index % 4 == 1) {
-                            return myAppThemes[newIndex].data.primaryColor;
-                          } else if (index % 4 == 2) {
-                            return myAppThemes[newIndex].data.accentColor;
-                          } else {
-                            return myAppThemes[newIndex].data.primaryColorLight;
+                          switch (shade) {
+                            case Shade.primaryColorDark:
+                              return theme.primaryColorDark;
+                              break;
+                            case Shade.primaryColor:
+                              return theme.primaryColor;
+                              break;
+                            case Shade.accentColor:
+                              return theme.accentColor;
+                              break;
+                            case Shade.primaryColorLight:
+                              return theme.primaryColorLight;
+                              break;
+                            default:
+                              return defaultColor;
+                              break;
                           }
                         }(),
                         elevation: 3.0,
@@ -144,39 +130,28 @@ class _ChangeColorState extends State<ChangeColor> {
                         ),
                         onPressed: () {
                           setState(() {
-                            int _selectedColorIndex;
-                            int newIndex = index ~/ 4;
+                            int themeIndex = index ~/ _shades;
+                            Shade shade = Shade.values[index % _shades];
+                            ThemeData theme = myAppThemes[themeIndex].data;
 
-                            _colorType = index % 4;
-
-                            _colorId = myAppThemes[newIndex].id;
-
-                            _colorPressed =
-                                List.generate(myAppThemes.length, (i) => false);
-                            _colorPressed[newIndex] = true;
-
-                            Color _selectedColor;
-                            if (index % 4 == 0) {
-                              _selectedColorIndex = 0;
-                              _selectedColor =
-                                  myAppThemes[newIndex].data.primaryColorDark;
-                            } else if (index % 4 == 1) {
-                              _selectedColorIndex = 1;
-                              _selectedColor =
-                                  myAppThemes[newIndex].data.primaryColor;
-                            } else if (index % 4 == 2) {
-                              _selectedColorIndex = 2;
-                              _selectedColor =
-                                  myAppThemes[newIndex].data.accentColor;
-                            } else {
-                              _selectedColorIndex = 3;
-                              _selectedColor =
-                                  myAppThemes[newIndex].data.primaryColorLight;
+                            switch (shade) {
+                              case Shade.primaryColorDark:
+                                _colorShade.color = theme.primaryColorDark;
+                                break;
+                              case Shade.primaryColor:
+                                _colorShade.color = theme.primaryColor;
+                                break;
+                              case Shade.accentColor:
+                                _colorShade.color = theme.accentColor;
+                                break;
+                              case Shade.primaryColorLight:
+                                _colorShade.color = theme.primaryColorLight;
+                                break;
+                              default:
+                                break;
                             }
 
-                            widget.valueSetterColor(_selectedColor);
-                            widget.valueSetterString(myAppThemes[newIndex].id);
-                            widget.valueSetterInt(_selectedColorIndex);
+                            widget.valueSetterColorShade(_colorShade);
                           });
                         },
                       ),

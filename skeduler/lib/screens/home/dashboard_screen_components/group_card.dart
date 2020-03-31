@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:random_color/random_color.dart';
+import 'package:skeduler/shared/functions.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class GroupCard extends StatelessWidget {
   final String groupName;
@@ -24,8 +25,6 @@ class GroupCard extends StatelessWidget {
     final double _dimension =
         (MediaQuery.of(context).size.width - 10) / 2 - 2 * _padding;
 
-    RandomColor _randomColor = RandomColor();
-
     return GestureDetector(
       onTap: () {},
       child: Container(
@@ -41,7 +40,9 @@ class GroupCard extends StatelessWidget {
                 width: _dimension,
                 decoration: BoxDecoration(
                   /// color: Colors.white,
-                  color: groupColor ?? _randomColor.randomColor(),
+                  color: groupColor ??
+                      getNativeThemeData(ThemeProvider.themeOf(context).id)
+                          .primaryColor,
                   borderRadius: BorderRadius.circular(_radius),
                   boxShadow: [
                     BoxShadow(
