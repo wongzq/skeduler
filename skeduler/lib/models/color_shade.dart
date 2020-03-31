@@ -23,16 +23,14 @@ class ColorShade {
     String themeId,
     Shade shade,
   }) {
-    bool _valid = false;
-
     /// use [Color] to set the values for [String] and [Shade]
     if (color != null && themeId == null && shade == null) {
-      _valid = setWithColor(color);
+      setWithColor(color);
     }
 
     /// use [String] and [Shade] to set the value for [Color]
     else if (color == null && themeId != null) {
-      _valid = setWithThemeIdAndShade(themeId, shade);
+      setWithThemeIdAndShade(themeId, shade);
     }
   }
 
@@ -41,14 +39,6 @@ class ColorShade {
   String get themeId => _themeId;
   Shade get shade => _shade;
   int get shadeIndex => _shade.index;
-  Color get primaryColor =>
-      colorFromThemeIdAndShade(_themeId, Shade.primaryColor);
-  Color get primaryColorDark =>
-      colorFromThemeIdAndShade(_themeId, Shade.primaryColorDark);
-  Color get primaryColorLight =>
-      colorFromThemeIdAndShade(_themeId, Shade.primaryColorLight);
-  Color get accentColor =>
-      colorFromThemeIdAndShade(_themeId, Shade.accentColor);
 
   /// setter methods
   set color(Color color) => setWithColor(color);
