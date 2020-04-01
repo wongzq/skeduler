@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auth_info.dart';
 import 'package:skeduler/screens/authentication/log_in.dart';
 import 'package:skeduler/screens/authentication/sign_up.dart';
-import 'package:skeduler/shared/loading.dart';
+import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 

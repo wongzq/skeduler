@@ -25,8 +25,7 @@ class ChangeColor extends StatefulWidget {
 }
 
 class _ChangeColorState extends State<ChangeColor> {
-  double _bodyHoriPadding = 20.0;
-  double _bodyVertPadding = 20.0;
+  double _bodyHoriPadding = 5.0;
   double _chipPadding = 5;
   double _chipPaddingExtra = 2;
   double _chipLabelHoriPadding = 5;
@@ -64,7 +63,7 @@ class _ChangeColorState extends State<ChangeColor> {
         });
       },
       title: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 5.0),
+        padding: EdgeInsets.symmetric(horizontal: _bodyHoriPadding),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
