@@ -11,15 +11,16 @@ import 'package:skeduler/services/database_service.dart';
 class DashboardScreen extends StatelessWidget {
   /// properties
   static const double _bodyPadding = 5.0;
-  final void Function({Group group}) callback;
+  final void Function() switchScreen;
 
-  DashboardScreen({this.callback});
+  DashboardScreen({this.switchScreen});
 
   /// methods
   @override
   Widget build(BuildContext context) {
     DatabaseService _dbs = Provider.of<DatabaseService>(context);
-    DrawerEnum selected = Provider.of<DrawerEnum>(context);
+    ValueNotifier<DrawerEnum> selected =
+        Provider.of<ValueNotifier<DrawerEnum>>(context);
 
     return Stack(
       children: <Widget>[
@@ -30,24 +31,28 @@ class DashboardScreen extends StatelessWidget {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               List<Group> _groups = snapshot.data;
               return GridView.builder(
-                itemCount: _groups != null ? _groups.length : 0,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2),
+                itemCount: _groups != null ? _groups.length : 0,
                 itemBuilder: (BuildContext context, int index) {
                   if (_groups[index] != null) {
-                    return GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        selected.value = DrawerEnums.group;
-                        callback(group: _groups[index]);
-                      },
-                      child: GroupCard(
-                        groupName: _groups[index].name,
-                        groupColor: _groups[index].colorShade.color,
-                        numOfMembers: _groups[index].numOfMembers,
-                        ownerName: _groups[index].ownerName,
-                      ),
-                    );
+                    return Consumer<ValueNotifier<Group>>(
+                        builder: (context, group, widget) {
+                      return GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          selected.value = DrawerEnum.group;
+                          group.value = _groups[index];
+                          switchScreen();
+                        },
+                        child: GroupCard(
+                          groupName: _groups[index].name,
+                          groupColor: _groups[index].colorShade.color,
+                          numOfMembers: _groups[index].numOfMembers,
+                          ownerName: _groups[index].ownerName,
+                        ),
+                      );
+                    });
                   } else {
                     return Container();
                   }

@@ -13,7 +13,7 @@ class Group {
   String _ownerEmail;
   String _ownerName;
 
-  List<Person> _people = [];
+  List<Profile> _people = [];
   List<Subject> _classes = [];
   List<Timetable> _timetables = [];
 
@@ -45,7 +45,7 @@ class Group {
   String get ownerName => _ownerName;
   int get numOfMembers => 1;
 
-  List<Person> get people => _people;
+  List<Profile> get people => _people;
   List<Subject> get classes => _classes;
   List<Timetable> get timetables => _timetables;
 }

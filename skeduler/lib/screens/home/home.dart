@@ -29,50 +29,58 @@ class _HomeState extends State<Home> {
   /// properties
   final AuthService _authService = AuthService();
 
-  // DrawerEnum _selected = DrawerEnum.dashboard;
-  DrawerEnum _selected = DrawerEnum(DrawerEnums.dashboard);
-  
-  void switchScreen({Group group}) {
-    setState(() {
-      if (group != null) {
-        _screens[DrawerEnums.group]['screen'] =
-            GroupScreen(group: group);
-      }
-    });
-  }
-
   /// Map of screens
-  static DashboardScreen _dashboardScreen = DashboardScreen();
-  static GroupScreen _groupScreen = GroupScreen();
-  static TimetableScreen _timetableScreen = TimetableScreen();
-  static ClassesScreen _classesScreen = ClassesScreen();
-  static PeopleScreen _peopleScreen = PeopleScreen();
-  static ProfileScreen _profileScreen = ProfileScreen();
-  static SettingsScreen _settingsScreen = SettingsScreen();
+  ValueNotifier<DrawerEnum> _selected =
+      ValueNotifier<DrawerEnum>(DrawerEnum.dashboard);
+  Map<DrawerEnum, Map<String, Object>> _screens;
 
-  Map<DrawerEnums, Map<String, Object>> _screens = {
-    DrawerEnums.dashboard: {'title': 'Dashboard', 'screen': _dashboardScreen},
-    DrawerEnums.group: {'title': 'Group', 'screen': _groupScreen},
-    DrawerEnums.timetable: {'title': 'Timetable', 'screen': _timetableScreen},
-    DrawerEnums.classes: {'title': 'Classes', 'screen': _classesScreen},
-    DrawerEnums.people: {'title': 'People', 'screen': _peopleScreen},
-    DrawerEnums.profile: {'title': 'Profile', 'screen': _profileScreen},
-    DrawerEnums.settings: {'title': 'Settings', 'screen': _settingsScreen},
-    DrawerEnums.logout: {'title': 'Logout', 'screen': null},
-  };
+  DashboardScreen _dashboardScreen = DashboardScreen();
+  GroupScreen _groupScreen = GroupScreen();
+  TimetableScreen _timetableScreen = TimetableScreen();
+  ClassesScreen _classesScreen = ClassesScreen();
+  PeopleScreen _peopleScreen = PeopleScreen();
+  ProfileScreen _profileScreen = ProfileScreen();
+  SettingsScreen _settingsScreen = SettingsScreen();
+
+  ValueNotifier<Group> _group = ValueNotifier<Group>(null);
+  // ValueNotifier<List<Timetable>> _timetables =
+  //     ValueNotifier<List<Timetable>>(null);
+  // ValueNotifier<List<Subject>> _subjects = ValueNotifier<List<Subject>>(null);
+  // ValueNotifier<List<Profile>> _profiles = ValueNotifier<List<Profile>>(null);
+  // ValueNotifier<Profile> _profile = ValueNotifier<Profile>(null);
+
+  void switchScreen() => setState(() {});
+  @override
+  void initState() {
+    _screens = {
+      DrawerEnum.dashboard: {'title': 'Dashboard', 'screen': _dashboardScreen},
+      DrawerEnum.group: {'title': 'Group', 'screen': _groupScreen},
+      DrawerEnum.timetable: {'title': 'Timetable', 'screen': _timetableScreen},
+      DrawerEnum.classes: {'title': 'Classes', 'screen': _classesScreen},
+      DrawerEnum.people: {'title': 'People', 'screen': _peopleScreen},
+      DrawerEnum.profile: {'title': 'Profile', 'screen': _profileScreen},
+      DrawerEnum.settings: {'title': 'Settings', 'screen': _settingsScreen},
+      DrawerEnum.logout: {'title': 'Logout', 'screen': null},
+    };
+    super.initState();
+  }
 
   /// methods
   @override
   Widget build(BuildContext context) {
-    _screens[DrawerEnums.dashboard]['screen'] =
-        DashboardScreen(callback: switchScreen);
+    _screens[DrawerEnum.dashboard]['screen'] =
+        DashboardScreen(switchScreen: switchScreen);
 
     User user = Provider.of<User>(context);
 
-    return ChangeNotifierProvider<DrawerEnum>.value(
-      value: _selected,
-      child: Consumer<DrawerEnum>(
-          builder: (BuildContext context, DrawerEnum selected, Widget widget) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ValueNotifier<DrawerEnum>>.value(
+            value: _selected),
+        ChangeNotifierProvider<ValueNotifier<Group>>.value(value: _group),
+      ],
+      child: Consumer<ValueNotifier<DrawerEnum>>(
+          builder: (BuildContext context, ValueNotifier<DrawerEnum> selected, Widget widget) {
         return Scaffold(
           /// Scaffold - appBar
           appBar: AppBar(
@@ -107,19 +115,19 @@ class _HomeState extends State<Home> {
 
                     /// Dashboard
                     Container(
-                      color: selected.value == DrawerEnums.dashboard
+                      color: selected.value == DrawerEnum.dashboard
                           ? Theme.of(context).primaryColorLight
                           : null,
                       child: ListTile(
                         dense: true,
                         leading: Icon(Icons.dashboard),
-                        title: Text(_screens[DrawerEnums.dashboard]['title']),
-                        selected: selected.value == DrawerEnums.dashboard
+                        title: Text(_screens[DrawerEnum.dashboard]['title']),
+                        selected: selected.value == DrawerEnum.dashboard
                             ? true
                             : false,
                         onTap: () {
                           setState(
-                              () => selected.value = DrawerEnums.dashboard);
+                              () => selected.value = DrawerEnum.dashboard);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -129,17 +137,17 @@ class _HomeState extends State<Home> {
 
                     /// Group
                     Container(
-                      color: selected.value == DrawerEnums.group
+                      color: selected.value == DrawerEnum.group
                           ? Theme.of(context).primaryColorLight
                           : null,
                       child: ListTile(
                         dense: true,
                         leading: Icon(FontAwesomeIcons.users),
-                        title: Text(_screens[DrawerEnums.group]['title']),
+                        title: Text(_screens[DrawerEnum.group]['title']),
                         selected:
-                            selected.value == DrawerEnums.group ? true : false,
+                            selected.value == DrawerEnum.group ? true : false,
                         onTap: () {
-                          setState(() => selected.value = DrawerEnums.group);
+                          setState(() => selected.value = DrawerEnum.group);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -147,19 +155,19 @@ class _HomeState extends State<Home> {
 
                     /// Timetable
                     Container(
-                      color: selected.value == DrawerEnums.timetable
+                      color: selected.value == DrawerEnum.timetable
                           ? Theme.of(context).primaryColorLight
                           : null,
                       child: ListTile(
                         dense: true,
                         leading: Icon(Icons.table_chart),
-                        title: Text(_screens[DrawerEnums.timetable]['title']),
-                        selected: selected.value == DrawerEnums.timetable
+                        title: Text(_screens[DrawerEnum.timetable]['title']),
+                        selected: selected.value == DrawerEnum.timetable
                             ? true
                             : false,
                         onTap: () {
                           setState(
-                              () => selected.value = DrawerEnums.timetable);
+                              () => selected.value = DrawerEnum.timetable);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -167,18 +175,18 @@ class _HomeState extends State<Home> {
 
                     /// Classes
                     Container(
-                      color: selected.value == DrawerEnums.classes
+                      color: selected.value == DrawerEnum.classes
                           ? Theme.of(context).primaryColorLight
                           : null,
                       child: ListTile(
                         dense: true,
                         leading: Icon(Icons.school),
-                        title: Text(_screens[DrawerEnums.classes]['title']),
-                        selected: selected.value == DrawerEnums.classes
+                        title: Text(_screens[DrawerEnum.classes]['title']),
+                        selected: selected.value == DrawerEnum.classes
                             ? true
                             : false,
                         onTap: () {
-                          setState(() => selected.value = DrawerEnums.classes);
+                          setState(() => selected.value = DrawerEnum.classes);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -186,17 +194,17 @@ class _HomeState extends State<Home> {
 
                     /// People
                     Container(
-                      color: selected.value == DrawerEnums.people
+                      color: selected.value == DrawerEnum.people
                           ? Theme.of(context).primaryColorLight
                           : null,
                       child: ListTile(
                         dense: true,
                         leading: Icon(Icons.people),
-                        title: Text(_screens[DrawerEnums.people]['title']),
+                        title: Text(_screens[DrawerEnum.people]['title']),
                         selected:
-                            selected.value == DrawerEnums.people ? true : false,
+                            selected.value == DrawerEnum.people ? true : false,
                         onTap: () {
-                          setState(() => selected.value = DrawerEnums.people);
+                          setState(() => selected.value = DrawerEnum.people);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -204,18 +212,18 @@ class _HomeState extends State<Home> {
 
                     /// Profile
                     Container(
-                      color: selected.value == DrawerEnums.profile
+                      color: selected.value == DrawerEnum.profile
                           ? Theme.of(context).primaryColorLight
                           : null,
                       child: ListTile(
                         dense: true,
                         leading: Icon(Icons.person),
-                        title: Text(_screens[DrawerEnums.profile]['title']),
-                        selected: selected.value == DrawerEnums.profile
+                        title: Text(_screens[DrawerEnum.profile]['title']),
+                        selected: selected.value == DrawerEnum.profile
                             ? true
                             : false,
                         onTap: () {
-                          setState(() => selected.value = DrawerEnums.profile);
+                          setState(() => selected.value = DrawerEnum.profile);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -225,18 +233,18 @@ class _HomeState extends State<Home> {
 
                     /// Settings
                     Container(
-                      color: selected.value == DrawerEnums.settings
+                      color: selected.value == DrawerEnum.settings
                           ? Theme.of(context).primaryColorLight
                           : null,
                       child: ListTile(
                         dense: true,
                         leading: Icon(Icons.settings),
-                        title: Text(_screens[DrawerEnums.settings]['title']),
-                        selected: selected.value == DrawerEnums.settings
+                        title: Text(_screens[DrawerEnum.settings]['title']),
+                        selected: selected.value == DrawerEnum.settings
                             ? true
                             : false,
                         onTap: () {
-                          setState(() => selected.value = DrawerEnums.settings);
+                          setState(() => selected.value = DrawerEnum.settings);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -244,15 +252,15 @@ class _HomeState extends State<Home> {
 
                     /// Logout
                     Container(
-                      color: selected.value == DrawerEnums.logout
+                      color: selected.value == DrawerEnum.logout
                           ? Theme.of(context).primaryColorLight
                           : null,
                       child: ListTile(
                         dense: true,
                         leading: Icon(Icons.exit_to_app),
-                        title: Text(_screens[DrawerEnums.logout]['title']),
+                        title: Text(_screens[DrawerEnum.logout]['title']),
                         selected:
-                            selected.value == DrawerEnums.logout ? true : false,
+                            selected.value == DrawerEnum.logout ? true : false,
                         onTap: () {
                           //setState(() => selected.value = DrawerEnum.logout);
                           showDialog(

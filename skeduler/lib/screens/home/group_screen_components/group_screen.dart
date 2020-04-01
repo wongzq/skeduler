@@ -27,17 +27,18 @@ class _GroupScreenState extends State<GroupScreen> {
 
   @override
   void initState() {
-    _groupName = widget.group.name;
-    _groupDescription = widget.group.description;
-    _groupColorShade = widget.group.colorShade;
-    _groupOwnerName = widget.group.ownerName;
     _expanded = ValueNotifier<bool>(false);
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    Group _group = Provider.of<ValueNotifier<Group>>(context).value;
+    _groupName = _group.name;
+    _groupDescription = _group.description;
+    _groupColorShade = _group.colorShade;
+    _groupOwnerName = _group.ownerName;
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => unfocus(),
