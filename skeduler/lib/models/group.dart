@@ -5,6 +5,8 @@ import 'package:skeduler/models/timetable.dart';
 
 class Group {
   /// properties
+  String _uid;
+
   String _name;
   String _description;
   ColorShade _colorShade;
@@ -16,13 +18,15 @@ class Group {
   List<Timetable> _timetables = [];
 
   /// constructor
-  Group({
+  Group(
+    String uid, {
     String name = '',
     String description = '',
     ColorShade colorShade,
     String ownerEmail = '',
     String ownerName = '',
   }) {
+    _uid = uid;
     _name = name;
     _description = description;
     _colorShade = colorShade;

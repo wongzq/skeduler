@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/drawer_enum.dart';
 import 'package:skeduler/models/group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/create_group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
@@ -30,11 +31,19 @@ class DashboardScreen extends StatelessWidget {
                     crossAxisCount: 2),
                 itemBuilder: (BuildContext context, int index) {
                   if (_groups[index] != null) {
-                    return GroupCard(
-                      groupName: _groups[index].name,
-                      groupColor: _groups[index].colorShade.color,
-                      numOfMembers: _groups[index].numOfMembers,
-                      ownerName: _groups[index].ownerName,
+                    return GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        // DrawerEnum selected = Provider.of<DrawerEnum>(context);
+                        // selected = DrawerEnum.group;
+                        print('tapped');
+                      },
+                      child: GroupCard(
+                        groupName: _groups[index].name,
+                        groupColor: _groups[index].colorShade.color,
+                        numOfMembers: _groups[index].numOfMembers,
+                        ownerName: _groups[index].ownerName,
+                      ),
                     );
                   } else {
                     return Container();

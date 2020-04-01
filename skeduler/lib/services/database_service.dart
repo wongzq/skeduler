@@ -75,10 +75,14 @@ class DatabaseService {
     return await groupsCollection.document().setData({
       'name': name,
       'description': description,
-      'themeId': colorShade.themeId,
-      'shade': colorShade.shadeIndex,
-      'ownerEmail': ownerEmail,
-      'ownerName': ownerName,
+      'colorShade': {
+        'themeId': colorShade.themeId,
+        'shade': colorShade.shadeIndex,
+      },
+      'owner': {
+        'email': ownerEmail,
+        'name': ownerName,
+      },
     });
   }
 
@@ -94,10 +98,14 @@ class DatabaseService {
     return await groupsCollection.document(groupId).updateData({
       'name': name,
       'description': description,
-      'themeId': colorShade.themeId,
-      'shade': colorShade.shade,
-      'ownerEmail': ownerEmail,
-      'ownerName': ownerName,
+      'colorShade': {
+        'themeId': colorShade.themeId,
+        'shade': colorShade.shadeIndex,
+      },
+      'owner': {
+        'email': ownerEmail,
+        'name': ownerName,
+      },
     });
   }
 
@@ -123,14 +131,15 @@ class DatabaseService {
   /// convert snapshot to [Group]
   Group _groupFromSnapshot(DocumentSnapshot snapshot) {
     return Group(
+      snapshot.documentID,
       name: snapshot.data['name'] ?? '',
       description: snapshot.data['description'] ?? '',
       colorShade: ColorShade(
-        themeId: snapshot.data['themeId'],
-        shade: Shade.values[snapshot.data['shade'] as int],
+        themeId: snapshot.data['colorShade']['themeId'],
+        shade: Shade.values[snapshot.data['colorShade']['shade']],
       ),
-      ownerEmail: snapshot.data['ownerEmail'] ?? '',
-      ownerName: snapshot.data['ownerName'] ?? '',
+      ownerEmail: snapshot.data['owner']['email'] ?? '',
+      ownerName: snapshot.data['owner']['name'] ?? '',
     );
   }
 
