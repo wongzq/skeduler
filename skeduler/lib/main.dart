@@ -86,15 +86,15 @@ class MyApp extends StatelessWidget {
                   /// Provide UserData from User
                   return MultiProvider(
                     providers: [
+                      ChangeNotifierProvider<NativeTheme>.value(
+                        value: _nativeTheme,
+                      ),
                       Provider<DatabaseService>.value(
                         value: _databaseService,
                       ),
                       StreamProvider<User>.value(
                         value: _databaseService.user,
                       ),
-                      ChangeNotifierProvider<NativeTheme>.value(
-                        value: _nativeTheme,
-                      )
                     ],
                     child: MaterialApp(
                       title: 'Skeduler',
@@ -105,6 +105,8 @@ class MyApp extends StatelessWidget {
                             splashFactory: InkRipple.splashFactory,
                           ),
                       home: Wrapper(),
+                      // initialRoute: '/',
+                      // onGenerateRoute: RouteGenerator.generateRoute,
                     ),
                   );
                 },

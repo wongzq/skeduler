@@ -8,6 +8,7 @@ class LabelTextInput extends StatefulWidget {
   final ValueSetter<String> valueSetter;
   final String Function(String) validator;
   final TextEditingController controller;
+  final String initialValue;
 
   const LabelTextInput({
     this.formKey,
@@ -15,7 +16,7 @@ class LabelTextInput extends StatefulWidget {
     this.hintText = '',
     this.valueSetter,
     this.validator,
-    this.controller,
+    this.controller, this.initialValue,
   });
 
   @override
@@ -41,6 +42,7 @@ class _LabelTextInputState extends State<LabelTextInput> {
             child: Form(
               key: widget.formKey,
               child: TextFormField(
+                initialValue: widget.initialValue,
                 controller: widget.controller,
                 decoration: InputDecoration(
                   hintText: widget.hintText,

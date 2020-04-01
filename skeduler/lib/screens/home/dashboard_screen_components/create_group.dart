@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/color_shade.dart';
 import 'package:skeduler/models/user.dart';
-import 'package:skeduler/screens/home/dashboard_screen_components/change_color.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/change_color.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/label_text_input.dart';
 import 'package:skeduler/shared/ui_settings.dart';
@@ -68,6 +68,7 @@ class _CreateGroupState extends State<CreateGroup> {
                       _groupOwnerEmail,
                       _groupOwnerName,
                     );
+                    Navigator.of(context).pop();
                   }
                 : null,
           ),
@@ -82,26 +83,37 @@ class _CreateGroupState extends State<CreateGroup> {
           children: <Widget>[
             /// Required fields
             /// Name
-            LabelTextInput(
-              hintText: 'Required',
-              label: 'Name',
-              valueSetter: (value) {
-                setState(() {
-                  _groupName = value;
-                  _valid = value != null && value.trim() != '' ? true : false;
-                });
-              },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: LabelTextInput(
+                hintText: 'Required',
+                label: 'Name',
+                valueSetter: (value) {
+                  setState(() {
+                    _groupName = value;
+                    _valid = value != null && value.trim().length <= 30
+                        ? true
+                        : false;
+                  });
+                },
+              ),
             ),
 
             /// Description
-            LabelTextInput(
-              hintText: 'Optional',
-              label: 'Description',
-              valueSetter: (value) {
-                setState(() {
-                  _groupDescription = value;
-                });
-              },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: LabelTextInput(
+                hintText: 'Optional',
+                label: 'Description',
+                valueSetter: (value) {
+                  setState(() {
+                    _groupDescription = value;
+                    _valid = value != null && value.trim().length <= 200
+                        ? true
+                        : false;
+                  });
+                },
+              ),
             ),
 
             /// Color

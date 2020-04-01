@@ -1,4 +1,6 @@
-enum DrawerEnum {
+import 'package:flutter/cupertino.dart';
+
+enum DrawerEnums {
   dashboard,
   group,
   people,
@@ -7,4 +9,10 @@ enum DrawerEnum {
   profile,
   settings,
   logout,
+}
+
+class DrawerEnum extends ChangeNotifier {
+  DrawerEnums value;
+
+  DrawerEnum(this.value);
 }

@@ -88,14 +88,14 @@ class DatabaseService {
 
   /// update [Group] data
   Future updateGroupData(
-    String groupId, {
+    String groupDocId, {
     String name,
     String description,
     ColorShade colorShade,
     String ownerEmail,
     String ownerName,
   }) async {
-    return await groupsCollection.document(groupId).updateData({
+    return await groupsCollection.document(groupDocId).updateData({
       'name': name,
       'description': description,
       'colorShade': {
