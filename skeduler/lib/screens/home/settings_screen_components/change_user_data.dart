@@ -3,8 +3,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/user.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/label_text_input.dart';
 
 class ChangeUserData extends StatefulWidget {
   @override

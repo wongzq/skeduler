@@ -6,9 +6,9 @@ import 'package:skeduler/models/color_shade.dart';
 import 'package:skeduler/models/user.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/change_color.dart';
+import 'package:skeduler/shared/components/change_color.dart';
+import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/label_text_input.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 import 'package:theme_provider/theme_provider.dart';
 
@@ -19,7 +19,8 @@ class CreateGroup extends StatefulWidget {
 
 class _CreateGroupState extends State<CreateGroup> {
   /// properties
-  bool _valid = false;
+  bool _nameValid = false;
+  bool _descValid = true;
 
   String _groupName;
   String _groupDescription;
@@ -57,9 +58,9 @@ class _CreateGroupState extends State<CreateGroup> {
           FlatButton(
             child: Icon(
               Icons.check,
-              color: _valid ? Colors.green : null,
+              color: _nameValid && _descValid ? Colors.green : null,
             ),
-            onPressed: _valid
+            onPressed: _nameValid && _descValid
                 ? () {
                     _dbs.setGroupData(
                       _groupName,
@@ -88,12 +89,17 @@ class _CreateGroupState extends State<CreateGroup> {
               child: LabelTextInput(
                 hintText: 'Required',
                 label: 'Name',
-                valueSetter: (value) {
+                valueSetterText: (value) {
                   setState(() {
                     _groupName = value;
-                    _valid = value != null && value.trim().length <= 30
-                        ? true
-                        : false;
+                    _nameValid = value == null ||
+                            value.trim().length == 0 ||
+                            value.trim().length > 30
+                        ? false
+                        : true;
+                    print('>$value<');
+                    print(_nameValid);
+                    print(_descValid);
                   });
                 },
               ),
@@ -105,12 +111,12 @@ class _CreateGroupState extends State<CreateGroup> {
               child: LabelTextInput(
                 hintText: 'Optional',
                 label: 'Description',
-                valueSetter: (value) {
+                valueSetterText: (value) {
                   setState(() {
                     _groupDescription = value;
-                    _valid = value != null && value.trim().length <= 200
-                        ? true
-                        : false;
+                    _descValid = value == null || value.trim().length == 0
+                        ? value.trim().length > 100 ? false : true
+                        : true;
                   });
                 },
               ),
@@ -125,7 +131,6 @@ class _CreateGroupState extends State<CreateGroup> {
               },
             ),
 
-            Divider(thickness: 1.0),
             SizedBox(height: 10.0),
             Text(
               'Preview in dashboard',

@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/color_shade.dart';
 import 'package:skeduler/models/group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
-import 'package:skeduler/shared/change_color.dart';
+import 'package:skeduler/shared/components/change_color.dart';
+import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/label_text_input.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class GroupScreen extends StatefulWidget {
@@ -23,8 +23,7 @@ class _GroupScreenState extends State<GroupScreen> {
   ColorShade _groupColorShade;
   String _groupOwnerName;
 
-  bool _valid;
-  ValueNotifier<bool> _collapsed;
+  ValueNotifier<bool> _expanded;
 
   @override
   void initState() {
@@ -32,7 +31,7 @@ class _GroupScreenState extends State<GroupScreen> {
     _groupDescription = widget.group.description;
     _groupColorShade = widget.group.colorShade;
     _groupOwnerName = widget.group.ownerName;
-    _collapsed = ValueNotifier<bool>(false);
+    _expanded = ValueNotifier<bool>(false);
 
     super.initState();
   }
@@ -52,10 +51,9 @@ class _GroupScreenState extends State<GroupScreen> {
               initialValue: _groupName,
               hintText: 'Required',
               label: 'Name',
-              valueSetter: (value) {
+              valueSetterText: (value) {
                 setState(() {
                   _groupName = value;
-                  _valid = value != null && value.trim() != '' ? true : false;
                 });
               },
             ),
@@ -68,7 +66,7 @@ class _GroupScreenState extends State<GroupScreen> {
               initialValue: _groupDescription,
               hintText: 'Optional',
               label: 'Description',
-              valueSetter: (value) {
+              valueSetterText: (value) {
                 setState(() {
                   _groupDescription = value;
                 });
@@ -78,28 +76,27 @@ class _GroupScreenState extends State<GroupScreen> {
 
           /// Color
           Provider<bool>.value(
-            value: _collapsed.value,
+            value: _expanded.value,
             child: ChangeColor(
-              collapseable: true,
+              initialValue: _groupColorShade,
+              initialExpanded: _expanded.value,
               valueSetterColorShade: (value) {
                 setState(() {
                   _groupColorShade = value;
                 });
               },
-              valueSetterCollapsed: (value) {
+              valueSetterExpanded: (value) {
                 setState(() {
-                  _collapsed.value = value;
+                  _expanded.value = value;
                 });
               },
-              initialValue: _groupColorShade,
             ),
           ),
 
           Visibility(
-            visible: !_collapsed.value,
+            visible: !_expanded.value,
             child: Column(
               children: <Widget>[
-                Divider(thickness: 1.0),
                 SizedBox(height: 10.0),
 
                 Text(
@@ -127,10 +124,10 @@ class _GroupScreenState extends State<GroupScreen> {
                   }(),
                   hasNotification: false,
                 ),
+                Divider(thickness: 1.0),
               ],
             ),
           ),
-          Divider(thickness: 1.0),
         ],
       ),
     );

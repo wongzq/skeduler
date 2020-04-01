@@ -3,20 +3,23 @@ import 'package:flutter/material.dart';
 
 class LabelTextInput extends StatefulWidget {
   final GlobalKey<FormState> formKey;
+  final TextEditingController controller;
   final String label;
   final String hintText;
-  final ValueSetter<String> valueSetter;
-  final String Function(String) validator;
-  final TextEditingController controller;
   final String initialValue;
+  final String Function(String) validator;
+  final ValueSetter<String> valueSetterText;
+  final ValueSetter<String> valueSetterValid;
 
   const LabelTextInput({
     this.formKey,
+    this.controller,
     this.label = '',
     this.hintText = '',
-    this.valueSetter,
+    this.initialValue,
     this.validator,
-    this.controller, this.initialValue,
+    this.valueSetterText,
+    this.valueSetterValid,
   });
 
   @override
@@ -51,12 +54,21 @@ class _LabelTextInputState extends State<LabelTextInput> {
                   ),
                 ),
                 style: TextStyle(fontSize: 15.0),
-                onChanged: (value) => widget.valueSetter(value),
+                onChanged: (value) {
+                  if (widget.valueSetterText != null)
+                    widget.valueSetterText(value);
+                },
                 validator: (value) {
                   if (widget.validator != null) {
-                    return widget.validator(value);
+                    String validity = widget.validator(value);
+                    if (widget.valueSetterValid != null)
+                      widget.valueSetterValid(validity);
+                    return validity;
                   } else {
-                    return value != null && value != '' ? null : '';
+                    String validity = value != null && value != '' ? null : '';
+                    if (widget.valueSetterValid != null)
+                      widget.valueSetterValid(validity);
+                    return validity;
                   }
                 },
               ),
