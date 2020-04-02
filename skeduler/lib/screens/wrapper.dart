@@ -40,8 +40,9 @@ class _WrapperState extends State<Wrapper> {
     final user = Provider.of<AuthUser>(context);
 
     return WillPopScope(
-      onWillPop: _onWillPop,
+      onWillPop: Navigator.of(context).canPop() ? null : _onWillPop,
       child: user == null ? Authentication() : widget.widget,
     );
+    // return user == null ? Authentication() : widget.widget;
   }
 }
