@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group.dart';
-import 'package:skeduler/screens/home/group_screen_components/edit_group.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen_options.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/components/add_person.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
