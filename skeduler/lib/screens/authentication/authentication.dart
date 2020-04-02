@@ -89,6 +89,7 @@ class _AuthenticationState extends State<Authentication>
                       ),
                     ),
                   ),
+
                   /// Tab 2: Sign up
                   Tab(
                     text: null,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:skeduler/screens/home/home_drawer.dart';
 import 'package:skeduler/screens/home/settings_screen_components/change_theme.dart';
 import 'package:skeduler/screens/home/settings_screen_components/change_user_data.dart';
+import 'package:skeduler/shared/ui_settings.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -10,12 +12,22 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        ChangeUserData(),
-        Divider(),
-        ChangeTheme(),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        title: Text(
+          'Group',
+          style: textStyleAppBarTitle,
+        ),
+      ),
+      drawer: HomeDrawer(),
+      body: Column(
+        children: <Widget>[
+          ChangeUserData(),
+          Divider(),
+          ChangeTheme(),
+        ],
+      ),
     );
   }
 }

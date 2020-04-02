@@ -27,8 +27,6 @@ class DatabaseService {
 
   /// get [Group] data
   Stream<Group> getGroup(String groupDocId) {
-    print(groupsCollection.document(groupDocId));
-    print(groupsCollection.document(groupDocId).snapshots());
     return groupsCollection
         .document(groupDocId)
         .snapshots()
@@ -86,6 +84,10 @@ class DatabaseService {
         'name': ownerName,
       },
     });
+  }
+
+  Future deleteGroup(String docId) async {
+    return await groupsCollection.document(docId).delete();
   }
 
   /// update [Group] data

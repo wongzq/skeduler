@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/dashboard_screen.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen.dart';
+import 'package:skeduler/screens/home/profile_screen_components/profile_screen.dart';
+import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
 import 'package:skeduler/screens/wrapper.dart';
 
 class RouteGenerator {
@@ -9,19 +11,29 @@ class RouteGenerator {
     final args = settings.arguments;
 
     switch (settings.name) {
-      case '/':
-        return MaterialPageRoute(builder: (_) => Wrapper());
-        break;
-
       case '/dashboard':
         if (args == null) {
-          return MaterialPageRoute(builder: (_) => DashboardScreen());
+          return MaterialPageRoute(
+              builder: (_) => wrapWidget(DashboardScreen()));
         }
         break;
 
       case '/group':
-        if (args is String) {
-          return MaterialPageRoute(builder: (_) => GroupScreen());
+        if (args == null) {
+          return MaterialPageRoute(builder: (_) => wrapWidget(GroupScreen()));
+        }
+        break;
+
+      case '/profile':
+        if (args == null) {
+          return MaterialPageRoute(builder: (_) => wrapWidget(ProfileScreen()));
+        }
+        break;
+
+      case '/settings':
+        if (args == null) {
+          return MaterialPageRoute(
+              builder: (_) => wrapWidget(SettingsScreen()));
         }
         break;
 
@@ -29,5 +41,9 @@ class RouteGenerator {
         return null;
     }
     return null;
+  }
+
+  static Widget wrapWidget(Widget widget) {
+    return Wrapper(widget);
   }
 }

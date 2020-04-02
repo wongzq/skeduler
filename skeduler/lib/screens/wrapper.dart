@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/user.dart';
 import 'package:skeduler/screens/authentication/authentication.dart';
-import 'package:skeduler/screens/home/home.dart';
 
 class Wrapper extends StatefulWidget {
+  final Widget widget;
+
+  const Wrapper(this.widget);
+
   @override
   _WrapperState createState() => _WrapperState();
 }
@@ -31,13 +34,14 @@ class _WrapperState extends State<Wrapper> {
         false;
   }
 
+  /// Map of screens
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthUser>(context);
 
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: user == null ? Authentication() : Home(),
+      child: user == null ? Authentication() : widget.widget,
     );
   }
 }

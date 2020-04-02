@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/drawer_enum.dart';
 import 'package:skeduler/models/my_app_themes.dart';
 import 'package:skeduler/models/user.dart';
 import 'package:skeduler/models/native_theme.dart';
-import 'package:skeduler/screens/wrapper.dart';
+import 'package:skeduler/route_generator.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:theme_provider/theme_provider.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
 
+    DatabaseService _dbService;
     NativeTheme _nativeTheme = NativeTheme();
 
     return ThemeProvider(
@@ -79,13 +81,10 @@ class MyApp extends StatelessWidget {
               value: AuthService().user,
               child: Consumer<AuthUser>(
                 builder: (_, user, __) {
-                  DatabaseService _dbService;
                   _dbService =
                       DatabaseService(uid: user != null ? user.uid : '');
 
-                  /// Provide NativeTheme
-                  /// Provide DatabaseService
-                  /// Provide UserData from User
+                  /// Multiple Providers
                   return MultiProvider(
                     providers: [
                       ChangeNotifierProvider<NativeTheme>.value(
@@ -97,6 +96,17 @@ class MyApp extends StatelessWidget {
                       StreamProvider<User>.value(
                         value: _dbService.user,
                       ),
+
+                      /// Current Drawer Selected
+                      ChangeNotifierProvider<ValueNotifier<DrawerEnum>>(
+                        create: (_) =>
+                            ValueNotifier<DrawerEnum>(DrawerEnum.dashboard),
+                      ),
+
+                      /// Group Doc ID
+                      ChangeNotifierProvider<ValueNotifier<String>>(
+                        create: (_) => ValueNotifier<String>(''),
+                      )
                     ],
                     child: MaterialApp(
                       title: 'Skeduler',
@@ -106,9 +116,8 @@ class MyApp extends StatelessWidget {
                             highlightColor: Colors.transparent,
                             splashFactory: InkRipple.splashFactory,
                           ),
-                      home: Wrapper(),
-                      // initialRoute: '/',
-                      // onGenerateRoute: RouteGenerator.generateRoute,
+                      initialRoute: '/dashboard',
+                      onGenerateRoute: RouteGenerator.generateRoute,
                     ),
                   );
                 },
