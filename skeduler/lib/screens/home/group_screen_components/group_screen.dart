@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen_options.dart';
@@ -18,15 +17,6 @@ class GroupScreen extends StatefulWidget {
 }
 
 class _GroupScreenState extends State<GroupScreen> {
-  String _groupName;
-
-  @override
-  void initState() {
-    SchedulerBinding.instance
-        .addPostFrameCallback((_) => widget.refresh(groupName: _groupName));
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
@@ -91,6 +81,7 @@ class _GroupScreenState extends State<GroupScreen> {
                         ],
                       ),
                     );
-            });
+            },
+          );
   }
 }
