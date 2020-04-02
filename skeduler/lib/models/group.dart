@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:skeduler/models/color_shade.dart';
 import 'package:skeduler/models/person.dart';
 import 'package:skeduler/models/subject.dart';
@@ -48,4 +49,28 @@ class Group {
   List<Profile> get people => _people;
   List<Subject> get classes => _classes;
   List<Timetable> get timetables => _timetables;
+}
+
+class GroupMetadata extends ChangeNotifier {
+  String _docId;
+  String _name;
+
+  GroupMetadata({groupDocId, groupName}) {
+    _docId = groupDocId;
+    _name = groupName;
+    notifyListeners();
+  }
+
+  String get docId => _docId;
+  String get name => _name;
+
+  set docId(String value) {
+    _docId = value;
+    notifyListeners();
+  }
+
+  set name(String value) {
+    _name = value;
+    notifyListeners();
+  }
 }

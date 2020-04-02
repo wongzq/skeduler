@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group.dart';
@@ -9,21 +10,37 @@ import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class GroupScreen extends StatefulWidget {
+  final void Function({String groupName}) refresh;
+
+  const GroupScreen({this.refresh});
+
   @override
   _GroupScreenState createState() => _GroupScreenState();
 }
 
 class _GroupScreenState extends State<GroupScreen> {
+  String _groupName;
+
+  @override
+  void initState() {
+    SchedulerBinding.instance
+        .addPostFrameCallback((_) => widget.refresh(groupName: _groupName));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     DatabaseService _dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<String> _groupDocId =
-        Provider.of<ValueNotifier<String>>(context);
+    GroupMetadata _groupMeta = Provider.of<GroupMetadata>(context);
 
     return StreamBuilder(
-        stream: _dbService.getGroup(_groupDocId.value),
-        builder: (context, snapshot) {
+        stream: _dbService.getGroup(_groupMeta.docId),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
           Group _group = snapshot.data ?? null;
+          if (snapshot.data != null) {
+            _groupName = _group.name;
+            // widget.refresh();
+          }
 
           return snapshot.data == null
               ? Loading()

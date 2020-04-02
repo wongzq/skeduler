@@ -11,18 +11,17 @@ import 'package:skeduler/services/database_service.dart';
 class DashboardScreen extends StatelessWidget {
   /// properties
   static const double _bodyPadding = 5.0;
-  final void Function() switchScreen;
+  final void Function() refresh;
 
-  DashboardScreen({this.switchScreen});
+  DashboardScreen({this.refresh});
 
   /// methods
   @override
   Widget build(BuildContext context) {
     DatabaseService _dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<String> _groupDocId =
-        Provider.of<ValueNotifier<String>>(context);
-    ValueNotifier<DrawerEnum> selected =
+    ValueNotifier<DrawerEnum> _selected =
         Provider.of<ValueNotifier<DrawerEnum>>(context);
+    GroupMetadata _groupMeta = Provider.of<GroupMetadata>(context);
 
     return Stack(
       children: <Widget>[
@@ -41,9 +40,9 @@ class DashboardScreen extends StatelessWidget {
                     return GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
-                        selected.value = DrawerEnum.group;
-                        _groupDocId.value = _groups[index].groupDocId;
-                        switchScreen();
+                        _selected.value = DrawerEnum.group;
+                        _groupMeta.docId = _groups[index].groupDocId;
+                        refresh();
                       },
                       child: GroupCard(
                         groupName: _groups[index].name,
