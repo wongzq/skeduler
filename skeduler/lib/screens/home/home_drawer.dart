@@ -58,6 +58,7 @@ class HomeDrawer extends StatelessWidget {
                   selected:
                       selected.value == DrawerEnum.dashboard ? true : false,
                   onTap: () {
+                    selected.value = DrawerEnum.dashboard;
                     Navigator.of(context).pop();
                     Navigator.of(context).pushNamed('/dashboard');
                   },
@@ -77,6 +78,7 @@ class HomeDrawer extends StatelessWidget {
                   title: Text(_screens[DrawerEnum.group]['title']),
                   selected: selected.value == DrawerEnum.group ? true : false,
                   onTap: () {
+                    selected.value = DrawerEnum.group;
                     Navigator.of(context).pop();
                     Navigator.of(context).pushNamed('/group');
                   },
@@ -109,7 +111,8 @@ class HomeDrawer extends StatelessWidget {
                   dense: true,
                   leading: Icon(Icons.school),
                   title: Text(_screens[DrawerEnum.classes]['title']),
-                  selected: selected.value == DrawerEnum.classes ? true : false,
+                  selected:
+                      selected.value == DrawerEnum.classes ? true : false,
                   onTap: () {
                     Navigator.of(context).pop();
                   },
@@ -141,9 +144,12 @@ class HomeDrawer extends StatelessWidget {
                   dense: true,
                   leading: Icon(Icons.person),
                   title: Text(_screens[DrawerEnum.profile]['title']),
-                  selected: selected.value == DrawerEnum.profile ? true : false,
+                  selected:
+                      selected.value == DrawerEnum.profile ? true : false,
                   onTap: () {
+                    selected.value = DrawerEnum.profile;
                     Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed('/profile');
                   },
                 ),
               ),
@@ -162,7 +168,9 @@ class HomeDrawer extends StatelessWidget {
                   selected:
                       selected.value == DrawerEnum.settings ? true : false,
                   onTap: () {
+                    selected.value = DrawerEnum.settings;
                     Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed('/settings');
                   },
                 ),
               ),
