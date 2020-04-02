@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:skeduler/models/color_shade.dart';
 import 'package:skeduler/models/my_app_themes.dart';
 import 'package:theme_provider/theme_provider.dart';
 
@@ -51,9 +52,9 @@ String getNativeThemeIdFromId(String themeId) {
   return _indexOfDark != -1 ? themeId.substring(0, _indexOfDark) : themeId;
 }
 
-ThemeData getNativeThemeData(String colorId) {
-  int index = myAppThemes.indexWhere((theme) => theme.id == colorId);
-  int darkIndex = myAppDarkThemes.indexWhere((theme) => theme.id == colorId);
+ThemeData getNativeThemeData(String themeId) {
+  int index = myAppThemes.indexWhere((theme) => theme.id == themeId);
+  int darkIndex = myAppDarkThemes.indexWhere((theme) => theme.id == themeId);
   int defaultIndex = myAppThemes
       .indexWhere((theme) => theme.data.primaryColor == defaultColor);
 
@@ -64,4 +65,27 @@ ThemeData getNativeThemeData(String colorId) {
   } else {
     return myAppThemes[defaultIndex].data;
   }
+}
+
+Color getNativeThemeColorShade(ColorShade colorShade) {
+  ThemeData theme = getNativeThemeData(colorShade.themeId);
+
+  switch (colorShade.shade) {
+    case Shade.primaryColorDark:
+      return theme.primaryColorDark;
+      break;
+    case Shade.primaryColor:
+      return theme.primaryColor;
+      break;
+    case Shade.accentColor:
+      return theme.accentColor;
+      break;
+    case Shade.primaryColorLight:
+      return theme.primaryColorLight;
+      break;
+    case Shade.none:
+      return defaultColor;
+      break;
+  }
+  return null;
 }

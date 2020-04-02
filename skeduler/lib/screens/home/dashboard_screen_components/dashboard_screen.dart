@@ -52,7 +52,7 @@ class DashboardScreen extends StatelessWidget {
                         onTap: () {
                           _selected.value = DrawerEnum.group;
                           _groupDocId.value = _groups[index].groupDocId;
-                          Navigator.of(context).pushNamed('/group');
+                          Navigator.pushNamed(context, '/group');
                         },
                         child: GroupCard(
                           groupName: _groups[index].name,

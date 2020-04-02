@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group.dart';
-import 'package:skeduler/screens/home/group_screen_components/edit_group.dart';
+import 'package:skeduler/models/my_app_themes.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/add_person.dart';
+import 'package:skeduler/shared/functions.dart';
 
 class GroupScreenOptions extends StatelessWidget {
   @override
@@ -19,12 +20,28 @@ class GroupScreenOptions extends StatelessWidget {
         builder: (context, snapshot) {
           Group group = snapshot.data;
 
+          Color mainIconBackgroundColor;
+          Color iconBackgroundColor;
+          Color labelBackgroundColor;
+
+          if (group != null) {
+            mainIconBackgroundColor =
+                getNativeThemeData(group.colorShade.themeId).primaryColor ??
+                    defaultColor;
+            iconBackgroundColor =
+                getNativeThemeData(group.colorShade.themeId).primaryColorDark ??
+                    defaultColor;
+            labelBackgroundColor =
+                getNativeThemeData(group.colorShade.themeId).primaryColorDark ??
+                    defaultColor;
+          }
+
           return Align(
             alignment: Alignment.bottomRight,
             child: Padding(
               padding: const EdgeInsets.only(bottom: 20.0, right: 20.0),
               child: SpeedDial(
-                backgroundColor: Theme.of(context).primaryColor,
+                backgroundColor: mainIconBackgroundColor,
                 overlayColor: Colors.grey,
                 overlayOpacity: 0.8,
                 curve: Curves.easeOutCubic,
@@ -129,7 +146,7 @@ class GroupScreenOptions extends StatelessWidget {
 
                   // Edit group information
                   SpeedDialChild(
-                    backgroundColor: Theme.of(context).primaryColorDark,
+                    backgroundColor: iconBackgroundColor,
                     foregroundColor: Colors.white,
                     child: Icon(
                       Icons.edit,
@@ -140,7 +157,7 @@ class GroupScreenOptions extends StatelessWidget {
                       width: 150.0,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColorDark,
+                        color: labelBackgroundColor,
                         borderRadius: BorderRadius.circular(20.0),
                         boxShadow: [
                           BoxShadow(
@@ -161,18 +178,14 @@ class GroupScreenOptions extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditGroup(group),
-                        ),
-                      );
+                      Navigator.of(context)
+                          .pushNamed('/group/edit', arguments: group);
                     },
                   ),
 
                   // Add subject
                   SpeedDialChild(
-                    backgroundColor: Theme.of(context).primaryColorDark,
+                    backgroundColor: iconBackgroundColor,
                     foregroundColor: Colors.white,
                     child: Icon(
                       Icons.school,
@@ -183,7 +196,7 @@ class GroupScreenOptions extends StatelessWidget {
                       width: 150.0,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColorDark,
+                        color: labelBackgroundColor,
                         borderRadius: BorderRadius.circular(20.0),
                         boxShadow: [
                           BoxShadow(
@@ -208,7 +221,7 @@ class GroupScreenOptions extends StatelessWidget {
 
                   /// Add member
                   SpeedDialChild(
-                    backgroundColor: Theme.of(context).primaryColorDark,
+                    backgroundColor: iconBackgroundColor,
                     foregroundColor: Colors.white,
                     child: Icon(
                       Icons.person_add,
@@ -219,7 +232,7 @@ class GroupScreenOptions extends StatelessWidget {
                       width: 150.0,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColorDark,
+                        color: labelBackgroundColor,
                         borderRadius: BorderRadius.circular(20.0),
                         boxShadow: [
                           BoxShadow(

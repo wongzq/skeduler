@@ -112,7 +112,7 @@ class _CreateGroupState extends State<CreateGroup> {
                   setState(() {
                     _groupDescription = value;
                     _descValid = value == null || value.trim().length == 0
-                        ? value.trim().length > 100 ? false : true
+                        ? value.trim().length >= 100 ? false : true
                         : true;
                   });
                 },

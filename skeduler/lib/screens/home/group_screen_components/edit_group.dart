@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/color_shade.dart';
 import 'package:skeduler/models/group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
+import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/change_color.dart';
 import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -23,6 +24,7 @@ class _EditGroupState extends State<EditGroup> {
   String _groupDescription;
   ColorShade _groupColorShade;
   String _groupOwnerName;
+  String _groupOwnerEmail;
 
   ValueNotifier<bool> _expanded;
 
@@ -32,12 +34,19 @@ class _EditGroupState extends State<EditGroup> {
     _groupDescription = widget.group.description;
     _groupColorShade = widget.group.colorShade;
     _groupOwnerName = widget.group.ownerName;
+    _groupOwnerEmail = widget.group.ownerEmail;
+
     _expanded = ValueNotifier<bool>(false);
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    DatabaseService dbService = Provider.of<DatabaseService>(context);
+    GlobalKey<FormState> _formKeyName = GlobalKey<FormState>();
+    GlobalKey<FormState> _formKeyDesc = GlobalKey<FormState>();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -59,12 +68,20 @@ class _EditGroupState extends State<EditGroup> {
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: LabelTextInput(
                     initialValue: _groupName,
-                    hintText: 'Required',
+                    hintText: widget.group.name,
                     label: 'Name',
                     valueSetterText: (value) {
-                      setState(() {
-                        _groupName = value;
-                      });
+                      _groupName = value;
+                    },
+                    formKey: _formKeyName,
+                    validator: (value) {
+                      if (value == null || value.trim().length == 0) {
+                        return 'Name cannot be empty';
+                      } else if (value.trim().length > 30) {
+                        return 'Name must be 30 characters or less';
+                      } else {
+                        return null;
+                      }
                     },
                   ),
                 ),
@@ -74,12 +91,18 @@ class _EditGroupState extends State<EditGroup> {
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: LabelTextInput(
                     initialValue: _groupDescription,
-                    hintText: 'Optional',
+                    hintText: widget.group.description,
                     label: 'Description',
                     valueSetterText: (value) {
-                      setState(() {
-                        _groupDescription = value;
-                      });
+                      _groupDescription = value;
+                    },
+                    formKey: _formKeyDesc,
+                    validator: (value) {
+                      if (value.trim().length >= 100) {
+                        return 'Description must be 100 characters or less';
+                      } else {
+                        return null;
+                      }
                     },
                   ),
                 ),
@@ -150,20 +173,44 @@ class _EditGroupState extends State<EditGroup> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
+                  // Cancel changes
                   FloatingActionButton(
                     heroTag: 'Cancel',
                     backgroundColor: Colors.red,
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
                     child: Icon(
                       Icons.close,
                       color: Colors.white,
                     ),
                   ),
+
                   SizedBox(width: 20.0),
+
+                  // Confirm amd make changes
                   FloatingActionButton(
                     heroTag: 'Confirm',
                     backgroundColor: Colors.green,
-                    onPressed: () {},
+                    onPressed: () {
+                      if (_formKeyName.currentState.validate() &&
+                          _formKeyDesc.currentState.validate()) {
+                        if (_groupName.trim() != widget.group.name ||
+                            _groupDescription.trim() !=
+                                widget.group.description ||
+                            _groupColorShade != widget.group.colorShade) {
+                          dbService.updateGroupData(
+                            widget.group.groupDocId,
+                            name: _groupName.trim(),
+                            description: _groupDescription.trim(),
+                            colorShade: _groupColorShade,
+                            ownerName: _groupOwnerName.trim(),
+                            ownerEmail: _groupOwnerEmail.trim(),
+                          );
+                        }
+                        Navigator.of(context).pop();
+                      }
+                    },
                     child: Icon(
                       Icons.check,
                       color: Colors.white,

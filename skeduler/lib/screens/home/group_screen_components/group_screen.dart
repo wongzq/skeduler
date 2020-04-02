@@ -5,6 +5,7 @@ import 'package:skeduler/screens/home/group_screen_components/group_screen_optio
 import 'package:skeduler/screens/home/home_drawer.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/loading.dart';
+import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class GroupScreen extends StatefulWidget {
@@ -43,7 +44,12 @@ class _GroupScreenState extends State<GroupScreen> {
                   ? Loading()
                   : Scaffold(
                       appBar: AppBar(
-                        backgroundColor: Theme.of(context).primaryColor,
+                        backgroundColor:
+                            getNativeThemeColorShade(group.colorShade),
+                        iconTheme: getNativeThemeData(group.colorShade.themeId)
+                            .iconTheme,
+                        textTheme: getNativeThemeData(group.colorShade.themeId)
+                            .textTheme,
                         title: group.name == null
                             ? Text(
                                 'Group',
@@ -58,7 +64,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                   ),
                                   Text(
                                     'Group',
-                                    style: textStyleBodyLight,
+                                    style: textStyleBody,
                                   )
                                 ],
                               ),

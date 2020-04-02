@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:skeduler/models/group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/dashboard_screen.dart';
+import 'package:skeduler/screens/home/group_screen_components/edit_group.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen.dart';
 import 'package:skeduler/screens/home/profile_screen_components/profile_screen.dart';
 import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
@@ -21,6 +23,12 @@ class RouteGenerator {
       case '/group':
         if (args == null) {
           return MaterialPageRoute(builder: (_) => wrapWidget(GroupScreen()));
+        }
+        break;
+      
+      case '/group/edit':
+        if (args is Group) {
+          return MaterialPageRoute(builder: (_) => wrapWidget(EditGroup(args)));
         }
         break;
 
