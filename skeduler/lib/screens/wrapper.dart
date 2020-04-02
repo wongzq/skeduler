@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/drawer_enum.dart';
 import 'package:skeduler/models/user.dart';
 import 'package:skeduler/screens/authentication/authentication.dart';
+import 'package:skeduler/screens/home/dashboard_screen_components/dashboard_screen.dart';
 import 'package:skeduler/screens/home/home.dart';
 
 class Wrapper extends StatefulWidget {
@@ -31,13 +33,30 @@ class _WrapperState extends State<Wrapper> {
         false;
   }
 
+  /// Map of screens
+  ValueNotifier<DrawerEnum> _selected =
+      ValueNotifier<DrawerEnum>(DrawerEnum.dashboard);
+  ValueNotifier<String> _groupDocId = ValueNotifier(null);
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthUser>(context);
 
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: user == null ? Authentication() : Home(),
+      child: user == null
+          ? Authentication()
+          : MultiProvider(
+              providers: [
+                ChangeNotifierProvider<ValueNotifier<String>>.value(
+                  value: _groupDocId,
+                ),
+                ChangeNotifierProvider<ValueNotifier<DrawerEnum>>.value(
+                  value: _selected,
+                ),
+              ],
+              child: Home(),
+            ),
     );
   }
 }

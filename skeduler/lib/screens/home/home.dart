@@ -6,6 +6,7 @@ import 'package:skeduler/models/user.dart';
 import 'package:skeduler/screens/home/classes_screen_components/classes_screen.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/dashboard_screen.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen.dart';
+import 'package:skeduler/screens/home/home_drawer.dart';
 import 'package:skeduler/screens/home/people_screen_components/people_screen.dart';
 import 'package:skeduler/screens/home/profile_screen_components/profile_screen.dart';
 import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
@@ -66,8 +67,7 @@ class _HomeState extends State<Home> {
     _screens[DrawerEnum.dashboard]['screen'] =
         DashboardScreen(switchScreen: switchScreen);
 
-    User user = Provider.of<User>(context);
-
+    
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ValueNotifier<String>>.value(
@@ -90,215 +90,7 @@ class _HomeState extends State<Home> {
           ),
 
           /// Scaffold - drawer
-          drawer: Container(
-            width: MediaQuery.of(context).size.width * 0.75,
-            child: Drawer(
-              child: ListTileTheme(
-                child: Column(
-                  children: <Widget>[
-                    /// User data display
-                    UserAccountsDrawerHeader(
-                      currentAccountPicture: CircleAvatar(
-                        child: Icon(Icons.person),
-                      ),
-                      accountName: Text(
-                        user != null ? user.name : 'Name',
-                        style: TextStyle(fontSize: 24.0),
-                      ),
-                      accountEmail: Text(
-                        user != null ? user.email : 'email',
-                        style: TextStyle(fontSize: 13.0),
-                      ),
-                    ),
-
-                    /// Dashboard
-                    Container(
-                      color: selected.value == DrawerEnum.dashboard
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.dashboard),
-                        title: Text(_screens[DrawerEnum.dashboard]['title']),
-                        selected: selected.value == DrawerEnum.dashboard
-                            ? true
-                            : false,
-                        onTap: () {
-                          setState(() => selected.value = DrawerEnum.dashboard);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    Divider(thickness: 1.0),
-
-                    /// Group
-                    Container(
-                      color: selected.value == DrawerEnum.group
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(FontAwesomeIcons.users),
-                        title: Text(_screens[DrawerEnum.group]['title']),
-                        selected:
-                            selected.value == DrawerEnum.group ? true : false,
-                        onTap: () {
-                          setState(() => selected.value = DrawerEnum.group);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    /// Timetable
-                    Container(
-                      color: selected.value == DrawerEnum.timetable
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.table_chart),
-                        title: Text(_screens[DrawerEnum.timetable]['title']),
-                        selected: selected.value == DrawerEnum.timetable
-                            ? true
-                            : false,
-                        onTap: () {
-                          setState(() => selected.value = DrawerEnum.timetable);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    /// Classes
-                    Container(
-                      color: selected.value == DrawerEnum.classes
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.school),
-                        title: Text(_screens[DrawerEnum.classes]['title']),
-                        selected:
-                            selected.value == DrawerEnum.classes ? true : false,
-                        onTap: () {
-                          setState(() => selected.value = DrawerEnum.classes);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    /// People
-                    Container(
-                      color: selected.value == DrawerEnum.people
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.people),
-                        title: Text(_screens[DrawerEnum.people]['title']),
-                        selected:
-                            selected.value == DrawerEnum.people ? true : false,
-                        onTap: () {
-                          setState(() => selected.value = DrawerEnum.people);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    /// Profile
-                    Container(
-                      color: selected.value == DrawerEnum.profile
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.person),
-                        title: Text(_screens[DrawerEnum.profile]['title']),
-                        selected:
-                            selected.value == DrawerEnum.profile ? true : false,
-                        onTap: () {
-                          setState(() => selected.value = DrawerEnum.profile);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    Divider(thickness: 1.0),
-
-                    /// Settings
-                    Container(
-                      color: selected.value == DrawerEnum.settings
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.settings),
-                        title: Text(_screens[DrawerEnum.settings]['title']),
-                        selected: selected.value == DrawerEnum.settings
-                            ? true
-                            : false,
-                        onTap: () {
-                          setState(() => selected.value = DrawerEnum.settings);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-
-                    /// Logout
-                    Container(
-                      color: selected.value == DrawerEnum.logout
-                          ? Theme.of(context).primaryColorLight
-                          : null,
-                      child: ListTile(
-                        dense: true,
-                        leading: Icon(Icons.exit_to_app),
-                        title: Text(_screens[DrawerEnum.logout]['title']),
-                        selected:
-                            selected.value == DrawerEnum.logout ? true : false,
-                        onTap: () {
-                          //setState(() => selected.value = DrawerEnum.logout);
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                content: Text('Do you want to logout?'),
-                                actions: <Widget>[
-                                  /// CANCEL button
-                                  FlatButton(
-                                    child: Text('CANCEL'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-
-                                  /// OK button
-                                  FlatButton(
-                                    child: Text('OK'),
-                                    onPressed: () {
-                                      /// pop AlertDialog
-                                      Navigator.of(context).pop();
-
-                                      /// pop Drawer
-                                      Navigator.of(context).pop();
-
-                                      _authService.logOut();
-
-                                      /// ThemeProvider.controllerOf(context).setTheme('default');
-                                    },
-                                  )
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
+          drawer: HomeDrawer(),
           /// Scaffold - body
           body: () {
             return _screens[selected.value]['screen'];
