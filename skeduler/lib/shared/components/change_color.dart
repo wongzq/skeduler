@@ -32,9 +32,9 @@ class _ChangeColorState extends State<ChangeColor> {
   double _chipLabelVertPadding = 5;
   double _chipWidth;
 
-  bool _expanded;
   int _shades = 4;
   ColorShade _colorShade;
+  bool _expanded;
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _ChangeColorState extends State<ChangeColor> {
     ScrollController _controller = ScrollController();
 
     return ExpansionTile(
-      initiallyExpanded: !widget.initialExpanded,
+      initiallyExpanded: widget.initialExpanded,
       onExpansionChanged: (expanded) {
         setState(() {
           _expanded = !_expanded;
@@ -62,6 +62,13 @@ class _ChangeColorState extends State<ChangeColor> {
             widget.valueSetterExpanded(_expanded);
         });
       },
+      trailing: Icon(
+        _expanded ? Icons.expand_less : Icons.expand_more,
+        color:
+            ThemeProvider.themeOf(context).data.brightness == Brightness.light
+                ? Colors.black
+                : Colors.white,
+      ),
       title: Padding(
         padding: EdgeInsets.symmetric(horizontal: _bodyHoriPadding),
         child: Row(
@@ -71,6 +78,10 @@ class _ChangeColorState extends State<ChangeColor> {
               'Color',
               style: TextStyle(
                 fontSize: 15.0,
+                color: ThemeProvider.themeOf(context).data.brightness ==
+                        Brightness.light
+                    ? Colors.black
+                    : Colors.white,
               ),
             ),
             Padding(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/drawer_enum.dart';
-import 'package:skeduler/models/group.dart';
 import 'package:skeduler/models/user.dart';
 import 'package:skeduler/screens/home/classes_screen_components/classes_screen.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/dashboard_screen.dart';
@@ -42,14 +41,10 @@ class _HomeState extends State<Home> {
   ProfileScreen _profileScreen = ProfileScreen();
   SettingsScreen _settingsScreen = SettingsScreen();
 
-  ValueNotifier<Group> _group = ValueNotifier<Group>(null);
-  // ValueNotifier<List<Timetable>> _timetables =
-  //     ValueNotifier<List<Timetable>>(null);
-  // ValueNotifier<List<Subject>> _subjects = ValueNotifier<List<Subject>>(null);
-  // ValueNotifier<List<Profile>> _profiles = ValueNotifier<List<Profile>>(null);
-  // ValueNotifier<Profile> _profile = ValueNotifier<Profile>(null);
+  ValueNotifier<String> _groupDocId = ValueNotifier(null);
 
   void switchScreen() => setState(() {});
+
   @override
   void initState() {
     _screens = {
@@ -75,19 +70,22 @@ class _HomeState extends State<Home> {
 
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<ValueNotifier<String>>.value(
+          value: _groupDocId,
+        ),
         ChangeNotifierProvider<ValueNotifier<DrawerEnum>>.value(
-            value: _selected),
-        ChangeNotifierProvider<ValueNotifier<Group>>.value(value: _group),
+          value: _selected,
+        ),
       ],
-      child: Consumer<ValueNotifier<DrawerEnum>>(
-          builder: (BuildContext context, ValueNotifier<DrawerEnum> selected, Widget widget) {
+      child: Consumer<ValueNotifier<DrawerEnum>>(builder: (BuildContext context,
+          ValueNotifier<DrawerEnum> selected, Widget widget) {
         return Scaffold(
           /// Scaffold - appBar
           appBar: AppBar(
             backgroundColor: Theme.of(context).primaryColor,
             title: Text(
               _screens[selected.value]['title'],
-              style: appBarTitleTextStyle,
+              style: textStyleAppBarTitle,
             ),
           ),
 
@@ -126,8 +124,7 @@ class _HomeState extends State<Home> {
                             ? true
                             : false,
                         onTap: () {
-                          setState(
-                              () => selected.value = DrawerEnum.dashboard);
+                          setState(() => selected.value = DrawerEnum.dashboard);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -166,8 +163,7 @@ class _HomeState extends State<Home> {
                             ? true
                             : false,
                         onTap: () {
-                          setState(
-                              () => selected.value = DrawerEnum.timetable);
+                          setState(() => selected.value = DrawerEnum.timetable);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -182,9 +178,8 @@ class _HomeState extends State<Home> {
                         dense: true,
                         leading: Icon(Icons.school),
                         title: Text(_screens[DrawerEnum.classes]['title']),
-                        selected: selected.value == DrawerEnum.classes
-                            ? true
-                            : false,
+                        selected:
+                            selected.value == DrawerEnum.classes ? true : false,
                         onTap: () {
                           setState(() => selected.value = DrawerEnum.classes);
                           Navigator.of(context).pop();
@@ -219,9 +214,8 @@ class _HomeState extends State<Home> {
                         dense: true,
                         leading: Icon(Icons.person),
                         title: Text(_screens[DrawerEnum.profile]['title']),
-                        selected: selected.value == DrawerEnum.profile
-                            ? true
-                            : false,
+                        selected:
+                            selected.value == DrawerEnum.profile ? true : false,
                         onTap: () {
                           setState(() => selected.value = DrawerEnum.profile);
                           Navigator.of(context).pop();

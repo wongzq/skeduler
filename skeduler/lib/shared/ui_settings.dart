@@ -85,7 +85,7 @@ const TextStyle textStyleBodyLight = TextStyle(
   color: Color(0xFFBBBBBB),
 );
 
-const TextStyle appBarTitleTextStyle = TextStyle(
+const TextStyle textStyleAppBarTitle = TextStyle(
   fontSize: 20.0,
   fontWeight: FontWeight.w400,
   letterSpacing: 2.0,

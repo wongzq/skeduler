@@ -30,13 +30,13 @@ class _CreateGroupState extends State<CreateGroup> {
   String _groupOwnerEmail;
   String _groupOwnerName;
 
-  DatabaseService _dbs;
+  DatabaseService _dbService;
 
   /// methods
   @override
   Widget build(BuildContext context) {
     User _owner = Provider.of<User>(context);
-    _dbs = Provider.of<DatabaseService>(context);
+    _dbService = Provider.of<DatabaseService>(context);
     _groupOwnerEmail = _owner.email;
     _groupOwnerName = _owner.name;
 
@@ -50,7 +50,7 @@ class _CreateGroupState extends State<CreateGroup> {
         ),
         title: Text(
           'Create group',
-          style: appBarTitleTextStyle,
+          style: textStyleAppBarTitle,
         ),
 
         /// Icon: Tick to update
@@ -62,7 +62,7 @@ class _CreateGroupState extends State<CreateGroup> {
             ),
             onPressed: _nameValid && _descValid
                 ? () {
-                    _dbs.setGroupData(
+                    _dbService.setGroupData(
                       _groupName,
                       _groupDescription,
                       _groupColorShade,
@@ -97,9 +97,6 @@ class _CreateGroupState extends State<CreateGroup> {
                             value.trim().length > 30
                         ? false
                         : true;
-                    print('>$value<');
-                    print(_nameValid);
-                    print(_descValid);
                   });
                 },
               ),

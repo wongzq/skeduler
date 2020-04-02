@@ -1,16 +1,16 @@
-class Availability {
-  /// properties
-  Set<DateTime> _dateTimes;
-}
+// class Availability {
+//   /// properties
+//   Set<DateTime> _dateTimes;
+// }
 
-class _AvailableMonth {
+// class _AvailableMonth {
 
-}
+// }
 
-class _AvailableDay {
+// class _AvailableDay {
 
-}
+// }
 
-class _AvailableTime {
+// class _AvailableTime {
   
-}
+// }

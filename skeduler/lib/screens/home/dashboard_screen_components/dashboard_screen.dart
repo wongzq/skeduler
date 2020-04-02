@@ -18,7 +18,9 @@ class DashboardScreen extends StatelessWidget {
   /// methods
   @override
   Widget build(BuildContext context) {
-    DatabaseService _dbs = Provider.of<DatabaseService>(context);
+    DatabaseService _dbService = Provider.of<DatabaseService>(context);
+    ValueNotifier<String> _groupDocId =
+        Provider.of<ValueNotifier<String>>(context);
     ValueNotifier<DrawerEnum> selected =
         Provider.of<ValueNotifier<DrawerEnum>>(context);
 
@@ -27,7 +29,7 @@ class DashboardScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(_bodyPadding),
           child: StreamBuilder<List<Group>>(
-            stream: _dbs.groups,
+            stream: _dbService.groups,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               List<Group> _groups = snapshot.data;
               return GridView.builder(
@@ -36,23 +38,20 @@ class DashboardScreen extends StatelessWidget {
                 itemCount: _groups != null ? _groups.length : 0,
                 itemBuilder: (BuildContext context, int index) {
                   if (_groups[index] != null) {
-                    return Consumer<ValueNotifier<Group>>(
-                        builder: (context, group, widget) {
-                      return GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          selected.value = DrawerEnum.group;
-                          group.value = _groups[index];
-                          switchScreen();
-                        },
-                        child: GroupCard(
-                          groupName: _groups[index].name,
-                          groupColor: _groups[index].colorShade.color,
-                          numOfMembers: _groups[index].numOfMembers,
-                          ownerName: _groups[index].ownerName,
-                        ),
-                      );
-                    });
+                    return GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        selected.value = DrawerEnum.group;
+                        _groupDocId.value = _groups[index].groupDocId;
+                        switchScreen();
+                      },
+                      child: GroupCard(
+                        groupName: _groups[index].name,
+                        groupColor: _groups[index].colorShade.color,
+                        numOfMembers: _groups[index].numOfMembers,
+                        ownerName: _groups[index].ownerName,
+                      ),
+                    );
                   } else {
                     return Container();
                   }

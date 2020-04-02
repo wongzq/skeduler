@@ -79,10 +79,12 @@ class MyApp extends StatelessWidget {
               value: AuthService().user,
               child: Consumer<AuthUser>(
                 builder: (_, user, __) {
-                  DatabaseService _databaseService;
-                  _databaseService =
+                  DatabaseService _dbService;
+                  _dbService =
                       DatabaseService(uid: user != null ? user.uid : '');
 
+                  /// Provide NativeTheme
+                  /// Provide DatabaseService
                   /// Provide UserData from User
                   return MultiProvider(
                     providers: [
@@ -90,10 +92,10 @@ class MyApp extends StatelessWidget {
                         value: _nativeTheme,
                       ),
                       Provider<DatabaseService>.value(
-                        value: _databaseService,
+                        value: _dbService,
                       ),
                       StreamProvider<User>.value(
-                        value: _databaseService.user,
+                        value: _dbService.user,
                       ),
                     ],
                     child: MaterialApp(

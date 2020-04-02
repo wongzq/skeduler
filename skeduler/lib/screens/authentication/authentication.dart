@@ -68,7 +68,7 @@ class _AuthenticationState extends State<Authentication>
             appBar: AppBar(
               title: Text(
                 'Skeduler',
-                style: appBarTitleTextStyle,
+                style: textStyleAppBarTitle,
               ),
               backgroundColor: Colors.black,
 

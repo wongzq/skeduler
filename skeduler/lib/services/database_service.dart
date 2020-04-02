@@ -26,9 +26,11 @@ class DatabaseService {
   }
 
   /// get [Group] data
-  Stream<Group> getGroup(String groupId) {
+  Stream<Group> getGroup(String groupDocId) {
+    print(groupsCollection.document(groupDocId));
+    print(groupsCollection.document(groupDocId).snapshots());
     return groupsCollection
-        .document(groupId)
+        .document(groupDocId)
         .snapshots()
         .map(_groupFromSnapshot);
   }
@@ -121,26 +123,30 @@ class DatabaseService {
 
   /// convert snapshot to [User]
   User _userFromSnapshot(DocumentSnapshot snapshot) {
-    return User(
-      uid: snapshot.data['uid'] ?? '',
-      email: snapshot.data['email'] ?? '',
-      name: snapshot.data['name'] ?? '',
-    );
+    return snapshot.data != null
+        ? User(
+            uid: snapshot.data['uid'] ?? '',
+            email: snapshot.data['email'] ?? '',
+            name: snapshot.data['name'] ?? '',
+          )
+        : User();
   }
 
   /// convert snapshot to [Group]
   Group _groupFromSnapshot(DocumentSnapshot snapshot) {
-    return Group(
-      snapshot.documentID,
-      name: snapshot.data['name'] ?? '',
-      description: snapshot.data['description'] ?? '',
-      colorShade: ColorShade(
-        themeId: snapshot.data['colorShade']['themeId'],
-        shade: Shade.values[snapshot.data['colorShade']['shade']],
-      ),
-      ownerEmail: snapshot.data['owner']['email'] ?? '',
-      ownerName: snapshot.data['owner']['name'] ?? '',
-    );
+    return snapshot.data != null
+        ? Group(
+            snapshot.documentID,
+            name: snapshot.data['name'] ?? '',
+            description: snapshot.data['description'] ?? '',
+            colorShade: ColorShade(
+              themeId: snapshot.data['colorShade']['themeId'],
+              shade: Shade.values[snapshot.data['colorShade']['shade']],
+            ),
+            ownerEmail: snapshot.data['owner']['email'] ?? '',
+            ownerName: snapshot.data['owner']['name'] ?? '',
+          )
+        : Group('');
   }
 
   /// convert document snapshots into [User]s

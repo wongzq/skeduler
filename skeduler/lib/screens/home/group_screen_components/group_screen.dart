@@ -1,136 +1,230 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/color_shade.dart';
 import 'package:skeduler/models/group.dart';
-import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
-import 'package:skeduler/shared/components/change_color.dart';
-import 'package:skeduler/shared/components/label_text_input.dart';
-import 'package:skeduler/shared/functions.dart';
-import 'package:theme_provider/theme_provider.dart';
+import 'package:skeduler/screens/home/group_screen_components/edit_group.dart';
+import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/components/add_person.dart';
+import 'package:skeduler/shared/components/loading.dart';
+import 'package:skeduler/shared/ui_settings.dart';
 
 class GroupScreen extends StatefulWidget {
-  final Group group;
-
-  const GroupScreen({this.group});
-
   @override
   _GroupScreenState createState() => _GroupScreenState();
 }
 
 class _GroupScreenState extends State<GroupScreen> {
-  String _groupName;
-  String _groupDescription;
-  ColorShade _groupColorShade;
-  String _groupOwnerName;
-
-  ValueNotifier<bool> _expanded;
-
-  @override
-  void initState() {
-    _expanded = ValueNotifier<bool>(false);
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    Group _group = Provider.of<ValueNotifier<Group>>(context).value;
-    _groupName = _group.name;
-    _groupDescription = _group.description;
-    _groupColorShade = _group.colorShade;
-    _groupOwnerName = _group.ownerName;
+    DatabaseService _dbService = Provider.of<DatabaseService>(context);
+    ValueNotifier<String> _groupDocId =
+        Provider.of<ValueNotifier<String>>(context);
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => unfocus(),
-      child: Column(
-        children: <Widget>[
-          /// Required fields
-          /// Name
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: LabelTextInput(
-              initialValue: _groupName,
-              hintText: 'Required',
-              label: 'Name',
-              valueSetterText: (value) {
-                setState(() {
-                  _groupName = value;
-                });
-              },
-            ),
-          ),
+    return StreamBuilder(
+        stream: _dbService.getGroup(_groupDocId.value),
+        builder: (context, snapshot) {
+          Group _group = snapshot.data ?? null;
 
-          /// Description
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: LabelTextInput(
-              initialValue: _groupDescription,
-              hintText: 'Optional',
-              label: 'Description',
-              valueSetterText: (value) {
-                setState(() {
-                  _groupDescription = value;
-                });
-              },
-            ),
-          ),
+          return snapshot.data == null
+              ? Loading()
+              : Stack(
+                  children: <Widget>[
+                    // Text: Group name
+                    Container(
+                      padding: EdgeInsets.all(20.0),
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        _group.description,
+                        style: textStyleBody,
+                      ),
+                    ),
 
-          /// Color
-          Provider<bool>.value(
-            value: _expanded.value,
-            child: ChangeColor(
-              initialValue: _groupColorShade,
-              initialExpanded: _expanded.value,
-              valueSetterColorShade: (value) {
-                setState(() {
-                  _groupColorShade = value;
-                });
-              },
-              valueSetterExpanded: (value) {
-                setState(() {
-                  _expanded.value = value;
-                });
-              },
-            ),
-          ),
+                    // SpeedDial: Options
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(bottom: 20.0, right: 20.0),
+                        child: SpeedDial(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          overlayColor: Colors.grey,
+                          overlayOpacity: 0.8,
+                          curve: Curves.easeOutCubic,
+                          animatedIcon: AnimatedIcons.menu_close,
+                          animatedIconTheme: IconThemeData(color: Colors.white),
 
-          Visibility(
-            visible: !_expanded.value,
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 10.0),
+                          /// Delete group
+                          children: <SpeedDialChild>[
+                            SpeedDialChild(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              child: Icon(
+                                Icons.delete,
+                                size: 30.0,
+                              ),
+                              labelWidget: Container(
+                                height: 40.0,
+                                width: 150.0,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      offset: Offset(0.0, 5.0),
+                                      blurRadius: 10.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  'DELETE',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
+                              ),
+                              onTap: () {},
+                            ),
 
-                Text(
-                  'Preview in dashboard',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 15.0,
-                    letterSpacing: 1.5,
-                  ),
-                ),
-                SizedBox(height: 10.0),
+                            SpeedDialChild(
+                              backgroundColor: Colors.white.withOpacity(0),
+                              elevation: 0,
+                            ),
 
-                /// Preview
-                GroupCard(
-                  groupName: _groupName,
-                  ownerName: _groupOwnerName,
-                  groupColor: () {
-                    if (_groupColorShade.color == null) {
-                      _groupColorShade.color =
-                          getNativeThemeData(ThemeProvider.themeOf(context).id)
-                              .primaryColor;
-                    }
-                    return _groupColorShade.color;
-                  }(),
-                  hasNotification: false,
-                ),
-                Divider(thickness: 1.0),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                            // Edit group information
+                            SpeedDialChild(
+                              backgroundColor:
+                                  Theme.of(context).primaryColorDark,
+                              foregroundColor: Colors.white,
+                              child: Icon(
+                                Icons.edit,
+                                size: 30.0,
+                              ),
+                              labelWidget: Container(
+                                height: 40.0,
+                                width: 150.0,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColorDark,
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      offset: Offset(0.0, 5.0),
+                                      blurRadius: 10.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  'EDIT INFO',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditGroup(_group),
+                                  ),
+                                );
+                              },
+                            ),
+
+                            // Add subject
+                            SpeedDialChild(
+                              backgroundColor:
+                                  Theme.of(context).primaryColorDark,
+                              foregroundColor: Colors.white,
+                              child: Icon(
+                                Icons.school,
+                                size: 30.0,
+                              ),
+                              labelWidget: Container(
+                                height: 40.0,
+                                width: 150.0,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColorDark,
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      offset: Offset(0.0, 5.0),
+                                      blurRadius: 10.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  'ADD SUBJECT',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
+                              ),
+                              onTap: () {},
+                            ),
+
+                            /// Add member
+                            SpeedDialChild(
+                              backgroundColor:
+                                  Theme.of(context).primaryColorDark,
+                              foregroundColor: Colors.white,
+                              child: Icon(
+                                Icons.person_add,
+                                size: 25.0,
+                              ),
+                              labelWidget: Container(
+                                height: 40.0,
+                                width: 150.0,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColorDark,
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      offset: Offset(0.0, 5.0),
+                                      blurRadius: 10.0,
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  'ADD MEMBER',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddPerson(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+        });
   }
 }
