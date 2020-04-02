@@ -8,24 +8,29 @@ import 'package:skeduler/screens/home/dashboard_screen_components/create_group.d
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/ui_settings.dart';
 
 class DashboardScreen extends StatelessWidget {
   /// properties
   static const double _bodyPadding = 5.0;
-  final void Function() switchScreen;
-
-  DashboardScreen({this.switchScreen});
 
   /// methods
   @override
   Widget build(BuildContext context) {
     DatabaseService _dbService = Provider.of<DatabaseService>(context);
+    ValueNotifier<DrawerEnum> _selected =
+        Provider.of<ValueNotifier<DrawerEnum>>(context);
     ValueNotifier<String> _groupDocId =
         Provider.of<ValueNotifier<String>>(context);
-    ValueNotifier<DrawerEnum> selected =
-        Provider.of<ValueNotifier<DrawerEnum>>(context);
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
+        title: Text(
+          'Dashboard',
+          style: textStyleAppBarTitle,
+        ),
+      ),
       drawer: HomeDrawer(),
       body: Stack(
         children: <Widget>[
@@ -35,6 +40,7 @@ class DashboardScreen extends StatelessWidget {
               stream: _dbService.groups,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 List<Group> _groups = snapshot.data;
+
                 return GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2),
@@ -44,9 +50,9 @@ class DashboardScreen extends StatelessWidget {
                       return GestureDetector(
                         behavior: HitTestBehavior.translucent,
                         onTap: () {
-                          selected.value = DrawerEnum.group;
+                          _selected.value = DrawerEnum.group;
                           _groupDocId.value = _groups[index].groupDocId;
-                          switchScreen();
+                          Navigator.of(context).pushNamed('/group');
                         },
                         child: GroupCard(
                           groupName: _groups[index].name,

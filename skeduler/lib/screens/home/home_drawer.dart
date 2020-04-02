@@ -3,7 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/drawer_enum.dart';
 import 'package:skeduler/models/user.dart';
-import 'package:skeduler/screens/home/group_screen_components/group_screen.dart';
 import 'package:skeduler/services/auth_service.dart';
 
 class HomeDrawer extends StatelessWidget {
@@ -59,8 +58,8 @@ class HomeDrawer extends StatelessWidget {
                   selected:
                       selected.value == DrawerEnum.dashboard ? true : false,
                   onTap: () {
-                    // setState(() => selected.value = DrawerEnum.dashboard);
                     Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed('/dashboard');
                   },
                 ),
               ),
@@ -78,10 +77,8 @@ class HomeDrawer extends StatelessWidget {
                   title: Text(_screens[DrawerEnum.group]['title']),
                   selected: selected.value == DrawerEnum.group ? true : false,
                   onTap: () {
-                    // setState(() => selected.value = DrawerEnum.group);
                     Navigator.of(context).pop();
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (_) => GroupScreen()));
+                    Navigator.of(context).pushNamed('/group');
                   },
                 ),
               ),
@@ -98,7 +95,6 @@ class HomeDrawer extends StatelessWidget {
                   selected:
                       selected.value == DrawerEnum.timetable ? true : false,
                   onTap: () {
-                    // setState(() => selected.value = DrawerEnum.timetable);
                     Navigator.of(context).pop();
                   },
                 ),
@@ -115,7 +111,6 @@ class HomeDrawer extends StatelessWidget {
                   title: Text(_screens[DrawerEnum.classes]['title']),
                   selected: selected.value == DrawerEnum.classes ? true : false,
                   onTap: () {
-                    // setState(() => selected.value = DrawerEnum.classes);
                     Navigator.of(context).pop();
                   },
                 ),
@@ -132,7 +127,6 @@ class HomeDrawer extends StatelessWidget {
                   title: Text(_screens[DrawerEnum.people]['title']),
                   selected: selected.value == DrawerEnum.people ? true : false,
                   onTap: () {
-                    // setState(() => selected.value = DrawerEnum.people);
                     Navigator.of(context).pop();
                   },
                 ),
@@ -149,7 +143,6 @@ class HomeDrawer extends StatelessWidget {
                   title: Text(_screens[DrawerEnum.profile]['title']),
                   selected: selected.value == DrawerEnum.profile ? true : false,
                   onTap: () {
-                    // setState(() => selected.value = DrawerEnum.profile);
                     Navigator.of(context).pop();
                   },
                 ),
@@ -169,7 +162,6 @@ class HomeDrawer extends StatelessWidget {
                   selected:
                       selected.value == DrawerEnum.settings ? true : false,
                   onTap: () {
-                    // setState(() => selected.value = DrawerEnum.settings);
                     Navigator.of(context).pop();
                   },
                 ),
@@ -186,7 +178,6 @@ class HomeDrawer extends StatelessWidget {
                   title: Text(_screens[DrawerEnum.logout]['title']),
                   selected: selected.value == DrawerEnum.logout ? true : false,
                   onTap: () {
-                    //setState(() => selected.value = DrawerEnum.logout);
                     showDialog(
                       context: context,
                       builder: (context) {
@@ -212,8 +203,6 @@ class HomeDrawer extends StatelessWidget {
                                 Navigator.of(context).pop();
 
                                 _authService.logOut();
-
-                                /// ThemeProvider.controllerOf(context).setTheme('default');
                               },
                             )
                           ],

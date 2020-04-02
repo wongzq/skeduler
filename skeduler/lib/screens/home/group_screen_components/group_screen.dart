@@ -3,6 +3,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group.dart';
 import 'package:skeduler/screens/home/group_screen_components/edit_group.dart';
+import 'package:skeduler/screens/home/home_drawer.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/add_person.dart';
 import 'package:skeduler/shared/components/loading.dart';
@@ -27,203 +28,228 @@ class _GroupScreenState extends State<GroupScreen> {
 
           return snapshot.data == null
               ? Loading()
-              : Stack(
-                  children: <Widget>[
-                    // Text: Group name
-                    Container(
-                      padding: EdgeInsets.all(20.0),
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        _group.description,
-                        style: textStyleBody,
-                      ),
-                    ),
-
-                    // SpeedDial: Options
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.only(bottom: 20.0, right: 20.0),
-                        child: SpeedDial(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          overlayColor: Colors.grey,
-                          overlayOpacity: 0.8,
-                          curve: Curves.easeOutCubic,
-                          animatedIcon: AnimatedIcons.menu_close,
-                          animatedIconTheme: IconThemeData(color: Colors.white),
-
-                          /// Delete group
-                          children: <SpeedDialChild>[
-                            SpeedDialChild(
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              child: Icon(
-                                Icons.delete,
-                                size: 30.0,
+              : Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    title: _group.name == null
+                        ? Text(
+                            'Group',
+                            style: textStyleAppBarTitle,
+                          )
+                        : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                _group.name,
+                                style: textStyleAppBarTitle,
                               ),
-                              labelWidget: Container(
-                                height: 40.0,
-                                width: 150.0,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      offset: Offset(0.0, 5.0),
-                                      blurRadius: 10.0,
-                                    ),
-                                  ],
-                                ),
-                                child: Text(
-                                  'DELETE',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w400,
-                                    letterSpacing: 1.5,
-                                  ),
-                                ),
-                              ),
-                              onTap: () {},
-                            ),
-
-                            SpeedDialChild(
-                              backgroundColor: Colors.white.withOpacity(0),
-                              elevation: 0,
-                            ),
-
-                            // Edit group information
-                            SpeedDialChild(
-                              backgroundColor:
-                                  Theme.of(context).primaryColorDark,
-                              foregroundColor: Colors.white,
-                              child: Icon(
-                                Icons.edit,
-                                size: 30.0,
-                              ),
-                              labelWidget: Container(
-                                height: 40.0,
-                                width: 150.0,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColorDark,
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      offset: Offset(0.0, 5.0),
-                                      blurRadius: 10.0,
-                                    ),
-                                  ],
-                                ),
-                                child: Text(
-                                  'EDIT INFO',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w400,
-                                    letterSpacing: 1.5,
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EditGroup(_group),
-                                  ),
-                                );
-                              },
-                            ),
-
-                            // Add subject
-                            SpeedDialChild(
-                              backgroundColor:
-                                  Theme.of(context).primaryColorDark,
-                              foregroundColor: Colors.white,
-                              child: Icon(
-                                Icons.school,
-                                size: 30.0,
-                              ),
-                              labelWidget: Container(
-                                height: 40.0,
-                                width: 150.0,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColorDark,
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      offset: Offset(0.0, 5.0),
-                                      blurRadius: 10.0,
-                                    ),
-                                  ],
-                                ),
-                                child: Text(
-                                  'ADD SUBJECT',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w400,
-                                    letterSpacing: 1.5,
-                                  ),
-                                ),
-                              ),
-                              onTap: () {},
-                            ),
-
-                            /// Add member
-                            SpeedDialChild(
-                              backgroundColor:
-                                  Theme.of(context).primaryColorDark,
-                              foregroundColor: Colors.white,
-                              child: Icon(
-                                Icons.person_add,
-                                size: 25.0,
-                              ),
-                              labelWidget: Container(
-                                height: 40.0,
-                                width: 150.0,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColorDark,
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      offset: Offset(0.0, 5.0),
-                                      blurRadius: 10.0,
-                                    ),
-                                  ],
-                                ),
-                                child: Text(
-                                  'ADD MEMBER',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w400,
-                                    letterSpacing: 1.5,
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddPerson(),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
+                              Text(
+                                'Group',
+                                style: textStyleBodyLight,
+                              )
+                            ],
+                          ),
+                  ),
+                  drawer: HomeDrawer(),
+                  body: Stack(
+                    children: <Widget>[
+                      // Text: Group name
+                      Container(
+                        padding: EdgeInsets.all(20.0),
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          _group.description,
+                          style: textStyleBody,
                         ),
                       ),
-                    ),
-                  ],
+
+                      // SpeedDial: Options
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.only(bottom: 20.0, right: 20.0),
+                          child: SpeedDial(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            overlayColor: Colors.grey,
+                            overlayOpacity: 0.8,
+                            curve: Curves.easeOutCubic,
+                            animatedIcon: AnimatedIcons.menu_close,
+                            animatedIconTheme:
+                                IconThemeData(color: Colors.white),
+
+                            /// Delete group
+                            children: <SpeedDialChild>[
+                              SpeedDialChild(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                                child: Icon(
+                                  Icons.delete,
+                                  size: 30.0,
+                                ),
+                                labelWidget: Container(
+                                  height: 40.0,
+                                  width: 150.0,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        offset: Offset(0.0, 5.0),
+                                        blurRadius: 10.0,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    'DELETE',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w400,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
+                                ),
+                                onTap: () {},
+                              ),
+
+                              SpeedDialChild(
+                                backgroundColor: Colors.white.withOpacity(0),
+                                elevation: 0,
+                              ),
+
+                              // Edit group information
+                              SpeedDialChild(
+                                backgroundColor:
+                                    Theme.of(context).primaryColorDark,
+                                foregroundColor: Colors.white,
+                                child: Icon(
+                                  Icons.edit,
+                                  size: 30.0,
+                                ),
+                                labelWidget: Container(
+                                  height: 40.0,
+                                  width: 150.0,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColorDark,
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        offset: Offset(0.0, 5.0),
+                                        blurRadius: 10.0,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    'EDIT INFO',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w400,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditGroup(_group),
+                                    ),
+                                  );
+                                },
+                              ),
+
+                              // Add subject
+                              SpeedDialChild(
+                                backgroundColor:
+                                    Theme.of(context).primaryColorDark,
+                                foregroundColor: Colors.white,
+                                child: Icon(
+                                  Icons.school,
+                                  size: 30.0,
+                                ),
+                                labelWidget: Container(
+                                  height: 40.0,
+                                  width: 150.0,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColorDark,
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        offset: Offset(0.0, 5.0),
+                                        blurRadius: 10.0,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    'ADD SUBJECT',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w400,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
+                                ),
+                                onTap: () {},
+                              ),
+
+                              /// Add member
+                              SpeedDialChild(
+                                backgroundColor:
+                                    Theme.of(context).primaryColorDark,
+                                foregroundColor: Colors.white,
+                                child: Icon(
+                                  Icons.person_add,
+                                  size: 25.0,
+                                ),
+                                labelWidget: Container(
+                                  height: 40.0,
+                                  width: 150.0,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColorDark,
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        offset: Offset(0.0, 5.0),
+                                        blurRadius: 10.0,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    'ADD MEMBER',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w400,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddPerson(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 );
         });
   }

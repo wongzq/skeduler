@@ -26,8 +26,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  /// properties
-  final AuthService _authService = AuthService();
 
   /// Map of screens
   ValueNotifier<DrawerEnum> _selected =
@@ -65,7 +63,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     _screens[DrawerEnum.dashboard]['screen'] =
-        DashboardScreen(switchScreen: switchScreen);
+        DashboardScreen();
 
     
     return MultiProvider(
