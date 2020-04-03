@@ -84,7 +84,7 @@ class GroupScreenOptions extends StatelessWidget {
                         'DELETE',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16.0,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 1.5,
                         ),
@@ -179,7 +179,7 @@ class GroupScreenOptions extends StatelessWidget {
                         'EDIT INFO',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16.0,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 1.5,
                         ),
@@ -218,7 +218,7 @@ class GroupScreenOptions extends StatelessWidget {
                         'ADD SUBJECT',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16.0,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 1.5,
                         ),
@@ -254,7 +254,7 @@ class GroupScreenOptions extends StatelessWidget {
                         'ADD MEMBER',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16.0,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 1.5,
                         ),

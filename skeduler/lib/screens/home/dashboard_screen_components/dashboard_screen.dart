@@ -116,7 +116,7 @@ class DashboardScreen extends StatelessWidget {
                         'JOIN',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16.0,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 1.5,
                         ),
@@ -152,7 +152,7 @@ class DashboardScreen extends StatelessWidget {
                         'CREATE',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16.0,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 1.5,
                         ),
