@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group.dart';
+import 'package:skeduler/models/user.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/components/loading.dart';
@@ -73,7 +75,9 @@ class _AddMemberState extends State<AddMember> {
                               validator: (value) {
                                 RegExp regExp = RegExp(
                                     r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)");
-                                return regExp.hasMatch(_newMemberEmail)
+                                return _newMemberEmail != null &&
+                                        _newMemberEmail.trim().length > 0 &&
+                                        regExp.hasMatch(_newMemberEmail)
                                     ? null
                                     : 'Invalid email address';
                               },
@@ -110,10 +114,26 @@ class _AddMemberState extends State<AddMember> {
                             FloatingActionButton(
                               heroTag: 'Confirm',
                               backgroundColor: Colors.green,
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_formKeyName.currentState.validate()) {
-                                  // dbService.addMemberToGroup(_newMemberEmail, groupDocId);
-                                  Navigator.of(context).pop();
+                                  await dbService
+                                      .addMemberToGroup(
+                                          groupDocId.value, _newMemberEmail)
+                                      .then((errorMsg) {
+                                    if (errorMsg == null) {
+                                      Fluttertoast.showToast(
+                                        msg: _newMemberEmail +
+                                            ' added successfully',
+                                        toastLength: Toast.LENGTH_LONG,
+                                      );
+                                      Navigator.of(context).pop();
+                                    } else {
+                                      Fluttertoast.showToast(
+                                        msg: errorMsg,
+                                        toastLength: Toast.LENGTH_LONG,
+                                      );
+                                    }
+                                  });
                                 }
                               },
                               child: Icon(

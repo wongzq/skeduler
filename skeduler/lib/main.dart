@@ -82,7 +82,7 @@ class MyApp extends StatelessWidget {
               child: Consumer<AuthUser>(
                 builder: (_, user, __) {
                   _dbService =
-                      DatabaseService(uid: user != null ? user.uid : '');
+                      DatabaseService(userId: user != null ? user.email : '');
 
                   /// Multiple Providers
                   return MultiProvider(

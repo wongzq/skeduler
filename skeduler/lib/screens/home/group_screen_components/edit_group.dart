@@ -115,15 +115,7 @@ class _EditGroupState extends State<EditGroup> {
                     initialExpanded: _expanded.value,
                     valueSetterColorShade: (value) {
                       setState(() {
-                        print('1'+_groupColorShade.themeId.toString());
-                        print('1'+_groupColorShade.shade.toString());
-                        print('1'+widget.group.colorShade.themeId.toString());
-                        print('1'+widget.group.colorShade.shade.toString());
                         _groupColorShade = value;
-                        print(_groupColorShade.themeId);
-                        print(_groupColorShade.shade);
-                        print(widget.group.colorShade.themeId);
-                        print(widget.group.colorShade.shade);
                       });
                     },
                     valueSetterExpanded: (value) {
@@ -203,11 +195,6 @@ class _EditGroupState extends State<EditGroup> {
                     onPressed: () {
                       if (_formKeyName.currentState.validate() &&
                           _formKeyDesc.currentState.validate()) {
-                        print('valid');
-                        print('Final' + _groupColorShade.themeId);
-                        print('Final' + _groupColorShade.shade.toString());
-                        print('Final' + widget.group.colorShade.themeId);
-                        print('Final' + widget.group.colorShade.shade.toString());
                         if (_groupName.trim() != widget.group.name ||
                             _groupDescription.trim() !=
                                 widget.group.description ||

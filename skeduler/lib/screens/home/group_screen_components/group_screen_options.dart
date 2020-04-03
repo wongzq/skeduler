@@ -5,6 +5,7 @@ import 'package:skeduler/models/group.dart';
 import 'package:skeduler/models/my_app_themes.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class GroupScreenOptions extends StatelessWidget {
   @override
@@ -24,14 +25,22 @@ class GroupScreenOptions extends StatelessWidget {
           Color labelBackgroundColor;
 
           if (group != null) {
-            mainIconBackgroundColor =
-                getOriginThemeData(group.colorShade.themeId).primaryColor ??
+            bool darkMode = ThemeProvider.themeOf(context).data.brightness ==
+                Brightness.dark;
+
+            mainIconBackgroundColor = darkMode
+                ? Colors.black
+                : getOriginThemeData(group.colorShade.themeId).primaryColor ??
                     defaultColor;
-            iconBackgroundColor =
-                getOriginThemeData(group.colorShade.themeId).primaryColorDark ??
+            iconBackgroundColor = darkMode
+                ? Colors.black
+                : getOriginThemeData(group.colorShade.themeId)
+                        .primaryColorDark ??
                     defaultColor;
-            labelBackgroundColor =
-                getOriginThemeData(group.colorShade.themeId).primaryColorDark ??
+            labelBackgroundColor = darkMode
+                ? Colors.black
+                : getOriginThemeData(group.colorShade.themeId)
+                        .primaryColorDark ??
                     defaultColor;
           }
 

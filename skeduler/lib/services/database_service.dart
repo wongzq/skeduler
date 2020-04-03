@@ -5,7 +5,7 @@ import 'package:skeduler/models/user.dart';
 
 class DatabaseService {
   /// properties
-  final String uid;
+  final String userId;
 
   /// collection reference
   final CollectionReference usersCollection =
@@ -14,15 +14,12 @@ class DatabaseService {
       Firestore.instance.collection('groups');
 
   /// constructor method
-  DatabaseService({this.uid});
+  DatabaseService({this.userId});
 
   /// getter methods
   /// get [User] data
   Stream<User> get user {
-    return usersCollection
-        .document(uid)
-        .snapshots()
-        .map(_currentUserFromSnapshot);
+    return usersCollection.document(userId).snapshots().map(_userFromSnapshot);
   }
 
   /// get [Group] data
@@ -49,8 +46,7 @@ class DatabaseService {
     String email,
     String name,
   ) async {
-    return await usersCollection.document(uid).setData({
-      'email': email,
+    return await usersCollection.document(email).setData({
       'name': name,
     });
   }
@@ -59,7 +55,7 @@ class DatabaseService {
   Future updateUserData({
     String name,
   }) async {
-    return await usersCollection.document(uid).updateData({
+    return await usersCollection.document(userId).updateData({
       'name': name,
     });
   }
@@ -83,6 +79,7 @@ class DatabaseService {
         'email': ownerEmail,
         'name': ownerName,
       },
+      'members': [ownerEmail],
     });
   }
 
@@ -114,31 +111,55 @@ class DatabaseService {
   }
 
   /// add [User] to [Group]
-  Future addMemberToGroup(String newMemberEmail, String groupDocId) {
-    // find user
-    // usersCollection.getDocuments().
-
-    // find group
-    
-    // add user to group
+  Future<String> addMemberToGroup(
+    String groupDocId,
+    String newMemberEmail,
+  ) async {
+    String errorMsg;
+    DocumentReference groupRef = groupsCollection.document(groupDocId);
+    try {
+      await groupRef.get().then((group) async {
+        if (group.exists) {
+          if (!(group.data['members'] as List).contains(newMemberEmail)) {
+            await usersCollection.document(newMemberEmail).get().then((user) {
+              if (user.exists) {
+                groupRef.updateData({
+                  'members': FieldValue.arrayUnion([user.documentID]),
+                });
+              } else {
+                errorMsg = 'User not found';
+                throw Exception();
+              }
+            });
+          } else {
+            errorMsg = 'User is already in the group';
+            throw Exception();
+          }
+        } else {
+          errorMsg = 'Group not found';
+          throw Exception();
+        }
+      });
+      return null;
+    } catch (e) {
+      return errorMsg;
+    }
   }
 
   /// auxiliary methods
-  /// convert snapshot of [currentUser] to [User]
-  User _currentUserFromSnapshot(DocumentSnapshot snapshot) {
-    return User(
-      uid: uid ?? '',
-      email: snapshot.data['email'] ?? '',
-      name: snapshot.data['name'] ?? '',
-    );
+  Future<DocumentSnapshot> findGroup(String groupDocId) async {
+    return await groupsCollection.document(groupDocId).get();
+  }
+
+  Future<DocumentSnapshot> findUser(String userId) async {
+    return await usersCollection.document(userId).get();
   }
 
   /// convert snapshot to [User]
   User _userFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
         ? User(
-            uid: snapshot.data['uid'] ?? '',
-            email: snapshot.data['email'] ?? '',
+            email: snapshot.documentID ?? '',
             name: snapshot.data['name'] ?? '',
           )
         : User();

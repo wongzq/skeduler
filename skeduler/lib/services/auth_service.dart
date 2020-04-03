@@ -5,14 +5,19 @@ import 'package:skeduler/services/database_service.dart';
 class AuthService {
   final FirebaseAuth _authService = FirebaseAuth.instance;
 
-  /// create user object based on FirebaseUser
-  AuthUser _userFromFirebaseUser(FirebaseUser firebaseUser) {
-    return firebaseUser != null ? AuthUser(uid: firebaseUser.uid) : null;
-  }
-
   /// Stream: authentication - change user
   Stream<AuthUser> get user {
     return _authService.onAuthStateChanged.map(_userFromFirebaseUser);
+  }
+
+  /// create user object based on FirebaseUser
+  AuthUser _userFromFirebaseUser(FirebaseUser firebaseUser) {
+    return firebaseUser != null
+        ? AuthUser(
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+          )
+        : null;
   }
 
   /// Function: log in with email & password
@@ -39,7 +44,7 @@ class AuthService {
           email: email, password: password);
 
       /// create a new document for the user with the uid
-      await DatabaseService(uid: result.user.uid).setUserData(email, name);
+      await DatabaseService(userId: result.user.uid).setUserData(email, name);
 
       return _userFromFirebaseUser(result.user);
     } catch (e) {
