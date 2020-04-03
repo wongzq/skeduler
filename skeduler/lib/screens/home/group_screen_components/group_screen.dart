@@ -24,7 +24,7 @@ class _GroupScreenState extends State<GroupScreen> {
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
 
-    return groupDocId.value == null
+    return groupDocId.value == null || groupDocId.value == ''
         ? Scaffold(
             appBar: AppBar(
               backgroundColor: Theme.of(context).primaryColor,
@@ -40,7 +40,7 @@ class _GroupScreenState extends State<GroupScreen> {
             builder: (context, snapshot) {
               Group group = snapshot != null ? snapshot.data : null;
 
-              return snapshot.data == null
+              return snapshot == null || snapshot.data == null
                   ? Loading()
                   : Scaffold(
                       appBar: AppBar(
