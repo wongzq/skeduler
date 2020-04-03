@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:skeduler/models/color_shade.dart';
 import 'package:skeduler/models/group.dart';
+import 'package:skeduler/models/member.dart';
 import 'package:skeduler/models/user.dart';
 
 class DatabaseService {
@@ -68,7 +70,8 @@ class DatabaseService {
     String ownerEmail,
     String ownerName,
   ) async {
-    return await groupsCollection.document().setData({
+    DocumentReference newGroupDoc = groupsCollection.document();
+    return await newGroupDoc.setData({
       'name': name,
       'description': description,
       'colorShade': {
@@ -79,7 +82,12 @@ class DatabaseService {
         'email': ownerEmail,
         'name': ownerName,
       },
-      'members': [ownerEmail],
+    }).then((onValue) {
+      addMemberToGroup(
+        groupDocId: newGroupDoc.documentID,
+        newMemberEmail: ownerEmail,
+        memberRole: MemberRole.owner,
+      );
     });
   }
 
@@ -111,39 +119,31 @@ class DatabaseService {
   }
 
   /// add [User] to [Group]
-  Future<String> addMemberToGroup(
-    String groupDocId,
-    String newMemberEmail,
-  ) async {
+  Future<String> addMemberToGroup({
+    @required String groupDocId,
+    @required String newMemberEmail,
+    MemberRole memberRole = MemberRole.pending,
+  }) async {
+    DocumentReference groupMemberRef = groupsCollection
+        .document(groupDocId)
+        .collection('members')
+        .document(newMemberEmail);
     String errorMsg;
-    DocumentReference groupRef = groupsCollection.document(groupDocId);
-    try {
-      await groupRef.get().then((group) async {
-        if (group.exists) {
-          if (!(group.data['members'] as List).contains(newMemberEmail)) {
-            await usersCollection.document(newMemberEmail).get().then((user) {
-              if (user.exists) {
-                groupRef.updateData({
-                  'members': FieldValue.arrayUnion([user.documentID]),
-                });
-              } else {
-                errorMsg = 'User not found';
-                throw Exception();
-              }
-            });
+
+    await usersCollection.document(newMemberEmail).get().then((user) async {
+      if (user.exists) {
+        await groupMemberRef.get().then((member) async {
+          if (!member.exists) {
+            await groupMemberRef.setData({'role': memberRole.index});
           } else {
             errorMsg = 'User is already in the group';
-            throw Exception();
           }
-        } else {
-          errorMsg = 'Group not found';
-          throw Exception();
-        }
-      });
-      return null;
-    } catch (e) {
-      return errorMsg;
-    }
+        });
+      } else {
+        errorMsg = 'User not found';
+      }
+    });
+    return errorMsg;
   }
 
   /// auxiliary methods

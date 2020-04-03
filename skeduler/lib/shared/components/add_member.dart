@@ -117,7 +117,9 @@ class _AddMemberState extends State<AddMember> {
                                 if (_formKeyName.currentState.validate()) {
                                   await dbService
                                       .addMemberToGroup(
-                                          groupDocId.value, _newMemberEmail)
+                                    groupDocId: groupDocId.value,
+                                    newMemberEmail: _newMemberEmail,
+                                  )
                                       .then((errorMsg) {
                                     if (errorMsg == null) {
                                       Fluttertoast.showToast(

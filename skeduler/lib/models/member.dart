@@ -11,3 +11,10 @@ class Member {
 
 //   Availability _availability;
 }
+
+enum MemberRole {
+  pending,
+  member,
+  admin,
+  owner,
+}
