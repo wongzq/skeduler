@@ -45,11 +45,11 @@ class _GroupScreenState extends State<GroupScreen> {
                   : Scaffold(
                       appBar: AppBar(
                         backgroundColor:
-                            getNativeThemeColorShade(group.colorShade),
-                        iconTheme: getNativeThemeData(group.colorShade.themeId)
-                            .iconTheme,
-                        textTheme: getNativeThemeData(group.colorShade.themeId)
-                            .textTheme,
+                            getOriginThemeColorShade(group.colorShade),
+                        iconTheme: getOriginThemeData(group.colorShade.themeId)
+                            .primaryIconTheme,
+                        textTheme: getOriginThemeData(group.colorShade.themeId)
+                            .primaryTextTheme,
                         title: group.name == null
                             ? Text(
                                 'Group',
@@ -72,7 +72,7 @@ class _GroupScreenState extends State<GroupScreen> {
                       drawer: HomeDrawer(),
                       body: Stack(
                         children: <Widget>[
-                          // Text: Group name
+                          /// Text: Group name
                           Container(
                             padding: EdgeInsets.all(20.0),
                             alignment: Alignment.topLeft,
@@ -82,7 +82,7 @@ class _GroupScreenState extends State<GroupScreen> {
                             ),
                           ),
 
-                          // SpeedDial: Options
+                          /// SpeedDial: Options
                           GroupScreenOptions(),
                         ],
                       ),

@@ -113,6 +113,16 @@ class DatabaseService {
     });
   }
 
+  /// add [User] to [Group]
+  Future addMemberToGroup(String newMemberEmail, String groupDocId) {
+    // find user
+    usersCollection.getDocuments().
+
+    // find group
+    
+    // add user to group
+  }
+
   /// auxiliary methods
   /// convert snapshot of [currentUser] to [User]
   User _currentUserFromSnapshot(DocumentSnapshot snapshot) {

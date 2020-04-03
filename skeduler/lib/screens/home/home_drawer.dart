@@ -13,7 +13,7 @@ class HomeDrawer extends StatelessWidget {
     DrawerEnum.group: {'title': 'Group', 'icon': null},
     DrawerEnum.timetable: {'title': 'Timetable', 'icon': null},
     DrawerEnum.classes: {'title': 'Classes', 'icon': null},
-    DrawerEnum.people: {'title': 'People', 'icon': null},
+    DrawerEnum.members: {'title': 'members', 'icon': null},
     DrawerEnum.profile: {'title': 'Profile', 'icon': null},
     DrawerEnum.settings: {'title': 'Settings', 'icon': null},
     DrawerEnum.logout: {'title': 'Logout', 'icon': null},
@@ -119,16 +119,16 @@ class HomeDrawer extends StatelessWidget {
                 ),
               ),
 
-              /// People
+              /// members
               Container(
-                color: selected.value == DrawerEnum.people
+                color: selected.value == DrawerEnum.members
                     ? Theme.of(context).primaryColorLight
                     : null,
                 child: ListTile(
                   dense: true,
                   leading: Icon(Icons.people),
-                  title: Text(_screens[DrawerEnum.people]['title']),
-                  selected: selected.value == DrawerEnum.people ? true : false,
+                  title: Text(_screens[DrawerEnum.members]['title']),
+                  selected: selected.value == DrawerEnum.members ? true : false,
                   onTap: () {
                     Navigator.of(context).pop();
                   },

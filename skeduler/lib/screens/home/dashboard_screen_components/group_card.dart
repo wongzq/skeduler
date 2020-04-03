@@ -39,7 +39,7 @@ class GroupCard extends StatelessWidget {
               decoration: BoxDecoration(
                 /// color: Colors.white,
                 color: groupColor ??
-                    getNativeThemeData(ThemeProvider.themeOf(context).id)
+                    getOriginThemeData(ThemeProvider.themeOf(context).id)
                         .primaryColor,
                 borderRadius: BorderRadius.circular(_radius),
                 boxShadow: [

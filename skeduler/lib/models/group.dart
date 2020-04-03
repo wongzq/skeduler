@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/models/color_shade.dart';
-import 'package:skeduler/models/person.dart';
+import 'package:skeduler/models/member.dart';
 import 'package:skeduler/models/subject.dart';
 import 'package:skeduler/models/timetable.dart';
 
@@ -14,7 +14,7 @@ class Group {
   String _ownerEmail;
   String _ownerName;
 
-  List<Profile> _people = [];
+  List<Member> _members = [];
   List<Subject> _classes = [];
   List<Timetable> _timetables = [];
 
@@ -46,7 +46,7 @@ class Group {
   String get ownerName => _ownerName;
   int get numOfMembers => 1;
 
-  List<Profile> get people => _people;
+  List<Member> get members => _members;
   List<Subject> get classes => _classes;
   List<Timetable> get timetables => _timetables;
 }

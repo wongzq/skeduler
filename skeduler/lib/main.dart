@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
     ]);
 
     DatabaseService _dbService;
-    NativeTheme _nativeTheme = NativeTheme();
+    OriginTheme _originTheme = OriginTheme();
 
     return ThemeProvider(
       themes: myAppThemes + myAppDarkThemes,
@@ -42,12 +42,12 @@ class MyApp extends StatelessWidget {
               .indexWhere((AppTheme theme) => theme.id == newTheme.id);
         }
 
-        _nativeTheme.primaryColor = myAppThemes[_themeIndex].data.primaryColor;
-        _nativeTheme.primaryColorLight =
+        _originTheme.primaryColor = myAppThemes[_themeIndex].data.primaryColor;
+        _originTheme.primaryColorLight =
             myAppThemes[_themeIndex].data.primaryColorLight;
-        _nativeTheme.primaryColorDark =
+        _originTheme.primaryColorDark =
             myAppThemes[_themeIndex].data.primaryColorDark;
-        _nativeTheme.accentColor = myAppThemes[_themeIndex].data.accentColor;
+        _originTheme.accentColor = myAppThemes[_themeIndex].data.accentColor;
       },
       child: ThemeConsumer(
         child: Builder(
@@ -67,13 +67,13 @@ class MyApp extends StatelessWidget {
                   theme.id == ThemeProvider.themeOf(themeContext).id);
             }
 
-            _nativeTheme.primaryColor =
+            _originTheme.primaryColor =
                 myAppThemes[_themeIndex].data.primaryColor;
-            _nativeTheme.primaryColorLight =
+            _originTheme.primaryColorLight =
                 myAppThemes[_themeIndex].data.primaryColorLight;
-            _nativeTheme.primaryColorDark =
+            _originTheme.primaryColorDark =
                 myAppThemes[_themeIndex].data.primaryColorDark;
-            _nativeTheme.accentColor =
+            _originTheme.accentColor =
                 myAppThemes[_themeIndex].data.accentColor;
 
             /// Provide User from Firebase
@@ -87,8 +87,8 @@ class MyApp extends StatelessWidget {
                   /// Multiple Providers
                   return MultiProvider(
                     providers: [
-                      ChangeNotifierProvider<NativeTheme>.value(
-                        value: _nativeTheme,
+                      ChangeNotifierProvider<OriginTheme>.value(
+                        value: _originTheme,
                       ),
                       Provider<DatabaseService>.value(
                         value: _dbService,

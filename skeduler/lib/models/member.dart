@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:skeduler/models/availability.dart';
 
-class Profile {
+class Member {
 //   /// properties
 //   String _uid;
 //   String _email;

@@ -59,7 +59,7 @@ class _MonthEditorState extends State<MonthEditor> {
 
   /// generate List<Widget> for months
   List<Widget> _generateMonths(GlobalKey _key) {
-    NativeTheme _nativeTheme = Provider.of<NativeTheme>(context);
+    OriginTheme _originTheme = Provider.of<OriginTheme>(context);
 
     return _months.asMap().entries.map((MapEntry item) {
       return Visibility(
@@ -91,7 +91,7 @@ class _MonthEditorState extends State<MonthEditor> {
           padding: EdgeInsets.all(_chipPadding),
           child: ActionChip(
             backgroundColor: _monthsSelected.contains(item.key)
-                ? _nativeTheme.primaryColorLight
+                ? _originTheme.primaryColorLight
                 : Colors.grey[200],
             elevation: 3.0,
             labelPadding: EdgeInsets.symmetric(

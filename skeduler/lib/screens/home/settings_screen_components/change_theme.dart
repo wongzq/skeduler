@@ -23,14 +23,14 @@ class _ChangeThemeState extends State<ChangeTheme> {
 
   @override
   Widget build(BuildContext context) {
-    NativeTheme _nativeTheme = Provider.of<NativeTheme>(context);
+    OriginTheme _originTheme = Provider.of<OriginTheme>(context);
 
     ScrollController _controller = ScrollController();
 
     bool _darkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;
 
-    String _nativeThemeId = getNativeThemeIdFromId(ThemeProvider.themeOf(context).id);
+    String _originThemeId = getOriginThemeIdFromId(ThemeProvider.themeOf(context).id);
 
     _chipWidth =
         (MediaQuery.of(context).size.width - 2 * _bodyHoriPadding) / 4 -
@@ -58,10 +58,10 @@ class _ChangeThemeState extends State<ChangeTheme> {
                 onChanged: (bool isDark) {
                   if (isDark) {
                     ThemeProvider.controllerOf(context)
-                        .setTheme(_nativeThemeId + '_dark');
+                        .setTheme(_originThemeId + '_dark');
                   } else {
                     ThemeProvider.controllerOf(context)
-                        .setTheme(_nativeThemeId);
+                        .setTheme(_originThemeId);
                   }
 
                   setState(() {
@@ -90,7 +90,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
                     horizontal: _chipLabelHoriPadding,
                     vertical: _chipLabelVertPadding,
                   ),
-                  backgroundColor: _nativeTheme.primaryColor,
+                  backgroundColor: _originTheme.primaryColor,
                   elevation: 3.0,
                   label: Container(
                     width: _chipWidth,
@@ -127,14 +127,14 @@ class _ChangeThemeState extends State<ChangeTheme> {
                           child: Text(''),
                         ),
                         onPressed: () {
-                          _nativeThemeId = myAppThemes[index].id;
+                          _originThemeId = myAppThemes[index].id;
 
                           if (_darkMode) {
                             ThemeProvider.controllerOf(context)
-                                .setTheme(_nativeThemeId + '_dark');
+                                .setTheme(_originThemeId + '_dark');
                           } else {
                             ThemeProvider.controllerOf(context)
-                                .setTheme(_nativeThemeId);
+                                .setTheme(_originThemeId);
                           }
 
                           setState(() {

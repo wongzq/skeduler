@@ -103,7 +103,7 @@ class ColorShade {
   }
 
   static Color colorFromThemeIdAndShade(String themeId, Shade colorType) {
-    int index = getNativeThemeIndexFromId(themeId);
+    int index = getOriginThemeIndexFromId(themeId);
 
     if (index != -1) {
       switch (colorType) {

@@ -43,6 +43,5 @@ class _WrapperState extends State<Wrapper> {
       onWillPop: Navigator.of(context).canPop() ? null : _onWillPop,
       child: user == null ? Authentication() : widget.widget,
     );
-    // return user == null ? Authentication() : widget.widget;
   }
 }

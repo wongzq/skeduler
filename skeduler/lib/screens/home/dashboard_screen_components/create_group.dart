@@ -35,10 +35,13 @@ class _CreateGroupState extends State<CreateGroup> {
   /// methods
   @override
   Widget build(BuildContext context) {
-    User _owner = Provider.of<User>(context);
+    User owner = Provider.of<User>(context);
     _dbService = Provider.of<DatabaseService>(context);
-    _groupOwnerEmail = _owner.email;
-    _groupOwnerName = _owner.name;
+
+    if (owner != null) {
+      _groupOwnerEmail = owner.email;
+      _groupOwnerName = owner.name;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -147,7 +150,7 @@ class _CreateGroupState extends State<CreateGroup> {
               groupColor: () {
                 if (_groupColorShade.color == null) {
                   _groupColorShade.color =
-                      getNativeThemeData(ThemeProvider.themeOf(context).id)
+                      getOriginThemeData(ThemeProvider.themeOf(context).id)
                           .primaryColor;
                 }
                 return _groupColorShade.color;

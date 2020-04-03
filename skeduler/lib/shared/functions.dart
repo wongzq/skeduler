@@ -26,7 +26,7 @@ Future<bool> checkInternetConnection() async {
   return hasConn;
 }
 
-int getNativeThemeIndexFromColor(Color color) {
+int getOriginThemeIndexFromColor(Color color) {
   int index = myAppThemes.indexWhere((AppTheme theme) {
     return theme.data.primaryColor == color ||
         theme.data.primaryColorDark == color ||
@@ -37,8 +37,8 @@ int getNativeThemeIndexFromColor(Color color) {
   return index;
 }
 
-int getNativeThemeIndexFromId(String themeId) {
-  themeId = getNativeThemeIdFromId(themeId);
+int getOriginThemeIndexFromId(String themeId) {
+  themeId = getOriginThemeIdFromId(themeId);
 
   int index = myAppThemes.indexWhere((AppTheme theme) {
     return theme.id == themeId;
@@ -47,12 +47,12 @@ int getNativeThemeIndexFromId(String themeId) {
   return index;
 }
 
-String getNativeThemeIdFromId(String themeId) {
+String getOriginThemeIdFromId(String themeId) {
   int _indexOfDark = themeId.lastIndexOf('_dark');
   return _indexOfDark != -1 ? themeId.substring(0, _indexOfDark) : themeId;
 }
 
-ThemeData getNativeThemeData(String themeId) {
+ThemeData getOriginThemeData(String themeId) {
   int index = myAppThemes.indexWhere((theme) => theme.id == themeId);
   int darkIndex = myAppDarkThemes.indexWhere((theme) => theme.id == themeId);
   int defaultIndex = myAppThemes
@@ -67,8 +67,8 @@ ThemeData getNativeThemeData(String themeId) {
   }
 }
 
-Color getNativeThemeColorShade(ColorShade colorShade) {
-  ThemeData theme = getNativeThemeData(colorShade.themeId);
+Color getOriginThemeColorShade(ColorShade colorShade) {
+  ThemeData theme = getOriginThemeData(colorShade.themeId);
 
   switch (colorShade.shade) {
     case Shade.primaryColorDark:

@@ -32,7 +32,7 @@ class _EditGroupState extends State<EditGroup> {
   void initState() {
     _groupName = widget.group.name;
     _groupDescription = widget.group.description;
-    _groupColorShade = widget.group.colorShade;
+    _groupColorShade = ColorShade(color: widget.group.colorShade.color);
     _groupOwnerName = widget.group.ownerName;
     _groupOwnerEmail = widget.group.ownerEmail;
 
@@ -115,7 +115,15 @@ class _EditGroupState extends State<EditGroup> {
                     initialExpanded: _expanded.value,
                     valueSetterColorShade: (value) {
                       setState(() {
+                        print('1'+_groupColorShade.themeId.toString());
+                        print('1'+_groupColorShade.shade.toString());
+                        print('1'+widget.group.colorShade.themeId.toString());
+                        print('1'+widget.group.colorShade.shade.toString());
                         _groupColorShade = value;
+                        print(_groupColorShade.themeId);
+                        print(_groupColorShade.shade);
+                        print(widget.group.colorShade.themeId);
+                        print(widget.group.colorShade.shade);
                       });
                     },
                     valueSetterExpanded: (value) {
@@ -149,7 +157,7 @@ class _EditGroupState extends State<EditGroup> {
                         ownerName: _groupOwnerName,
                         groupColor: () {
                           if (_groupColorShade.color == null) {
-                            _groupColorShade.color = getNativeThemeData(
+                            _groupColorShade.color = getOriginThemeData(
                                     ThemeProvider.themeOf(context).id)
                                 .primaryColor;
                           }
@@ -165,7 +173,7 @@ class _EditGroupState extends State<EditGroup> {
             ),
           ),
 
-          // Editing mode
+          /// Editing mode
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
@@ -173,7 +181,7 @@ class _EditGroupState extends State<EditGroup> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  // Cancel changes
+                  /// Cancel changes
                   FloatingActionButton(
                     heroTag: 'Cancel',
                     backgroundColor: Colors.red,
@@ -188,17 +196,25 @@ class _EditGroupState extends State<EditGroup> {
 
                   SizedBox(width: 20.0),
 
-                  // Confirm amd make changes
+                  /// Confirm amd make changes
                   FloatingActionButton(
                     heroTag: 'Confirm',
                     backgroundColor: Colors.green,
                     onPressed: () {
                       if (_formKeyName.currentState.validate() &&
                           _formKeyDesc.currentState.validate()) {
+                        print('valid');
+                        print('Final' + _groupColorShade.themeId);
+                        print('Final' + _groupColorShade.shade.toString());
+                        print('Final' + widget.group.colorShade.themeId);
+                        print('Final' + widget.group.colorShade.shade.toString());
                         if (_groupName.trim() != widget.group.name ||
                             _groupDescription.trim() !=
                                 widget.group.description ||
-                            _groupColorShade != widget.group.colorShade) {
+                            _groupColorShade.themeId !=
+                                widget.group.colorShade.themeId ||
+                            _groupColorShade.shade !=
+                                widget.group.colorShade.shade) {
                           dbService.updateGroupData(
                             widget.group.groupDocId,
                             name: _groupName.trim(),

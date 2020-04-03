@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/group.dart';
 import 'package:skeduler/models/my_app_themes.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/components/add_person.dart';
 import 'package:skeduler/shared/functions.dart';
 
 class GroupScreenOptions extends StatelessWidget {
@@ -26,13 +25,13 @@ class GroupScreenOptions extends StatelessWidget {
 
           if (group != null) {
             mainIconBackgroundColor =
-                getNativeThemeData(group.colorShade.themeId).primaryColor ??
+                getOriginThemeData(group.colorShade.themeId).primaryColor ??
                     defaultColor;
             iconBackgroundColor =
-                getNativeThemeData(group.colorShade.themeId).primaryColorDark ??
+                getOriginThemeData(group.colorShade.themeId).primaryColorDark ??
                     defaultColor;
             labelBackgroundColor =
-                getNativeThemeData(group.colorShade.themeId).primaryColorDark ??
+                getOriginThemeData(group.colorShade.themeId).primaryColorDark ??
                     defaultColor;
           }
 
@@ -144,7 +143,7 @@ class GroupScreenOptions extends StatelessWidget {
                     elevation: 0,
                   ),
 
-                  // Edit group information
+                  /// Edit group information
                   SpeedDialChild(
                     backgroundColor: iconBackgroundColor,
                     foregroundColor: Colors.white,
@@ -183,7 +182,7 @@ class GroupScreenOptions extends StatelessWidget {
                     },
                   ),
 
-                  // Add subject
+                  /// Add subject
                   SpeedDialChild(
                     backgroundColor: iconBackgroundColor,
                     foregroundColor: Colors.white,
@@ -253,12 +252,7 @@ class GroupScreenOptions extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddPerson(),
-                        ),
-                      );
+                      Navigator.of(context).pushNamed('/group/addMember');
                     },
                   ),
                 ],

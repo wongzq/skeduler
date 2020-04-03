@@ -6,10 +6,11 @@ import 'package:skeduler/screens/home/group_screen_components/group_screen.dart'
 import 'package:skeduler/screens/home/profile_screen_components/profile_screen.dart';
 import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
 import 'package:skeduler/screens/wrapper.dart';
+import 'package:skeduler/shared/components/add_member.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    // getting arguments passed in while calling Navigator.pushNamed
+    /// getting arguments passed in while calling Navigator.pushNamed
     final args = settings.arguments;
 
     switch (settings.name) {
@@ -29,6 +30,12 @@ class RouteGenerator {
       case '/group/edit':
         if (args is Group) {
           return MaterialPageRoute(builder: (_) => wrapWidget(EditGroup(args)));
+        }
+        break;
+      
+      case '/group/addMember':
+        if (args == null) {
+          return MaterialPageRoute(builder: (_) => wrapWidget(AddMember()));
         }
         break;
 

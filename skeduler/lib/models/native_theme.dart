@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class NativeTheme extends ChangeNotifier {
+class OriginTheme extends ChangeNotifier {
   Color _primaryColor;
   Color _primaryColorLight;
   Color _primaryColorDark;
   Color _accentColor;
 
-  NativeTheme({
+  OriginTheme({
     Color primaryColor,
     Color primaryColorLight,
     Color primaryColorDark,

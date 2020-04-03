@@ -94,7 +94,7 @@ class _ChangeColorState extends State<ChangeColor> {
                 backgroundColor: () {
                   if (_colorShade.color == null) {
                     _colorShade.color =
-                        getNativeThemeData(ThemeProvider.themeOf(context).id)
+                        getOriginThemeData(ThemeProvider.themeOf(context).id)
                             .primaryColor;
                   }
                   return _colorShade.color;

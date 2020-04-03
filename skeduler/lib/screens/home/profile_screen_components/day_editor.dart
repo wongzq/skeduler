@@ -44,7 +44,7 @@ class _DayEditorState extends State<DayEditor> {
 
   /// generate List<Widget> for days
   List<Widget> _generateDays(GlobalKey _key) {
-    NativeTheme _nativeTheme = Provider.of<NativeTheme>(context);
+    OriginTheme _originTheme = Provider.of<OriginTheme>(context);
 
     return _days.asMap().entries.map((MapEntry item) {
       return Visibility(
@@ -74,7 +74,7 @@ class _DayEditorState extends State<DayEditor> {
           padding: const EdgeInsets.all(_chipPadding),
           child: ActionChip(
             backgroundColor: _daysSelected.contains(item.key)
-                ? _nativeTheme.primaryColorLight
+                ? _originTheme.primaryColorLight
                 : Colors.grey[200],
             elevation: 3.0,
             labelPadding: EdgeInsets.symmetric(
