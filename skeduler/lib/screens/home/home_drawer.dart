@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/main.dart';
 import 'package:skeduler/models/drawer_enum.dart';
 import 'package:skeduler/models/user.dart';
 import 'package:skeduler/services/auth_service.dart';
@@ -111,8 +112,7 @@ class HomeDrawer extends StatelessWidget {
                   dense: true,
                   leading: Icon(Icons.school),
                   title: Text(_screens[DrawerEnum.classes]['title']),
-                  selected:
-                      selected.value == DrawerEnum.classes ? true : false,
+                  selected: selected.value == DrawerEnum.classes ? true : false,
                   onTap: () {
                     Navigator.of(context).pop();
                   },
@@ -144,8 +144,7 @@ class HomeDrawer extends StatelessWidget {
                   dense: true,
                   leading: Icon(Icons.person),
                   title: Text(_screens[DrawerEnum.profile]['title']),
-                  selected:
-                      selected.value == DrawerEnum.profile ? true : false,
+                  selected: selected.value == DrawerEnum.profile ? true : false,
                   onTap: () {
                     selected.value = DrawerEnum.profile;
                     Navigator.of(context).pop();
@@ -204,13 +203,8 @@ class HomeDrawer extends StatelessWidget {
                             FlatButton(
                               child: Text('OK'),
                               onPressed: () {
-                                /// pop AlertDialog
-                                Navigator.of(context).pop();
-
-                                /// pop Drawer
-                                Navigator.of(context).pop();
-
                                 _authService.logOut();
+                                RestartWidget.restartApp(context);
                               },
                             )
                           ],

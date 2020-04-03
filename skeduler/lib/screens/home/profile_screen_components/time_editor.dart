@@ -175,7 +175,7 @@ class _TimeEditorState extends State<TimeEditor> {
 
   @override
   Widget build(BuildContext context) {
-    OriginTheme _originTheme = Provider.of<OriginTheme>(context);
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
     _editorsStatus = Provider.of<EditorsStatus>(context);
 
     return GestureDetector(
@@ -243,10 +243,10 @@ class _TimeEditorState extends State<TimeEditor> {
                         height: _buttonHeight,
                         width: MediaQuery.of(context).size.width - 2,
                         child: RaisedButton(
-                          color: _originTheme.primaryColorLight,
+                          color: originTheme.primaryColorLight,
                           disabledColor: Colors.grey[200],
                           disabledTextColor: Color(0xFFBBBBBB),
-                          highlightColor: _originTheme.primaryColor,
+                          highlightColor: originTheme.primaryColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
                           ),

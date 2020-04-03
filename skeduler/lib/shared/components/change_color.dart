@@ -51,7 +51,7 @@ class _ChangeColorState extends State<ChangeColor> {
             (2 * _chipPadding) -
             8;
 
-    ScrollController _controller = ScrollController();
+    ScrollController controller = ScrollController();
 
     return ExpansionTile(
       initiallyExpanded: widget.initialExpanded,
@@ -118,7 +118,7 @@ class _ChangeColorState extends State<ChangeColor> {
             gradientFractionOnEnd: 0.05,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              controller: _controller,
+              controller: controller,
               itemCount: myAppThemes.length * _shades,
               itemBuilder: (BuildContext context, int index) {
                 return Visibility(

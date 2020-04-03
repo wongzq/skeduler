@@ -23,14 +23,15 @@ class _ChangeThemeState extends State<ChangeTheme> {
 
   @override
   Widget build(BuildContext context) {
-    OriginTheme _originTheme = Provider.of<OriginTheme>(context);
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
 
-    ScrollController _controller = ScrollController();
+    ScrollController controller = ScrollController();
 
-    bool _darkMode =
+    bool darkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;
 
-    String _originThemeId = getOriginThemeIdFromId(ThemeProvider.themeOf(context).id);
+    String _originThemeId =
+        getOriginThemeIdFromId(ThemeProvider.themeOf(context).id);
 
     _chipWidth =
         (MediaQuery.of(context).size.width - 2 * _bodyHoriPadding) / 4 -
@@ -65,10 +66,10 @@ class _ChangeThemeState extends State<ChangeTheme> {
                   }
 
                   setState(() {
-                    _darkMode = isDark;
+                    darkMode = isDark;
                   });
                 },
-                value: _darkMode,
+                value: darkMode,
               ),
             ],
           ),
@@ -90,7 +91,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
                     horizontal: _chipLabelHoriPadding,
                     vertical: _chipLabelVertPadding,
                   ),
-                  backgroundColor: _originTheme.primaryColor,
+                  backgroundColor: originTheme.primaryColor,
                   elevation: 3.0,
                   label: Container(
                     width: _chipWidth,
@@ -109,7 +110,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
               gradientFractionOnEnd: 0.05,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                controller: _controller,
+                controller: controller,
                 itemCount: myAppThemes.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Visibility(
@@ -129,7 +130,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
                         onPressed: () {
                           _originThemeId = myAppThemes[index].id;
 
-                          if (_darkMode) {
+                          if (darkMode) {
                             ThemeProvider.controllerOf(context)
                                 .setTheme(_originThemeId + '_dark');
                           } else {

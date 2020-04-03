@@ -30,13 +30,11 @@ class _CreateGroupState extends State<CreateGroup> {
   String _groupOwnerEmail;
   String _groupOwnerName;
 
-  DatabaseService _dbService;
-
   /// methods
   @override
   Widget build(BuildContext context) {
     User owner = Provider.of<User>(context);
-    _dbService = Provider.of<DatabaseService>(context);
+    DatabaseService dbService = Provider.of<DatabaseService>(context);
 
     if (owner != null) {
       _groupOwnerEmail = owner.email;
@@ -65,7 +63,7 @@ class _CreateGroupState extends State<CreateGroup> {
             ),
             onPressed: _nameValid && _descValid
                 ? () {
-                    _dbService.setGroupData(
+                    dbService.setGroupData(
                       _groupName,
                       _groupDescription,
                       _groupColorShade,

@@ -17,10 +17,10 @@ class DashboardScreen extends StatelessWidget {
   /// methods
   @override
   Widget build(BuildContext context) {
-    DatabaseService _dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<DrawerEnum> _selected =
+    DatabaseService dbService = Provider.of<DatabaseService>(context);
+    ValueNotifier<DrawerEnum> selected =
         Provider.of<ValueNotifier<DrawerEnum>>(context);
-    ValueNotifier<String> _groupDocId =
+    ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
 
     return Scaffold(
@@ -37,7 +37,7 @@ class DashboardScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(_bodyPadding),
             child: StreamBuilder<List<Group>>(
-              stream: _dbService.groups,
+              stream: dbService.groups,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 List<Group> _groups = snapshot.data;
 
@@ -50,8 +50,8 @@ class DashboardScreen extends StatelessWidget {
                       return GestureDetector(
                         behavior: HitTestBehavior.translucent,
                         onTap: () {
-                          _selected.value = DrawerEnum.group;
-                          _groupDocId.value = _groups[index].groupDocId;
+                          selected.value = DrawerEnum.group;
+                          groupDocId.value = _groups[index].groupDocId;
                           Navigator.of(context).pushNamed('/group');
                         },
                         child: GroupCard(

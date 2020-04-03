@@ -19,8 +19,8 @@ class _ChangeUserDataState extends State<ChangeUserData> {
     User user = Provider.of<User>(context);
     DatabaseService dbs = Provider.of<DatabaseService>(context);
 
-    TextEditingController _controller = TextEditingController();
-    _controller.text = user != null ? user.name : '';
+    TextEditingController controller = TextEditingController();
+    controller.text = user != null ? user.name : '';
 
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -31,7 +31,7 @@ class _ChangeUserDataState extends State<ChangeUserData> {
         child: Column(
           children: <Widget>[
             LabelTextInput(
-              controller: _controller,
+              controller: controller,
               formKey: _formKey,
               label: 'Name',
               hintText: user != null ? user.name : '',
@@ -51,7 +51,7 @@ class _ChangeUserDataState extends State<ChangeUserData> {
               children: <Widget>[
                 FlatButton(
                   onPressed: () {
-                    _controller.text = user.name;
+                    controller.text = user.name;
                     unfocus();
                   },
                   child: Text('Cancel'),
@@ -61,8 +61,8 @@ class _ChangeUserDataState extends State<ChangeUserData> {
                     if (_formKey.currentState.validate()) {
                       bool hasConn = await checkInternetConnection();
                       if (hasConn) {
-                        dbs.updateUserData(name: _controller.text);
-                        _controller.text = user.name;
+                        dbs.updateUserData(name: controller.text);
+                        controller.text = user.name;
                       } else {
                         Fluttertoast.showToast(
                           msg: 'Please check your internet connection',
@@ -70,7 +70,7 @@ class _ChangeUserDataState extends State<ChangeUserData> {
                           backgroundColor: Colors.white,
                           textColor: Colors.black,
                         );
-                        _controller.text = user.name;
+                        controller.text = user.name;
                       }
                       unfocus();
                     }

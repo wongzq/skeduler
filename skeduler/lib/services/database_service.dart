@@ -39,7 +39,10 @@ class DatabaseService {
 
   /// get ['groups'] collection
   Stream<List<Group>> get groups {
-    return groupsCollection.snapshots().map(_groupsFromSnapshot);
+    return groupsCollection
+        .where('members', arrayContains: userId)
+        .snapshots()
+        .map(_groupsFromSnapshot);
   }
 
   /// setter methods
@@ -82,6 +85,7 @@ class DatabaseService {
         'email': ownerEmail,
         'name': ownerName,
       },
+      'members': [ownerEmail],
     }).then((onValue) {
       addMemberToGroup(
         groupDocId: newGroupDoc.documentID,
@@ -92,6 +96,18 @@ class DatabaseService {
   }
 
   Future deleteGroup(String docId) async {
+    // Cloud function to delete all subcollections
+    // temporary replacement
+    await groupsCollection
+        .document(docId)
+        .collection('members')
+        .getDocuments()
+        .then((onValue) {
+      for (DocumentSnapshot snap in onValue.documents) {
+        snap.reference.delete();
+      }
+    });
+
     return await groupsCollection.document(docId).delete();
   }
 
@@ -134,6 +150,9 @@ class DatabaseService {
       if (user.exists) {
         await groupMemberRef.get().then((member) async {
           if (!member.exists) {
+            await groupsCollection.document(groupDocId).updateData({
+              'members': FieldValue.arrayUnion([newMemberEmail])
+            });
             await groupMemberRef.setData({'role': memberRole.index});
           } else {
             errorMsg = 'User is already in the group';
