@@ -116,7 +116,7 @@ class DatabaseService {
   /// add [User] to [Group]
   Future addMemberToGroup(String newMemberEmail, String groupDocId) {
     // find user
-    usersCollection.getDocuments().
+    // usersCollection.getDocuments().
 
     // find group
     
