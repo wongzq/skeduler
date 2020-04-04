@@ -19,8 +19,8 @@ class Group {
   List<Timetable> _timetables = [];
 
   /// constructor
-  Group(
-    String groupDocId, {
+  Group({
+    @required String groupDocId,
     String name = '',
     String description = '',
     ColorShade colorShade,

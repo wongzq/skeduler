@@ -9,14 +9,22 @@ class DatabaseService {
   /// properties
   final String userId;
 
+  /// constructor method
+  DatabaseService({this.userId});
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Collection References
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+
   /// collection reference
   final CollectionReference usersCollection =
       Firestore.instance.collection('users');
   final CollectionReference groupsCollection =
       Firestore.instance.collection('groups');
 
-  /// constructor method
-  DatabaseService({this.userId});
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Getter methods
+  ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// getter methods
   /// get [User] data
@@ -53,6 +61,10 @@ class DatabaseService {
         .snapshots()
         .map(_membersFromSnapshots);
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Setter methods
+  ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// setter methods
   /// set [User] data
@@ -103,6 +115,10 @@ class DatabaseService {
       );
     });
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Modifying methods
+  ////////////////////////////////////////////////////////////////////////////////////////////////
 
   Future deleteGroup(String docId) async {
     // Cloud function to delete all subcollections
@@ -174,6 +190,10 @@ class DatabaseService {
     return errorMsg;
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Auxiliary methods
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+
   /// auxiliary methods
   Future<DocumentSnapshot> findGroup(String groupDocId) async {
     return await groupsCollection.document(groupDocId).get();
@@ -197,7 +217,7 @@ class DatabaseService {
   Group _groupFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
         ? Group(
-            snapshot.documentID,
+            groupDocId: snapshot.documentID,
             name: snapshot.data['name'] ?? '',
             description: snapshot.data['description'] ?? '',
             colorShade: ColorShade(
@@ -207,11 +227,23 @@ class DatabaseService {
             ownerEmail: snapshot.data['owner']['email'] ?? '',
             ownerName: snapshot.data['owner']['name'] ?? '',
           )
-        : Group('');
+        : Group(groupDocId: null);
   }
 
   Member _memberFromSnapshot(DocumentSnapshot snapshot) {
-    return snapshot.data != null ? Member() : Member();
+    return snapshot.data != null
+        ? Member(
+            email: snapshot.documentID,
+            name: snapshot.data['name'],
+            nickname: snapshot.data['nickname'] ?? snapshot.data['name'],
+            description: snapshot.data['description'],
+            role: MemberRole.values[snapshot.data['role']],
+            colorShade: ColorShade(
+              themeId: snapshot.data['colorShade']['themeId'],
+              shade: snapshot.data['colorShade']['shade'],
+            ),
+          )
+        : Member(email: null);
   }
 
   /// convert document snapshots into [User]s
