@@ -124,7 +124,7 @@ class _AddMemberState extends State<AddMember> {
                                     if (errorMsg == null) {
                                       Fluttertoast.showToast(
                                         msg: _newMemberEmail +
-                                            ' added successfully',
+                                            ' has been invited',
                                         toastLength: Toast.LENGTH_LONG,
                                       );
                                       Navigator.of(context).pop();

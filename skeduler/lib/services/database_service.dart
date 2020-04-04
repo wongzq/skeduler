@@ -47,29 +47,35 @@ class DatabaseService {
 
   /// get [Group] data
   Stream<Group> getGroup(String groupDocId) {
-    return groupsCollection
-        .document(groupDocId)
-        .snapshots()
-        .map(_groupFromSnapshot);
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : groupsCollection
+            .document(groupDocId)
+            .snapshots()
+            .map(_groupFromSnapshot);
   }
 
   /// get [Group][Member] data of me
   Stream<Member> getGroupMemberMyData(String groupDocId) {
-    return groupsCollection
-        .document(groupDocId)
-        .collection('members')
-        .document(userId)
-        .snapshots()
-        .map(_memberFromSnapshot);
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : groupsCollection
+            .document(groupDocId)
+            .collection('members')
+            .document(userId)
+            .snapshots()
+            .map(_memberFromSnapshot);
   }
 
   /// get [Group][Member]s' data
   Stream<List<Member>> getGroupMembers(String groupDocId) {
-    return groupsCollection
-        .document(groupDocId)
-        .collection('members')
-        .snapshots()
-        .map(_membersFromSnapshots);
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : groupsCollection
+            .document(groupDocId)
+            .collection('members')
+            .snapshots()
+            .map(_membersFromSnapshots);
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,35 +139,43 @@ class DatabaseService {
   Future deleteGroup(String groupDocId) async {
     // Cloud function to delete all subcollections
     // temporary replacement
-    await groupsCollection
-        .document(groupDocId)
-        .collection('members')
-        .getDocuments()
-        .then((onValue) {
-      for (DocumentSnapshot snap in onValue.documents) {
-        snap.reference.delete();
-      }
-    });
+    if (groupDocId == null || groupDocId.trim() == '') {
+      return null;
+    } else {
+      await groupsCollection
+          .document(groupDocId)
+          .collection('members')
+          .getDocuments()
+          .then((onValue) {
+        for (DocumentSnapshot snap in onValue.documents) {
+          snap.reference.delete();
+        }
+      });
 
-    return await groupsCollection.document(groupDocId).delete();
+      return await groupsCollection.document(groupDocId).delete();
+    }
   }
 
   Future leaveGroup(String groupDocId) async {
-    return await groupsCollection
-        .document(groupDocId)
-        .get()
-        .then((onValue) async {
-      if (onValue.exists) {
-        await groupsCollection.document(groupDocId).updateData({
-          'members': FieldValue.arrayRemove([userId])
-        });
-        await groupsCollection
-            .document(groupDocId)
-            .collection('members')
-            .document(userId)
-            .delete();
-      }
-    });
+    if (groupDocId == null || groupDocId.trim() == '') {
+      return null;
+    } else {
+      return await groupsCollection
+          .document(groupDocId)
+          .get()
+          .then((onValue) async {
+        if (onValue.exists) {
+          await groupsCollection.document(groupDocId).updateData({
+            'members': FieldValue.arrayRemove([userId])
+          });
+          await groupsCollection
+              .document(groupDocId)
+              .collection('members')
+              .document(userId)
+              .delete();
+        }
+      });
+    }
   }
 
   /// update [Group] data
@@ -173,18 +187,51 @@ class DatabaseService {
     String ownerEmail,
     String ownerName,
   }) async {
-    return await groupsCollection.document(groupDocId).updateData({
-      'name': name,
-      'description': description,
-      'colorShade': {
-        'themeId': colorShade.themeId,
-        'shade': colorShade.shadeIndex,
-      },
-      'owner': {
-        'email': ownerEmail,
-        'name': ownerName,
-      },
-    });
+    if (groupDocId == null || groupDocId.trim() == '') {
+      return null;
+    } else {
+      return await groupsCollection.document(groupDocId).updateData({
+        'name': name,
+        'description': description,
+        'colorShade': {
+          'themeId': colorShade.themeId,
+          'shade': colorShade.shadeIndex,
+        },
+        'owner': {
+          'email': ownerEmail,
+          'name': ownerName,
+        },
+      });
+    }
+  }
+
+  Future acceptGroupInvitation(String groupDocId) async {
+    if (groupDocId == null || groupDocId.trim() == '') {
+      return null;
+    } else {
+      DocumentReference groupMemberRef = groupsCollection
+          .document(groupDocId)
+          .collection('members')
+          .document(userId);
+
+      return await groupMemberRef.updateData({'role': MemberRole.member.index});
+    }
+  }
+
+  Future declineGroupInvitation(String groupDocId) async {
+    if (groupDocId == null || groupDocId.trim() == '') {
+      return null;
+    } else {
+      await groupsCollection.document(groupDocId).updateData({
+        'members': FieldValue.arrayRemove([userId])
+      });
+
+      return await groupsCollection
+          .document(groupDocId)
+          .collection('members')
+          .document(userId)
+          .delete();
+    }
   }
 
   /// add [User] to [Group]
@@ -193,11 +240,12 @@ class DatabaseService {
     @required String newMemberEmail,
     MemberRole memberRole = MemberRole.pending,
   }) async {
+    String errorMsg;
+
     DocumentReference groupMemberRef = groupsCollection
         .document(groupDocId)
         .collection('members')
         .document(newMemberEmail);
-    String errorMsg;
 
     await usersCollection.document(newMemberEmail).get().then((user) async {
       if (user.exists) {

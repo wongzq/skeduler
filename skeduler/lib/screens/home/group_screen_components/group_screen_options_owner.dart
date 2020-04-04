@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/services/database_service.dart';
@@ -12,6 +13,8 @@ class GroupScreenOptionsOwner extends StatelessWidget {
   Widget build(BuildContext context) {
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
     DatabaseService dbService = Provider.of<DatabaseService>(context);
+    ValueNotifier<DrawerEnum> selected =
+        Provider.of<ValueNotifier<DrawerEnum>>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
 
@@ -137,7 +140,9 @@ class GroupScreenOptionsOwner extends StatelessWidget {
                                     if (formKey.currentState.validate()) {
                                       dbService.deleteGroup(group.groupDocId);
                                       groupDocId.value = null;
-                                      Navigator.pop(context);
+                                      selected.value = DrawerEnum.dashboard;
+                                      Navigator.popUntil(
+                                          context, (route) => route.isFirst);
                                     }
                                   },
                                 ),

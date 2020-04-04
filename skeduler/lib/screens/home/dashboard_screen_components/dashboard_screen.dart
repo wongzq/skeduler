@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/group_data/group.dart';
+import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/create_group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
@@ -39,28 +40,104 @@ class DashboardScreen extends StatelessWidget {
             child: StreamBuilder<List<Group>>(
               stream: dbService.groups,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
-                List<Group> _groups = snapshot.data;
+                List<Group> groups = snapshot.data;
 
                 return GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2),
-                  itemCount: _groups != null ? _groups.length : 0,
+                  itemCount: groups != null ? groups.length : 0,
                   itemBuilder: (BuildContext context, int index) {
-                    if (_groups[index] != null) {
-                      return GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          selected.value = DrawerEnum.group;
-                          groupDocId.value = _groups[index].groupDocId;
-                          Navigator.of(context).pushNamed('/group');
-                        },
-                        child: GroupCard(
-                          groupName: _groups[index].name,
-                          groupColor: _groups[index].colorShade.color,
-                          numOfMembers: _groups[index].numOfMembers,
-                          ownerName: _groups[index].ownerName,
-                        ),
-                      );
+                    if (groups[index] != null) {
+                      return StreamBuilder(
+                          stream: dbService
+                              .getGroupMemberMyData(groups[index].groupDocId),
+                          builder: (context, snapshot) {
+                            Member me = snapshot != null ? snapshot.data : null;
+
+                            return GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: () {
+                                if (me != null &&
+                                    me.role != null &&
+                                    me.role != MemberRole.pending) {
+                                  selected.value = DrawerEnum.group;
+                                  groupDocId.value = groups[index].groupDocId;
+
+                                  Navigator.of(context).pushNamed('/group');
+                                } else {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return StreamBuilder(
+                                            stream: dbService.getGroup(
+                                                groups[index].groupDocId),
+                                            builder: (context, snapshot) {
+                                              Group group = snapshot != null
+                                                  ? snapshot.data
+                                                  : null;
+
+                                              return group == null
+                                                  ? Container()
+                                                  : AlertDialog(
+                                                      content: Text(
+                                                          'You have been invited to join ' +
+                                                              group.name),
+                                                      actions: <Widget>[
+                                                        /// DECLINE button
+                                                        FlatButton(
+                                                          child:
+                                                              Text('DECLINE'),
+                                                          onPressed: () async {
+                                                            await dbService
+                                                                .declineGroupInvitation(
+                                                                    groups[index]
+                                                                        .groupDocId);
+
+                                                            selected.value =
+                                                                DrawerEnum
+                                                                    .dashboard;
+
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+
+                                                        /// ACCEPT button
+                                                        FlatButton(
+                                                          child: Text('ACCEPT'),
+                                                          onPressed: () async {
+                                                            await dbService
+                                                                .acceptGroupInvitation(
+                                                                    groups[index]
+                                                                        .groupDocId);
+
+                                                            selected.value =
+                                                                DrawerEnum
+                                                                    .group;
+                                                            groupDocId.value =
+                                                                groups[index]
+                                                                    .groupDocId;
+                                                            Navigator.of(
+                                                                    context)
+                                                                .popAndPushNamed(
+                                                                    '/group');
+                                                          },
+                                                        )
+                                                      ],
+                                                    );
+                                            });
+                                      });
+                                }
+                              },
+                              child: GroupCard(
+                                groupName: groups[index].name,
+                                groupColor: groups[index].colorShade.color,
+                                numOfMembers: groups[index].numOfMembers,
+                                ownerName: groups[index].ownerName,
+                              ),
+                            );
+                          });
                     } else {
                       return Container();
                     }

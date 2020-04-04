@@ -10,7 +10,6 @@ import 'package:theme_provider/theme_provider.dart';
 class GroupScreenOptionsAdmin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    GlobalKey<FormState> formKey = GlobalKey<FormState>();
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
@@ -113,7 +112,7 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
                                   onPressed: () {
                                     dbService.leaveGroup(groupDocId.value);
                                     groupDocId.value = null;
-                                    Navigator.pop(context);
+                                    Navigator.popUntil(context, (route)=>route.isFirst);
                                   },
                                 ),
                               ],

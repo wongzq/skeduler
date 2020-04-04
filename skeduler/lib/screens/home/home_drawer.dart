@@ -3,8 +3,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/main.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
+import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/services/auth_service.dart';
+import 'package:skeduler/services/database_service.dart';
 
 class HomeDrawer extends StatelessWidget {
   final AuthService _authService = AuthService();
@@ -14,7 +16,7 @@ class HomeDrawer extends StatelessWidget {
     DrawerEnum.group: {'title': 'Group', 'icon': null},
     DrawerEnum.timetable: {'title': 'Timetable', 'icon': null},
     DrawerEnum.classes: {'title': 'Classes', 'icon': null},
-    DrawerEnum.members: {'title': 'members', 'icon': null},
+    DrawerEnum.members: {'title': 'Members', 'icon': null},
     DrawerEnum.profile: {'title': 'Profile', 'icon': null},
     DrawerEnum.settings: {'title': 'Settings', 'icon': null},
     DrawerEnum.logout: {'title': 'Logout', 'icon': null},
@@ -24,6 +26,9 @@ class HomeDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     ValueNotifier<DrawerEnum> selected =
         Provider.of<ValueNotifier<DrawerEnum>>(context);
+    ValueNotifier<String> groupDocId =
+        Provider.of<ValueNotifier<String>>(context);
+    DatabaseService dbService = Provider.of<DatabaseService>(context);
 
     User user = Provider.of<User>(context);
     return Container(
@@ -69,91 +74,120 @@ class HomeDrawer extends StatelessWidget {
               Divider(thickness: 1.0),
 
               /// Group
-              Container(
-                color: selected.value == DrawerEnum.group
-                    ? Theme.of(context).primaryColorLight
-                    : null,
-                child: ListTile(
-                  dense: true,
-                  leading: Icon(FontAwesomeIcons.users),
-                  title: Text(_screens[DrawerEnum.group]['title']),
-                  selected: selected.value == DrawerEnum.group ? true : false,
-                  onTap: () {
-                    selected.value = DrawerEnum.group;
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed('/group');
-                  },
-                ),
-              ),
+              StreamBuilder(
+                  stream: dbService.getGroup(groupDocId.value),
+                  builder: (context, snapshot) {
+                    Group group = snapshot != null ? snapshot.data : null;
 
-              /// Timetable
-              Container(
-                color: selected.value == DrawerEnum.timetable
-                    ? Theme.of(context).primaryColorLight
-                    : null,
-                child: ListTile(
-                  dense: true,
-                  leading: Icon(Icons.table_chart),
-                  title: Text(_screens[DrawerEnum.timetable]['title']),
-                  selected:
-                      selected.value == DrawerEnum.timetable ? true : false,
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
+                    return groupDocId.value == null ||
+                            groupDocId.value == '' ||
+                            snapshot == null ||
+                            snapshot.data == null
+                        ? Container()
+                        : Column(
+                            children: <Widget>[
+                              Container(
+                                color: selected.value == DrawerEnum.group
+                                    ? Theme.of(context).primaryColorLight
+                                    : null,
+                                child: ListTile(
+                                  dense: true,
+                                  leading: Icon(FontAwesomeIcons.users),
+                                  title: Text(group.name ??
+                                      _screens[DrawerEnum.group]['title']),
+                                  selected: selected.value == DrawerEnum.group
+                                      ? true
+                                      : false,
+                                  onTap: () {
+                                    selected.value = DrawerEnum.group;
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pushNamed('/group');
+                                  },
+                                ),
+                              ),
 
-              /// Classes
-              Container(
-                color: selected.value == DrawerEnum.classes
-                    ? Theme.of(context).primaryColorLight
-                    : null,
-                child: ListTile(
-                  dense: true,
-                  leading: Icon(Icons.school),
-                  title: Text(_screens[DrawerEnum.classes]['title']),
-                  selected: selected.value == DrawerEnum.classes ? true : false,
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
+                              /// Timetable
+                              Container(
+                                color: selected.value == DrawerEnum.timetable
+                                    ? Theme.of(context).primaryColorLight
+                                    : null,
+                                child: ListTile(
+                                  dense: true,
+                                  leading: Icon(Icons.table_chart),
+                                  title: Text(
+                                      _screens[DrawerEnum.timetable]['title']),
+                                  selected:
+                                      selected.value == DrawerEnum.timetable
+                                          ? true
+                                          : false,
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
 
-              /// members
-              Container(
-                color: selected.value == DrawerEnum.members
-                    ? Theme.of(context).primaryColorLight
-                    : null,
-                child: ListTile(
-                  dense: true,
-                  leading: Icon(Icons.people),
-                  title: Text(_screens[DrawerEnum.members]['title']),
-                  selected: selected.value == DrawerEnum.members ? true : false,
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
+                              /// Classes
+                              Container(
+                                color: selected.value == DrawerEnum.classes
+                                    ? Theme.of(context).primaryColorLight
+                                    : null,
+                                child: ListTile(
+                                  dense: true,
+                                  leading: Icon(Icons.school),
+                                  title: Text(
+                                      _screens[DrawerEnum.classes]['title']),
+                                  selected: selected.value == DrawerEnum.classes
+                                      ? true
+                                      : false,
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
 
-              /// Profile
-              Container(
-                color: selected.value == DrawerEnum.profile
-                    ? Theme.of(context).primaryColorLight
-                    : null,
-                child: ListTile(
-                  dense: true,
-                  leading: Icon(Icons.person),
-                  title: Text(_screens[DrawerEnum.profile]['title']),
-                  selected: selected.value == DrawerEnum.profile ? true : false,
-                  onTap: () {
-                    selected.value = DrawerEnum.profile;
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed('/profile');
-                  },
-                ),
-              ),
+                              /// members
+                              Container(
+                                color: selected.value == DrawerEnum.members
+                                    ? Theme.of(context).primaryColorLight
+                                    : null,
+                                child: ListTile(
+                                  dense: true,
+                                  leading: Icon(Icons.people),
+                                  title: Text(
+                                      _screens[DrawerEnum.members]['title']),
+                                  selected: selected.value == DrawerEnum.members
+                                      ? true
+                                      : false,
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
 
-              Divider(thickness: 1.0),
+                              /// Profile
+                              Container(
+                                color: selected.value == DrawerEnum.profile
+                                    ? Theme.of(context).primaryColorLight
+                                    : null,
+                                child: ListTile(
+                                  dense: true,
+                                  leading: Icon(Icons.person),
+                                  title: Text(
+                                      _screens[DrawerEnum.profile]['title']),
+                                  selected: selected.value == DrawerEnum.profile
+                                      ? true
+                                      : false,
+                                  onTap: () {
+                                    selected.value = DrawerEnum.profile;
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pushNamed('/profile');
+                                  },
+                                ),
+                              ),
+                              Divider(thickness: 1.0),
+                            ],
+                          );
+                  }),
 
               /// Settings
               Container(
@@ -206,7 +240,7 @@ class HomeDrawer extends StatelessWidget {
                                 _authService.logOut();
                                 RestartWidget.restartApp(context);
                               },
-                            )
+                            ),
                           ],
                         );
                       },

@@ -7,6 +7,7 @@ import 'package:skeduler/screens/home/profile_screen_components/profile_screen.d
 import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
 import 'package:skeduler/screens/wrapper.dart';
 import 'package:skeduler/shared/components/add_member.dart';
+import 'package:skeduler/shared/components/custom_transition_route.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -16,39 +17,37 @@ class RouteGenerator {
     switch (settings.name) {
       case '/dashboard':
         if (args == null) {
-          return MaterialPageRoute(
-              builder: (_) => wrapWidget(DashboardScreen()));
+          return CustomTransitionRoute(page: wrapWidget(DashboardScreen()));
         }
         break;
 
       case '/group':
         if (args == null) {
-          return MaterialPageRoute(builder: (_) => wrapWidget(GroupScreen()));
+          return CustomTransitionRoute(page: wrapWidget(GroupScreen()));
         }
         break;
-      
+
       case '/group/edit':
         if (args is Group) {
-          return MaterialPageRoute(builder: (_) => wrapWidget(EditGroup(args)));
+          return CustomTransitionRoute(page: wrapWidget(EditGroup(args)));
         }
         break;
-      
+
       case '/group/addMember':
         if (args == null) {
-          return MaterialPageRoute(builder: (_) => wrapWidget(AddMember()));
+          return CustomTransitionRoute(page: wrapWidget(AddMember()));
         }
         break;
 
       case '/profile':
         if (args == null) {
-          return MaterialPageRoute(builder: (_) => wrapWidget(ProfileScreen()));
+          return CustomTransitionRoute(page: wrapWidget(ProfileScreen()));
         }
         break;
 
       case '/settings':
         if (args == null) {
-          return MaterialPageRoute(
-              builder: (_) => wrapWidget(SettingsScreen()));
+          return CustomTransitionRoute(page: wrapWidget(SettingsScreen()));
         }
         break;
 

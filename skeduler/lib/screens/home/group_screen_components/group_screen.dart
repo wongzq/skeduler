@@ -16,7 +16,7 @@ import 'package:theme_provider/theme_provider.dart';
 class GroupScreen extends StatefulWidget {
   final void Function({String groupName}) refresh;
 
-  const GroupScreen({this.refresh});
+  const GroupScreen({Key key, this.refresh}) : super(key: key);
 
   @override
   _GroupScreenState createState() => _GroupScreenState();
@@ -97,42 +97,44 @@ class _GroupScreenState extends State<GroupScreen> {
                               ),
                       ),
                       drawer: HomeDrawer(),
-                      body: Stack(
-                        children: <Widget>[
-                          /// Text: Group name
-                          Container(
-                            padding: EdgeInsets.all(20.0),
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              group.description,
-                              style: textStyleBody,
-                            ),
-                          ),
+                      body: StreamBuilder(
+                          stream:
+                              dbService.getGroupMemberMyData(groupDocId.value),
+                          builder: (context, snapshot) {
+                            Member me = snapshot != null ? snapshot.data : null;
 
-                          /// SpeedDial: Options
-                          StreamBuilder(
-                              stream: dbService
-                                  .getGroupMemberMyData(groupDocId.value),
-                              builder: (context, snapshot) {
-                                Member me =
-                                    snapshot != null ? snapshot.data : null;
+                            return me != null && me.role == MemberRole.pending
+                                ? Container()
+                                : Stack(
+                                    children: <Widget>[
+                                      /// Text: Group name
+                                      Container(
+                                        padding: EdgeInsets.all(20.0),
+                                        alignment: Alignment.topLeft,
+                                        child: Text(
+                                          group.description,
+                                          style: textStyleBody,
+                                        ),
+                                      ),
 
-                                return me != null
-                                    ? () {
-                                        if (me.role == MemberRole.owner)
-                                          return GroupScreenOptionsOwner();
-                                        else if (me.role == MemberRole.admin)
-                                          return GroupScreenOptionsAdmin();
-                                        else if (me.role == MemberRole.member ||
-                                            me.role == MemberRole.pending)
-                                          return GroupScreenOptionsMember();
-                                        else
-                                          return Container();
-                                      }()
-                                    : Container();
-                              }),
-                        ],
-                      ),
+                                      /// SpeedDial: Options
+                                      me != null
+                                          ? () {
+                                              if (me.role == MemberRole.owner)
+                                                return GroupScreenOptionsOwner();
+                                              else if (me.role ==
+                                                  MemberRole.admin)
+                                                return GroupScreenOptionsAdmin();
+                                              else if (me.role ==
+                                                  MemberRole.member)
+                                                return GroupScreenOptionsMember();
+                                              else
+                                                return Container();
+                                            }()
+                                          : Container(),
+                                    ],
+                                  );
+                          }),
                     );
             },
           );
