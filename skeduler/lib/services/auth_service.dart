@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:skeduler/models/user.dart';
+import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/services/database_service.dart';
 
 class AuthService {

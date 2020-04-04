@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/color_shade.dart';
-import 'package:skeduler/models/group.dart';
-import 'package:skeduler/models/my_app_themes.dart';
+import 'package:skeduler/models/auxiliary/color_shade.dart';
+import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen_options.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
 import 'package:skeduler/services/database_service.dart';
@@ -42,6 +41,7 @@ class _GroupScreenState extends State<GroupScreen> {
             stream: dbService.getGroup(groupDocId.value),
             builder: (context, snapshot) {
               Group group = snapshot != null ? snapshot.data : null;
+
               Color backgroundColor;
               IconThemeData iconTheme;
               TextTheme textTheme;
@@ -66,6 +66,7 @@ class _GroupScreenState extends State<GroupScreen> {
                     : getOriginThemeData(group.colorShade.themeId)
                         .primaryTextTheme;
               }
+
               return snapshot == null || snapshot.data == null
                   ? Loading()
                   : Scaffold(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/user.dart';
+import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/screens/authentication/authentication.dart';
 
 class Wrapper extends StatefulWidget {

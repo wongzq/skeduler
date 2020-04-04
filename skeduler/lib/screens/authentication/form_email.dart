@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/auth_info.dart';
+import 'package:skeduler/models/auxiliary/auth_info.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class FormEmail extends StatefulWidget {

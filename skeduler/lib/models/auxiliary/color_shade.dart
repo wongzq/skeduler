@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:skeduler/models/my_app_themes.dart';
+import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:theme_provider/theme_provider.dart';
 

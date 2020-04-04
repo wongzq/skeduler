@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:skeduler/models/color_shade.dart';
-import 'package:skeduler/models/my_app_themes.dart';
+import 'package:skeduler/models/auxiliary/color_shade.dart';
+import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 void unfocus() {

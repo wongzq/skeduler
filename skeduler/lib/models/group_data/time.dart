@@ -1,4 +1,4 @@
-// class Availability {
+class Time {
 //   /// properties
 //   Set<DateTime> _dateTimes;
 // }
@@ -13,4 +13,4 @@
 
 // class _AvailableTime {
   
-// }
+}

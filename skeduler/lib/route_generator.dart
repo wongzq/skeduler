@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:skeduler/models/group.dart';
+import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/dashboard_screen.dart';
 import 'package:skeduler/screens/home/group_screen_components/edit_group.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen.dart';

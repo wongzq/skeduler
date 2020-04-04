@@ -1,7 +1,7 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
-import 'package:skeduler/models/color_shade.dart';
-import 'package:skeduler/models/my_app_themes.dart';
+import 'package:skeduler/models/auxiliary/color_shade.dart';
+import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:theme_provider/theme_provider.dart';
 

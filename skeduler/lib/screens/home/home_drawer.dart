@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/main.dart';
-import 'package:skeduler/models/drawer_enum.dart';
-import 'package:skeduler/models/user.dart';
+import 'package:skeduler/models/auxiliary/drawer_enum.dart';
+import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/services/auth_service.dart';
 
 class HomeDrawer extends StatelessWidget {

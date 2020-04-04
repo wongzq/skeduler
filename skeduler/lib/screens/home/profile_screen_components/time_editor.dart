@@ -3,7 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/native_theme.dart';
+import 'package:skeduler/models/auxiliary/native_theme.dart';
 import 'package:skeduler/screens/home/profile_screen_components/custom_time_picker.dart';
 import 'package:skeduler/screens/home/profile_screen_components/editors_status.dart';
 import 'package:skeduler/shared/ui_settings.dart';

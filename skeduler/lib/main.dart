@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/drawer_enum.dart';
-import 'package:skeduler/models/my_app_themes.dart';
-import 'package:skeduler/models/user.dart';
-import 'package:skeduler/models/native_theme.dart';
+import 'package:skeduler/models/auxiliary/drawer_enum.dart';
+import 'package:skeduler/models/auxiliary/my_app_themes.dart';
+import 'package:skeduler/models/group_data/user.dart';
+import 'package:skeduler/models/auxiliary/native_theme.dart';
 import 'package:skeduler/route_generator.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/services/database_service.dart';

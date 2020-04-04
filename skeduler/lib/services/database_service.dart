@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:skeduler/models/color_shade.dart';
-import 'package:skeduler/models/group.dart';
-import 'package:skeduler/models/member.dart';
-import 'package:skeduler/models/user.dart';
+import 'package:skeduler/models/auxiliary/color_shade.dart';
+import 'package:skeduler/models/group_data/group.dart';
+import 'package:skeduler/models/group_data/member.dart';
+import 'package:skeduler/models/group_data/user.dart';
 
 class DatabaseService {
   /// properties
@@ -24,6 +24,19 @@ class DatabaseService {
     return usersCollection.document(userId).snapshots().map(_userFromSnapshot);
   }
 
+  /// get ['users'] collection
+  Stream<List<User>> get users {
+    return usersCollection.snapshots().map(_usersFromSnapshots);
+  }
+
+  /// get ['groups'] collection
+  Stream<List<Group>> get groups {
+    return groupsCollection
+        .where('members', arrayContains: userId)
+        .snapshots()
+        .map(_groupsFromSnapshots);
+  }
+
   /// get [Group] data
   Stream<Group> getGroup(String groupDocId) {
     return groupsCollection
@@ -32,17 +45,13 @@ class DatabaseService {
         .map(_groupFromSnapshot);
   }
 
-  /// get ['users'] collection
-  Stream<List<User>> get users {
-    return usersCollection.snapshots().map(_usersFromSnapshot);
-  }
-
-  /// get ['groups'] collection
-  Stream<List<Group>> get groups {
+  /// get [Group][Member]s data
+  Stream<List<Member>> getGroupMembers(String groupDocId) {
     return groupsCollection
-        .where('members', arrayContains: userId)
+        .document(groupDocId)
+        .collection('members')
         .snapshots()
-        .map(_groupsFromSnapshot);
+        .map(_membersFromSnapshots);
   }
 
   /// setter methods
@@ -201,13 +210,22 @@ class DatabaseService {
         : Group('');
   }
 
+  Member _memberFromSnapshot(DocumentSnapshot snapshot) {
+    return snapshot.data != null ? Member() : Member();
+  }
+
   /// convert document snapshots into [User]s
-  List<User> _usersFromSnapshot(QuerySnapshot query) {
+  List<User> _usersFromSnapshots(QuerySnapshot query) {
     return query.documents.map(_userFromSnapshot).toList();
   }
 
   /// convert document snapshots into [Group]s
-  List<Group> _groupsFromSnapshot(QuerySnapshot query) {
+  List<Group> _groupsFromSnapshots(QuerySnapshot query) {
     return query.documents.map(_groupFromSnapshot).toList();
+  }
+
+  /// convert document snapshots into [Member]s
+  List<Member> _membersFromSnapshots(QuerySnapshot query) {
+    return query.documents.map(_memberFromSnapshot).toList();
   }
 }
