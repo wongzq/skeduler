@@ -116,11 +116,9 @@ class _GroupScreenState extends State<GroupScreen> {
                               builder: (context, snapshot) {
                                 Member me =
                                     snapshot != null ? snapshot.data : null;
-                                print('Snap ' + snapshot.toString());
-                                print('Snap data ' + snapshot.data.toString());
+
                                 return me != null
                                     ? () {
-                                        print('Role ' + me.role.toString());
                                         if (me.role == MemberRole.owner)
                                           return GroupScreenOptionsOwner();
                                         else if (me.role == MemberRole.admin)

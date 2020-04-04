@@ -55,9 +55,6 @@ class DatabaseService {
 
   /// get [Group][Member] data of me
   Stream<Member> getGroupMemberMyData(String groupDocId) {
-    print(groupDocId);
-    print(userId);
-
     return groupsCollection
         .document(groupDocId)
         .collection('members')
@@ -262,9 +259,7 @@ class DatabaseService {
   }
 
   Member _memberFromSnapshot(DocumentSnapshot snapshot) {
-    print('DB Snap ' + snapshot.toString());
-    print('DB Snap data ' + snapshot.data.toString());
-    Member test = snapshot.data != null
+    return snapshot.data != null
         ? Member(
             email: snapshot.documentID,
             name: snapshot.data['name'],
@@ -279,8 +274,6 @@ class DatabaseService {
                 : null,
           )
         : Member(email: null);
-    print('Testing 123 ' + test.toString());
-    return test;
   }
 
   /// convert document snapshots into [User]s
