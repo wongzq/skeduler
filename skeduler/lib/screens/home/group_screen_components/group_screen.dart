@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/screens/home/group_screen_components/group_screen_options.dart';
+import 'package:skeduler/models/group_data/member.dart';
+import 'package:skeduler/screens/home/group_screen_components/group_screen_options_owner.dart';
+import 'package:skeduler/screens/home/group_screen_components/group_screen_options_admin.dart';
+import 'package:skeduler/screens/home/group_screen_components/group_screen_options_member.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/loading.dart';
@@ -107,7 +110,29 @@ class _GroupScreenState extends State<GroupScreen> {
                           ),
 
                           /// SpeedDial: Options
-                          GroupScreenOptions(),
+                          StreamBuilder(
+                              stream: dbService
+                                  .getGroupMemberMyData(groupDocId.value),
+                              builder: (context, snapshot) {
+                                Member me =
+                                    snapshot != null ? snapshot.data : null;
+                                print('Snap ' + snapshot.toString());
+                                print('Snap data ' + snapshot.data.toString());
+                                return me != null
+                                    ? () {
+                                        print('Role ' + me.role.toString());
+                                        if (me.role == MemberRole.owner)
+                                          return GroupScreenOptionsOwner();
+                                        else if (me.role == MemberRole.admin)
+                                          return GroupScreenOptionsAdmin();
+                                        else if (me.role == MemberRole.member ||
+                                            me.role == MemberRole.pending)
+                                          return GroupScreenOptionsMember();
+                                        else
+                                          return Container();
+                                      }()
+                                    : Container();
+                              }),
                         ],
                       ),
                     );

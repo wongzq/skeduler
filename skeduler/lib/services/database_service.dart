@@ -53,7 +53,20 @@ class DatabaseService {
         .map(_groupFromSnapshot);
   }
 
-  /// get [Group][Member]s data
+  /// get [Group][Member] data of me
+  Stream<Member> getGroupMemberMyData(String groupDocId) {
+    print(groupDocId);
+    print(userId);
+
+    return groupsCollection
+        .document(groupDocId)
+        .collection('members')
+        .document(userId)
+        .snapshots()
+        .map(_memberFromSnapshot);
+  }
+
+  /// get [Group][Member]s' data
   Stream<List<Member>> getGroupMembers(String groupDocId) {
     return groupsCollection
         .document(groupDocId)
@@ -120,11 +133,11 @@ class DatabaseService {
   /// Modifying methods
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  Future deleteGroup(String docId) async {
+  Future deleteGroup(String groupDocId) async {
     // Cloud function to delete all subcollections
     // temporary replacement
     await groupsCollection
-        .document(docId)
+        .document(groupDocId)
         .collection('members')
         .getDocuments()
         .then((onValue) {
@@ -133,7 +146,25 @@ class DatabaseService {
       }
     });
 
-    return await groupsCollection.document(docId).delete();
+    return await groupsCollection.document(groupDocId).delete();
+  }
+
+  Future leaveGroup(String groupDocId) async {
+    return await groupsCollection
+        .document(groupDocId)
+        .get()
+        .then((onValue) async {
+      if (onValue.exists) {
+        await groupsCollection.document(groupDocId).updateData({
+          'members': FieldValue.arrayRemove([userId])
+        });
+        await groupsCollection
+            .document(groupDocId)
+            .collection('members')
+            .document(userId)
+            .delete();
+      }
+    });
   }
 
   /// update [Group] data
@@ -231,19 +262,25 @@ class DatabaseService {
   }
 
   Member _memberFromSnapshot(DocumentSnapshot snapshot) {
-    return snapshot.data != null
+    print('DB Snap ' + snapshot.toString());
+    print('DB Snap data ' + snapshot.data.toString());
+    Member test = snapshot.data != null
         ? Member(
             email: snapshot.documentID,
             name: snapshot.data['name'],
             nickname: snapshot.data['nickname'] ?? snapshot.data['name'],
             description: snapshot.data['description'],
             role: MemberRole.values[snapshot.data['role']],
-            colorShade: ColorShade(
-              themeId: snapshot.data['colorShade']['themeId'],
-              shade: snapshot.data['colorShade']['shade'],
-            ),
+            colorShade: snapshot.data['colorShade'] != null
+                ? ColorShade(
+                    themeId: snapshot.data['colorShade']['themeId'],
+                    shade: snapshot.data['colorShade']['shade'],
+                  )
+                : null,
           )
         : Member(email: null);
+    print('Testing 123 ' + test.toString());
+    return test;
   }
 
   /// convert document snapshots into [User]s
