@@ -124,11 +124,21 @@ class DatabaseService {
       },
       'members': [ownerEmail],
     }).then((onValue) async {
-      await addMemberToGroup(
+      await inviteMemberToGroup(
         groupDocId: newGroupDoc.documentID,
         newMemberEmail: ownerEmail,
         memberRole: MemberRole.owner,
       );
+      await usersCollection.document(userId).get().then((onValue) async {
+        await groupsCollection
+            .document(newGroupDoc.documentID)
+            .collection('members')
+            .document(userId)
+            .updateData({
+          'name': onValue.data['name'],
+          'nickname': onValue.data['name'],
+        });
+      });
     });
   }
 
@@ -209,12 +219,20 @@ class DatabaseService {
     if (groupDocId == null || groupDocId.trim() == '') {
       return null;
     } else {
-      DocumentReference groupMemberRef = groupsCollection
-          .document(groupDocId)
-          .collection('members')
-          .document(userId);
+      return await usersCollection.document(userId).get().then((onValue) async {
+        if (onValue.exists) {
+          DocumentReference groupMemberRef = groupsCollection
+              .document(groupDocId)
+              .collection('members')
+              .document(userId);
 
-      return await groupMemberRef.updateData({'role': MemberRole.member.index});
+          await groupMemberRef.updateData({
+            'role': MemberRole.member.index,
+            'name': onValue.data['name'],
+            'nickname': onValue.data['name'],
+          });
+        }
+      });
     }
   }
 
@@ -235,7 +253,7 @@ class DatabaseService {
   }
 
   /// add [User] to [Group]
-  Future<String> addMemberToGroup({
+  Future<String> inviteMemberToGroup({
     @required String groupDocId,
     @required String newMemberEmail,
     MemberRole memberRole = MemberRole.pending,

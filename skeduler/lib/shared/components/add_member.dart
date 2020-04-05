@@ -116,7 +116,7 @@ class _AddMemberState extends State<AddMember> {
                               onPressed: () async {
                                 if (_formKeyName.currentState.validate()) {
                                   await dbService
-                                      .addMemberToGroup(
+                                      .inviteMemberToGroup(
                                     groupDocId: groupDocId.value,
                                     newMemberEmail: _newMemberEmail,
                                   )

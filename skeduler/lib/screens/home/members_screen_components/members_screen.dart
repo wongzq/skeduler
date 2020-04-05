@@ -4,7 +4,7 @@ import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
-import 'package:skeduler/screens/home/members_screen_components/MemberListTile.dart';
+import 'package:skeduler/screens/home/members_screen_components/member_list_tile.dart';
 import 'package:skeduler/screens/home/members_screen_components/members_screen_options_admin.dart';
 import 'package:skeduler/screens/home/members_screen_components/members_screen_options_member.dart';
 import 'package:skeduler/screens/home/members_screen_components/members_screen_options_owner.dart';

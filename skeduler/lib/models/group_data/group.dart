@@ -41,7 +41,7 @@ class Group {
 
   String get name => _name;
   String get description => _description;
-  ColorShade get colorShade => _colorShade;
+  ColorShade get colorShade => _colorShade ?? ColorShade();
   String get ownerEmail => _ownerEmail;
   String get ownerName => _ownerName;
   int get numOfMembers => 1;
