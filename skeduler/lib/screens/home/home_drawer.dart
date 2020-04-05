@@ -159,7 +159,9 @@ class HomeDrawer extends StatelessWidget {
                                       ? true
                                       : false,
                                   onTap: () {
+                                    selected.value = DrawerEnum.members;
                                     Navigator.of(context).pop();
+                                    Navigator.of(context).pushNamed('/members');
                                   },
                                 ),
                               ),

@@ -3,6 +3,7 @@ import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/dashboard_screen.dart';
 import 'package:skeduler/screens/home/group_screen_components/edit_group.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen.dart';
+import 'package:skeduler/screens/home/members_screen_components/members_screen.dart';
 import 'package:skeduler/screens/home/profile_screen_components/profile_screen.dart';
 import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
 import 'package:skeduler/screens/wrapper.dart';
@@ -36,6 +37,12 @@ class RouteGenerator {
       case '/group/addMember':
         if (args == null) {
           return CustomTransitionRoute(page: wrapWidget(AddMember()));
+        }
+        break;
+
+      case '/members':
+        if (args == null) {
+          return CustomTransitionRoute(page: wrapWidget(MembersScreen()));
         }
         break;
 

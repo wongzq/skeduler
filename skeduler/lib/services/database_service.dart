@@ -123,8 +123,8 @@ class DatabaseService {
         'name': ownerName,
       },
       'members': [ownerEmail],
-    }).then((onValue) {
-      addMemberToGroup(
+    }).then((onValue) async {
+      await addMemberToGroup(
         groupDocId: newGroupDoc.documentID,
         newMemberEmail: ownerEmail,
         memberRole: MemberRole.owner,
@@ -266,19 +266,38 @@ class DatabaseService {
     return errorMsg;
   }
 
+  /// remove [User] from [Group]
+  Future removeMemberFromGroup({
+    @required String groupDocId,
+    @required String memberDocId,
+  }) async {
+    await groupsCollection.document(groupDocId).updateData({
+      'members': FieldValue.arrayRemove([memberDocId])
+    });
+    return await groupsCollection
+        .document(groupDocId)
+        .collection('members')
+        .document(memberDocId)
+        .delete();
+  }
+
+  Future changeMemberRoleInGroup({
+    @required String groupDocId,
+    @required String memberDocId,
+    @required MemberRole role,
+  }) async {
+    return await groupsCollection
+        .document(groupDocId)
+        .collection('members')
+        .document(memberDocId)
+        .updateData({'role': role.index});
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Auxiliary methods
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// auxiliary methods
-  Future<DocumentSnapshot> findGroup(String groupDocId) async {
-    return await groupsCollection.document(groupDocId).get();
-  }
-
-  Future<DocumentSnapshot> findUser(String userId) async {
-    return await usersCollection.document(userId).get();
-  }
-
   /// convert snapshot to [User]
   User _userFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null

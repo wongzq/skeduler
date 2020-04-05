@@ -60,9 +60,8 @@ class DashboardScreen extends StatelessWidget {
                                 if (me != null &&
                                     me.role != null &&
                                     me.role != MemberRole.pending) {
-                                  selected.value = DrawerEnum.group;
                                   groupDocId.value = groups[index].groupDocId;
-
+                                  selected.value = DrawerEnum.group;
                                   Navigator.of(context).pushNamed('/group');
                                 } else {
                                   showDialog(
@@ -123,7 +122,7 @@ class DashboardScreen extends StatelessWidget {
                                                                 .popAndPushNamed(
                                                                     '/group');
                                                           },
-                                                        )
+                                                        ),
                                                       ],
                                                     );
                                             });

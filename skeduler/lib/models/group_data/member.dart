@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/group_data/time.dart';
 
@@ -7,6 +9,46 @@ enum MemberRole {
   member,
   admin,
   owner,
+}
+
+String _memberRole(MemberRole role) {
+  switch (role) {
+    case MemberRole.pending:
+      return 'Pending';
+      break;
+    case MemberRole.member:
+      return 'Member';
+      break;
+    case MemberRole.admin:
+      return 'Admin';
+      break;
+    case MemberRole.owner:
+      return 'Owner';
+      break;
+    default:
+      return '';
+      break;
+  }
+}
+
+IconData _memberRoleIcon(MemberRole role) {
+  switch (role) {
+    case MemberRole.pending:
+      return FontAwesomeIcons.clock;
+      break;
+    case MemberRole.member:
+      return FontAwesomeIcons.userAlt;
+      break;
+    case MemberRole.admin:
+      return FontAwesomeIcons.userCog;
+      break;
+    case MemberRole.owner:
+      return FontAwesomeIcons.userTie;
+      break;
+    default:
+      return Icons.close;
+      break;
+  }
 }
 
 class Member {
@@ -46,6 +88,8 @@ class Member {
   String get nickname => _nickname;
   String get description => _description;
   MemberRole get role => _role;
+  String get roleStr => _memberRole(_role);
+  IconData get roleIcon => _memberRoleIcon(_role);
   ColorShade get colorShade => _colorShade;
   List<Time> get times => _times;
 }
