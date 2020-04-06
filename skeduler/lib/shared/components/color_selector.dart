@@ -5,7 +5,7 @@ import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:theme_provider/theme_provider.dart';
 
-class ChangeColor extends StatefulWidget {
+class ColorSelector extends StatefulWidget {
   /// properties
   final bool initialExpanded;
   final ColorShade initialValue;
@@ -13,7 +13,7 @@ class ChangeColor extends StatefulWidget {
   final ValueSetter<ColorShade> valueSetterColorShade;
 
   /// constructor
-  const ChangeColor({
+  const ColorSelector({
     this.initialExpanded = true,
     this.initialValue,
     this.valueSetterExpanded,
@@ -21,10 +21,10 @@ class ChangeColor extends StatefulWidget {
   });
 
   @override
-  _ChangeColorState createState() => _ChangeColorState();
+  _ColorSelectorState createState() => _ColorSelectorState();
 }
 
-class _ChangeColorState extends State<ChangeColor> {
+class _ColorSelectorState extends State<ColorSelector> {
   double _bodyHoriPadding = 5.0;
   double _chipPadding = 5;
   double _chipPaddingExtra = 2;

@@ -13,11 +13,11 @@ class HomeDrawer extends StatelessWidget {
 
   final Map<DrawerEnum, Map<String, dynamic>> _screens = {
     DrawerEnum.dashboard: {'title': 'Dashboard', 'icon': null},
-    DrawerEnum.group: {'title': 'Select a group', 'icon': null},
+    DrawerEnum.group: {'title': 'No group selected', 'icon': null},
     DrawerEnum.timetable: {'title': 'Timetable', 'icon': null},
     DrawerEnum.classes: {'title': 'Subjects', 'icon': null},
     DrawerEnum.members: {'title': 'Members', 'icon': null},
-    DrawerEnum.profile: {'title': 'Profile', 'icon': null},
+    DrawerEnum.profile: {'title': 'Profile & Schedule', 'icon': null},
     DrawerEnum.settings: {'title': 'Settings', 'icon': null},
     DrawerEnum.logout: {'title': 'Logout', 'icon': null},
   };
@@ -38,17 +38,17 @@ class HomeDrawer extends StatelessWidget {
           child: Column(
             children: <Widget>[
               /// User data display
-              UserAccountsDrawerHeader(
-                currentAccountPicture: CircleAvatar(
-                  child: Icon(Icons.person),
-                ),
-                accountName: Text(
-                  user != null ? user.name : 'Name',
-                  style: TextStyle(fontSize: 24.0),
-                ),
-                accountEmail: Text(
-                  user != null ? user.email : 'email',
-                  style: TextStyle(fontSize: 13.0),
+              Container(
+                height: 150.0,
+                child: UserAccountsDrawerHeader(
+                  accountName: Text(
+                    user != null ? user.name : 'Name',
+                    style: TextStyle(fontSize: 24.0),
+                  ),
+                  accountEmail: Text(
+                    user != null ? user.email : 'email',
+                    style: TextStyle(fontSize: 13.0),
+                  ),
                 ),
               ),
 

@@ -6,7 +6,7 @@ import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/components/change_color.dart';
+import 'package:skeduler/shared/components/color_selector.dart';
 import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
@@ -121,7 +121,7 @@ class _CreateGroupState extends State<CreateGroup> {
             ),
 
             /// Color
-            ChangeColor(
+            ColorSelector(
               valueSetterColorShade: (value) {
                 setState(() {
                   _groupColorShade = value;

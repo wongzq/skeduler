@@ -34,7 +34,8 @@ class MemberListTile extends StatelessWidget {
                   child: Container(
                     child: ListTile(
                       leading: Icon(member.roleIcon),
-                      title: Text(member.nickname ?? member.email),
+                      title:
+                          Text(member.nickname ?? member.name ?? member.email),
                       subtitle: Text(member.roleStr),
                     ),
                   ),
@@ -50,7 +51,7 @@ class MemberListTile extends StatelessWidget {
             child: Container(
               child: ListTile(
                 leading: Icon(member.roleIcon),
-                title: Text(member.nickname ?? member.email),
+                title: Text(member.nickname ?? member.name ?? member.email),
                 subtitle: Text(member.roleStr),
                 trailing: member.role == MemberRole.owner
                     ? null
