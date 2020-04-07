@@ -11,11 +11,11 @@ class Time {
 
 enum Month { jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec }
 
-enum WeekDay { mon, tue, wed, thu, fri, sat, sun }
+enum Weekday { mon, tue, wed, thu, fri, sat, sun }
 
 List<Time> generateTimes({
   @required List<Month> months,
-  @required List<WeekDay> weekDays,
+  @required List<Weekday> weekDays,
   @required Time time,
   @required DateTime startDate,
   @required DateTime endDate,
@@ -53,14 +53,11 @@ List<Time> generateTimes({
             time.endTime.minute,
           );
 
-          if ((newStartDateTime.isAfter(startDate) ||
-                  newStartDateTime.isAtSameMomentAs(startDate)) &&
-              (newEndDateTime.isBefore(endDate.add(Duration(days: 1))) ||
-                  newEndDateTime
-                      .isAtSameMomentAs(endDate.add(Duration(days: 1))))) {
-            print(newStartDateTime);
-            print(newEndDateTime);
-            print('\n');
+          if ((newStartDateTime.isAtSameMomentAs(startDate) ||
+                  newStartDateTime.isAfter(startDate)) &&
+              (newEndDateTime
+                      .isAtSameMomentAs(endDate.add(Duration(days: 1))) ||
+                  newEndDateTime.isBefore(endDate.add(Duration(days: 1))))) {
             times.add(Time(newStartDateTime, newEndDateTime));
           }
         }

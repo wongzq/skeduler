@@ -21,8 +21,6 @@ class MembersScreenOptionsMember extends StatelessWidget {
           Group group = snapshot.data;
 
           Color mainIconBackgroundColor;
-          Color iconBackgroundColor;
-          Color labelBackgroundColor;
 
           if (group != null) {
             bool darkMode = ThemeProvider.themeOf(context).data.brightness ==
@@ -31,16 +29,6 @@ class MembersScreenOptionsMember extends StatelessWidget {
             mainIconBackgroundColor = darkMode
                 ? Colors.black
                 : getOriginThemeData(group.colorShade.themeId).primaryColor ??
-                    defaultColor;
-            iconBackgroundColor = darkMode
-                ? Colors.black
-                : getOriginThemeData(group.colorShade.themeId)
-                        .primaryColorDark ??
-                    defaultColor;
-            labelBackgroundColor = darkMode
-                ? Colors.black
-                : getOriginThemeData(group.colorShade.themeId)
-                        .primaryColorDark ??
                     defaultColor;
           }
 

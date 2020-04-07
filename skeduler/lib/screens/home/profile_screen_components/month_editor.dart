@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/native_theme.dart';
+import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/screens/home/profile_screen_components/editors_status.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class MonthEditor extends StatefulWidget {
-  // final ValueSetter<List<Map<String,bool>>> monthsSelected;
+  final ValueSetter<List<Month>> valueSetterMonths;
+
+  const MonthEditor({
+    Key key,
+    @required this.valueSetterMonths,
+  }) : super(key: key);
 
   @override
   _MonthEditorState createState() => _MonthEditorState();
@@ -21,6 +27,7 @@ class _MonthEditorState extends State<MonthEditor> {
 
   EditorsStatus _editorsStatus;
 
+  List<Month> _monthsSelected = [];
   List<String> _months = [
     'Jan',
     'Feb',
@@ -35,8 +42,6 @@ class _MonthEditorState extends State<MonthEditor> {
     'Nov',
     'Dec'
   ];
-
-  Set<int> _monthsSelected = Set<int>();
 
   double _bodyPadding = 10.0;
   double _sizedBoxPadding = 8.0;
@@ -74,7 +79,7 @@ class _MonthEditorState extends State<MonthEditor> {
             return _editorsStatus.currentEditor == CurrentEditor.month ||
                     _editorsStatus.currentEditor ==
                         CurrentEditor.monthSelected ||
-                    _monthsSelected.contains(item.key)
+                    _monthsSelected.contains(Month.values[item.key])
                 ? true
                 : false;
           } else if (_key == _wrapSelectedKey) {
@@ -82,7 +87,7 @@ class _MonthEditorState extends State<MonthEditor> {
             /// CurrentEditor is monthSelected AND Chip is selected
             return _editorsStatus.currentEditor ==
                         CurrentEditor.monthSelected &&
-                    _monthsSelected.contains(item.key)
+                    _monthsSelected.contains(Month.values[item.key])
                 ? true
                 : false;
           } else {
@@ -92,7 +97,7 @@ class _MonthEditorState extends State<MonthEditor> {
         child: Padding(
           padding: EdgeInsets.all(_chipPadding),
           child: ActionChip(
-            backgroundColor: _monthsSelected.contains(item.key)
+            backgroundColor: _monthsSelected.contains(Month.values[item.key])
                 ? originTheme.primaryColorLight
                 : Colors.grey[200],
             elevation: 3.0,
@@ -104,7 +109,7 @@ class _MonthEditorState extends State<MonthEditor> {
               width: _chipWidth,
               child: Text(
                 item.value,
-                style: _monthsSelected.contains(item.key)
+                style: _monthsSelected.contains(Month.values[item.key])
                     ? textStyleBody.copyWith(color: Colors.black)
                     : textStyleBodyLight,
               ),
@@ -113,10 +118,17 @@ class _MonthEditorState extends State<MonthEditor> {
               /// modify Wrap Selected
               setState(() {
                 _editorsStatus.currentEditor = CurrentEditor.monthSelected;
-                _monthsSelected.contains(item.key)
-                    ? _monthsSelected.remove(item.key)
-                    : _monthsSelected.add(item.key);
+
+                if (_monthsSelected.contains(Month.values[item.key])) {
+                  _monthsSelected.remove(Month.values[item.key]);
+                } else {
+                  _monthsSelected.add(Month.values[item.key]);
+                }
               });
+
+              if (widget.valueSetterMonths != null) {
+                widget.valueSetterMonths(_monthsSelected);
+              }
 
               /// get Size of Wrap Selected
               SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -171,8 +183,8 @@ class _MonthEditorState extends State<MonthEditor> {
                     alignment: Alignment.topCenter,
                     child: Padding(
                       padding: EdgeInsets.only(top: _sizedBoxPadding),
-                      child:
-                          Text('Month', key: _textKey, style: textStyleHeader),
+                      child: Text('Month',
+                          key: _textKey, style: textStyleHeader),
                     ),
                   ),
 

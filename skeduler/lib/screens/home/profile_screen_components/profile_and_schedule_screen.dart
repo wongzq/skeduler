@@ -82,7 +82,7 @@ class _ProfileAndScheduleScreenState extends State<ProfileAndScheduleScreen>
                     textTheme: textTheme,
                     elevation: 0.0,
                     title: Text(
-                      'My Profile',
+                      group.name,
                       style: textStyleAppBarTitle,
                     ),
                     bottom: TabBar(

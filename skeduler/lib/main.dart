@@ -17,7 +17,7 @@ class MyApp2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Month> months = [Month.jan, Month.feb];
-    List<WeekDay> days = [WeekDay.mon, WeekDay.wed];
+    List<Weekday> days = [Weekday.mon, Weekday.wed];
     Time time = Time(
       DateTime(2020, 1, 1, 15, 00),
       DateTime(2020, 1, 1, 18, 00),
