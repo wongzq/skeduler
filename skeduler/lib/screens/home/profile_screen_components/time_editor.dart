@@ -9,7 +9,6 @@ import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/screens/home/profile_screen_components/custom_time_picker.dart';
 import 'package:skeduler/screens/home/profile_screen_components/editors_status.dart';
 import 'package:skeduler/shared/ui_settings.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class TimeEditor extends StatefulWidget {
   final ValueGetter<List<Month>> valueGetterMonths;
