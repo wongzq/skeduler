@@ -1,0 +1,32 @@
+{
+    "project_info": {
+        "project_number": "929672221395",
+        "firebase_url": "https://zq-skeduler.firebaseio.com",
+        "project_id": "zq-skeduler",
+        "storage_bucket": "zq-skeduler.appspot.com"
+    },
+    "client": [{
+        "client_info": {
+            "mobilesdk_app_id": "1:929672221395:android:c1c39397115327dc1fba26",
+            "android_client_info": {
+                "package_name": "com.wongzhengquan.skeduler"
+            }
+        },
+        "oauth_client": [{
+            "client_id": "929672221395-nposumfofve9rpdsngmavq2cr8q5ae82.apps.googleusercontent.com",
+            "client_type": 3
+        }],
+        "api_key": [{
+            "current_key": "AIzaSyAlTOXVlg9ruGMrscqiaPEtjrcKFxfY1Uk"
+        }],
+        "services": {
+            "appinvite_service": {
+                "other_platform_oauth_client": [{
+                    "client_id": "929672221395-nposumfofve9rpdsngmavq2cr8q5ae82.apps.googleusercontent.com",
+                    "client_type": 3
+                }]
+            }
+        }
+    }],
+    "configuration_version": "1"
+}

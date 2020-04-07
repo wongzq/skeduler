@@ -70,3 +70,22 @@ List<Time> generateTimes({
 
   return times;
 }
+
+List<Time> getTimesOnSameDay(List<Time> prevTimes, List<Time> newTimes) {
+  List<Time> timesOnSameDay = [];
+
+  for (int p = 0; p < prevTimes.length; p++) {
+    for (int n = 0; n < newTimes.length; n++) {
+      if ((prevTimes[p].startTime.year == newTimes[n].startTime.year &&
+              prevTimes[p].startTime.month == newTimes[n].startTime.month &&
+              prevTimes[p].startTime.day == newTimes[n].startTime.day) ||
+          (prevTimes[p].endTime.year == newTimes[n].endTime.year &&
+              prevTimes[p].endTime.month == newTimes[n].endTime.month &&
+              prevTimes[p].endTime.day == newTimes[n].endTime.day)) {
+        timesOnSameDay.add(prevTimes[p]);
+      }
+    }
+  }
+
+  return timesOnSameDay;
+}

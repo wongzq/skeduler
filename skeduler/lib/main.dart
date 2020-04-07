@@ -11,7 +11,7 @@ import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:theme_provider/theme_provider.dart';
 
-void main() => runApp(MyApp2());
+void main() => runApp(MyApp());
 
 class MyApp2 extends StatelessWidget {
   @override
@@ -19,15 +19,15 @@ class MyApp2 extends StatelessWidget {
     List<Month> months = [Month.jan, Month.feb];
     List<WeekDay> days = [WeekDay.mon, WeekDay.wed];
     Time time = Time(
-      DateTime(2020, 1, 1, 15, 30),
-      DateTime(2020, 1, 1, 18, 45),
+      DateTime(2020, 1, 1, 15, 00),
+      DateTime(2020, 1, 1, 18, 00),
     );
 
     List<Time> times = generateTimes(
       months: months,
       weekDays: days,
       time: time,
-      startDate: DateTime(2020, 1, 8),
+      startDate: DateTime(2020, 2, 8),
       endDate: DateTime(2020, 2, 30),
     );
 
