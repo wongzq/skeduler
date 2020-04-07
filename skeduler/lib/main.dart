@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
+import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/models/auxiliary/native_theme.dart';
 import 'package:skeduler/route_generator.dart';
@@ -10,7 +11,38 @@ import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:theme_provider/theme_provider.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(MyApp2());
+
+class MyApp2 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    List<Month> months = [Month.jan, Month.feb];
+    List<WeekDay> days = [WeekDay.mon, WeekDay.wed];
+    Time time = Time(
+      DateTime(2020, 1, 1, 15, 30),
+      DateTime(2020, 1, 1, 18, 45),
+    );
+
+    List<Time> times = generateTimes(
+      months: months,
+      weekDays: days,
+      time: time,
+      startDate: DateTime(2020, 1, 8),
+      endDate: DateTime(2020, 2, 30),
+    );
+
+    DatabaseService dbService =
+        DatabaseService(userId: 'wong.zhengquan@gmail.com');
+    dbService.modifyGroupMemberTimes(
+        'KLlU4B609GMb2JfVzroN', 'wong.zhengquan@gmail.com', times);
+
+    return MaterialApp(
+      home: Scaffold(
+        body: Text(''),
+      ),
+    );
+  }
+}
 
 class MyApp extends StatelessWidget {
   /// This widget is the root of your application.

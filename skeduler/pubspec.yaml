@@ -37,6 +37,7 @@ dependencies:
   provider: ^4.0.4
   random_color: ^1.0.3
   theme_provider: ^0.3.3
+  quiver: ^2.0.5
 
   # flutter_speed_dial: ^1.2.5
   flutter_speed_dial:

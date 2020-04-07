@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
+import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/models/group_data/user.dart';
 
 class DatabaseService {
@@ -84,19 +85,14 @@ class DatabaseService {
 
   /// setter methods
   /// set [User] data
-  Future setUserData(
-    String email,
-    String name,
-  ) async {
+  Future setUserData(String email, String name) async {
     return await usersCollection.document(email).setData({
       'name': name,
     });
   }
 
   /// update [User] data
-  Future updateUserData({
-    String name,
-  }) async {
+  Future updateUserData({String name}) async {
     return await usersCollection.document(userId).updateData({
       'name': name,
     });
@@ -252,6 +248,59 @@ class DatabaseService {
     }
   }
 
+  Future modifyGroupMemberTimes(
+      String groupDocId, String memberDocId, List<Time> times) async {
+    print('1');
+    if (groupDocId != null && groupDocId.trim() != '') {
+      print('2');
+      return await groupsCollection
+          .document(groupDocId)
+          .collection('members')
+          .document(memberDocId)
+          .get()
+          .then((member) async {
+        if (member.exists) {
+          print('3');
+          // List<Time> prevTimes =
+          //     _timesFromField((member.data['times'] ?? []) as List);
+
+          // remove similar days
+          // for (int i = 0; i < prevTimes.length; i++) {
+          //   groupsCollection
+          //       .document(groupDocId)
+          //       .collection('members')
+          //       .document(memberDocId)
+          //       .updateData({'times': FieldValue.arrayRemove(null)});
+          // }
+
+          List<Map<String, Timestamp>> timestamps = [];
+
+          times.forEach((time) {
+            Timestamp startTimestamp =
+                Timestamp(time.startTime.millisecondsSinceEpoch ~/ 1000, 0);
+            Timestamp endTimestamp =
+                Timestamp(time.endTime.millisecondsSinceEpoch ~/ 1000, 0);
+
+            timestamps
+                .add({'startTime': startTimestamp, 'endTime': endTimestamp});
+          });
+
+          // add new days
+          // for (int i = 0; i < timestamps.length; i++) {
+          print('here');
+          await groupsCollection
+              .document(groupDocId)
+              .collection('members')
+              .document(memberDocId)
+              .updateData({'times': FieldValue.arrayUnion(timestamps)});
+          // }
+        }
+      });
+    } else {
+      return null;
+    }
+  }
+
   /// add [User] to [Group]
   Future<String> inviteMemberToGroup({
     @required String groupDocId,
@@ -361,6 +410,18 @@ class DatabaseService {
         : Member(email: null);
   }
 
+  Time _timeFromListElement(Map<String, Timestamp> dateTime) {
+    Timestamp startTimestamp = dateTime['startTime'];
+    Timestamp endTimestamp = dateTime['endTime'];
+
+    DateTime startDateTime = DateTime.fromMicrosecondsSinceEpoch(
+        startTimestamp.microsecondsSinceEpoch);
+    DateTime endDateTime = DateTime.fromMicrosecondsSinceEpoch(
+        endTimestamp.microsecondsSinceEpoch);
+
+    return Time(startDateTime, endDateTime);
+  }
+
   /// convert document snapshots into [User]s
   List<User> _usersFromSnapshots(QuerySnapshot query) {
     return query.documents.map(_userFromSnapshot).toList();
@@ -374,5 +435,9 @@ class DatabaseService {
   /// convert document snapshots into [Member]s
   List<Member> _membersFromSnapshots(QuerySnapshot query) {
     return query.documents.map(_memberFromSnapshot).toList();
+  }
+
+  List<Time> _timesFromField(List<Map<String, Timestamp>> times) {
+    return times.map(_timeFromListElement).toList();
   }
 }

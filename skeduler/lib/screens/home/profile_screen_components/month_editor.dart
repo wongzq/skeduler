@@ -6,6 +6,8 @@ import 'package:skeduler/screens/home/profile_screen_components/editors_status.d
 import 'package:skeduler/shared/ui_settings.dart';
 
 class MonthEditor extends StatefulWidget {
+  // final ValueSetter<List<Map<String,bool>>> monthsSelected;
+
   @override
   _MonthEditorState createState() => _MonthEditorState();
 }
@@ -20,18 +22,18 @@ class _MonthEditorState extends State<MonthEditor> {
   EditorsStatus _editorsStatus;
 
   List<String> _months = [
-    'Jan 2020',
-    'Feb 2020',
-    'Mar 2020',
-    'Apr 2020',
-    'May 2020',
-    'Jun 2020',
-    'Jul 2020',
-    'Aug 2020',
-    'Sep 2020',
-    'Oct 2020',
-    'Nov 2020',
-    'Dec 2020'
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
   ];
 
   Set<int> _monthsSelected = Set<int>();
@@ -142,7 +144,7 @@ class _MonthEditorState extends State<MonthEditor> {
     _editorsStatus = Provider.of<EditorsStatus>(context);
 
     /// note: 4 px on each side is the default ActionChip padding
-    _chipWidth = (MediaQuery.of(context).size.width - 2 * _bodyPadding) / 3 -
+    _chipWidth = (MediaQuery.of(context).size.width - 2 * _bodyPadding) / 4 -
         (2 * _chipLabelHoriPadding) -
         (2 * _chipPadding) -
         8;
