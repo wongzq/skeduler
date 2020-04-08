@@ -6,11 +6,7 @@ import 'package:skeduler/screens/home/profile_screen_components/editors_status.d
 import 'package:skeduler/screens/home/profile_screen_components/month_editor.dart';
 import 'package:skeduler/screens/home/profile_screen_components/time_editor.dart';
 
-class ScheduleTab extends StatelessWidget {
-  // final MonthEditor _monthEditor = MonthEditor();
-  // final DayEditor _dayEditor = DayEditor();
-  // final TimeEditor _timeEditor = TimeEditor();
-
+class ScheduleEditorTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Month> _monthsSelected = [];

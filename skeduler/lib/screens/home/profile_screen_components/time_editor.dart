@@ -8,6 +8,7 @@ import 'package:skeduler/models/auxiliary/native_theme.dart';
 import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/screens/home/profile_screen_components/custom_time_picker.dart';
 import 'package:skeduler/screens/home/profile_screen_components/editors_status.dart';
+import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class TimeEditor extends StatefulWidget {
@@ -360,6 +361,9 @@ class _TimeEditorState extends State<TimeEditor> {
   @override
   Widget build(BuildContext context) {
     OriginTheme originTheme = Provider.of<OriginTheme>(context);
+    DatabaseService dbService = Provider.of<DatabaseService>(context);
+    ValueNotifier<String> groupDocId =
+        Provider.of<ValueNotifier<String>>(context);
     _editorsStatus = Provider.of<EditorsStatus>(context);
 
     return AbsorbPointer(
@@ -402,6 +406,9 @@ class _TimeEditorState extends State<TimeEditor> {
                         child: ExpansionTile(
                           key: GlobalKey(),
                           initiallyExpanded: _dateRangeExpanded,
+                          onExpansionChanged: (val) {
+                            _dateRangeExpanded = val;
+                          },
                           title: Text(
                             'Date range (optional)',
                             style: textStyleBodyLight.copyWith(
@@ -479,7 +486,21 @@ class _TimeEditorState extends State<TimeEditor> {
                               borderRadius: BorderRadius.circular(30.0),
                             ),
                             elevation: 3.0,
-                            onPressed: _validTime && _validDate ? () {} : null,
+                            onPressed: _validTime && _validDate
+                                ? () async {
+                                    List<Time> newTimes = generateTimes(
+                                      months: widget.valueGetterMonths(),
+                                      weekDays: widget.valueGetterWeekdays(),
+                                      time: Time(_startTime, _endTime),
+                                      startDate: _startDate ??
+                                          getFirstDayOfStartMonth(),
+                                      endDate:
+                                          _endDate ?? getLastDayOfLastMonth(),
+                                    );
+                                    await dbService.modifyGroupMemberTimes(
+                                        groupDocId.value, null, newTimes);
+                                  }
+                                : null,
                             child: Text(
                               'SAVE',
                               style: TextStyle(

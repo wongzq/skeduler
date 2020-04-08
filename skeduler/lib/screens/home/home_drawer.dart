@@ -17,7 +17,7 @@ class HomeDrawer extends StatelessWidget {
     DrawerEnum.timetable: {'title': 'Timetable', 'icon': null},
     DrawerEnum.classes: {'title': 'Subjects', 'icon': null},
     DrawerEnum.members: {'title': 'Members', 'icon': null},
-    DrawerEnum.profile: {'title': 'Profile & Schedule', 'icon': null},
+    DrawerEnum.profile: {'title': 'My Schedule', 'icon': null},
     DrawerEnum.settings: {'title': 'Settings', 'icon': null},
     DrawerEnum.logout: {'title': 'Logout', 'icon': null},
   };

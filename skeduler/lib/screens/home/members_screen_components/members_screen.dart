@@ -93,7 +93,7 @@ class _MembersScreenState extends State<MembersScreen> {
                                             textTheme: textTheme,
                                             title: group.name == null
                                                 ? Text(
-                                                    'Group',
+                                                    'Members',
                                                     style: textStyleAppBarTitle,
                                                   )
                                                 : Column(

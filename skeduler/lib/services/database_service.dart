@@ -250,6 +250,9 @@ class DatabaseService {
 
   Future modifyGroupMemberTimes(
       String groupDocId, String memberDocId, List<Time> newTimes) async {
+    memberDocId =
+        memberDocId == null || memberDocId == '' ? userId : memberDocId;
+
     if (groupDocId != null && groupDocId.trim() != '') {
       return await groupsCollection
           .document(groupDocId)
@@ -258,22 +261,9 @@ class DatabaseService {
           .get()
           .then((member) async {
         if (member.exists) {
-          List<Time> prevTimes = _timesFromDynamicList(member.data['times']);
-          List<Time> timesOnSameDay = getTimesOnSameDay(prevTimes, newTimes);
-
           List<Map<String, Timestamp>> timestampsOnSameDay = [];
           List<Map<String, Timestamp>> timestamps = [];
 
-          timesOnSameDay.forEach((time) {
-            Timestamp startTimestamp =
-                Timestamp(time.startTime.millisecondsSinceEpoch ~/ 1000, 0);
-            Timestamp endTimestamp =
-                Timestamp(time.endTime.millisecondsSinceEpoch ~/ 1000, 0);
-
-            timestampsOnSameDay
-                .add({'startTime': startTimestamp, 'endTime': endTimestamp});
-          });
-          
           newTimes.forEach((time) {
             Timestamp startTimestamp =
                 Timestamp(time.startTime.millisecondsSinceEpoch ~/ 1000, 0);
@@ -284,20 +274,41 @@ class DatabaseService {
                 .add({'startTime': startTimestamp, 'endTime': endTimestamp});
           });
 
-          // remove times on same day
-          await groupsCollection
-              .document(groupDocId)
-              .collection('members')
-              .document(memberDocId)
-              .updateData(
-                  {'times': FieldValue.arrayRemove(timestampsOnSameDay)});
+          if (member.data['times'] != null) {
+            List<Time> prevTimes = _timesFromDynamicList(member.data['times']);
+            List<Time> timesOnSameDay = getTimesOnSameDay(prevTimes, newTimes);
 
+            timesOnSameDay.forEach((time) {
+              Timestamp startTimestamp =
+                  Timestamp(time.startTime.millisecondsSinceEpoch ~/ 1000, 0);
+              Timestamp endTimestamp =
+                  Timestamp(time.endTime.millisecondsSinceEpoch ~/ 1000, 0);
+
+              timestampsOnSameDay
+                  .add({'startTime': startTimestamp, 'endTime': endTimestamp});
+            });
+
+            // remove times on same day
+            await groupsCollection
+                .document(groupDocId)
+                .collection('members')
+                .document(memberDocId)
+                .updateData(
+                    {'times': FieldValue.arrayRemove(timestampsOnSameDay)});
+          }
           // add new times
           await groupsCollection
               .document(groupDocId)
               .collection('members')
               .document(memberDocId)
               .updateData({'times': FieldValue.arrayUnion(timestamps)});
+          // else {
+          //   await groupsCollection
+          //       .document(groupDocId)
+          //       .collection('members')
+          //       .document(memberDocId)
+          //       .setData({'times': timestamps});
+          // }
         }
       });
     } else {

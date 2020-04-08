@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ProfileTab extends StatelessWidget {
+class CalendarEditorTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(

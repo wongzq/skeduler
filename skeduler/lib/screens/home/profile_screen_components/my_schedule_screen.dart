@@ -3,21 +3,20 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
-import 'package:skeduler/screens/home/profile_screen_components/profile_tab.dart';
-import 'package:skeduler/screens/home/profile_screen_components/schedule_tab.dart';
+import 'package:skeduler/screens/home/profile_screen_components/calendar_editor_tab.dart';
+import 'package:skeduler/screens/home/profile_screen_components/schedule_editor_tab.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 import 'package:theme_provider/theme_provider.dart';
 
-class ProfileAndScheduleScreen extends StatefulWidget {
+class MyScheduleScreen extends StatefulWidget {
   @override
-  _ProfileAndScheduleScreenState createState() =>
-      _ProfileAndScheduleScreenState();
+  _MyScheduleScreenState createState() => _MyScheduleScreenState();
 }
 
-class _ProfileAndScheduleScreenState extends State<ProfileAndScheduleScreen>
+class _MyScheduleScreenState extends State<MyScheduleScreen>
     with TickerProviderStateMixin {
   /// properties
 
@@ -81,10 +80,24 @@ class _ProfileAndScheduleScreenState extends State<ProfileAndScheduleScreen>
                     iconTheme: iconTheme,
                     textTheme: textTheme,
                     elevation: 0.0,
-                    title: Text(
-                      group.name,
-                      style: textStyleAppBarTitle,
-                    ),
+                    title: group.name == null
+                        ? Text(
+                            'My Schedule',
+                            style: textStyleAppBarTitle,
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                group.name,
+                                style: textStyleAppBarTitle,
+                              ),
+                              Text(
+                                'My Schedule',
+                                style: textStyleBody,
+                              )
+                            ],
+                          ),
                     bottom: TabBar(
                       onTap: (tab) {
                         setState(() {});
@@ -95,7 +108,7 @@ class _ProfileAndScheduleScreenState extends State<ProfileAndScheduleScreen>
                         Tab(
                           text: null,
                           child: Text(
-                            'Profile',
+                            'Scheduler',
                             style: TextStyle(
                               color: _tabController.index == 0
                                   ? textTheme.title.color
@@ -108,7 +121,7 @@ class _ProfileAndScheduleScreenState extends State<ProfileAndScheduleScreen>
                         Tab(
                           text: null,
                           child: Text(
-                            'Schedule',
+                            'Calendar',
                             style: TextStyle(
                               color: _tabController.index == 1
                                   ? textTheme.title.color
@@ -125,8 +138,8 @@ class _ProfileAndScheduleScreenState extends State<ProfileAndScheduleScreen>
                   body: TabBarView(
                     controller: _tabController,
                     children: <Widget>[
-                      ProfileTab(),
-                      ScheduleTab(),
+                      ScheduleEditorTab(),
+                      CalendarEditorTab(),
                     ],
                   ),
                 );
