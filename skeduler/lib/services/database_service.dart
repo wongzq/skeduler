@@ -327,7 +327,6 @@ class DatabaseService {
           List<Time> timesRemoveSameDay;
           List<Map<String, Timestamp>> timestamps = [];
 
-          // List<Map<String, Timestamp>> timestampsOnSameDay = [];
           if (member.data['times'] != null) {
             prevTimes = _timesFromDynamicList(member.data['times']);
             timesRemoveSameDay =

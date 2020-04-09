@@ -23,7 +23,9 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
   TabController _tabController;
 
   /// methods
-  void _switchTab() {}
+  void _switchTab() {
+    setState(() {});
+  }
 
   @override
   void initState() {

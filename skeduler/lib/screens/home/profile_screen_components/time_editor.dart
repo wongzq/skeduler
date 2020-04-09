@@ -595,12 +595,6 @@ class _TimeEditorState extends State<TimeEditor> {
                                                     );
 
                                                     await dbService
-                                                        .updateGroupMemberTimes(
-                                                            groupDocId.value,
-                                                            null,
-                                                            removeTimes);
-
-                                                    await dbService
                                                         .removeGroupMemberTimes(
                                                       groupDocId.value,
                                                       null,

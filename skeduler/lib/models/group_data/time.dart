@@ -70,14 +70,16 @@ List<Time> generateTimes({
 
 List<Time> generateTimesRemoveSameDay(
     List<Time> prevTimes, List<Time> newTimes) {
+  prevTimes = prevTimes ?? [];
+  newTimes = newTimes ?? [];
   List<Time> timesRemoveSameDay = [];
+
+  for (int n = 0; n < newTimes.length; n++) {
+    timesRemoveSameDay.add(newTimes[n]);
+  }
 
   for (int p = 0; p < prevTimes.length; p++) {
     for (int n = 0; n < newTimes.length; n++) {
-      if (p == 0) {
-        timesRemoveSameDay.add(newTimes[n]);
-      }
-
       if (!((prevTimes[p].startTime.year == newTimes[n].startTime.year &&
               prevTimes[p].startTime.month == newTimes[n].startTime.month &&
               prevTimes[p].startTime.day == newTimes[n].startTime.day) ||

@@ -38,8 +38,8 @@ class _ScheduleTabState extends State<ScheduleTab> {
                                     .primaryColorDark,
                         onPressed: () {
                           setState(() {
-                            print('pressed');
-                            Navigator.of(context).pushNamed('/mySchedule/scheduleEditor');
+                            Navigator.of(context)
+                                .pushNamed('/mySchedule/scheduleEditor');
                           });
                         },
                         child: Icon(
