@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
-import 'package:skeduler/screens/home/profile_screen_components/calendar_editor_tab.dart';
-import 'package:skeduler/screens/home/profile_screen_components/schedule_editor_tab.dart';
+import 'package:skeduler/screens/home/profile_screen_components/schedule_tab.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -108,7 +107,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                         Tab(
                           text: null,
                           child: Text(
-                            'Scheduler',
+                            'Schedule',
                             style: TextStyle(
                               color: _tabController.index == 0
                                   ? textTheme.title.color
@@ -138,8 +137,9 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                   body: TabBarView(
                     controller: _tabController,
                     children: <Widget>[
-                      ScheduleEditorTab(),
-                      CalendarEditorTab(),
+                      // ScheduleEditor(),
+                      ScheduleTab(),
+                      Container(),
                     ],
                   ),
                 );

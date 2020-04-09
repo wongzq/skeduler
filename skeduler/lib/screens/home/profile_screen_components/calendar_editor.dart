@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CalendarEditorTab extends StatelessWidget {
+class CalendarEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(

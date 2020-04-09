@@ -141,7 +141,9 @@ class DashboardScreen extends StatelessWidget {
                       return Container();
                     }
                   },
-                  physics: BouncingScrollPhysics(),
+                  physics: BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
+                  ),
                   scrollDirection: Axis.vertical,
                 );
               },

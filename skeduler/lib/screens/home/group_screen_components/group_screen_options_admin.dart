@@ -5,7 +5,6 @@ import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class GroupScreenOptionsAdmin extends StatelessWidget {
   @override
@@ -24,12 +23,12 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
           Color labelBackgroundColor;
 
           if (group != null) {
-            bool darkMode = ThemeProvider.themeOf(context).data.brightness ==
-                Brightness.dark;
+            bool darkMode = Theme.of(context).brightness == Brightness.dark;
 
             mainIconBackgroundColor = darkMode
                 ? Colors.black
-                : getOriginThemeData(group.colorShade.themeId).primaryColor ??
+                : getOriginThemeData(group.colorShade.themeId)
+                        .primaryColorDark ??
                     defaultColor;
             iconBackgroundColor = darkMode
                 ? Colors.black
@@ -112,7 +111,8 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
                                   onPressed: () {
                                     dbService.leaveGroup(groupDocId.value);
                                     groupDocId.value = null;
-                                    Navigator.popUntil(context, (route)=>route.isFirst);
+                                    Navigator.popUntil(
+                                        context, (route) => route.isFirst);
                                   },
                                 ),
                               ],

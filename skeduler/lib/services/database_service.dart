@@ -248,10 +248,72 @@ class DatabaseService {
     }
   }
 
-  Future modifyGroupMemberTimes(
+  Future removeGroupMemberTimes(
+      String groupDocId, String memberDocId, List<Time> removeTimes) async {
+    memberDocId =
+        memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
+
+    List<Time> prevTimes = [];
+    List<Time> timesOfSameDay = [];
+    List<Map<String, Timestamp>> removeTimestamps = [];
+
+    if (groupDocId != null && groupDocId.trim() != '') {
+      return await groupsCollection
+          .document(groupDocId)
+          .collection('members')
+          .document(memberDocId)
+          .get()
+          .then((member) async {
+        if (member.data['times'] != null) {
+          prevTimes = _timesFromDynamicList(member.data['times']);
+
+          for (int p = 0; p < prevTimes.length; p++) {
+            for (int r = 0; r < removeTimes.length; r++) {
+              if ((prevTimes[p].startTime.year ==
+                          removeTimes[r].startTime.year &&
+                      prevTimes[p].startTime.month ==
+                          removeTimes[r].startTime.month &&
+                      prevTimes[p].startTime.day ==
+                          removeTimes[r].startTime.day) ||
+                  (prevTimes[p].endTime.year == removeTimes[r].endTime.year &&
+                      prevTimes[p].endTime.month ==
+                          removeTimes[r].endTime.month &&
+                      prevTimes[p].endTime.day == removeTimes[r].endTime.day)) {
+                timesOfSameDay.add(prevTimes[p]);
+              }
+            }
+          }
+
+          timesOfSameDay.forEach((time) {
+            Timestamp startTimestamp =
+                Timestamp(time.startTime.millisecondsSinceEpoch ~/ 1000, 0);
+            Timestamp endTimestamp =
+                Timestamp(time.endTime.millisecondsSinceEpoch ~/ 1000, 0);
+
+            Map<String, Timestamp> removeTimestamp = {
+              'startTime': startTimestamp,
+              'endTime': endTimestamp
+            };
+
+            removeTimestamps.add(removeTimestamp);
+          });
+
+          await groupsCollection
+              .document(groupDocId)
+              .collection('members')
+              .document(memberDocId)
+              .updateData({'times': FieldValue.arrayRemove(removeTimestamps)});
+        }
+      });
+    } else {
+      return null;
+    }
+  }
+
+  Future updateGroupMemberTimes(
       String groupDocId, String memberDocId, List<Time> newTimes) async {
     memberDocId =
-        memberDocId == null || memberDocId == '' ? userId : memberDocId;
+        memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
 
     if (groupDocId != null && groupDocId.trim() != '') {
       return await groupsCollection
@@ -261,54 +323,50 @@ class DatabaseService {
           .get()
           .then((member) async {
         if (member.exists) {
-          List<Map<String, Timestamp>> timestampsOnSameDay = [];
+          List<Time> prevTimes;
+          List<Time> timesRemoveSameDay;
           List<Map<String, Timestamp>> timestamps = [];
 
-          newTimes.forEach((time) {
-            Timestamp startTimestamp =
-                Timestamp(time.startTime.millisecondsSinceEpoch ~/ 1000, 0);
-            Timestamp endTimestamp =
-                Timestamp(time.endTime.millisecondsSinceEpoch ~/ 1000, 0);
-
-            timestamps
-                .add({'startTime': startTimestamp, 'endTime': endTimestamp});
-          });
-
+          // List<Map<String, Timestamp>> timestampsOnSameDay = [];
           if (member.data['times'] != null) {
-            List<Time> prevTimes = _timesFromDynamicList(member.data['times']);
-            List<Time> timesOnSameDay = getTimesOnSameDay(prevTimes, newTimes);
+            prevTimes = _timesFromDynamicList(member.data['times']);
+            timesRemoveSameDay =
+                generateTimesRemoveSameDay(prevTimes, newTimes);
 
-            timesOnSameDay.forEach((time) {
+            // remove previous times
+            await groupsCollection
+                .document(groupDocId)
+                .collection('members')
+                .document(memberDocId)
+                .updateData({'times': FieldValue.delete()});
+
+            timesRemoveSameDay.forEach((time) {
               Timestamp startTimestamp =
                   Timestamp(time.startTime.millisecondsSinceEpoch ~/ 1000, 0);
               Timestamp endTimestamp =
                   Timestamp(time.endTime.millisecondsSinceEpoch ~/ 1000, 0);
 
-              timestampsOnSameDay
+              timestamps
                   .add({'startTime': startTimestamp, 'endTime': endTimestamp});
             });
+          } else {
+            newTimes.forEach((time) {
+              Timestamp startTimestamp =
+                  Timestamp(time.startTime.millisecondsSinceEpoch ~/ 1000, 0);
+              Timestamp endTimestamp =
+                  Timestamp(time.endTime.millisecondsSinceEpoch ~/ 1000, 0);
 
-            // remove times on same day
-            await groupsCollection
-                .document(groupDocId)
-                .collection('members')
-                .document(memberDocId)
-                .updateData(
-                    {'times': FieldValue.arrayRemove(timestampsOnSameDay)});
+              timestamps
+                  .add({'startTime': startTimestamp, 'endTime': endTimestamp});
+            });
           }
+
           // add new times
           await groupsCollection
               .document(groupDocId)
               .collection('members')
               .document(memberDocId)
               .updateData({'times': FieldValue.arrayUnion(timestamps)});
-          // else {
-          //   await groupsCollection
-          //       .document(groupDocId)
-          //       .collection('members')
-          //       .document(memberDocId)
-          //       .setData({'times': timestamps});
-          // }
         }
       });
     } else {
@@ -421,6 +479,7 @@ class DatabaseService {
                     shade: snapshot.data['colorShade']['shade'],
                   )
                 : null,
+            times: _timesFromDynamicList(snapshot.data['times'] ?? []),
           )
         : Member(email: null);
   }

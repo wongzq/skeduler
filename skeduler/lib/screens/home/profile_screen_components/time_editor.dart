@@ -497,12 +497,124 @@ class _TimeEditorState extends State<TimeEditor> {
                                       endDate:
                                           _endDate ?? getLastDayOfLastMonth(),
                                     );
-                                    await dbService.modifyGroupMemberTimes(
+                                    await dbService.updateGroupMemberTimes(
                                         groupDocId.value, null, newTimes);
                                   }
                                 : null,
                             child: Text(
                               'SAVE',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: _spacing),
+
+                      /// Button: Remove
+                      Padding(
+                        padding: const EdgeInsets.all(_spacing),
+                        child: Container(
+                          height: _buttonHeight,
+                          width: MediaQuery.of(context).size.width - 2,
+                          child: RaisedButton(
+                            color: Colors.red[300],
+                            disabledColor: Colors.grey[200],
+                            disabledTextColor: Color(0xFFBBBBBB),
+                            highlightColor: Colors.red[500],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            elevation: 3.0,
+                            onPressed: _validDate
+                                ? () async {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            content: RichText(
+                                              text: TextSpan(
+                                                children: <TextSpan>[
+                                                  TextSpan(
+                                                    text:
+                                                        'Remove from your schedule?\n\n',
+                                                    style: TextStyle(
+                                                      fontSize: 15.0,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  TextSpan(
+                                                    text: DateFormat(
+                                                                'EEEE, d MMMM')
+                                                            .format(
+                                                          _startDate ??
+                                                              getFirstDayOfStartMonth(),
+                                                        ) +
+                                                        ' to ' +
+                                                        DateFormat(
+                                                                'EEEE, d MMMM')
+                                                            .format(
+                                                          _endDate ??
+                                                              getLastDayOfLastMonth(),
+                                                        ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            actions: <Widget>[
+                                              FlatButton(
+                                                child: Text('CANCEL'),
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                              ),
+                                              FlatButton(
+                                                  child: Text(
+                                                    'REMOVE',
+                                                    style: TextStyle(
+                                                      color: Colors.red,
+                                                    ),
+                                                  ),
+                                                  onPressed: () async {
+                                                    List<Time> removeTimes =
+                                                        generateTimes(
+                                                      months: widget
+                                                          .valueGetterMonths(),
+                                                      weekDays: widget
+                                                          .valueGetterWeekdays(),
+                                                      time: Time(
+                                                          _startTime, _endTime),
+                                                      startDate: _startDate ??
+                                                          getFirstDayOfStartMonth(),
+                                                      endDate: _endDate ??
+                                                          getLastDayOfLastMonth(),
+                                                    );
+
+                                                    await dbService
+                                                        .updateGroupMemberTimes(
+                                                            groupDocId.value,
+                                                            null,
+                                                            removeTimes);
+
+                                                    await dbService
+                                                        .removeGroupMemberTimes(
+                                                      groupDocId.value,
+                                                      null,
+                                                      removeTimes,
+                                                    );
+                                                    Navigator.of(context).pop();
+                                                  }),
+                                            ],
+                                          );
+                                        });
+                                  }
+                                : null,
+                            child: Text(
+                              'REMOVE',
                               style: TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w600,
@@ -522,8 +634,8 @@ class _TimeEditorState extends State<TimeEditor> {
                           height: _buttonHeight,
                           width: MediaQuery.of(context).size.width - 2,
                           child: RaisedButton(
-                            color: Colors.red[300],
-                            highlightColor: Colors.red[500],
+                            color: Theme.of(context).primaryColorLight,
+                            highlightColor: Theme.of(context).primaryColorDark,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0),
                             ),

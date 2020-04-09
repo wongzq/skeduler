@@ -5,6 +5,7 @@ import 'package:skeduler/screens/home/group_screen_components/edit_group.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen.dart';
 import 'package:skeduler/screens/home/members_screen_components/members_screen.dart';
 import 'package:skeduler/screens/home/profile_screen_components/my_schedule_screen.dart';
+import 'package:skeduler/screens/home/profile_screen_components/schedule_editor.dart';
 import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
 import 'package:skeduler/screens/wrapper.dart';
 import 'package:skeduler/shared/components/add_member.dart';
@@ -46,9 +47,15 @@ class RouteGenerator {
         }
         break;
 
-      case '/profile':
+      case '/mySchedule':
         if (args == null) {
           return CustomTransitionRoute(page: wrapWidget(MyScheduleScreen()));
+        }
+        break;
+
+      case '/mySchedule/scheduleEditor':
+        if (args == null) {
+          return CustomTransitionRoute(page: wrapWidget(ScheduleEditor()));
         }
         break;
 

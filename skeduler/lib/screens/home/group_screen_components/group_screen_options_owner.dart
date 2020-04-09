@@ -33,7 +33,8 @@ class GroupScreenOptionsOwner extends StatelessWidget {
 
             mainIconBackgroundColor = darkMode
                 ? Colors.black
-                : getOriginThemeData(group.colorShade.themeId).primaryColor ??
+                : getOriginThemeData(group.colorShade.themeId)
+                        .primaryColorDark ??
                     defaultColor;
             iconBackgroundColor = darkMode
                 ? Colors.black

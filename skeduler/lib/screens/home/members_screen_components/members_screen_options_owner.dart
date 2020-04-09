@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:theme_provider/theme_provider.dart';
 
@@ -30,7 +29,8 @@ class MembersScreenOptionsOwner extends StatelessWidget {
 
             mainIconBackgroundColor = darkMode
                 ? Colors.black
-                : getOriginThemeData(group.colorShade.themeId).primaryColor ??
+                : getOriginThemeData(group.colorShade.themeId)
+                        .primaryColorDark ??
                     defaultColor;
             iconBackgroundColor = darkMode
                 ? Colors.black
@@ -45,7 +45,7 @@ class MembersScreenOptionsOwner extends StatelessWidget {
           }
 
           return group == null
-              ? Loading()
+              ? Container()
               : Align(
                   alignment: Alignment.bottomRight,
                   child: Padding(
