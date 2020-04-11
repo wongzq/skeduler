@@ -3,7 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/native_theme.dart';
 import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/screens/home/profile_screen_components/editors_status.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/editors_status.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class DayEditor extends StatefulWidget {
@@ -31,7 +31,6 @@ class _DayEditorState extends State<DayEditor> {
 
   List<String> _days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  // Set<int> _daysSelected = Set<int>();
   List<Weekday> _weekdaysSelected = [];
 
   static const double _bodyPadding = 10.0;

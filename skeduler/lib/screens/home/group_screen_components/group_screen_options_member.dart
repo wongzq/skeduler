@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/functions.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class GroupScreenOptionsMember extends StatelessWidget {
   @override
@@ -19,30 +16,15 @@ class GroupScreenOptionsMember extends StatelessWidget {
         builder: (context, snapshot) {
           Group group = snapshot.data;
 
-          Color mainIconBackgroundColor;
-
-          if (group != null) {
-            bool darkMode = ThemeProvider.themeOf(context).data.brightness ==
-                Brightness.dark;
-
-            mainIconBackgroundColor = darkMode
-                ? Colors.black
-                : getOriginThemeData(group.colorShade.themeId)
-                        .primaryColorDark ??
-                    defaultColor;
-          }
-
           return Align(
             alignment: Alignment.bottomRight,
             child: Padding(
               padding: const EdgeInsets.only(bottom: 20.0, right: 20.0),
               child: SpeedDial(
-                backgroundColor: mainIconBackgroundColor,
                 overlayColor: Colors.grey,
                 overlayOpacity: 0.8,
                 curve: Curves.easeOutCubic,
                 animatedIcon: AnimatedIcons.menu_close,
-                animatedIconTheme: IconThemeData(color: Colors.white),
 
                 /// Delete group
                 children: <SpeedDialChild>[

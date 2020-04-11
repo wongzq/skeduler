@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:quiver/time.dart';
 import 'package:skeduler/models/auxiliary/native_theme.dart';
 import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/screens/home/profile_screen_components/custom_time_picker.dart';
-import 'package:skeduler/screens/home/profile_screen_components/editors_status.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/custom_time_picker.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/editors_status.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
@@ -543,6 +543,11 @@ class _TimeEditorState extends State<TimeEditor> {
                                                     text:
                                                         'Remove from your schedule?\n\n',
                                                     style: TextStyle(
+                                                      color: Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black,
                                                       fontSize: 15.0,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -562,6 +567,13 @@ class _TimeEditorState extends State<TimeEditor> {
                                                           _endDate ??
                                                               getLastDayOfLastMonth(),
                                                         ),
+                                                    style: TextStyle(
+                                                      color: Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black,
+                                                    ),
                                                   ),
                                                 ],
                                               ),

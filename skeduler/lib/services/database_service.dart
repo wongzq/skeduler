@@ -332,7 +332,7 @@ class DatabaseService {
             timesRemoveSameDay =
                 generateTimesRemoveSameDay(prevTimes, newTimes);
 
-            // remove previous times
+            /// remove previous times
             await groupsCollection
                 .document(groupDocId)
                 .collection('members')
@@ -360,7 +360,7 @@ class DatabaseService {
             });
           }
 
-          // add new times
+          /// add new times
           await groupsCollection
               .document(groupDocId)
               .collection('members')

@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/screens/home/profile_screen_components/day_editor.dart';
-import 'package:skeduler/screens/home/profile_screen_components/editors_status.dart';
-import 'package:skeduler/screens/home/profile_screen_components/month_editor.dart';
-import 'package:skeduler/screens/home/profile_screen_components/time_editor.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/day_editor.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/editors_status.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/month_editor.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/time_editor.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class ScheduleEditor extends StatelessWidget {
   @override
@@ -30,33 +27,8 @@ class ScheduleEditor extends StatelessWidget {
         builder: (context, snapshot) {
           Group group = snapshot != null ? snapshot.data : null;
 
-          Color backgroundColor;
-          IconThemeData iconTheme;
-          TextTheme textTheme;
-
-          if (group != null) {
-            bool lightShade = group.colorShade.shade == Shade.primaryColorLight;
-
-            backgroundColor = getOriginThemeColorShade(group.colorShade);
-            iconTheme = lightShade
-                ? ThemeProvider.themeOf(context)
-                    .data
-                    .iconTheme
-                    .copyWith(color: Colors.black)
-                : getOriginThemeData(group.colorShade.themeId).primaryIconTheme;
-            textTheme = lightShade
-                ? ThemeProvider.themeOf(context)
-                    .data
-                    .textTheme
-                    .copyWith(title: TextStyle(color: Colors.black))
-                : getOriginThemeData(group.colorShade.themeId).primaryTextTheme;
-          }
-
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: backgroundColor,
-              iconTheme: iconTheme,
-              textTheme: textTheme,
               elevation: 0.0,
               title: group.name == null
                   ? Text(

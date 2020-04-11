@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/functions.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class MembersScreenOptionsAdmin extends StatelessWidget {
   @override
@@ -19,31 +16,6 @@ class MembersScreenOptionsAdmin extends StatelessWidget {
         builder: (context, snapshot) {
           Group group = snapshot.data;
 
-          Color mainIconBackgroundColor;
-          Color iconBackgroundColor;
-          Color labelBackgroundColor;
-
-          if (group != null) {
-            bool darkMode = ThemeProvider.themeOf(context).data.brightness ==
-                Brightness.dark;
-
-            mainIconBackgroundColor = darkMode
-                ? Colors.black
-                : getOriginThemeData(group.colorShade.themeId)
-                        .primaryColorDark ??
-                    defaultColor;
-            iconBackgroundColor = darkMode
-                ? Colors.black
-                : getOriginThemeData(group.colorShade.themeId)
-                        .primaryColorDark ??
-                    defaultColor;
-            labelBackgroundColor = darkMode
-                ? Colors.black
-                : getOriginThemeData(group.colorShade.themeId)
-                        .primaryColorDark ??
-                    defaultColor;
-          }
-
           return group == null
               ? Container()
               : Align(
@@ -51,14 +23,12 @@ class MembersScreenOptionsAdmin extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 20.0, right: 20.0),
                     child: SpeedDial(
-                      backgroundColor: mainIconBackgroundColor ?? defaultColor,
                       overlayColor: Colors.grey,
                       overlayOpacity: 0.8,
                       curve: Curves.easeOutCubic,
                       animatedIcon: AnimatedIcons.menu_close,
-                      animatedIconTheme: IconThemeData(color: Colors.white),
 
-                      /// Delete group
+                      /// Exit group
                       children: <SpeedDialChild>[
                         SpeedDialChild(
                           backgroundColor: Colors.red,
@@ -129,8 +99,6 @@ class MembersScreenOptionsAdmin extends StatelessWidget {
 
                         /// Add member
                         SpeedDialChild(
-                          backgroundColor: iconBackgroundColor,
-                          foregroundColor: Colors.white,
                           child: Icon(
                             Icons.person_add,
                             size: 25.0,
@@ -140,7 +108,7 @@ class MembersScreenOptionsAdmin extends StatelessWidget {
                             width: 150.0,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: labelBackgroundColor,
+                              color: Theme.of(context).accentColor,
                               borderRadius: BorderRadius.circular(20.0),
                               boxShadow: [
                                 BoxShadow(
@@ -153,7 +121,7 @@ class MembersScreenOptionsAdmin extends StatelessWidget {
                             child: Text(
                               'ADD MEMBER',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.w400,
                                 letterSpacing: 1.5,

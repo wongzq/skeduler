@@ -30,7 +30,7 @@ class ScheduleView extends StatelessWidget {
                   return Container(
                     child: Column(
                       children: <Widget>[
-                        // Header
+                        /// Header
                         index == 0
                             ? Column(
                                 children: <Widget>[
@@ -72,11 +72,11 @@ class ScheduleView extends StatelessWidget {
                               )
                             : Container(),
 
-                        // Custom List Tile
+                        /// Custom List Tile
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            // Left section
+                            /// Left section
                             Container(
                               padding:
                                   EdgeInsets.fromLTRB(20.0, 10.0, 0.0, 10.0),
@@ -104,7 +104,7 @@ class ScheduleView extends StatelessWidget {
                               ),
                             ),
 
-                            // Right section
+                            /// Right section
                             Row(
                               children: <Widget>[
                                 Container(
