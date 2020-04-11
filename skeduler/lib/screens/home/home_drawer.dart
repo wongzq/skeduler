@@ -25,9 +25,7 @@ class HomeDrawer extends StatelessWidget {
   };
 
   Color _tileSelectedBackgroundColor(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.light
-          ? Theme.of(context).primaryColorLight
-          : null;
+      Theme.of(context).brightness == Brightness.light ? null : null;
 
   Color _tileSelectedForegroundColor(BuildContext context) =>
       Theme.of(context).brightness == Brightness.light
@@ -119,45 +117,6 @@ class HomeDrawer extends StatelessWidget {
                           ),
                         ),
 
-                        /// Timetable
-                        Container(
-                          color: selected.value == DrawerEnum.timetable
-                              ? _tileSelectedBackgroundColor(context)
-                              : null,
-                          child: ListTile(
-                            enabled: group != null ? true : false,
-                            dense: true,
-                            leading: Icon(Icons.table_chart),
-                            title:
-                                Text(_screens[DrawerEnum.timetable]['title']),
-                            selected: selected.value == DrawerEnum.timetable
-                                ? true
-                                : false,
-                            onTap: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
-
-                        /// Classes
-                        Container(
-                          color: selected.value == DrawerEnum.classes
-                              ? _tileSelectedBackgroundColor(context)
-                              : null,
-                          child: ListTile(
-                            enabled: group != null ? true : false,
-                            dense: true,
-                            leading: Icon(Icons.school),
-                            title: Text(_screens[DrawerEnum.classes]['title']),
-                            selected: selected.value == DrawerEnum.classes
-                                ? true
-                                : false,
-                            onTap: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
-
                         /// members
                         Container(
                           color: selected.value == DrawerEnum.members
@@ -179,7 +138,46 @@ class HomeDrawer extends StatelessWidget {
                           ),
                         ),
 
-                        /// Profile
+                        /// Classes
+                        Container(
+                          color: selected.value == DrawerEnum.classes
+                              ? _tileSelectedBackgroundColor(context)
+                              : null,
+                          child: ListTile(
+                            enabled: group != null ? true : false,
+                            dense: true,
+                            leading: Icon(Icons.class_),
+                            title: Text(_screens[DrawerEnum.classes]['title']),
+                            selected: selected.value == DrawerEnum.classes
+                                ? true
+                                : false,
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+
+                        /// Timetable
+                        Container(
+                          color: selected.value == DrawerEnum.timetable
+                              ? _tileSelectedBackgroundColor(context)
+                              : null,
+                          child: ListTile(
+                            enabled: group != null ? true : false,
+                            dense: true,
+                            leading: Icon(Icons.table_chart),
+                            title:
+                                Text(_screens[DrawerEnum.timetable]['title']),
+                            selected: selected.value == DrawerEnum.timetable
+                                ? true
+                                : false,
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+
+                        /// My Schedule
                         Container(
                           color: selected.value == DrawerEnum.profile
                               ? _tileSelectedBackgroundColor(context)
@@ -187,7 +185,7 @@ class HomeDrawer extends StatelessWidget {
                           child: ListTile(
                             enabled: group != null ? true : false,
                             dense: true,
-                            leading: Icon(Icons.person),
+                            leading: Icon(Icons.schedule),
                             title: Text(_screens[DrawerEnum.profile]['title']),
                             selected: selected.value == DrawerEnum.profile
                                 ? true
