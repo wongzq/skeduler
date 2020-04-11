@@ -24,6 +24,16 @@ class HomeDrawer extends StatelessWidget {
     DrawerEnum.logout: {'title': 'Logout', 'icon': null},
   };
 
+  Color _tileSelectedBackgroundColor(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.light
+          ? Theme.of(context).primaryColorLight
+          : null;
+
+  Color _tileSelectedForegroundColor(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.light
+          ? getOriginThemeData(ThemeProvider.themeOf(context).id).primaryColor
+          : getOriginThemeData(ThemeProvider.themeOf(context).id).accentColor;
+
   @override
   Widget build(BuildContext context) {
     ValueNotifier<DrawerEnum> selected =
@@ -37,11 +47,7 @@ class HomeDrawer extends StatelessWidget {
       width: MediaQuery.of(context).size.width * 0.75,
       child: Drawer(
         child: ListTileTheme(
-          selectedColor: Theme.of(context).brightness == Brightness.light
-              ? getOriginThemeData(ThemeProvider.themeOf(context).id)
-                  .primaryColor
-              : getOriginThemeData(ThemeProvider.themeOf(context).id)
-                  .accentColor,
+          selectedColor: _tileSelectedForegroundColor(context),
           child: Column(
             children: <Widget>[
               /// User data display
@@ -62,7 +68,7 @@ class HomeDrawer extends StatelessWidget {
               /// Dashboard
               Container(
                 color: selected.value == DrawerEnum.dashboard
-                    ? Theme.of(context).primaryColorLight
+                    ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
                   dense: true,
@@ -90,7 +96,7 @@ class HomeDrawer extends StatelessWidget {
                       children: <Widget>[
                         Container(
                           color: selected.value == DrawerEnum.group
-                              ? Theme.of(context).primaryColorLight
+                              ? _tileSelectedBackgroundColor(context)
                               : null,
                           child: ListTile(
                             enabled: group != null ? true : false,
@@ -116,7 +122,7 @@ class HomeDrawer extends StatelessWidget {
                         /// Timetable
                         Container(
                           color: selected.value == DrawerEnum.timetable
-                              ? Theme.of(context).primaryColorLight
+                              ? _tileSelectedBackgroundColor(context)
                               : null,
                           child: ListTile(
                             enabled: group != null ? true : false,
@@ -136,7 +142,7 @@ class HomeDrawer extends StatelessWidget {
                         /// Classes
                         Container(
                           color: selected.value == DrawerEnum.classes
-                              ? Theme.of(context).primaryColorLight
+                              ? _tileSelectedBackgroundColor(context)
                               : null,
                           child: ListTile(
                             enabled: group != null ? true : false,
@@ -155,7 +161,7 @@ class HomeDrawer extends StatelessWidget {
                         /// members
                         Container(
                           color: selected.value == DrawerEnum.members
-                              ? Theme.of(context).primaryColorLight
+                              ? _tileSelectedBackgroundColor(context)
                               : null,
                           child: ListTile(
                             enabled: group != null ? true : false,
@@ -176,7 +182,7 @@ class HomeDrawer extends StatelessWidget {
                         /// Profile
                         Container(
                           color: selected.value == DrawerEnum.profile
-                              ? Theme.of(context).primaryColorLight
+                              ? _tileSelectedBackgroundColor(context)
                               : null,
                           child: ListTile(
                             enabled: group != null ? true : false,
@@ -201,7 +207,7 @@ class HomeDrawer extends StatelessWidget {
               /// Settings
               Container(
                 color: selected.value == DrawerEnum.settings
-                    ? Theme.of(context).primaryColorLight
+                    ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
                   dense: true,
@@ -220,7 +226,7 @@ class HomeDrawer extends StatelessWidget {
               /// Logout
               Container(
                 color: selected.value == DrawerEnum.logout
-                    ? Theme.of(context).primaryColorLight
+                    ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
                   dense: true,

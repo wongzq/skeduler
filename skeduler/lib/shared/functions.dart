@@ -105,5 +105,5 @@ Color getFABIconForegroundColor(BuildContext context) {
 Color getFABIconBackgroundColor(BuildContext context) {
   return Theme.of(context).brightness == Brightness.light
       ? getOriginThemeData(ThemeProvider.themeOf(context).id).primaryColor
-      : getOriginThemeData(ThemeProvider.themeOf(context).id).primaryColor;
+      : getOriginThemeData(ThemeProvider.themeOf(context).id).primaryColorDark;
 }
