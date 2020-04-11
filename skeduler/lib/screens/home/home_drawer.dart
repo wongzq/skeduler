@@ -7,6 +7,8 @@ import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/functions.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class HomeDrawer extends StatelessWidget {
   final AuthService _authService = AuthService();
@@ -35,6 +37,11 @@ class HomeDrawer extends StatelessWidget {
       width: MediaQuery.of(context).size.width * 0.75,
       child: Drawer(
         child: ListTileTheme(
+          selectedColor: Theme.of(context).brightness == Brightness.light
+              ? getOriginThemeData(ThemeProvider.themeOf(context).id)
+                  .primaryColor
+              : getOriginThemeData(ThemeProvider.themeOf(context).id)
+                  .accentColor,
           child: Column(
             children: <Widget>[
               /// User data display

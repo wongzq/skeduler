@@ -9,6 +9,7 @@ import 'package:skeduler/screens/home/dashboard_screen_components/create_group.d
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -156,21 +157,18 @@ class DashboardScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 20.0, right: 20.0),
               child: SpeedDial(
-                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: getFABIconForegroundColor(context),
+                backgroundColor: getFABIconBackgroundColor(context),
                 overlayColor: Colors.grey,
                 overlayOpacity: 0.8,
                 curve: Curves.easeOutCubic,
-                child: Icon(
-                  Icons.add,
-                  size: 30.0,
-                  color: Colors.white,
-                ),
+                child: Icon(Icons.add, size: 30.0),
 
                 /// Join button
                 children: <SpeedDialChild>[
                   SpeedDialChild(
-                    backgroundColor: Theme.of(context).primaryColorDark,
-                    foregroundColor: Colors.white,
+                    foregroundColor: getFABIconForegroundColor(context),
+                    backgroundColor: getFABIconBackgroundColor(context),
                     child: Icon(
                       Icons.group_add,
                       size: 30.0,
@@ -180,7 +178,7 @@ class DashboardScreen extends StatelessWidget {
                       width: 100.0,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColorDark,
+                        color: getFABIconBackgroundColor(context),
                         borderRadius: BorderRadius.circular(20.0),
                         boxShadow: [
                           BoxShadow(
@@ -193,7 +191,7 @@ class DashboardScreen extends StatelessWidget {
                       child: Text(
                         'JOIN',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: getFABTextColor(context),
                           fontSize: 14.0,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 1.5,
@@ -205,8 +203,8 @@ class DashboardScreen extends StatelessWidget {
 
                   /// Create button
                   SpeedDialChild(
-                    backgroundColor: Theme.of(context).primaryColorDark,
-                    foregroundColor: Colors.white,
+                    foregroundColor: getFABIconForegroundColor(context),
+                    backgroundColor: getFABIconBackgroundColor(context),
                     child: Icon(
                       FontAwesomeIcons.users,
                       size: 25.0,
@@ -216,7 +214,7 @@ class DashboardScreen extends StatelessWidget {
                       width: 100.0,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColorDark,
+                        color: getFABIconBackgroundColor(context),
                         borderRadius: BorderRadius.circular(20.0),
                         boxShadow: [
                           BoxShadow(
@@ -229,7 +227,7 @@ class DashboardScreen extends StatelessWidget {
                       child: Text(
                         'CREATE',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: getFABTextColor(context),
                           fontSize: 14.0,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 1.5,

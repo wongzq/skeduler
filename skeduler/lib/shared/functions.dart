@@ -89,3 +89,21 @@ Color getOriginThemeColorShade(ColorShade colorShade) {
   }
   return null;
 }
+
+Color getFABTextColor(BuildContext context) {
+  return Theme.of(context).brightness == Brightness.light
+      ? Theme.of(context).primaryTextTheme.title.color
+      : Theme.of(context).primaryTextTheme.title.color;
+}
+
+Color getFABIconForegroundColor(BuildContext context) {
+  return Theme.of(context).brightness == Brightness.light
+      ? Theme.of(context).primaryIconTheme.color
+      : Theme.of(context).primaryIconTheme.color;
+}
+
+Color getFABIconBackgroundColor(BuildContext context) {
+  return Theme.of(context).brightness == Brightness.light
+      ? getOriginThemeData(ThemeProvider.themeOf(context).id).primaryColor
+      : getOriginThemeData(ThemeProvider.themeOf(context).id).primaryColor;
+}

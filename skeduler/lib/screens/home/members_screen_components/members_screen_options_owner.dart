@@ -3,6 +3,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/functions.dart';
 
 class MembersScreenOptionsOwner extends StatelessWidget {
   @override
@@ -23,6 +24,8 @@ class MembersScreenOptionsOwner extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 20.0, right: 20.0),
                     child: SpeedDial(
+                      foregroundColor: getFABIconForegroundColor(context),
+                      backgroundColor: getFABIconBackgroundColor(context),
                       overlayColor: Colors.grey,
                       overlayOpacity: 0.8,
                       curve: Curves.easeOutCubic,
@@ -32,6 +35,8 @@ class MembersScreenOptionsOwner extends StatelessWidget {
                       children: <SpeedDialChild>[
                         /// Add member
                         SpeedDialChild(
+                          foregroundColor: getFABIconForegroundColor(context),
+                          backgroundColor: getFABIconBackgroundColor(context),
                           child: Icon(
                             Icons.person_add,
                             size: 25.0,
@@ -41,7 +46,7 @@ class MembersScreenOptionsOwner extends StatelessWidget {
                             width: 150.0,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: Theme.of(context).accentColor,
+                              color: getFABIconBackgroundColor(context),
                               borderRadius: BorderRadius.circular(20.0),
                               boxShadow: [
                                 BoxShadow(
@@ -54,7 +59,7 @@ class MembersScreenOptionsOwner extends StatelessWidget {
                             child: Text(
                               'ADD MEMBER',
                               style: TextStyle(
-                                color: Colors.black,
+                                color: getFABTextColor(context),
                                 fontSize: 14.0,
                                 fontWeight: FontWeight.w400,
                                 letterSpacing: 1.5,

@@ -3,6 +3,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/functions.dart';
 
 class GroupScreenOptionsMember extends StatelessWidget {
   @override
@@ -21,6 +22,8 @@ class GroupScreenOptionsMember extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 20.0, right: 20.0),
               child: SpeedDial(
+                foregroundColor: getFABIconForegroundColor(context),
+                backgroundColor: getFABIconBackgroundColor(context),
                 overlayColor: Colors.grey,
                 overlayOpacity: 0.8,
                 curve: Curves.easeOutCubic,
@@ -30,7 +33,7 @@ class GroupScreenOptionsMember extends StatelessWidget {
                 children: <SpeedDialChild>[
                   SpeedDialChild(
                     backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
+                    foregroundColor: getFABIconForegroundColor(context),
                     child: Icon(
                       Icons.exit_to_app,
                       size: 25.0,
@@ -53,7 +56,7 @@ class GroupScreenOptionsMember extends StatelessWidget {
                       child: Text(
                         'EXIT GROUP',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: getFABTextColor(context),
                           fontSize: 14.0,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 1.5,
