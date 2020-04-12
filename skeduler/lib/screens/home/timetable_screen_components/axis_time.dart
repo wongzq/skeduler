@@ -3,26 +3,26 @@ import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/shared/functions.dart';
 
 class AxisTime extends StatefulWidget {
-  final ValueSetter<List<bool>> valSetTimetableTimeslots;
+  final ValueSetter<List<bool>> valSetTimetableTimes;
 
-  const AxisTime({Key key, this.valSetTimetableTimeslots}) : super(key: key);
+  const AxisTime({Key key, this.valSetTimetableTimes}) : super(key: key);
 
   @override
   _AxisTimeState createState() => _AxisTimeState();
 }
 
 class _AxisTimeState extends State<AxisTime> {
-  List<Time> _timetableTimeslots = [];
+  List<Time> _timetableTimes = [];
 
-  List<Widget> _generateTimetableTimeslots() {
+  List<Widget> _generateTimetableTimes() {
     List<Widget> timeslots = [];
 
-    timeslots.add(_generateAddTimeslotButton());
+    timeslots.add(_generateAddTimeButton());
 
     return timeslots;
   }
 
-  Widget _generateAddTimeslotButton() {
+  Widget _generateAddTimeButton() {
     return ListTile(
       title: Icon(
         Icons.add_circle,
@@ -42,8 +42,8 @@ class _AxisTimeState extends State<AxisTime> {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      title: Text('Axis 2 : Timeslots'),
-      children: _generateTimetableTimeslots(),
+      title: Text('Axis 2 : Times'),
+      children: _generateTimetableTimes(),
     );
   }
 }
