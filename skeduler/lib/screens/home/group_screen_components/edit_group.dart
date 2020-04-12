@@ -157,7 +157,6 @@ class _EditGroupState extends State<EditGroup> {
                         }(),
                         hasNotification: false,
                       ),
-                      Divider(thickness: 1.0),
                     ],
                   ),
                 ),
