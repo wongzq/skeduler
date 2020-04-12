@@ -4,6 +4,7 @@ import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/models/group_data/time.dart';
+import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/models/group_data/user.dart';
 
 class DatabaseService {
@@ -79,6 +80,17 @@ class DatabaseService {
             .map(_membersFromSnapshots);
   }
 
+  /// get [Group][Timetable] data
+  Stream<List<Timetable>> getGroupTimetables(String groupDocId) {
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : groupsCollection
+            .document(groupDocId)
+            .collection('timetables')
+            .snapshots()
+            .map(_timetablesFromSnapshots);
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Setter methods
   ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,13 +99,6 @@ class DatabaseService {
   /// set [User] data
   Future setUserData(String email, String name) async {
     return await usersCollection.document(email).setData({
-      'name': name,
-    });
-  }
-
-  /// update [User] data
-  Future updateUserData({String name}) async {
-    return await usersCollection.document(userId).updateData({
       'name': name,
     });
   }
@@ -142,46 +147,11 @@ class DatabaseService {
   /// Modifying methods
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  Future deleteGroup(String groupDocId) async {
-    // Cloud function to delete all subcollections
-    // temporary replacement
-    if (groupDocId == null || groupDocId.trim() == '') {
-      return null;
-    } else {
-      await groupsCollection
-          .document(groupDocId)
-          .collection('members')
-          .getDocuments()
-          .then((onValue) {
-        for (DocumentSnapshot snap in onValue.documents) {
-          snap.reference.delete();
-        }
-      });
-
-      return await groupsCollection.document(groupDocId).delete();
-    }
-  }
-
-  Future leaveGroup(String groupDocId) async {
-    if (groupDocId == null || groupDocId.trim() == '') {
-      return null;
-    } else {
-      return await groupsCollection
-          .document(groupDocId)
-          .get()
-          .then((onValue) async {
-        if (onValue.exists) {
-          await groupsCollection.document(groupDocId).updateData({
-            'members': FieldValue.arrayRemove([userId])
-          });
-          await groupsCollection
-              .document(groupDocId)
-              .collection('members')
-              .document(userId)
-              .delete();
-        }
-      });
-    }
+  /// update [User] data
+  Future updateUserData({String name}) async {
+    return await usersCollection.document(userId).updateData({
+      'name': name,
+    });
   }
 
   /// update [Group] data
@@ -209,6 +179,65 @@ class DatabaseService {
         },
       });
     }
+  }
+
+  /// add [User] to [Group]
+  Future<String> inviteMemberToGroup({
+    @required String groupDocId,
+    @required String newMemberEmail,
+    MemberRole memberRole = MemberRole.pending,
+  }) async {
+    String errorMsg;
+
+    DocumentReference groupMemberRef = groupsCollection
+        .document(groupDocId)
+        .collection('members')
+        .document(newMemberEmail);
+
+    await usersCollection.document(newMemberEmail).get().then((user) async {
+      if (user.exists) {
+        await groupMemberRef.get().then((member) async {
+          if (!member.exists) {
+            await groupsCollection.document(groupDocId).updateData({
+              'members': FieldValue.arrayUnion([newMemberEmail])
+            });
+            await groupMemberRef.setData({'role': memberRole.index});
+          } else {
+            errorMsg = 'User is already in the group';
+          }
+        });
+      } else {
+        errorMsg = 'User not found';
+      }
+    });
+    return errorMsg;
+  }
+
+  /// remove [User] from [Group]
+  Future removeMemberFromGroup({
+    @required String groupDocId,
+    @required String memberDocId,
+  }) async {
+    await groupsCollection.document(groupDocId).updateData({
+      'members': FieldValue.arrayRemove([memberDocId])
+    });
+    return await groupsCollection
+        .document(groupDocId)
+        .collection('members')
+        .document(memberDocId)
+        .delete();
+  }
+
+  Future changeMemberRoleInGroup({
+    @required String groupDocId,
+    @required String memberDocId,
+    @required MemberRole role,
+  }) async {
+    return await groupsCollection
+        .document(groupDocId)
+        .collection('members')
+        .document(memberDocId)
+        .updateData({'role': role.index});
   }
 
   Future acceptGroupInvitation(String groupDocId) async {
@@ -248,65 +277,45 @@ class DatabaseService {
     }
   }
 
-  Future removeGroupMemberTimes(
-      String groupDocId, String memberDocId, List<Time> removeTimes) async {
-    memberDocId =
-        memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
-
-    List<Time> prevTimes = [];
-    List<Time> timesOfSameDay = [];
-    List<Map<String, Timestamp>> removeTimestamps = [];
-
-    if (groupDocId != null && groupDocId.trim() != '') {
-      return await groupsCollection
+  Future deleteGroup(String groupDocId) async {
+    // Cloud function to delete all subcollections
+    // temporary replacement
+    if (groupDocId == null || groupDocId.trim() == '') {
+      return null;
+    } else {
+      await groupsCollection
           .document(groupDocId)
           .collection('members')
-          .document(memberDocId)
+          .getDocuments()
+          .then((onValue) {
+        for (DocumentSnapshot snap in onValue.documents) {
+          snap.reference.delete();
+        }
+      });
+
+      return await groupsCollection.document(groupDocId).delete();
+    }
+  }
+
+  Future leaveGroup(String groupDocId) async {
+    if (groupDocId == null || groupDocId.trim() == '') {
+      return null;
+    } else {
+      return await groupsCollection
+          .document(groupDocId)
           .get()
-          .then((member) async {
-        if (member.data['times'] != null) {
-          prevTimes = _timesFromDynamicList(member.data['times']);
-
-          for (int p = 0; p < prevTimes.length; p++) {
-            for (int r = 0; r < removeTimes.length; r++) {
-              if ((prevTimes[p].startTime.year ==
-                          removeTimes[r].startTime.year &&
-                      prevTimes[p].startTime.month ==
-                          removeTimes[r].startTime.month &&
-                      prevTimes[p].startTime.day ==
-                          removeTimes[r].startTime.day) ||
-                  (prevTimes[p].endTime.year == removeTimes[r].endTime.year &&
-                      prevTimes[p].endTime.month ==
-                          removeTimes[r].endTime.month &&
-                      prevTimes[p].endTime.day == removeTimes[r].endTime.day)) {
-                timesOfSameDay.add(prevTimes[p]);
-              }
-            }
-          }
-
-          timesOfSameDay.forEach((time) {
-            Timestamp startTimestamp =
-                Timestamp(time.startTime.millisecondsSinceEpoch ~/ 1000, 0);
-            Timestamp endTimestamp =
-                Timestamp(time.endTime.millisecondsSinceEpoch ~/ 1000, 0);
-
-            Map<String, Timestamp> removeTimestamp = {
-              'startTime': startTimestamp,
-              'endTime': endTimestamp
-            };
-
-            removeTimestamps.add(removeTimestamp);
+          .then((onValue) async {
+        if (onValue.exists) {
+          await groupsCollection.document(groupDocId).updateData({
+            'members': FieldValue.arrayRemove([userId])
           });
-
           await groupsCollection
               .document(groupDocId)
               .collection('members')
-              .document(memberDocId)
-              .updateData({'times': FieldValue.arrayRemove(removeTimestamps)});
+              .document(userId)
+              .delete();
         }
       });
-    } else {
-      return null;
     }
   }
 
@@ -373,63 +382,66 @@ class DatabaseService {
     }
   }
 
-  /// add [User] to [Group]
-  Future<String> inviteMemberToGroup({
-    @required String groupDocId,
-    @required String newMemberEmail,
-    MemberRole memberRole = MemberRole.pending,
-  }) async {
-    String errorMsg;
+  Future removeGroupMemberTimes(
+      String groupDocId, String memberDocId, List<Time> removeTimes) async {
+    memberDocId =
+        memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
 
-    DocumentReference groupMemberRef = groupsCollection
-        .document(groupDocId)
-        .collection('members')
-        .document(newMemberEmail);
+    List<Time> prevTimes = [];
+    List<Time> timesOfSameDay = [];
+    List<Map<String, Timestamp>> removeTimestamps = [];
 
-    await usersCollection.document(newMemberEmail).get().then((user) async {
-      if (user.exists) {
-        await groupMemberRef.get().then((member) async {
-          if (!member.exists) {
-            await groupsCollection.document(groupDocId).updateData({
-              'members': FieldValue.arrayUnion([newMemberEmail])
-            });
-            await groupMemberRef.setData({'role': memberRole.index});
-          } else {
-            errorMsg = 'User is already in the group';
+    if (groupDocId != null && groupDocId.trim() != '') {
+      return await groupsCollection
+          .document(groupDocId)
+          .collection('members')
+          .document(memberDocId)
+          .get()
+          .then((member) async {
+        if (member.data['times'] != null) {
+          prevTimes = _timesFromDynamicList(member.data['times']);
+
+          for (int p = 0; p < prevTimes.length; p++) {
+            for (int r = 0; r < removeTimes.length; r++) {
+              if ((prevTimes[p].startTime.year ==
+                          removeTimes[r].startTime.year &&
+                      prevTimes[p].startTime.month ==
+                          removeTimes[r].startTime.month &&
+                      prevTimes[p].startTime.day ==
+                          removeTimes[r].startTime.day) ||
+                  (prevTimes[p].endTime.year == removeTimes[r].endTime.year &&
+                      prevTimes[p].endTime.month ==
+                          removeTimes[r].endTime.month &&
+                      prevTimes[p].endTime.day == removeTimes[r].endTime.day)) {
+                timesOfSameDay.add(prevTimes[p]);
+              }
+            }
           }
-        });
-      } else {
-        errorMsg = 'User not found';
-      }
-    });
-    return errorMsg;
-  }
 
-  /// remove [User] from [Group]
-  Future removeMemberFromGroup({
-    @required String groupDocId,
-    @required String memberDocId,
-  }) async {
-    await groupsCollection.document(groupDocId).updateData({
-      'members': FieldValue.arrayRemove([memberDocId])
-    });
-    return await groupsCollection
-        .document(groupDocId)
-        .collection('members')
-        .document(memberDocId)
-        .delete();
-  }
+          timesOfSameDay.forEach((time) {
+            Timestamp startTimestamp =
+                Timestamp(time.startTime.millisecondsSinceEpoch ~/ 1000, 0);
+            Timestamp endTimestamp =
+                Timestamp(time.endTime.millisecondsSinceEpoch ~/ 1000, 0);
 
-  Future changeMemberRoleInGroup({
-    @required String groupDocId,
-    @required String memberDocId,
-    @required MemberRole role,
-  }) async {
-    return await groupsCollection
-        .document(groupDocId)
-        .collection('members')
-        .document(memberDocId)
-        .updateData({'role': role.index});
+            Map<String, Timestamp> removeTimestamp = {
+              'startTime': startTimestamp,
+              'endTime': endTimestamp
+            };
+
+            removeTimestamps.add(removeTimestamp);
+          });
+
+          await groupsCollection
+              .document(groupDocId)
+              .collection('members')
+              .document(memberDocId)
+              .updateData({'times': FieldValue.arrayRemove(removeTimestamps)});
+        }
+      });
+    } else {
+      return null;
+    }
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -483,6 +495,10 @@ class DatabaseService {
         : Member(email: null);
   }
 
+  Timetable _timetableFromSnapshot(DocumentSnapshot snapshot) {
+    return snapshot.data != null ? Timetable() : Timetable();
+  }
+
   /// convert document snapshots into [User]s
   List<User> _usersFromSnapshots(QuerySnapshot query) {
     return query.documents.map(_userFromSnapshot).toList();
@@ -496,6 +512,11 @@ class DatabaseService {
   /// convert document snapshots into [Member]s
   List<Member> _membersFromSnapshots(QuerySnapshot query) {
     return query.documents.map(_memberFromSnapshot).toList();
+  }
+
+  /// convert document snapshots into [Timetable]s
+  List<Timetable> _timetablesFromSnapshots(QuerySnapshot query) {
+    return query.documents.map(_timetableFromSnapshot).toList();
   }
 
   List<Time> _timesFromDynamicList(List timesDynamic) {

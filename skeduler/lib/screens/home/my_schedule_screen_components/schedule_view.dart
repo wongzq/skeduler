@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/components/edit_time_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 import 'package:theme_provider/theme_provider.dart';
@@ -166,65 +167,69 @@ class ScheduleView extends StatelessWidget {
                                     onSelected: (val) {
                                       switch (val) {
                                         case ScheduleViewOption.edit:
-                                          showDialog(context: null);
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return EditTimeDialog();
+                                            },
+                                          );
                                           break;
+
                                         case ScheduleViewOption.remove:
                                           showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return AlertDialog(
-                                                  content: RichText(
-                                                    text: TextSpan(
-                                                      children: <TextSpan>[
-                                                        TextSpan(
-                                                          text:
-                                                              'Remove this from your schedule?\n\n',
-                                                          style: TextStyle(
-                                                            fontSize: 15.0,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                content: RichText(
+                                                  text: TextSpan(
+                                                    children: <TextSpan>[
+                                                      TextSpan(
+                                                        text:
+                                                            'Remove this from your schedule?\n\n',
+                                                        style: TextStyle(
+                                                          fontSize: 15.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                         ),
-                                                        TextSpan(
-                                                            text: DateFormat(
-                                                                    'EEEE, d MMMM')
-                                                                .format(member
-                                                                    .times[
-                                                                        index]
-                                                                    .startTime)),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                      TextSpan(
+                                                        text: DateFormat(
+                                                                'EEEE, d MMMM')
+                                                            .format(member
+                                                                .times[index]
+                                                                .startTime),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  actions: <Widget>[
-                                                    FlatButton(
-                                                      child: Text('CANCEL'),
-                                                      onPressed: () =>
-                                                          Navigator.of(context)
-                                                              .pop(),
-                                                    ),
-                                                    FlatButton(
-                                                        child: Text(
-                                                          'REMOVE',
-                                                          style: TextStyle(
-                                                            color: Colors.red,
-                                                          ),
+                                                ),
+                                                actions: <Widget>[
+                                                  FlatButton(
+                                                    child: Text('CANCEL'),
+                                                    onPressed: () =>
+                                                        Navigator.of(context)
+                                                            .pop(),
+                                                  ),
+                                                  FlatButton(
+                                                      child: Text(
+                                                        'REMOVE',
+                                                        style: TextStyle(
+                                                          color: Colors.red,
                                                         ),
-                                                        onPressed: () async {
-                                                          await dbService
-                                                              .removeGroupMemberTimes(
-                                                            groupDocId.value,
-                                                            null,
-                                                            [
-                                                              member
-                                                                  .times[index]
-                                                            ],
-                                                          );
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        }),
-                                                  ],
-                                                );
-                                              });
+                                                      ),
+                                                      onPressed: () async {
+                                                        await dbService
+                                                            .removeGroupMemberTimes(
+                                                          groupDocId.value,
+                                                          null,
+                                                          [member.times[index]],
+                                                        );
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      }),
+                                                ],
+                                              );
+                                            },
+                                          );
                                           break;
                                       }
                                     },

@@ -3,12 +3,12 @@ import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/shared/functions.dart';
 
 class AxisDay extends StatefulWidget {
-  final ValueSetter<List<bool>> valSetTimetableDaysSelected;
+  final ValueSetter<List<Weekday>> valSetWeekdaysSelected;
   final bool initiallyExpanded;
 
   const AxisDay({
     Key key,
-    this.valSetTimetableDaysSelected,
+    this.valSetWeekdaysSelected,
     this.initiallyExpanded = false,
   }) : super(key: key);
 
@@ -17,8 +17,8 @@ class AxisDay extends StatefulWidget {
 }
 
 class _AxisDayState extends State<AxisDay> {
-  List<bool> _timetableDaysSelected = List.generate(7, (index) => false);
-  List<Weekday> _timetableDays = [
+  List<Weekday> _weekdaysSelected = [];
+  List<Weekday> _weekdays = [
     Weekday.mon,
     Weekday.tue,
     Weekday.wed,
@@ -33,17 +33,32 @@ class _AxisDayState extends State<AxisDay> {
   List<Widget> _generateTimetableDays() {
     List<Widget> weekdayOptions = [];
 
-    _timetableDays.forEach((weekday) {
+    _weekdays.forEach((weekdayOption) {
       weekdayOptions.add(ListTile(
         dense: true,
+
+        /// Checkbox
         leading: Checkbox(
           activeColor: getFABIconBackgroundColor(context),
-          value: _timetableDaysSelected[weekday.index],
+          value: _weekdaysSelected.contains(weekdayOption),
           onChanged: (selected) {
-            setState(() => _timetableDaysSelected[weekday.index] = selected);
+            setState(() {
+              if (selected == true) {
+                /// Add to weekdaysSelected
+                _weekdaysSelected.add(weekdayOption);
+              } else {
+                /// Remove from weekdaysSelected
+                _weekdaysSelected.removeWhere((elem) => elem == weekdayOption);
+              }
+
+              /// Update through valueSetter
+              widget.valSetWeekdaysSelected(_weekdaysSelected);
+            });
           },
         ),
-        title: Text(getWeekdayStr(weekday)),
+
+        /// Weekday display
+        title: Text(getWeekdayStr(weekdayOption)),
       ));
     });
 

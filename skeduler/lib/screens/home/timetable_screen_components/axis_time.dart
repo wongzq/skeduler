@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/models/group_data/time.dart';
+import 'package:skeduler/shared/components/edit_time_dialog.dart';
 
 class AxisTime extends StatefulWidget {
   final ValueSetter<List<bool>> valSetTimetableTimes;
@@ -38,7 +39,10 @@ class _AxisTimeState extends State<AxisTime> {
         showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog();
+            return EditTimeDialog(
+              contentText: 'Add time slot',
+              onSave: () {},
+            );
           },
         );
       },
@@ -57,7 +61,7 @@ class _AxisTimeState extends State<AxisTime> {
       onExpansionChanged: (expanded) => setState(() => _expanded = !_expanded),
       initiallyExpanded: widget.initiallyExpanded,
       title: Text(
-        'Axis 2 : Times',
+        'Axis 2 : Time',
         style: TextStyle(
           color: Theme.of(context).brightness == Brightness.light
               ? Colors.black

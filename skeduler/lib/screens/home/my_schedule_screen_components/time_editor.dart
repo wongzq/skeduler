@@ -6,9 +6,9 @@ import 'package:provider/provider.dart';
 import 'package:quiver/time.dart';
 import 'package:skeduler/models/auxiliary/native_theme.dart';
 import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/screens/home/my_schedule_screen_components/custom_time_picker.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/editors_status.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/components/custom_time_picker.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class TimeEditor extends StatefulWidget {
@@ -48,10 +48,10 @@ class _TimeEditorState extends State<TimeEditor> {
 
   bool _dateRangeExpanded;
 
-  static const double _spacing = 5.0;
-  static const double _bodyPadding = 10.0;
-  static const double _centerWidth = 20.0;
-  static const double _buttonHeight = 45.0;
+  double _spacing = 5.0;
+  double _bodyPadding = 10.0;
+  double _centerWidth = 20.0;
+  double _buttonHeight = 45.0;
 
   /// methods
   /// set the selected height of time editor
@@ -135,7 +135,7 @@ class _TimeEditorState extends State<TimeEditor> {
                 _centerWidth) /
             2,
         child: Padding(
-          padding: const EdgeInsets.all(_spacing),
+          padding: EdgeInsets.all(_spacing),
           child: RaisedButton(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30.0),
@@ -245,16 +245,18 @@ class _TimeEditorState extends State<TimeEditor> {
                 _centerWidth) /
             2,
         child: Padding(
-          padding: const EdgeInsets.all(_spacing),
+          padding: EdgeInsets.all(_spacing),
           child: RaisedButton(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30.0),
             ),
             elevation: 3.0,
-            onPressed: () {
-              DatePicker.showDatePicker(
-                context,
-                currentTime: () {
+            onPressed: () async {
+              DateTime date = await showDatePicker(
+                context: context,
+                firstDate: getFirstDayOfStartMonth(),
+                lastDate: getLastDayOfLastMonth(),
+                initialDate: () {
                   if (start) {
                     return _startDate != null
                         ? _startDate
@@ -267,22 +269,17 @@ class _TimeEditorState extends State<TimeEditor> {
                     return DateTime.now();
                   }
                 }(),
-                theme: DatePickerTheme(
-                  containerHeight: MediaQuery.of(context).size.height / 3,
-                ),
-                showTitleActions: true,
-                onConfirm: (date) {
-                  if (start && _validateStartEndDate(date)) {
-                    _startDateStr = DateFormat('yyyy/MM/dd').format(date);
-                    _startDate = date;
-                  } else if (end && _validateStartEndDate(date)) {
-                    _endDateStr = DateFormat('yyyy/MM/dd').format(date);
-                    _endDate = date;
-                  }
-                  _validateDate();
-                  setState(() {});
-                },
               );
+
+              if (start && _validateStartEndDate(date)) {
+                _startDateStr = DateFormat('yyyy/MM/dd').format(date);
+                _startDate = date;
+              } else if (end && _validateStartEndDate(date)) {
+                _endDateStr = DateFormat('yyyy/MM/dd').format(date);
+                _endDate = date;
+              }
+
+              _validateDate();
               setState(() {});
             },
             child: Container(
@@ -367,8 +364,8 @@ class _TimeEditorState extends State<TimeEditor> {
     _editorsStatus = Provider.of<EditorsStatus>(context);
 
     return AbsorbPointer(
-      absorbing: widget.valGetMonths().isEmpty ||
-          widget.valGetWeekdays().isEmpty,
+      absorbing:
+          widget.valGetMonths().isEmpty || widget.valGetWeekdays().isEmpty,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () =>
@@ -380,7 +377,7 @@ class _TimeEditorState extends State<TimeEditor> {
               _editorsStatus.defaultSecondaryHeight,
           width: _editorsStatus.totalWidth,
           child: Padding(
-            padding: const EdgeInsets.all(_bodyPadding),
+            padding: EdgeInsets.all(_bodyPadding),
             child: Column(
               children: <Widget>[
                 /// Title
@@ -473,7 +470,7 @@ class _TimeEditorState extends State<TimeEditor> {
 
                       /// Button: Save
                       Padding(
-                        padding: const EdgeInsets.all(_spacing),
+                        padding: EdgeInsets.all(_spacing),
                         child: Container(
                           height: _buttonHeight,
                           width: MediaQuery.of(context).size.width - 2,
@@ -517,7 +514,7 @@ class _TimeEditorState extends State<TimeEditor> {
 
                       /// Button: Remove
                       Padding(
-                        padding: const EdgeInsets.all(_spacing),
+                        padding: EdgeInsets.all(_spacing),
                         child: Container(
                           height: _buttonHeight,
                           width: MediaQuery.of(context).size.width - 2,
@@ -594,8 +591,8 @@ class _TimeEditorState extends State<TimeEditor> {
                                                   onPressed: () async {
                                                     List<Time> removeTimes =
                                                         generateTimes(
-                                                      months: widget
-                                                          .valGetMonths(),
+                                                      months:
+                                                          widget.valGetMonths(),
                                                       weekDays: widget
                                                           .valGetWeekdays(),
                                                       time: Time(
@@ -635,7 +632,7 @@ class _TimeEditorState extends State<TimeEditor> {
 
                       /// Button: Reset
                       Padding(
-                        padding: const EdgeInsets.all(_spacing),
+                        padding: EdgeInsets.all(_spacing),
                         child: Container(
                           height: _buttonHeight,
                           width: MediaQuery.of(context).size.width - 2,
