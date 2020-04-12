@@ -3,18 +3,17 @@ import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/shared/functions.dart';
 
 class AxisDay extends StatefulWidget {
-  final ValueSetter<List<bool>> valSetTimetableWeekdaysSelected;
+  final ValueSetter<List<bool>> valSetTimetableDaysSelected;
 
-  const AxisDay({Key key, this.valSetTimetableWeekdaysSelected})
-      : super(key: key);
+  const AxisDay({Key key, this.valSetTimetableDaysSelected}) : super(key: key);
 
   @override
   _AxisDayState createState() => _AxisDayState();
 }
 
 class _AxisDayState extends State<AxisDay> {
-  List<bool> _timetableWeekdaysSelected = List.generate(7, (index) => false);
-  List<Weekday> _timetableWeekdays = [
+  List<bool> _timetableDaysSelected = List.generate(7, (index) => false);
+  List<Weekday> _timetableDays = [
     Weekday.mon,
     Weekday.tue,
     Weekday.wed,
@@ -24,18 +23,17 @@ class _AxisDayState extends State<AxisDay> {
     Weekday.sun,
   ];
 
-  List<Widget> _generateTimetableWeekdays() {
+  List<Widget> _generateTimetableDays() {
     List<Widget> weekdayOptions = [];
 
-    _timetableWeekdays.forEach((weekday) {
+    _timetableDays.forEach((weekday) {
       weekdayOptions.add(ListTile(
         dense: true,
         leading: Checkbox(
           activeColor: getFABIconBackgroundColor(context),
-          value: _timetableWeekdaysSelected[weekday.index],
+          value: _timetableDaysSelected[weekday.index],
           onChanged: (selected) {
-            setState(
-                () => _timetableWeekdaysSelected[weekday.index] = selected);
+            setState(() => _timetableDaysSelected[weekday.index] = selected);
           },
         ),
         title: Text(getWeekdayStr(weekday)),
@@ -49,7 +47,7 @@ class _AxisDayState extends State<AxisDay> {
   Widget build(BuildContext context) {
     return ExpansionTile(
       title: Text('Axis 1 : Day'),
-      children: _generateTimetableWeekdays(),
+      children: _generateTimetableDays(),
     );
   }
 }

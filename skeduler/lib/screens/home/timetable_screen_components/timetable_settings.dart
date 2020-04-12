@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/axis_day.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/axis_time.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/ui_settings.dart';
@@ -45,7 +46,16 @@ class TimetableSettings extends StatelessWidget {
                     data: Theme.of(context).copyWith(
                       dividerColor: Colors.transparent,
                     ),
-                    child: AxisDay(),
+                    child: ListView(
+                      physics: BouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics(),
+                      ),
+                      children: <Widget>[
+                        AxisDay(),
+                        AxisTime(),
+                        // AxisCustom(),
+                      ],
+                    ),
                   ),
                 );
         });
