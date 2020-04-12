@@ -56,6 +56,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                         child: FloatingActionButton(
                           foregroundColor: getFABIconForegroundColor(context),
                           backgroundColor: getFABIconBackgroundColor(context),
+                          child: Icon(Icons.edit),
                           onPressed: () {
                             Navigator.of(context)
                                 .pushNamed('/timetableSettings');
