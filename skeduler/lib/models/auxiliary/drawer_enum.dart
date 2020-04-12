@@ -4,7 +4,7 @@ enum DrawerEnum {
   members,
   classes,
   timetable,
-  profile,
+  mySchedule,
   settings,
   logout,
 }

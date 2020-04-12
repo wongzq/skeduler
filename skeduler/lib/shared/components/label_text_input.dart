@@ -8,8 +8,8 @@ class LabelTextInput extends StatefulWidget {
   final String hintText;
   final String initialValue;
   final String Function(String) validator;
-  final ValueSetter<String> valueSetterText;
-  final ValueSetter<String> valueSetterValid;
+  final ValueSetter<String> valSetText;
+  final ValueSetter<String> valSetValid;
 
   const LabelTextInput({
     this.formKey,
@@ -18,8 +18,8 @@ class LabelTextInput extends StatefulWidget {
     this.hintText = '',
     this.initialValue,
     this.validator,
-    this.valueSetterText,
-    this.valueSetterValid,
+    this.valSetText,
+    this.valSetValid,
   });
 
   @override
@@ -55,19 +55,19 @@ class _LabelTextInputState extends State<LabelTextInput> {
                 ),
                 style: TextStyle(fontSize: 15.0),
                 onChanged: (value) {
-                  if (widget.valueSetterText != null)
-                    widget.valueSetterText(value);
+                  if (widget.valSetText != null)
+                    widget.valSetText(value);
                 },
                 validator: (value) {
                   if (widget.validator != null) {
                     String validity = widget.validator(value);
-                    if (widget.valueSetterValid != null)
-                      widget.valueSetterValid(validity);
+                    if (widget.valSetValid != null)
+                      widget.valSetValid(validity);
                     return validity;
                   } else {
                     String validity = value != null && value != '' ? null : '';
-                    if (widget.valueSetterValid != null)
-                      widget.valueSetterValid(validity);
+                    if (widget.valSetValid != null)
+                      widget.valSetValid(validity);
                     return validity;
                   }
                 },

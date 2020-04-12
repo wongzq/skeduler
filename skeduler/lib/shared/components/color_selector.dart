@@ -9,15 +9,15 @@ class ColorSelector extends StatefulWidget {
   /// properties
   final bool initialExpanded;
   final ColorShade initialValue;
-  final ValueSetter<bool> valueSetterExpanded;
-  final ValueSetter<ColorShade> valueSetterColorShade;
+  final ValueSetter<bool> valSetExpanded;
+  final ValueSetter<ColorShade> valSetColorShade;
 
   /// constructor
   const ColorSelector({
     this.initialExpanded = true,
     this.initialValue,
-    this.valueSetterExpanded,
-    this.valueSetterColorShade,
+    this.valSetExpanded,
+    this.valSetColorShade,
   });
 
   @override
@@ -58,8 +58,8 @@ class _ColorSelectorState extends State<ColorSelector> {
       onExpansionChanged: (expanded) {
         setState(() {
           _expanded = !_expanded;
-          if (widget.valueSetterExpanded != null)
-            widget.valueSetterExpanded(_expanded);
+          if (widget.valSetExpanded != null)
+            widget.valSetExpanded(_expanded);
         });
       },
       trailing: Icon(
@@ -180,7 +180,7 @@ class _ColorSelectorState extends State<ColorSelector> {
                               break;
                           }
 
-                          widget.valueSetterColorShade(_colorShade);
+                          widget.valSetColorShade(_colorShade);
                         });
                       },
                     ),

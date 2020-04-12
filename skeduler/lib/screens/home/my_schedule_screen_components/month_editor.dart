@@ -7,11 +7,11 @@ import 'package:skeduler/screens/home/my_schedule_screen_components/editors_stat
 import 'package:skeduler/shared/ui_settings.dart';
 
 class MonthEditor extends StatefulWidget {
-  final ValueSetter<List<Month>> valueSetterMonths;
+  final ValueSetter<List<Month>> valSetMonths;
 
   const MonthEditor({
     Key key,
-    @required this.valueSetterMonths,
+    @required this.valSetMonths,
   }) : super(key: key);
 
   @override
@@ -126,8 +126,8 @@ class _MonthEditorState extends State<MonthEditor> {
                 }
               });
 
-              if (widget.valueSetterMonths != null) {
-                widget.valueSetterMonths(_monthsSelected);
+              if (widget.valSetMonths != null) {
+                widget.valSetMonths(_monthsSelected);
               }
 
               /// get Size of Wrap Selected

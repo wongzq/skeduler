@@ -86,6 +86,10 @@ class _MembersScreenState extends State<MembersScreen> {
                                           body: Stack(
                                             children: <Widget>[
                                               ListView.builder(
+                                                physics: BouncingScrollPhysics(
+                                                  parent:
+                                                      AlwaysScrollableScrollPhysics(),
+                                                ),
                                                 itemCount: members != null
                                                     ? members.length
                                                     : 0,

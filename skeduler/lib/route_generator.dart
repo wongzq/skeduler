@@ -7,6 +7,8 @@ import 'package:skeduler/screens/home/members_screen_components/members_screen.d
 import 'package:skeduler/screens/home/my_schedule_screen_components/my_schedule_screen.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_editor.dart';
 import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_screen.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings.dart';
 import 'package:skeduler/screens/wrapper.dart';
 import 'package:skeduler/shared/components/add_member.dart';
 import 'package:skeduler/shared/components/custom_transition_route.dart';
@@ -44,6 +46,18 @@ class RouteGenerator {
       case '/members':
         if (args == null) {
           return CustomTransitionRoute(page: wrapWidget(MembersScreen()));
+        }
+        break;
+
+      case '/timetable':
+        if (args == null) {
+          return CustomTransitionRoute(page: wrapWidget(TimetableScreen()));
+        }
+        break;
+
+      case '/timetableSettings':
+        if (args == null) {
+          return CustomTransitionRoute(page: wrapWidget(TimetableSettings()));
         }
         break;
 

@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/screens/home/home_drawer.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/axis_day.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/functions.dart';
+import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
-class TimetableScreen extends StatefulWidget {
-  @override
-  _TimetableScreenState createState() => _TimetableScreenState();
-}
-
-class _TimetableScreenState extends State<TimetableScreen> {
+class TimetableSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
@@ -24,7 +19,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
           Group group = snapshot != null ? snapshot.data : null;
 
           return group == null
-              ? Container()
+              ? Loading()
               : Scaffold(
                   appBar: AppBar(
                     title: group.name == null
@@ -46,23 +41,11 @@ class _TimetableScreenState extends State<TimetableScreen> {
                             ],
                           ),
                   ),
-                  drawer: HomeDrawer(),
-                  body: Stack(
-                    children: <Widget>[
-                      Container(),
-                      Positioned(
-                        right: 20.0,
-                        bottom: 20.0,
-                        child: FloatingActionButton(
-                          foregroundColor: getFABIconForegroundColor(context),
-                          backgroundColor: getFABIconBackgroundColor(context),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed('/timetableSettings');
-                          },
-                        ),
-                      ),
-                    ],
+                  body: Theme(
+                    data: Theme.of(context).copyWith(
+                      dividerColor: Colors.transparent,
+                    ),
+                    child: AxisDay(),
                   ),
                 );
         });

@@ -70,7 +70,7 @@ class _EditGroupState extends State<EditGroup> {
                     initialValue: _groupName,
                     hintText: widget.group.name,
                     label: 'Name',
-                    valueSetterText: (value) {
+                    valSetText: (value) {
                       _groupName = value;
                     },
                     formKey: _formKeyName,
@@ -93,7 +93,7 @@ class _EditGroupState extends State<EditGroup> {
                     initialValue: _groupDescription,
                     hintText: widget.group.description,
                     label: 'Description',
-                    valueSetterText: (value) {
+                    valSetText: (value) {
                       _groupDescription = value;
                     },
                     formKey: _formKeyDesc,
@@ -113,12 +113,12 @@ class _EditGroupState extends State<EditGroup> {
                   child: ColorSelector(
                     initialValue: _groupColorShade,
                     initialExpanded: _expanded.value,
-                    valueSetterColorShade: (value) {
+                    valSetColorShade: (value) {
                       setState(() {
                         _groupColorShade = value;
                       });
                     },
-                    valueSetterExpanded: (value) {
+                    valSetExpanded: (value) {
                       setState(() {
                         _expanded.value = value;
                       });

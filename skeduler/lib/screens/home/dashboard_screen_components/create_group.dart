@@ -90,7 +90,7 @@ class _CreateGroupState extends State<CreateGroup> {
               child: LabelTextInput(
                 hintText: 'Required',
                 label: 'Name',
-                valueSetterText: (value) {
+                valSetText: (value) {
                   setState(() {
                     _groupName = value;
                     _nameValid = value == null ||
@@ -109,7 +109,7 @@ class _CreateGroupState extends State<CreateGroup> {
               child: LabelTextInput(
                 hintText: 'Optional',
                 label: 'Description',
-                valueSetterText: (value) {
+                valSetText: (value) {
                   setState(() {
                     _groupDescription = value;
                     _descValid = value == null || value.trim().length == 0
@@ -122,7 +122,7 @@ class _CreateGroupState extends State<CreateGroup> {
 
             /// Color
             ColorSelector(
-              valueSetterColorShade: (value) {
+              valSetColorShade: (value) {
                 setState(() {
                   _groupColorShade = value;
                 });

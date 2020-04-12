@@ -13,6 +13,34 @@ enum Month { jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec }
 
 enum Weekday { mon, tue, wed, thu, fri, sat, sun }
 
+String getWeekdayStr(Weekday weekday) {
+  switch (weekday) {
+    case Weekday.mon:
+      return 'Monday';
+      break;
+    case Weekday.tue:
+      return 'Tuesday';
+      break;
+    case Weekday.wed:
+      return 'Wednesday';
+      break;
+    case Weekday.thu:
+      return 'Thursday';
+      break;
+    case Weekday.fri:
+      return 'Friday';
+      break;
+    case Weekday.sat:
+      return 'Saturday';
+      break;
+    case Weekday.sun:
+      return 'Sunday';
+      break;
+    default:
+      return '';
+  }
+}
+
 List<Time> generateTimes({
   @required List<Month> months,
   @required List<Weekday> weekDays,

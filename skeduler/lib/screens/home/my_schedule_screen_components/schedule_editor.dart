@@ -71,7 +71,7 @@ class ScheduleEditor extends StatelessWidget {
                       children: <Widget>[
                         /// Month Editor
                         MonthEditor(
-                          valueSetterMonths: (monthsSelected) {
+                          valSetMonths: (monthsSelected) {
                             _monthsSelected = monthsSelected;
                             _monthsSelected
                                 .sort((a, b) => a.index.compareTo(b.index));
@@ -83,12 +83,12 @@ class ScheduleEditor extends StatelessWidget {
 
                         /// Day Editor
                         DayEditor(
-                          valueSetterWeekdays: (weekdaysSelected) {
+                          valSetWeekdays: (weekdaysSelected) {
                             _weekdaysSelected = weekdaysSelected;
                             _weekdaysSelected
                                 .sort((a, b) => a.index.compareTo(b.index));
                           },
-                          valueGetterMonths: () => _monthsSelected,
+                          valGetMonths: () => _monthsSelected,
                         ),
                         Divider(
                             thickness: 1.0,
@@ -96,8 +96,8 @@ class ScheduleEditor extends StatelessWidget {
 
                         /// Time Editor
                         TimeEditor(
-                          valueGetterMonths: () => _monthsSelected,
-                          valueGetterWeekdays: () => _weekdaysSelected,
+                          valGetMonths: () => _monthsSelected,
+                          valGetWeekdays: () => _weekdaysSelected,
                         ),
                       ],
                     ),

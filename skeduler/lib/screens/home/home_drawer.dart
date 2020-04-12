@@ -19,7 +19,7 @@ class HomeDrawer extends StatelessWidget {
     DrawerEnum.timetable: {'title': 'Timetable', 'icon': null},
     DrawerEnum.classes: {'title': 'Subjects', 'icon': null},
     DrawerEnum.members: {'title': 'Members', 'icon': null},
-    DrawerEnum.profile: {'title': 'My Schedule', 'icon': null},
+    DrawerEnum.mySchedule: {'title': 'My Schedule', 'icon': null},
     DrawerEnum.settings: {'title': 'Settings', 'icon': null},
     DrawerEnum.logout: {'title': 'Logout', 'icon': null},
   };
@@ -172,26 +172,29 @@ class HomeDrawer extends StatelessWidget {
                                 ? true
                                 : false,
                             onTap: () {
+                              selected.value = DrawerEnum.timetable;
                               Navigator.of(context).pop();
+                              Navigator.of(context).pushNamed('/timetable');
                             },
                           ),
                         ),
 
                         /// My Schedule
                         Container(
-                          color: selected.value == DrawerEnum.profile
+                          color: selected.value == DrawerEnum.mySchedule
                               ? _tileSelectedBackgroundColor(context)
                               : null,
                           child: ListTile(
                             enabled: group != null ? true : false,
                             dense: true,
                             leading: Icon(Icons.schedule),
-                            title: Text(_screens[DrawerEnum.profile]['title']),
-                            selected: selected.value == DrawerEnum.profile
+                            title:
+                                Text(_screens[DrawerEnum.mySchedule]['title']),
+                            selected: selected.value == DrawerEnum.mySchedule
                                 ? true
                                 : false,
                             onTap: () {
-                              selected.value = DrawerEnum.profile;
+                              selected.value = DrawerEnum.mySchedule;
                               Navigator.of(context).pop();
                               Navigator.of(context).pushNamed('/mySchedule');
                             },

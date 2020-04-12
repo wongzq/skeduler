@@ -12,13 +12,13 @@ import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class TimeEditor extends StatefulWidget {
-  final ValueGetter<List<Month>> valueGetterMonths;
-  final ValueGetter<List<Weekday>> valueGetterWeekdays;
+  final ValueGetter<List<Month>> valGetMonths;
+  final ValueGetter<List<Weekday>> valGetWeekdays;
 
   const TimeEditor({
     Key key,
-    @required this.valueGetterMonths,
-    @required this.valueGetterWeekdays,
+    @required this.valGetMonths,
+    @required this.valGetWeekdays,
   }) : super(key: key);
 
   @override
@@ -91,10 +91,10 @@ class _TimeEditorState extends State<TimeEditor> {
   }
 
   DateTime getFirstDayOfStartMonth() {
-    if (widget.valueGetterMonths != null) {
+    if (widget.valGetMonths != null) {
       return DateTime(
         DateTime.now().year,
-        widget.valueGetterMonths().first.index + 1,
+        widget.valGetMonths().first.index + 1,
       );
     } else {
       return null;
@@ -102,13 +102,13 @@ class _TimeEditorState extends State<TimeEditor> {
   }
 
   DateTime getLastDayOfLastMonth() {
-    if (widget.valueGetterMonths != null) {
+    if (widget.valGetMonths != null) {
       return DateTime(
           DateTime.now().year,
-          widget.valueGetterMonths().last.index + 1,
+          widget.valGetMonths().last.index + 1,
           daysInMonth(
             DateTime.now().year,
-            widget.valueGetterMonths().last.index + 1,
+            widget.valGetMonths().last.index + 1,
           ));
     } else {
       return null;
@@ -367,8 +367,8 @@ class _TimeEditorState extends State<TimeEditor> {
     _editorsStatus = Provider.of<EditorsStatus>(context);
 
     return AbsorbPointer(
-      absorbing: widget.valueGetterMonths().isEmpty ||
-          widget.valueGetterWeekdays().isEmpty,
+      absorbing: widget.valGetMonths().isEmpty ||
+          widget.valGetWeekdays().isEmpty,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () =>
@@ -489,8 +489,8 @@ class _TimeEditorState extends State<TimeEditor> {
                             onPressed: _validTime && _validDate
                                 ? () async {
                                     List<Time> newTimes = generateTimes(
-                                      months: widget.valueGetterMonths(),
-                                      weekDays: widget.valueGetterWeekdays(),
+                                      months: widget.valGetMonths(),
+                                      weekDays: widget.valGetWeekdays(),
                                       time: Time(_startTime, _endTime),
                                       startDate: _startDate ??
                                           getFirstDayOfStartMonth(),
@@ -595,9 +595,9 @@ class _TimeEditorState extends State<TimeEditor> {
                                                     List<Time> removeTimes =
                                                         generateTimes(
                                                       months: widget
-                                                          .valueGetterMonths(),
+                                                          .valGetMonths(),
                                                       weekDays: widget
-                                                          .valueGetterWeekdays(),
+                                                          .valGetWeekdays(),
                                                       time: Time(
                                                           _startTime, _endTime),
                                                       startDate: _startDate ??

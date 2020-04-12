@@ -67,7 +67,7 @@ class _AddMemberState extends State<AddMember> {
                               initialValue: _newMemberEmail,
                               hintText: 'Required',
                               label: 'Email',
-                              valueSetterText: (value) {
+                              valSetText: (value) {
                                 _newMemberEmail = value;
                               },
                               formKey: _formKeyName,

@@ -7,13 +7,13 @@ import 'package:skeduler/screens/home/my_schedule_screen_components/editors_stat
 import 'package:skeduler/shared/ui_settings.dart';
 
 class DayEditor extends StatefulWidget {
-  final ValueSetter<List<Weekday>> valueSetterWeekdays;
-  final ValueGetter<List<Month>> valueGetterMonths;
+  final ValueSetter<List<Weekday>> valSetWeekdays;
+  final ValueGetter<List<Month>> valGetMonths;
 
   const DayEditor({
     Key key,
-    @required this.valueSetterWeekdays,
-    @required this.valueGetterMonths,
+    @required this.valSetWeekdays,
+    @required this.valGetMonths,
   }) : super(key: key);
 
   @override
@@ -110,8 +110,8 @@ class _DayEditorState extends State<DayEditor> {
                     : _weekdaysSelected.add(Weekday.values[item.key]);
               });
 
-              if (widget.valueSetterWeekdays != null) {
-                widget.valueSetterWeekdays(_weekdaysSelected);
+              if (widget.valSetWeekdays != null) {
+                widget.valSetWeekdays(_weekdaysSelected);
               }
 
               /// get Size of Wrap Selected
@@ -146,7 +146,7 @@ class _DayEditorState extends State<DayEditor> {
         8;
 
     return AbsorbPointer(
-      absorbing: widget.valueGetterMonths().isEmpty,
+      absorbing: widget.valGetMonths().isEmpty,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () =>
