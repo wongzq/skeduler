@@ -174,6 +174,11 @@ class ScheduleView extends StatelessWidget {
                                           showDialog(
                                             context: context,
                                             builder: (context) {
+                                              newStartTime =
+                                                  member.times[index].startTime;
+                                              newEndTime =
+                                                  member.times[index].endTime;
+
                                               return EditTimeDialog(
                                                 contentText:
                                                     'Edit schedule time',
