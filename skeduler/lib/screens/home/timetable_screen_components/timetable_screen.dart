@@ -21,10 +21,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
     ValueNotifier<TempTimetable> tempTimetable =
         Provider.of<ValueNotifier<TempTimetable>>(context);
 
-    print(tempTimetable.value.startDate);
-    print(tempTimetable.value.endDate);
-    print(tempTimetable.value.axisDays);
-
     return StreamBuilder<Object>(
         stream: dbService.getGroup(groupDocId.value),
         builder: (context, snapshot) {

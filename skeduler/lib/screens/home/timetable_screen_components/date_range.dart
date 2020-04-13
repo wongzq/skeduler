@@ -25,8 +25,8 @@ class DateRange extends StatefulWidget {
 
 class _DateRangeState extends State<DateRange> {
   /// Properties
-  DateTime _startDate = DateTime(DateTime.now().year);
-  DateTime _endDate = DateTime(DateTime.now().year);
+  DateTime _startDate;
+  DateTime _endDate;
   String _startDateStr;
   String _endDateStr;
 
@@ -211,6 +211,11 @@ class _DateRangeState extends State<DateRange> {
       _endDate = widget.initialEndDate;
       _startDateStr = DateFormat('yyyy/MM/dd').format(_startDate);
       _endDateStr = DateFormat('yyyy/MM/dd').format(_endDate);
+    } else {
+      _startDate = DateTime(
+          DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      _endDate = DateTime(
+          DateTime.now().year, DateTime.now().month, DateTime.now().day);
     }
     super.initState();
   }
