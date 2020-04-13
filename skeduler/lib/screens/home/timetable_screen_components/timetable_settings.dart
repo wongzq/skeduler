@@ -16,10 +16,8 @@ class TimetableSettings extends StatelessWidget {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
-
-    List<Weekday> weekdays = [];
-    List<Time> times = [];
-    List<String> custom = [];
+    ValueNotifier<TempTimetable> tempTimetable =
+        Provider.of<ValueNotifier<TempTimetable>>(context);
 
     return StreamBuilder<Object>(
       stream: dbService.getGroup(groupDocId.value),
@@ -73,12 +71,25 @@ class TimetableSettings extends StatelessWidget {
                             parent: AlwaysScrollableScrollPhysics(),
                           ),
                           children: <Widget>[
-                            DateRange(),
-                            AxisDay(valSetWeekdaysSelected:
-                                (timetableWeekdaysSelected) {
-                              weekdays = timetableWeekdaysSelected;
-                              print(weekdays);
-                            }),
+                            DateRange(
+                              initialStartDate: tempTimetable.value.startDate,
+                              initialEndDate: tempTimetable.value.endDate,
+                              valSetStartDate: (startDate) {
+                                tempTimetable.value.startDate = startDate;
+                              },
+                              valSetEndDate: (endDate) {
+                                tempTimetable.value.endDate = endDate;
+                              },
+                            ),
+                            AxisDay(
+                              initialWeekdaysSelected:
+                                  tempTimetable.value.axisDays,
+                              valSetWeekdaysSelected:
+                                  (timetableWeekdaysSelected) {
+                                tempTimetable.value.axisDays =
+                                    timetableWeekdaysSelected;
+                              },
+                            ),
                             AxisTime(),
                             // AxisCustom(),
                           ],

@@ -4,11 +4,13 @@ import 'package:skeduler/shared/functions.dart';
 
 class AxisDay extends StatefulWidget {
   final ValueSetter<List<Weekday>> valSetWeekdaysSelected;
+  final List<Weekday> initialWeekdaysSelected;
   final bool initiallyExpanded;
 
   const AxisDay({
     Key key,
     this.valSetWeekdaysSelected,
+    this.initialWeekdaysSelected,
     this.initiallyExpanded = false,
   }) : super(key: key);
 
@@ -17,7 +19,10 @@ class AxisDay extends StatefulWidget {
 }
 
 class _AxisDayState extends State<AxisDay> {
-  List<Weekday> _weekdaysSelected = [];
+  bool _expanded;
+
+  List<Weekday> _weekdaysSelected;
+  
   List<Weekday> _weekdays = [
     Weekday.mon,
     Weekday.tue,
@@ -28,7 +33,6 @@ class _AxisDayState extends State<AxisDay> {
     Weekday.sun,
   ];
 
-  bool _expanded;
 
   List<Widget> _generateTimetableDays() {
     List<Widget> weekdayOptions = [];
@@ -68,6 +72,7 @@ class _AxisDayState extends State<AxisDay> {
   @override
   void initState() {
     _expanded = widget.initiallyExpanded;
+    _weekdaysSelected = widget.initialWeekdaysSelected ?? [];
     super.initState();
   }
 

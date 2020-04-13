@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
+import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/models/auxiliary/native_theme.dart';
 import 'package:skeduler/route_generator.dart';
@@ -107,7 +108,12 @@ class MyApp extends StatelessWidget {
                         /// Group Doc ID
                         ChangeNotifierProvider<ValueNotifier<String>>(
                           create: (_) => ValueNotifier<String>(''),
-                        )
+                        ),
+
+                        /// Temp Timetable
+                        ChangeNotifierProvider<ValueNotifier<TempTimetable>>(
+                          create: (_) => ValueNotifier<TempTimetable>(TempTimetable()),
+                        ),
                       ],
                       child: MaterialApp(
                         title: 'Skeduler',

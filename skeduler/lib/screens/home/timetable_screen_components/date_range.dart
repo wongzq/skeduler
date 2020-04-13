@@ -3,19 +3,19 @@ import 'package:intl/intl.dart';
 
 class DateRange extends StatefulWidget {
   final String contentText;
-  final DateTime initialStartTime;
-  final DateTime initialEndTime;
-  final ValueSetter<DateTime> valSetStartTime;
-  final ValueSetter<DateTime> valSetEndTime;
+  final DateTime initialStartDate;
+  final DateTime initialEndDate;
+  final ValueSetter<DateTime> valSetStartDate;
+  final ValueSetter<DateTime> valSetEndDate;
   final void Function() onSave;
 
   const DateRange({
     Key key,
     this.contentText = 'Edit Time',
-    this.initialStartTime,
-    this.initialEndTime,
-    this.valSetStartTime,
-    this.valSetEndTime,
+    this.initialStartDate,
+    this.initialEndDate,
+    this.valSetStartDate,
+    this.valSetEndDate,
     this.onSave,
   }) : super(key: key);
 
@@ -42,8 +42,7 @@ class _DateRangeState extends State<DateRange> {
     if (_startDate == null && _endDate == null) {
       _validDate = true;
     } else if (_startDate != null && _endDate != null) {
-      if (_endDate.isAfter(_startDate) ||
-          _endDate.isAtSameMomentAs(_startDate)) {
+      if (_endDate.isAfter(_startDate)) {
         _validDate = true;
       } else {
         _validDate = false;
@@ -51,18 +50,6 @@ class _DateRangeState extends State<DateRange> {
     } else {
       _validDate = false;
     }
-  }
-
-  bool _validateStartEndDate(DateTime date) {
-    // if ((date.isAfter(getFirstDayOfStartMonth()) ||
-    //         date.isAtSameMomentAs(getFirstDayOfStartMonth())) &&
-    //     (date.isBefore(getLastDayOfLastMonth().add(Duration(days: 1))))) {
-    //   return true;
-    // } else {
-    //   return false;
-    // }
-
-    return true;
   }
 
   /// generate DatePicker widget for Start Date and End Date
@@ -93,11 +80,11 @@ class _DateRangeState extends State<DateRange> {
                   initialDate: () {
                     if (start) {
                       DateTime prevDateTime = DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month,
-                        DateTime.now().day,
+                        _startDate.year,
+                        _startDate.month,
+                        _startDate.day,
                       );
-                      if (DateTime.now().weekday != 1) {
+                      if (_startDate.weekday != 1) {
                         while (true) {
                           prevDateTime =
                               prevDateTime.subtract(Duration(days: 1));
@@ -109,11 +96,11 @@ class _DateRangeState extends State<DateRange> {
                       return prevDateTime;
                     } else if (end) {
                       DateTime nextDateTime = DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month,
-                        DateTime.now().day,
+                        _endDate.year,
+                        _endDate.month,
+                        _endDate.day,
                       );
-                      if (DateTime.now().weekday != 7) {
+                      if (_endDate.weekday != 7) {
                         while (true) {
                           nextDateTime = nextDateTime.add(Duration(days: 1));
                           if (nextDateTime.weekday == 7) {
@@ -136,14 +123,24 @@ class _DateRangeState extends State<DateRange> {
                     }
                   });
 
-              if (start && _validateStartEndDate(date)) {
+              if (start && date != null) {
                 _startDateStr = DateFormat('yyyy/MM/dd').format(date);
                 _startDate = date;
-              } else if (end && _validateStartEndDate(date)) {
+              } else if (end && date != null) {
                 _endDateStr = DateFormat('yyyy/MM/dd').format(date);
                 _endDate = date;
               }
+
               _validateDate();
+
+              if (_validDate) {
+                if (widget.valSetStartDate != null) {
+                  widget.valSetStartDate(_startDate);
+                }
+                if (widget.valSetEndDate != null) {
+                  widget.valSetEndDate(_endDate);
+                }
+              }
               setState(() {});
             },
             child: Container(
@@ -209,8 +206,12 @@ class _DateRangeState extends State<DateRange> {
 
   @override
   void initState() {
-    _startDate = widget.initialStartTime ?? _startDate;
-    _endDate = widget.initialEndTime ?? _endDate;
+    if (widget.initialStartDate != null) {
+      _startDate = widget.initialStartDate;
+      _endDate = widget.initialEndDate;
+      _startDateStr = DateFormat('yyyy/MM/dd').format(_startDate);
+      _endDateStr = DateFormat('yyyy/MM/dd').format(_endDate);
+    }
     super.initState();
   }
 

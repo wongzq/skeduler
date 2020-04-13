@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
-import 'package:skeduler/models/group_data/member.dart';
-import 'package:skeduler/models/group_data/subject.dart';
-import 'package:skeduler/models/group_data/timetable.dart';
 
 class Group {
   /// properties
@@ -13,10 +10,6 @@ class Group {
   ColorShade _colorShade;
   String _ownerEmail;
   String _ownerName;
-
-  List<Member> _members = [];
-  List<Subject> _classes = [];
-  List<Timetable> _timetables = [];
 
   /// constructor
   Group({
@@ -45,10 +38,6 @@ class Group {
   String get ownerEmail => _ownerEmail;
   String get ownerName => _ownerName;
   int get numOfMembers => 1;
-
-  List<Member> get members => _members;
-  List<Subject> get classes => _classes;
-  List<Timetable> get timetables => _timetables;
 }
 
 class GroupMetadata extends ChangeNotifier {

@@ -319,8 +319,40 @@ class DatabaseService {
     }
   }
 
+  Future updateGroupTimetable(
+    String groupDocId,
+    String timetableId,
+    TempTimetable tempTimetable,
+  ) async {
+    if (groupDocId != null && groupDocId.trim() != '') {
+      return await groupsCollection
+          .document(groupDocId)
+          .collection('timetables')
+          .document(timetableId)
+          .get()
+          .then((timetable) async {
+        if (!timetable.exists) {
+          await groupsCollection
+              .document(groupDocId)
+              .collection('timetables')
+              .document(timetableId)
+              .setData(mapFromTimetable(tempTimetable));
+        } else {
+          await groupsCollection
+              .document(groupDocId)
+              .collection('timetables')
+              .document(timetableId)
+              .updateData(mapFromTimetable(tempTimetable));
+        }
+      });
+    }
+  }
+
   Future updateGroupMemberTimes(
-      String groupDocId, String memberDocId, List<Time> newTimes) async {
+    String groupDocId,
+    String memberDocId,
+    List<Time> newTimes,
+  ) async {
     memberDocId =
         memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
 
@@ -383,7 +415,10 @@ class DatabaseService {
   }
 
   Future removeGroupMemberTimes(
-      String groupDocId, String memberDocId, List<Time> removeTimes) async {
+    String groupDocId,
+    String memberDocId,
+    List<Time> removeTimes,
+  ) async {
     memberDocId =
         memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
 
@@ -496,7 +531,16 @@ class DatabaseService {
   }
 
   Timetable _timetableFromSnapshot(DocumentSnapshot snapshot) {
-    return snapshot.data != null ? Timetable() : Timetable();
+    return snapshot.data != null
+        ? Timetable(
+            id: snapshot.documentID,
+            startDate: snapshot.data['startDate'] ?? Timestamp.now(),
+            endDate: snapshot.data['endDate'] ?? Timestamp.now(),
+            axisDays: snapshot.data['axisDays'] ?? [],
+            axisTimes: snapshot.data['axisTimes'] ?? [],
+            axisCustom: snapshot.data['axisCustom'] ?? [],
+          )
+        : Timetable(id: '');
   }
 
   /// convert document snapshots into [User]s
