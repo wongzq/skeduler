@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/member.dart';
+import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/edit_time_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -14,6 +15,9 @@ class ScheduleView extends StatelessWidget {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
+
+    DateTime newStartTime;
+    DateTime newEndTime;
 
     return StreamBuilder(
       stream: dbService.getGroupMemberMyData(groupDocId.value),
@@ -170,7 +174,31 @@ class ScheduleView extends StatelessWidget {
                                           showDialog(
                                             context: context,
                                             builder: (context) {
-                                              return EditTimeDialog();
+                                              return EditTimeDialog(
+                                                contentText:
+                                                    'Edit schedule time',
+                                                initialStartTime: member
+                                                    .times[index].startTime,
+                                                initialEndTime:
+                                                    member.times[index].endTime,
+                                                valSetStartTime: (dateTime) =>
+                                                    newStartTime = dateTime,
+                                                valSetEndTime: (dateTime) =>
+                                                    newEndTime = dateTime,
+                                                onSave: () async {
+                                                  await dbService
+                                                      .updateGroupMemberTimes(
+                                                    groupDocId.value,
+                                                    null,
+                                                    [
+                                                      Time(
+                                                        newStartTime,
+                                                        newEndTime,
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
                                             },
                                           );
                                           break;

@@ -91,6 +91,24 @@ class DatabaseService {
             .map(_timetablesFromSnapshots);
   }
 
+  Future getGroupTimetable(String groupDocId) async {
+    if (groupDocId == null || groupDocId.trim() == '') {
+      return null;
+    } else {
+      await groupsCollection
+          .document(groupDocId)
+          .collection('timetables')
+          .document('test')
+          .get()
+          .then((timetable) {
+        if (timetable.exists) {
+          return _timetableFromSnapshot(timetable);
+        } else {
+          return null;
+        }
+      });
+    }
+  }
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Setter methods
   ////////////////////////////////////////////////////////////////////////////////////////////////

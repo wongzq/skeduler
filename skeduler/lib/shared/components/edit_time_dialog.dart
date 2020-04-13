@@ -81,7 +81,7 @@ class _EditTimeDialogState extends State<EditTimeDialog> {
                     _endTimeStr = DateFormat('hh:mm aa').format(time);
                     _endTime = time;
                     if (widget.valSetEndTime != null)
-                      widget.valSetStartTime(_endTime);
+                      widget.valSetEndTime(_endTime);
                   }
                   _validateTime();
                   setState(() {});
@@ -165,8 +165,15 @@ class _EditTimeDialogState extends State<EditTimeDialog> {
 
   @override
   void initState() {
-    _startTime = widget.initialStartTime ?? _startTime;
-    _endTime = widget.initialEndTime ?? _endTime;
+    if (widget.initialStartTime != null) {
+      _startTime = widget.initialStartTime;
+      _startTimeStr = DateFormat('hh:mm aa').format(_startTime);
+    }
+    if (widget.initialEndTime != null) {
+      _endTime = widget.initialEndTime ?? _endTime;
+      _endTimeStr = DateFormat('hh:mm aa').format(_endTime);
+    }
+
     super.initState();
   }
 

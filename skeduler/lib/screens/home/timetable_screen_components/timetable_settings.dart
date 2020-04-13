@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/axis_day.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/axis_time.dart';

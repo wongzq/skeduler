@@ -17,9 +17,9 @@ class Timetable {
     @required String id,
     Timestamp startDate,
     Timestamp endDate,
-    List<int> axisDays,
-    List<Map<String, Timestamp>> axisTimes,
-    List<String> axisCustom,
+    List<dynamic> axisDays,
+    List<dynamic> axisTimes,
+    List<dynamic> axisCustom,
   }) {
     _id = id;
     _startDate =
@@ -71,12 +71,22 @@ class TempTimetable {
     List<Weekday> axisDays,
     List<Time> axisTimes,
     List<String> axisCustom,
+    Timetable timetable,
   })  : _id = id,
         _startDate = startDate,
         _endDate = endDate,
         _axisDays = axisDays,
         _axisTimes = axisTimes,
-        _axisCustom = axisCustom;
+        _axisCustom = axisCustom {
+    if (timetable != null) {
+      _id = timetable.id;
+      _startDate = timetable.startDate;
+      _endDate = timetable.endDate;
+      _axisDays = timetable.axisDays;
+      _axisTimes = timetable.axisTimes;
+      _axisCustom = timetable.axisCustom;
+    }
+  }
 
   /// getter methods
   String get id => this._id;
