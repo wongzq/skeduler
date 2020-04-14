@@ -26,8 +26,8 @@ class TimetableSettings extends StatelessWidget {
         return StreamBuilder<Object>(
             stream: dbService.getGroupTimetables(groupDocId.value),
             builder: (context, snapshot) {
-              List<Timetable> timetables =
-                  snapshot != null ? snapshot.data : null;
+              // List<Timetable> timetables =
+              //     snapshot != null ? snapshot.data : null;
 
               return group == null
                   ? Loading()
@@ -89,7 +89,13 @@ class TimetableSettings extends StatelessWidget {
                                     timetableWeekdaysSelected;
                               },
                             ),
-                            AxisTime(),
+                            AxisTime(
+                              initialTimes: tempTimetable.value.axisTimes,
+                              valSetTimes: (times) {
+                                tempTimetable.value.axisTimes = times;
+                                print(tempTimetable.value.axisTimes);
+                              },
+                            ),
                             // AxisCustom(),
                           ],
                         ),

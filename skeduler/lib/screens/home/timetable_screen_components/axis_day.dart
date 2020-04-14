@@ -22,7 +22,7 @@ class _AxisDayState extends State<AxisDay> {
   bool _expanded;
 
   List<Weekday> _weekdaysSelected;
-  
+
   List<Weekday> _weekdays = [
     Weekday.mon,
     Weekday.tue,
@@ -32,7 +32,6 @@ class _AxisDayState extends State<AxisDay> {
     Weekday.sat,
     Weekday.sun,
   ];
-
 
   List<Widget> _generateTimetableDays() {
     List<Widget> weekdayOptions = [];
@@ -56,7 +55,9 @@ class _AxisDayState extends State<AxisDay> {
               }
 
               /// Update through valueSetter
-              widget.valSetWeekdaysSelected(_weekdaysSelected);
+              if (widget.valSetWeekdaysSelected != null) {
+                widget.valSetWeekdaysSelected(_weekdaysSelected);
+              }
             });
           },
         ),

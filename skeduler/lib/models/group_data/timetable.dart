@@ -102,7 +102,7 @@ class TempTimetable {
   set endDate(DateTime endDate) => this._endDate = endDate;
   set axisDays(List<Weekday> axisDays) => this._axisDays = axisDays;
   set axisTimes(List<Time> axisTimes) => this._axisTimes = axisTimes;
-  set axisString(List<String> axisCustom) => this._axisCustom = axisCustom;
+  set axisCustom(List<String> axisCustom) => this._axisCustom = axisCustom;
 }
 
 Map<String, dynamic> mapFromTimetable(TempTimetable tempTimetable) {
@@ -118,7 +118,17 @@ Map<String, dynamic> mapFromTimetable(TempTimetable tempTimetable) {
   axisDaysInt.sort((a, b) => a.compareTo(b));
   firestoreMap['axisDays'] = axisDaysInt;
 
-  print(firestoreMap);
+  List<Map<String, Timestamp>> axisTimesTimestamps = [];
+  tempTimetable.axisTimes.forEach((time) {
+    axisTimesTimestamps.add({
+      'startTime': Timestamp.fromMillisecondsSinceEpoch(
+          time.startTime.millisecondsSinceEpoch),
+      'endTime': Timestamp.fromMillisecondsSinceEpoch(
+          time.endTime.millisecondsSinceEpoch),
+    });
+  });
+  axisTimesTimestamps.sort((a, b) => a['startTime'].compareTo(b['startTime']));
+  firestoreMap['axisTimes'] = axisTimesTimestamps;
 
   return firestoreMap;
 }

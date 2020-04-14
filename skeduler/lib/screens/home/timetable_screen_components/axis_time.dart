@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:skeduler/models/group_data/time.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_view.dart';
 import 'package:skeduler/shared/components/edit_time_dialog.dart';
+import 'package:skeduler/shared/functions.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class AxisTime extends StatefulWidget {
-  final ValueSetter<List<bool>> valSetTimetableTimes;
+  final ValueSetter<List<Time>> valSetTimes;
+  final List<Time> initialTimes;
   final bool initiallyExpanded;
 
   const AxisTime({
     Key key,
-    this.valSetTimetableTimes,
+    this.valSetTimes,
+    this.initialTimes,
     this.initiallyExpanded = false,
   }) : super(key: key);
 
@@ -17,12 +23,170 @@ class AxisTime extends StatefulWidget {
 }
 
 class _AxisTimeState extends State<AxisTime> {
-  List<Time> _timetableTimes = [];
+  List<Time> _times;
 
   bool _expanded;
 
   List<Widget> _generateTimetableTimes() {
     List<Widget> timeslots = [];
+
+    _times.forEach((time) {
+      timeslots.add(
+        ListTile(
+          dense: true,
+          title: Row(
+            children: <Widget>[
+              /// Time slot start
+              Container(
+                padding: EdgeInsets.all(10.0),
+                decoration: BoxDecoration(
+                  color: getOriginThemeData(ThemeProvider.themeOf(context).id)
+                      .primaryColorLight,
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                child: Text(
+                  DateFormat('hh:mm aa').format(time.startTime),
+                  style: TextStyle(
+                    color: Colors.black,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+              ),
+
+              /// to
+              Container(
+                padding: EdgeInsets.all(10.0),
+                child: Text('to'),
+              ),
+
+              /// Time slot end
+              Container(
+                padding: EdgeInsets.all(10.0),
+                decoration: BoxDecoration(
+                  color: getOriginThemeData(ThemeProvider.themeOf(context).id)
+                      .primaryColorLight,
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                child: Text(
+                  DateFormat('hh:mm aa').format(time.endTime),
+                  style: TextStyle(
+                    color: Colors.black,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          /// Options
+          trailing: PopupMenuButton(
+            icon: Icon(Icons.more_vert),
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem(child: Text('Edit'), value: TimeslotOption.edit),
+                PopupMenuItem(
+                    child: Text('Remove'), value: TimeslotOption.remove),
+              ];
+            },
+            onSelected: (val) {
+              switch (val) {
+                case TimeslotOption.edit:
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      DateTime newStartTime = time.startTime;
+                      DateTime newEndTime = time.endTime;
+
+                      return EditTimeDialog(
+                        contentText: 'Edit schedule time',
+                        initialStartTime: time.startTime,
+                        initialEndTime: time.endTime,
+                        valSetStartTime: (dateTime) => newStartTime = dateTime,
+                        valSetEndTime: (dateTime) => newEndTime = dateTime,
+                        onSave: () {
+                          setState(() {
+                            /// Remove previous time slot
+                            _times.removeWhere((test) {
+                              return test.startTime == time.startTime &&
+                                  test.endTime == time.endTime;
+                            });
+
+                            /// Add new time slot
+                            _times.add(Time(newStartTime, newEndTime));
+
+                            /// Update through valueSetter
+                            if (widget.valSetTimes != null) {
+                              widget.valSetTimes(_times);
+                            }
+                          });
+                        },
+                      );
+                    },
+                  );
+                  break;
+
+                case TimeslotOption.remove:
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        content: RichText(
+                          text: TextSpan(
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: 'Remove this time slot?\n\n',
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: DateFormat('hh:mm aa')
+                                        .format(time.startTime) +
+                                    ' to ' +
+                                    DateFormat('hh:mm aa').format(time.endTime),
+                              ),
+                            ],
+                          ),
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text('CANCEL'),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                          FlatButton(
+                              child: Text(
+                                'REMOVE',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  /// Remove time slot
+                                  _times.removeWhere((test) {
+                                    return test.startTime == time.startTime &&
+                                        test.endTime == time.endTime;
+                                  });
+
+                                  /// Update through valueSetter
+                                  if (widget.valSetTimes != null) {
+                                    widget.valSetTimes(_times);
+                                  }
+                                });
+                                Navigator.of(context).pop();
+                              }),
+                        ],
+                      );
+                    },
+                  );
+                  break;
+              }
+            },
+          ),
+        ),
+      );
+    });
 
     timeslots.add(_generateAddTimeButton());
 
@@ -39,9 +203,24 @@ class _AxisTimeState extends State<AxisTime> {
         showDialog(
           context: context,
           builder: (context) {
+            DateTime newStartTime;
+            DateTime newEndTime;
+
             return EditTimeDialog(
               contentText: 'Add time slot',
-              onSave: () {},
+              valSetStartTime: (dateTime) => newStartTime = dateTime,
+              valSetEndTime: (dateTime) => newEndTime = dateTime,
+              onSave: () {
+                setState(() {
+                  if (newEndTime.isAfter(newStartTime)) {
+                    _times.add(Time(newStartTime, newEndTime));
+
+                    if (widget.valSetTimes != null) {
+                      widget.valSetTimes(_times);
+                    }
+                  }
+                });
+              },
             );
           },
         );
@@ -52,6 +231,7 @@ class _AxisTimeState extends State<AxisTime> {
   @override
   void initState() {
     _expanded = widget.initiallyExpanded;
+    _times = widget.initialTimes ?? [];
     super.initState();
   }
 

@@ -16,9 +16,6 @@ class ScheduleView extends StatelessWidget {
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
 
-    DateTime newStartTime;
-    DateTime newEndTime;
-
     return StreamBuilder(
       stream: dbService.getGroupMemberMyData(groupDocId.value),
       builder: (context, snapshot) {
@@ -150,123 +147,119 @@ class ScheduleView extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(vertical: 0.0),
-                                  child: PopupMenuButton(
-                                    icon: Icon(
-                                      Icons.more_vert,
-                                    ),
-                                    itemBuilder: (context) {
-                                      return [
-                                        PopupMenuItem(
-                                          child: Text('Edit'),
-                                          value: ScheduleViewOption.edit,
-                                        ),
-                                        PopupMenuItem(
-                                          child: Text('Remove'),
-                                          value: ScheduleViewOption.remove,
-                                        ),
-                                      ];
-                                    },
-                                    onSelected: (val) {
-                                      switch (val) {
-                                        case ScheduleViewOption.edit:
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              newStartTime =
-                                                  member.times[index].startTime;
-                                              newEndTime =
-                                                  member.times[index].endTime;
-
-                                              return EditTimeDialog(
-                                                contentText:
-                                                    'Edit schedule time',
-                                                initialStartTime: member
-                                                    .times[index].startTime,
-                                                initialEndTime:
-                                                    member.times[index].endTime,
-                                                valSetStartTime: (dateTime) =>
-                                                    newStartTime = dateTime,
-                                                valSetEndTime: (dateTime) =>
-                                                    newEndTime = dateTime,
-                                                onSave: () async {
-                                                  await dbService
-                                                      .updateGroupMemberTimes(
-                                                    groupDocId.value,
-                                                    null,
-                                                    [
-                                                      Time(
-                                                        newStartTime,
-                                                        newEndTime,
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            },
-                                          );
-                                          break;
-
-                                        case ScheduleViewOption.remove:
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                content: RichText(
-                                                  text: TextSpan(
-                                                    children: <TextSpan>[
-                                                      TextSpan(
-                                                        text:
-                                                            'Remove this from your schedule?\n\n',
-                                                        style: TextStyle(
-                                                          fontSize: 15.0,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      TextSpan(
-                                                        text: DateFormat(
-                                                                'EEEE, d MMMM')
-                                                            .format(member
-                                                                .times[index]
-                                                                .startTime),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                actions: <Widget>[
-                                                  FlatButton(
-                                                    child: Text('CANCEL'),
-                                                    onPressed: () =>
-                                                        Navigator.of(context)
-                                                            .pop(),
-                                                  ),
-                                                  FlatButton(
-                                                      child: Text(
-                                                        'REMOVE',
-                                                        style: TextStyle(
-                                                          color: Colors.red,
-                                                        ),
-                                                      ),
-                                                      onPressed: () async {
-                                                        await dbService
-                                                            .removeGroupMemberTimes(
-                                                          groupDocId.value,
-                                                          null,
-                                                          [member.times[index]],
-                                                        );
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      }),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                          break;
-                                      }
-                                    },
+                                PopupMenuButton(
+                                  icon: Icon(
+                                    Icons.more_vert,
                                   ),
+                                  itemBuilder: (context) {
+                                    return [
+                                      PopupMenuItem(
+                                        child: Text('Edit'),
+                                        value: TimeslotOption.edit,
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text('Remove'),
+                                        value: TimeslotOption.remove,
+                                      ),
+                                    ];
+                                  },
+                                  onSelected: (val) {
+                                    switch (val) {
+                                      case TimeslotOption.edit:
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            DateTime newStartTime =
+                                                member.times[index].startTime;
+                                            DateTime newEndTime =
+                                                member.times[index].endTime;
+
+                                            return EditTimeDialog(
+                                              contentText: 'Edit schedule time',
+                                              initialStartTime:
+                                                  member.times[index].startTime,
+                                              initialEndTime:
+                                                  member.times[index].endTime,
+                                              valSetStartTime: (dateTime) =>
+                                                  newStartTime = dateTime,
+                                              valSetEndTime: (dateTime) =>
+                                                  newEndTime = dateTime,
+                                              onSave: () async {
+                                                await dbService
+                                                    .updateGroupMemberTimes(
+                                                  groupDocId.value,
+                                                  null,
+                                                  [
+                                                    Time(
+                                                      newStartTime,
+                                                      newEndTime,
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                        );
+                                        break;
+
+                                      case TimeslotOption.remove:
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              content: RichText(
+                                                text: TextSpan(
+                                                  children: <TextSpan>[
+                                                    TextSpan(
+                                                      text:
+                                                          'Remove this from your schedule?\n\n',
+                                                      style: TextStyle(
+                                                        fontSize: 15.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    TextSpan(
+                                                      text: DateFormat(
+                                                              'EEEE, d MMMM')
+                                                          .format(member
+                                                              .times[index]
+                                                              .startTime),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                  child: Text('CANCEL'),
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(),
+                                                ),
+                                                FlatButton(
+                                                    child: Text(
+                                                      'REMOVE',
+                                                      style: TextStyle(
+                                                        color: Colors.red,
+                                                      ),
+                                                    ),
+                                                    onPressed: () async {
+                                                      await dbService
+                                                          .removeGroupMemberTimes(
+                                                        groupDocId.value,
+                                                        null,
+                                                        [member.times[index]],
+                                                      );
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    }),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                        break;
+                                    }
+                                  },
                                 )
                               ],
                             ),
@@ -286,4 +279,4 @@ class ScheduleView extends StatelessWidget {
   }
 }
 
-enum ScheduleViewOption { edit, remove }
+enum TimeslotOption { edit, remove }
