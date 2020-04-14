@@ -354,13 +354,13 @@ class DatabaseService {
               .document(groupDocId)
               .collection('timetables')
               .document(timetableId)
-              .setData(mapFromTimetable(tempTimetable));
+              .setData(firestoreMapFromTimetable(tempTimetable));
         } else {
           await groupsCollection
               .document(groupDocId)
               .collection('timetables')
               .document(timetableId)
-              .updateData(mapFromTimetable(tempTimetable));
+              .updateData(firestoreMapFromTimetable(tempTimetable));
         }
       });
     }

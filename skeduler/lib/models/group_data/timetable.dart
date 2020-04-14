@@ -105,30 +105,40 @@ class TempTimetable {
   set axisCustom(List<String> axisCustom) => this._axisCustom = axisCustom;
 }
 
-Map<String, dynamic> mapFromTimetable(TempTimetable tempTimetable) {
+/// convert from [TempTimetable] to Firestore's [Map<String, dynamic>] format
+Map<String, dynamic> firestoreMapFromTimetable(TempTimetable tempTimetable) {
   Map<String, dynamic> firestoreMap = {};
 
+  /// convert startDate and endDate
   firestoreMap['startDate'] = Timestamp.fromMillisecondsSinceEpoch(
       tempTimetable.startDate.millisecondsSinceEpoch);
   firestoreMap['endDate'] = Timestamp.fromMillisecondsSinceEpoch(
       tempTimetable.endDate.millisecondsSinceEpoch);
 
-  List<int> axisDaysInt = [];
-  tempTimetable.axisDays.forEach((weekday) => axisDaysInt.add(weekday.index));
-  axisDaysInt.sort((a, b) => a.compareTo(b));
-  firestoreMap['axisDays'] = axisDaysInt;
+  /// convert axisDays
+  if (tempTimetable.axisDays != null) {
+    List<int> axisDaysInt = [];
+    tempTimetable.axisDays.forEach((weekday) => axisDaysInt.add(weekday.index));
+    axisDaysInt.sort((a, b) => a.compareTo(b));
+    firestoreMap['axisDays'] = axisDaysInt;
+  }
 
-  List<Map<String, Timestamp>> axisTimesTimestamps = [];
-  tempTimetable.axisTimes.forEach((time) {
-    axisTimesTimestamps.add({
-      'startTime': Timestamp.fromMillisecondsSinceEpoch(
-          time.startTime.millisecondsSinceEpoch),
-      'endTime': Timestamp.fromMillisecondsSinceEpoch(
-          time.endTime.millisecondsSinceEpoch),
+  /// convert axisTimes
+  if (tempTimetable.axisTimes != null) {
+    List<Map<String, Timestamp>> axisTimesTimestamps = [];
+    tempTimetable.axisTimes.forEach((time) {
+      axisTimesTimestamps.add({
+        'startTime': Timestamp.fromMillisecondsSinceEpoch(
+            time.startTime.millisecondsSinceEpoch),
+        'endTime': Timestamp.fromMillisecondsSinceEpoch(
+            time.endTime.millisecondsSinceEpoch),
+      });
     });
-  });
-  axisTimesTimestamps.sort((a, b) => a['startTime'].compareTo(b['startTime']));
-  firestoreMap['axisTimes'] = axisTimesTimestamps;
+    axisTimesTimestamps
+        .sort((a, b) => a['startTime'].compareTo(b['startTime']));
+    firestoreMap['axisTimes'] = axisTimesTimestamps;
+  }
 
+  /// return final map in firestore format
   return firestoreMap;
 }
