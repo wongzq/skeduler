@@ -109,6 +109,20 @@ class DatabaseService {
       });
     }
   }
+
+  Stream<List<Timetable>> getGroupTimetableForToday(String groupDocId) {
+    return groupDocId != null && groupDocId.trim() != ''
+        ? groupsCollection
+            .document(groupDocId)
+            .collection('timetables')
+            .where('startTime', isLessThanOrEqualTo: Timestamp.now())
+            .where('endTime', isGreaterThanOrEqualTo: Timestamp.now())
+            .limit(1)
+            .snapshots()
+            .map(_timetablesFromSnapshots)
+        : null;
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Setter methods
   ////////////////////////////////////////////////////////////////////////////////////////////////

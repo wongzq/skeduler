@@ -142,3 +142,64 @@ Map<String, dynamic> firestoreMapFromTimetable(TempTimetable tempTimetable) {
   /// return final map in firestore format
   return firestoreMap;
 }
+
+/// auxiliary function to check if all [Time] in [List<Time>] is consecutive with no conflicts of time
+bool isConsecutiveTimes(List<Time> times) {
+  bool isConsecutive = true;
+
+  /// sort the area in terms of startTime
+  times.sort((a, b) {
+    return a.startTime.millisecondsSinceEpoch
+        .compareTo(b.startTime.millisecondsSinceEpoch);
+  });
+
+  /// loop through the array to find any conflict
+  for (int i = 0; i < times.length; i++) {
+    print('i ' + i.toString());
+    print(times[i].startTime);
+    print(times[i].endTime);
+
+    if (i != 0) {
+      /// if conflict is found, returns [hasNoConflict] as [false]
+      if (!(times[i - 1].startTime.isBefore(times[i].startTime) &&
+          times[i - 1].endTime.isBefore(times[i].endTime) &&
+          (times[i - 1].endTime.isBefore(times[i].startTime) ||
+              times[i - 1].endTime.isAtSameMomentAs(times[i].startTime)))) {
+        print('conflict found');
+        isConsecutive = false;
+        break;
+      }
+    }
+  }
+
+  return isConsecutive;
+}
+
+/// auxiliary function to check if all [Timetable] in [List<Timetable>] is consecutive with no conflicts of date
+bool isConsecutiveTimetables(List<Timetable> timetables) {
+  bool isConsecutive = true;
+
+  /// sort the area in terms of startDate
+  timetables.sort((a, b) {
+    return a.startDate.millisecondsSinceEpoch
+        .compareTo(b.startDate.millisecondsSinceEpoch);
+  });
+
+  /// loop through the array to find any conflict
+  for (int i = 0; i < timetables.length; i++) {
+    if (i != 0) {
+      /// if conflict is found, returns [hasNoConflict] as [false]
+      if (!(timetables[i - 1].startDate.isBefore(timetables[i].startDate) &&
+          timetables[i - 1].endDate.isBefore(timetables[i].endDate) &&
+          (timetables[i - 1].endDate.isBefore(timetables[i].startDate) ||
+              timetables[i - 1]
+                  .endDate
+                  .isAtSameMomentAs(timetables[i].startDate)))) {
+        isConsecutive = false;
+        break;
+      }
+    }
+  }
+
+  return isConsecutive;
+}

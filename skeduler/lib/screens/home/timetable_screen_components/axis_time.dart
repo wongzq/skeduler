@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:skeduler/models/group_data/time.dart';
+import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_view.dart';
 import 'package:skeduler/shared/components/edit_time_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -105,14 +107,33 @@ class _AxisTimeState extends State<AxisTime> {
                         valSetEndTime: (dateTime) => newEndTime = dateTime,
                         onSave: () {
                           setState(() {
-                            /// Remove previous time slot
-                            _times.removeWhere((test) {
+                            List<Time> tempTimes = List<Time>.from(_times);
+                            tempTimes.removeWhere((test) {
                               return test.startTime == time.startTime &&
                                   test.endTime == time.endTime;
                             });
+                            tempTimes.add(Time(newStartTime, newEndTime));
 
-                            /// Add new time slot
-                            _times.add(Time(newStartTime, newEndTime));
+                            /// If no conflict in temporary, then edit in main
+                            if (isConsecutiveTimes(tempTimes)) {
+                              /// Remove previous time slot
+                              _times.removeWhere((test) {
+                                return test.startTime == time.startTime &&
+                                    test.endTime == time.endTime;
+                              });
+
+                              /// Add new time slot
+                              _times.add(Time(newStartTime, newEndTime));
+
+                              _times.sort((a, b) =>
+                                  a.startTime.millisecondsSinceEpoch.compareTo(
+                                      b.startTime.millisecondsSinceEpoch));
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: 'There was a conflict in the time',
+                                toastLength: Toast.LENGTH_LONG,
+                              );
+                            }
 
                             /// Update through valueSetter
                             if (widget.valSetTimes != null) {
@@ -213,7 +234,21 @@ class _AxisTimeState extends State<AxisTime> {
               onSave: () {
                 setState(() {
                   if (newEndTime.isAfter(newStartTime)) {
-                    _times.add(Time(newStartTime, newEndTime));
+                    List<Time> tempTimes = List<Time>.from(_times);
+                    tempTimes.add(Time(newStartTime, newEndTime));
+
+                    /// If no conflict in temporary, then add to main
+                    if (isConsecutiveTimes(tempTimes)) {
+                      _times.add(Time(newStartTime, newEndTime));
+
+                      _times.sort((a, b) => a.startTime.millisecondsSinceEpoch
+                          .compareTo(b.startTime.millisecondsSinceEpoch));
+                    } else {
+                      Fluttertoast.showToast(
+                        msg: 'There was a conflict in the time',
+                        toastLength: Toast.LENGTH_LONG,
+                      );
+                    }
 
                     if (widget.valSetTimes != null) {
                       widget.valSetTimes(_times);
