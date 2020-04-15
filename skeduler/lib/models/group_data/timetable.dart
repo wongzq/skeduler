@@ -4,7 +4,7 @@ import 'package:skeduler/models/group_data/time.dart';
 
 class Timetable {
   /// Properties
-  String _id;
+  String _docId;
   DateTime _startDate;
   DateTime _endDate;
 
@@ -14,14 +14,14 @@ class Timetable {
 
   /// Constructor
   Timetable({
-    @required String id,
+    @required String docId,
     Timestamp startDate,
     Timestamp endDate,
     List<dynamic> axisDays,
     List<dynamic> axisTimes,
     List<dynamic> axisCustom,
   }) {
-    _id = id;
+    _docId = docId;
     _startDate =
         DateTime.fromMillisecondsSinceEpoch(startDate.millisecondsSinceEpoch);
     _endDate =
@@ -46,7 +46,7 @@ class Timetable {
   }
 
   /// getter methods
-  String get id => _id;
+  String get docId => _docId;
   DateTime get startDate => _startDate;
   DateTime get endDate => _endDate;
   List<Weekday> get axisDays => _axisDays;
@@ -56,7 +56,7 @@ class Timetable {
 
 class TempTimetable {
   /// Properties
-  String _id;
+  String _docId;
   DateTime _startDate;
   DateTime _endDate;
 
@@ -65,21 +65,21 @@ class TempTimetable {
   List<String> _axisCustom = [];
 
   TempTimetable({
-    String id,
+    String docId,
     DateTime startDate,
     DateTime endDate,
     List<Weekday> axisDays,
     List<Time> axisTimes,
     List<String> axisCustom,
     Timetable timetable,
-  })  : _id = id,
+  })  : _docId = docId,
         _startDate = startDate,
         _endDate = endDate,
         _axisDays = axisDays,
         _axisTimes = axisTimes,
         _axisCustom = axisCustom {
     if (timetable != null) {
-      _id = timetable.id;
+      _docId = timetable.docId;
       _startDate = timetable.startDate;
       _endDate = timetable.endDate;
       _axisDays = timetable.axisDays;
@@ -89,7 +89,7 @@ class TempTimetable {
   }
 
   /// getter methods
-  String get id => this._id;
+  String get docId => this._docId;
   DateTime get startDate => this._startDate;
   DateTime get endDate => this._endDate;
   List<Weekday> get axisDays => this._axisDays;
@@ -97,7 +97,7 @@ class TempTimetable {
   List<String> get axisCustom => this._axisCustom;
 
   /// setter methods
-  set id(String id) => this._id = id;
+  set docId(String id) => this._docId = id;
   set startDate(DateTime startDate) => this._startDate = startDate;
   set endDate(DateTime endDate) => this._endDate = endDate;
   set axisDays(List<Weekday> axisDays) => this._axisDays = axisDays;
@@ -141,38 +141,6 @@ Map<String, dynamic> firestoreMapFromTimetable(TempTimetable tempTimetable) {
 
   /// return final map in firestore format
   return firestoreMap;
-}
-
-/// auxiliary function to check if all [Time] in [List<Time>] is consecutive with no conflicts of time
-bool isConsecutiveTimes(List<Time> times) {
-  bool isConsecutive = true;
-
-  /// sort the area in terms of startTime
-  times.sort((a, b) {
-    return a.startTime.millisecondsSinceEpoch
-        .compareTo(b.startTime.millisecondsSinceEpoch);
-  });
-
-  /// loop through the array to find any conflict
-  for (int i = 0; i < times.length; i++) {
-    print('i ' + i.toString());
-    print(times[i].startTime);
-    print(times[i].endTime);
-
-    if (i != 0) {
-      /// if conflict is found, returns [hasNoConflict] as [false]
-      if (!(times[i - 1].startTime.isBefore(times[i].startTime) &&
-          times[i - 1].endTime.isBefore(times[i].endTime) &&
-          (times[i - 1].endTime.isBefore(times[i].startTime) ||
-              times[i - 1].endTime.isAtSameMomentAs(times[i].startTime)))) {
-        print('conflict found');
-        isConsecutive = false;
-        break;
-      }
-    }
-  }
-
-  return isConsecutive;
 }
 
 /// auxiliary function to check if all [Timetable] in [List<Timetable>] is consecutive with no conflicts of date

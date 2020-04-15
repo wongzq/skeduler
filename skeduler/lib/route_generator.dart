@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/models/group_data/group.dart';
+import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/dashboard_screen.dart';
 import 'package:skeduler/screens/home/group_screen_components/edit_group.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen.dart';
@@ -7,6 +8,7 @@ import 'package:skeduler/screens/home/members_screen_components/members_screen.d
 import 'package:skeduler/screens/home/my_schedule_screen_components/my_schedule_screen.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_editor.dart';
 import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_editor.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_screen.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings.dart';
 import 'package:skeduler/screens/wrapper.dart';
@@ -52,6 +54,12 @@ class RouteGenerator {
       case '/timetable':
         if (args == null) {
           return CustomTransitionRoute(page: wrapWidget(TimetableScreen()));
+        }
+        break;
+
+      case '/timetableEditor':
+        if (args == TempTimetable) {
+          return CustomTransitionRoute(page: wrapWidget(TimetableEditor(timetable: args)));
         }
         break;
 

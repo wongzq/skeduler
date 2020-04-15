@@ -91,14 +91,17 @@ class DatabaseService {
             .map(_timetablesFromSnapshots);
   }
 
-  Future getGroupTimetable(String groupDocId) async {
-    if (groupDocId == null || groupDocId.trim() == '') {
+  Future getGroupTimetable(String groupDocId, String timetableDocId) async {
+    if (groupDocId == null ||
+        groupDocId.trim() == '' ||
+        timetableDocId == null ||
+        timetableDocId.trim() == '') {
       return null;
     } else {
       await groupsCollection
           .document(groupDocId)
           .collection('timetables')
-          .document('test')
+          .document(timetableDocId)
           .get()
           .then((timetable) {
         if (timetable.exists) {
@@ -353,30 +356,24 @@ class DatabaseService {
 
   Future updateGroupTimetable(
     String groupDocId,
-    String timetableId,
     TempTimetable tempTimetable,
   ) async {
     if (groupDocId != null && groupDocId.trim() != '') {
-      return await groupsCollection
+      DocumentReference timetableRef = groupsCollection
           .document(groupDocId)
           .collection('timetables')
-          .document(timetableId)
-          .get()
-          .then((timetable) async {
+          .document(tempTimetable.docId);
+
+      return await timetableRef.get().then((timetable) async {
         if (!timetable.exists) {
-          await groupsCollection
-              .document(groupDocId)
-              .collection('timetables')
-              .document(timetableId)
-              .setData(firestoreMapFromTimetable(tempTimetable));
+          await timetableRef.setData(firestoreMapFromTimetable(tempTimetable));
         } else {
-          await groupsCollection
-              .document(groupDocId)
-              .collection('timetables')
-              .document(timetableId)
+          await timetableRef
               .updateData(firestoreMapFromTimetable(tempTimetable));
         }
       });
+    } else {
+      return null;
     }
   }
 
@@ -528,6 +525,8 @@ class DatabaseService {
 
   /// convert snapshot to [Group]
   Group _groupFromSnapshot(DocumentSnapshot snapshot) {
+    print(snapshot.data['members']);
+
     return snapshot.data != null
         ? Group(
             groupDocId: snapshot.documentID,
@@ -539,6 +538,8 @@ class DatabaseService {
             ),
             ownerEmail: snapshot.data['owner']['email'] ?? '',
             ownerName: snapshot.data['owner']['name'] ?? '',
+            members: snapshot.data['members'] ?? [],
+            timetables: snapshot.data['timetables'] ?? [],
           )
         : Group(groupDocId: null);
   }
@@ -565,14 +566,14 @@ class DatabaseService {
   Timetable _timetableFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
         ? Timetable(
-            id: snapshot.documentID,
+            docId: snapshot.documentID,
             startDate: snapshot.data['startDate'] ?? Timestamp.now(),
             endDate: snapshot.data['endDate'] ?? Timestamp.now(),
             axisDays: snapshot.data['axisDays'] ?? [],
             axisTimes: snapshot.data['axisTimes'] ?? [],
             axisCustom: snapshot.data['axisCustom'] ?? [],
           )
-        : Timetable(id: '');
+        : Timetable(docId: '');
   }
 
   /// convert document snapshots into [User]s

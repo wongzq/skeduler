@@ -7,17 +7,23 @@ import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
-class TimetableScreen extends StatefulWidget {
+class TimetableEditor extends StatefulWidget {
+  final TempTimetable timetable;
+
+  const TimetableEditor({Key key, @required this.timetable}) : super(key: key);
+
   @override
-  _TimetableScreenState createState() => _TimetableScreenState();
+  _TimetableEditorState createState() => _TimetableEditorState();
 }
 
-class _TimetableScreenState extends State<TimetableScreen> {
+class _TimetableEditorState extends State<TimetableEditor> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
+    ValueNotifier<TempTimetable> tempTimetable =
+        Provider.of<ValueNotifier<TempTimetable>>(context);
 
     return StreamBuilder<Object>(
         stream: dbService.getGroup(groupDocId.value),
@@ -48,45 +54,9 @@ class _TimetableScreenState extends State<TimetableScreen> {
                           ),
                     actions: <Widget>[
                       IconButton(
-                        icon: PopupMenuButton(
-                          child: Icon(Icons.more_vert),
-                          itemBuilder: (BuildContext context) {
-                            List<PopupMenuEntry> timetableOptions = [];
-
-                            /// Add timetables to options
-                            group.timetables.forEach((timetableDocId) {
-                              timetableOptions.add(PopupMenuItem(
-                                value: timetableDocId,
-                                child: Text(timetableDocId),
-                              ));
-                            });
-
-                            /// Add 'add timetable' button to options
-                            timetableOptions.add(PopupMenuItem(
-                              value: 0,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Visibility(
-                                    visible: group.timetables.isNotEmpty,
-                                    // visible: true,
-                                    child: Divider(thickness: 1.0),
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      Icon(Icons.add),
-                                      SizedBox(width: 10.0),
-                                      Text('Add timetable'),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ));
-
-                            return timetableOptions;
-                          },
-                        ),
-                        onPressed: () {},
+                        icon: Icon(Icons.settings),
+                        onPressed: () => Navigator.of(context)
+                            .pushNamed('/timetableSettings'),
                       ),
                     ],
                   ),
@@ -102,12 +72,12 @@ class _TimetableScreenState extends State<TimetableScreen> {
                           child: FloatingActionButton(
                             foregroundColor: getFABIconForegroundColor(context),
                             backgroundColor: getFABIconBackgroundColor(context),
-                            child: Icon(Icons.edit),
+                            child: Icon(Icons.save),
                             onPressed: () {
-                              TempTimetable tempTimetable = TempTimetable();
-                              Navigator.of(context).pushNamed(
-                                  '/timetableEditor',
-                                  arguments: tempTimetable);
+                              dbService.updateGroupTimetable(
+                                groupDocId.value,
+                                tempTimetable.value,
+                              );
                             },
                           ),
                         ),

@@ -11,6 +11,9 @@ class Group {
   String _ownerEmail;
   String _ownerName;
 
+  List<String> _members;
+  List<String> _timetables;
+
   /// constructor
   Group({
     @required String groupDocId,
@@ -19,6 +22,8 @@ class Group {
     ColorShade colorShade,
     String ownerEmail = '',
     String ownerName = '',
+    List<dynamic> members = const [],
+    List<dynamic> timetables = const [],
   }) {
     _groupDocId = groupDocId;
 
@@ -27,6 +32,11 @@ class Group {
     _colorShade = colorShade;
     _ownerEmail = ownerEmail;
     _ownerName = ownerName;
+
+    _members = [];
+    members.forEach((member) => _members.add(member));
+    _timetables = [];
+    timetables.forEach((timetable) => _timetables.add(timetable));
   }
 
   /// getter methods
@@ -37,7 +47,10 @@ class Group {
   ColorShade get colorShade => _colorShade ?? ColorShade();
   String get ownerEmail => _ownerEmail;
   String get ownerName => _ownerName;
-  int get numOfMembers => 1;
+  // int get numOfMembers => 1;
+  int get numOfMembers => _members.length;
+  List<String> get members => _members;
+  List<String> get timetables => _timetables;
 }
 
 class GroupMetadata extends ChangeNotifier {
