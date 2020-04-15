@@ -139,17 +139,12 @@ bool isConsecutiveTimes(List<Time> times) {
 
   /// loop through the array to find any conflict
   for (int i = 0; i < times.length; i++) {
-    print('i ' + i.toString());
-    print(times[i].startTime);
-    print(times[i].endTime);
-
     if (i != 0) {
       /// if conflict is found, returns [hasNoConflict] as [false]
       if (!(times[i - 1].startTime.isBefore(times[i].startTime) &&
           times[i - 1].endTime.isBefore(times[i].endTime) &&
           (times[i - 1].endTime.isBefore(times[i].startTime) ||
               times[i - 1].endTime.isAtSameMomentAs(times[i].startTime)))) {
-        print('conflict found');
         isConsecutive = false;
         break;
       }

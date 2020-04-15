@@ -525,8 +525,6 @@ class DatabaseService {
 
   /// convert snapshot to [Group]
   Group _groupFromSnapshot(DocumentSnapshot snapshot) {
-    print(snapshot.data['members']);
-
     return snapshot.data != null
         ? Group(
             groupDocId: snapshot.documentID,

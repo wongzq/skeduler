@@ -85,6 +85,12 @@ class _TimetableScreenState extends State<TimetableScreen> {
 
                             return timetableOptions;
                           },
+                          onSelected: (value) {
+                            if (value == 0) {
+                              Navigator.of(context)
+                                  .pushNamed('/timetableEditor');
+                            }
+                          },
                         ),
                         onPressed: () {},
                       ),

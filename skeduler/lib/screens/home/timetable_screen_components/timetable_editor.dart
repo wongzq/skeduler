@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
@@ -8,9 +10,9 @@ import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class TimetableEditor extends StatefulWidget {
-  final TempTimetable timetable;
+  final TempTimetable tempTimetable;
 
-  const TimetableEditor({Key key, @required this.timetable}) : super(key: key);
+  const TimetableEditor({Key key, this.tempTimetable}) : super(key: key);
 
   @override
   _TimetableEditorState createState() => _TimetableEditorState();
@@ -34,6 +36,14 @@ class _TimetableEditorState extends State<TimetableEditor> {
               ? Container()
               : Scaffold(
                   appBar: AppBar(
+                    leading: IconButton(
+                      icon: Icon(
+                        Platform.isIOS
+                            ? Icons.arrow_back_ios
+                            : Icons.arrow_back,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                     title: group.name == null
                         ? Text(
                             'Timetable',
