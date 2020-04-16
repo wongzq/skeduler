@@ -60,9 +60,6 @@ class RouteGenerator {
       case '/timetableEditor':
         if (args == null) {
           return CustomTransitionRoute(page: wrapWidget(TimetableEditor()));
-        } else if (args == TempTimetable) {
-          return CustomTransitionRoute(
-              page: wrapWidget(TimetableEditor(tempTimetable: args)));
         }
         break;
 

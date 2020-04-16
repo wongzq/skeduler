@@ -18,6 +18,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
+    ValueNotifier<TempTimetable> tempTTB =
+        Provider.of<ValueNotifier<TempTimetable>>(context);
 
     return StreamBuilder<Object>(
         stream: dbService.getGroup(groupDocId.value),
@@ -85,8 +87,15 @@ class _TimetableScreenState extends State<TimetableScreen> {
 
                             return timetableOptions;
                           },
-                          onSelected: (value) {
+                          onSelected: (value) async {
                             if (value == 0) {
+                              Navigator.of(context)
+                                  .pushNamed('/timetableEditor');
+                            } else {
+                              tempTTB.value = TempTimetable(
+                                  timetable: await dbService.getGroupTimetable(
+                                      groupDocId.value, value));
+
                               Navigator.of(context)
                                   .pushNamed('/timetableEditor');
                             }

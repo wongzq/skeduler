@@ -17,12 +17,12 @@ class TimetableSettings extends StatelessWidget {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
-    ValueNotifier<TempTimetable> tempTimetable =
+    ValueNotifier<TempTimetable> tempTTB =
         Provider.of<ValueNotifier<TempTimetable>>(context);
 
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-    TempTimetable tempTimetableSub = TempTimetable();
+    TempTimetable tempTTBSub = TempTimetable();
 
     return StreamBuilder<Object>(
         stream: dbService.getGroup(groupDocId.value),
@@ -58,35 +58,29 @@ class TimetableSettings extends StatelessWidget {
                           icon: Icon(Icons.check),
                           onPressed: () {
                             if (_formKey.currentState.validate()) {
-                              if (tempTimetable.value.docId ==
-                                  tempTimetableSub.docId) {
-                                tempTimetable.value.docId =
-                                    tempTimetableSub.docId;
-                                tempTimetable.value.startDate =
-                                    tempTimetableSub.startDate;
-                                tempTimetable.value.endDate =
-                                    tempTimetableSub.endDate;
-                                tempTimetable.value.axisDays =
-                                    tempTimetableSub.axisDays;
-                                tempTimetable.value.axisTimes =
-                                    tempTimetableSub.axisTimes;
+                              /// if new timetable or update previous timetable
+                              if (tempTTB.value == null ||
+                                  tempTTB.value.docId == tempTTBSub.docId) {
+                                tempTTB.value.docId = tempTTBSub.docId;
+                                tempTTB.value.startDate = tempTTBSub.startDate;
+                                tempTTB.value.endDate = tempTTBSub.endDate;
+                                tempTTB.value.axisDays = tempTTBSub.axisDays;
+                                tempTTB.value.axisTimes = tempTTBSub.axisTimes;
 
                                 dbService.updateGroupTimetable(
-                                    groupDocId.value, tempTimetable.value);
-                              } else {
-                                tempTimetable.value.docId =
-                                    tempTimetableSub.docId;
-                                tempTimetable.value.startDate =
-                                    tempTimetableSub.startDate;
-                                tempTimetable.value.endDate =
-                                    tempTimetableSub.endDate;
-                                tempTimetable.value.axisDays =
-                                    tempTimetableSub.axisDays;
-                                tempTimetable.value.axisTimes =
-                                    tempTimetableSub.axisTimes;
+                                    groupDocId.value, tempTTB.value);
+                              } else if (tempTTB.value != null &&
+                                  tempTTB.value.docId != null &&
+                                  tempTTB.value.docId.trim() != '' &&
+                                  tempTTB.value.docId != tempTTBSub.docId) {
+                                tempTTB.value.docId = tempTTBSub.docId;
+                                tempTTB.value.startDate = tempTTBSub.startDate;
+                                tempTTB.value.endDate = tempTTBSub.endDate;
+                                tempTTB.value.axisDays = tempTTBSub.axisDays;
+                                tempTTB.value.axisTimes = tempTTBSub.axisTimes;
 
                                 dbService.updateGroupTimetable(
-                                    groupDocId.value, tempTimetable.value);
+                                    groupDocId.value, tempTTB.value);
                               }
                             }
                           },
@@ -105,12 +99,12 @@ class TimetableSettings extends StatelessWidget {
                           LabelTextInput(
                             label: 'Name',
                             formKey: _formKey,
-                            initialValue: tempTimetable != null &&
-                                    tempTimetable.value != null
-                                ? tempTimetable.value.docId
-                                : 'Timetable Name',
+                            initialValue:
+                                tempTTB != null && tempTTB.value != null
+                                    ? tempTTB.value.docId
+                                    : 'Timetable Name',
                             valSetText: (text) {
-                              tempTimetableSub.docId = text;
+                              tempTTBSub.docId = text;
                             },
                             validator: (text) {
                               if (text == null || text.trim() == '') {
@@ -123,31 +117,29 @@ class TimetableSettings extends StatelessWidget {
                           SizedBox(height: 10.0),
 
                           DateRange(
-                            initialStartDate: tempTimetable.value.startDate,
-                            initialEndDate: tempTimetable.value.endDate,
+                            initialStartDate: tempTTB.value.startDate,
+                            initialEndDate: tempTTB.value.endDate,
                             valSetStartDate: (startDate) {
-                              tempTimetableSub.startDate = startDate;
+                              tempTTBSub.startDate = startDate;
                             },
                             valSetEndDate: (endDate) {
-                              tempTimetableSub.endDate = endDate;
+                              tempTTBSub.endDate = endDate;
                             },
                           ),
                           SizedBox(height: 10.0),
 
                           AxisDay(
-                            initialWeekdaysSelected:
-                                tempTimetable.value.axisDays,
+                            initialWeekdaysSelected: tempTTB.value.axisDays,
                             valSetWeekdaysSelected:
                                 (timetableWeekdaysSelected) {
-                              tempTimetableSub.axisDays =
-                                  timetableWeekdaysSelected;
+                              tempTTBSub.axisDays = timetableWeekdaysSelected;
                             },
                           ),
 
                           AxisTime(
-                            initialTimes: tempTimetable.value.axisTimes,
+                            initialTimes: tempTTB.value.axisTimes,
                             valSetTimes: (times) {
-                              tempTimetableSub.axisTimes = times;
+                              tempTTBSub.axisTimes = times;
                             },
                           ),
                           // AxisCustom(),

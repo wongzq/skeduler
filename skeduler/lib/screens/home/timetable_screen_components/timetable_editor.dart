@@ -10,10 +10,6 @@ import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class TimetableEditor extends StatefulWidget {
-  final TempTimetable tempTimetable;
-
-  const TimetableEditor({Key key, this.tempTimetable}) : super(key: key);
-
   @override
   _TimetableEditorState createState() => _TimetableEditorState();
 }
@@ -24,7 +20,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
-    ValueNotifier<TempTimetable> tempTimetable =
+    ValueNotifier<TempTimetable> tempTTB =
         Provider.of<ValueNotifier<TempTimetable>>(context);
 
     return StreamBuilder<Object>(
@@ -65,8 +61,9 @@ class _TimetableEditorState extends State<TimetableEditor> {
                     actions: <Widget>[
                       IconButton(
                         icon: Icon(Icons.settings),
-                        onPressed: () => Navigator.of(context)
-                            .pushNamed('/timetableSettings'),
+                        onPressed: () => Navigator.of(context).pushNamed(
+                          '/timetableSettings',
+                        ),
                       ),
                     ],
                   ),
@@ -86,7 +83,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                             onPressed: () {
                               dbService.updateGroupTimetable(
                                 groupDocId.value,
-                                tempTimetable.value,
+                                tempTTB.value,
                               );
                             },
                           ),

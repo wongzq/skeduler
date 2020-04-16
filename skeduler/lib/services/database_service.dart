@@ -91,14 +91,14 @@ class DatabaseService {
             .map(_timetablesFromSnapshots);
   }
 
-  Future getGroupTimetable(String groupDocId, String timetableDocId) async {
+  Future<Timetable> getGroupTimetable(String groupDocId, String timetableDocId) async {
     if (groupDocId == null ||
         groupDocId.trim() == '' ||
         timetableDocId == null ||
         timetableDocId.trim() == '') {
       return null;
     } else {
-      await groupsCollection
+      return await groupsCollection
           .document(groupDocId)
           .collection('timetables')
           .document(timetableDocId)
@@ -367,10 +367,40 @@ class DatabaseService {
       return await timetableRef.get().then((timetable) async {
         if (!timetable.exists) {
           await timetableRef.setData(firestoreMapFromTimetable(tempTimetable));
+          await groupsCollection.document(groupDocId).updateData({
+            'timetables': FieldValue.arrayUnion([tempTimetable.docId])
+          });
         } else {
           await timetableRef
               .updateData(firestoreMapFromTimetable(tempTimetable));
         }
+      });
+    } else {
+      return null;
+    }
+  }
+
+  Future updateGroupTimetableDocId(
+    String groupDocId,
+    String oldTimetableId,
+    String newTimetableId,
+  ) async {
+    if (groupDocId != null && groupDocId.trim() != '') {
+      CollectionReference timetablesRef =
+          groupsCollection.document(groupDocId).collection('timetables');
+      return await timetablesRef
+          .document(oldTimetableId)
+          .get()
+          .then((groupData) async {
+        await timetablesRef.document(newTimetableId).setData(groupData.data);
+
+        await groupsCollection.document(groupDocId).updateData({
+          'timetables': FieldValue.arrayRemove([oldTimetableId])
+        });
+
+        await groupsCollection.document(groupDocId).updateData({
+          'timetables': FieldValue.arrayUnion([newTimetableId])
+        });
       });
     } else {
       return null;
