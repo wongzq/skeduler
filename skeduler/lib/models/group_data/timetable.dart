@@ -72,6 +72,7 @@ class TempTimetable {
     List<Time> axisTimes,
     List<String> axisCustom,
     Timetable timetable,
+    TempTimetable tempTTB,
   })  : _docId = docId,
         _startDate = startDate,
         _endDate = endDate,
@@ -85,6 +86,13 @@ class TempTimetable {
       _axisDays = timetable.axisDays;
       _axisTimes = timetable.axisTimes;
       _axisCustom = timetable.axisCustom;
+    } else if (tempTTB != null) {
+      _docId = tempTTB.docId;
+      _startDate = tempTTB.startDate;
+      _endDate = tempTTB.endDate;
+      _axisDays = tempTTB.axisDays;
+      _axisTimes = tempTTB.axisTimes;
+      _axisCustom = tempTTB.axisCustom;
     }
   }
 

@@ -91,7 +91,8 @@ class DatabaseService {
             .map(_timetablesFromSnapshots);
   }
 
-  Future<Timetable> getGroupTimetable(String groupDocId, String timetableDocId) async {
+  Future<Timetable> getGroupTimetable(
+      String groupDocId, String timetableDocId) async {
     if (groupDocId == null ||
         groupDocId.trim() == '' ||
         timetableDocId == null ||
@@ -380,7 +381,7 @@ class DatabaseService {
     }
   }
 
-  Future updateGroupTimetableDocId(
+  Future<bool> updateGroupTimetableDocId(
     String groupDocId,
     String oldTimetableId,
     String newTimetableId,
@@ -388,22 +389,38 @@ class DatabaseService {
     if (groupDocId != null && groupDocId.trim() != '') {
       CollectionReference timetablesRef =
           groupsCollection.document(groupDocId).collection('timetables');
+
       return await timetablesRef
-          .document(oldTimetableId)
+          .document(newTimetableId)
           .get()
           .then((groupData) async {
-        await timetablesRef.document(newTimetableId).setData(groupData.data);
+        /// If there is another timetable with same ID, doesn't replace
+        if (!groupData.exists) {
+          await timetablesRef
+              .document(oldTimetableId)
+              .get()
+              .then((groupData) async {
+            await timetablesRef
+                .document(newTimetableId)
+                .setData(groupData.data);
 
-        await groupsCollection.document(groupDocId).updateData({
-          'timetables': FieldValue.arrayRemove([oldTimetableId])
-        });
+            await timetablesRef.document(oldTimetableId).delete();
 
-        await groupsCollection.document(groupDocId).updateData({
-          'timetables': FieldValue.arrayUnion([newTimetableId])
-        });
+            await groupsCollection.document(groupDocId).updateData({
+              'timetables': FieldValue.arrayUnion([newTimetableId])
+            });
+
+            await groupsCollection.document(groupDocId).updateData({
+              'timetables': FieldValue.arrayRemove([oldTimetableId])
+            });
+          });
+          return true;
+        } else {
+          return false;
+        }
       });
     } else {
-      return null;
+      return false;
     }
   }
 

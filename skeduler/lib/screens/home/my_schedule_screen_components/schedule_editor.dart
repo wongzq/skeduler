@@ -32,7 +32,7 @@ class ScheduleEditor extends StatelessWidget {
               elevation: 0.0,
               title: group.name == null
                   ? Text(
-                      'My Schedule',
+                      'My Schedule Editor',
                       style: textStyleAppBarTitle,
                     )
                   : Column(
@@ -43,7 +43,7 @@ class ScheduleEditor extends StatelessWidget {
                           style: textStyleAppBarTitle,
                         ),
                         Text(
-                          'My Schedule',
+                          'My Schedule Editor',
                           style: textStyleBody,
                         )
                       ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
@@ -22,7 +23,7 @@ class TimetableSettings extends StatelessWidget {
 
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-    TempTimetable tempTTBSub = TempTimetable();
+    TempTimetable tempTTBSub = TempTimetable(tempTTB: tempTTB.value);
 
     return StreamBuilder<Object>(
         stream: dbService.getGroup(groupDocId.value),
@@ -37,7 +38,7 @@ class TimetableSettings extends StatelessWidget {
                     appBar: AppBar(
                       title: group.name == null
                           ? Text(
-                              'Timetable',
+                              'Timetable Settings',
                               style: textStyleAppBarTitle,
                             )
                           : Column(
@@ -48,7 +49,7 @@ class TimetableSettings extends StatelessWidget {
                                   style: textStyleAppBarTitle,
                                 ),
                                 Text(
-                                  'Timetable',
+                                  'Timetable Settings',
                                   style: textStyleBody,
                                 )
                               ],
@@ -56,8 +57,11 @@ class TimetableSettings extends StatelessWidget {
                       actions: <Widget>[
                         IconButton(
                           icon: Icon(Icons.check),
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formKey.currentState.validate()) {
+                              print(tempTTB.value);
+                              print(tempTTB.value.docId);
+
                               /// if new timetable or update previous timetable
                               if (tempTTB.value == null ||
                                   tempTTB.value.docId == tempTTBSub.docId) {
@@ -67,20 +71,39 @@ class TimetableSettings extends StatelessWidget {
                                 tempTTB.value.axisDays = tempTTBSub.axisDays;
                                 tempTTB.value.axisTimes = tempTTBSub.axisTimes;
 
-                                dbService.updateGroupTimetable(
+                                await dbService.updateGroupTimetable(
                                     groupDocId.value, tempTTB.value);
                               } else if (tempTTB.value != null &&
                                   tempTTB.value.docId != null &&
                                   tempTTB.value.docId.trim() != '' &&
                                   tempTTB.value.docId != tempTTBSub.docId) {
-                                tempTTB.value.docId = tempTTBSub.docId;
-                                tempTTB.value.startDate = tempTTBSub.startDate;
-                                tempTTB.value.endDate = tempTTBSub.endDate;
-                                tempTTB.value.axisDays = tempTTBSub.axisDays;
-                                tempTTB.value.axisTimes = tempTTBSub.axisTimes;
+                                print('here');
 
-                                dbService.updateGroupTimetable(
-                                    groupDocId.value, tempTTB.value);
+                                /// Change ID by cloning old document with new ID
+                                await dbService
+                                    .updateGroupTimetableDocId(groupDocId.value,
+                                        tempTTB.value.docId, tempTTBSub.docId)
+                                    .then((changed) async {
+                                  if (changed) {
+                                    /// Update document with new data
+                                    tempTTB.value.docId = tempTTBSub.docId;
+                                    tempTTB.value.startDate =
+                                        tempTTBSub.startDate;
+                                    tempTTB.value.endDate = tempTTBSub.endDate;
+                                    tempTTB.value.axisDays =
+                                        tempTTBSub.axisDays;
+                                    tempTTB.value.axisTimes =
+                                        tempTTBSub.axisTimes;
+
+                                    await dbService.updateGroupTimetable(
+                                        groupDocId.value, tempTTB.value);
+                                  } else {
+                                    Fluttertoast.showToast(
+                                      msg: 'Timetable ID already exists',
+                                      toastLength: Toast.LENGTH_LONG,
+                                    );
+                                  }
+                                });
                               }
                             }
                           },
@@ -96,23 +119,26 @@ class TimetableSettings extends StatelessWidget {
                           parent: AlwaysScrollableScrollPhysics(),
                         ),
                         children: <Widget>[
-                          LabelTextInput(
-                            label: 'Name',
-                            formKey: _formKey,
-                            initialValue:
-                                tempTTB != null && tempTTB.value != null
-                                    ? tempTTB.value.docId
-                                    : 'Timetable Name',
-                            valSetText: (text) {
-                              tempTTBSub.docId = text;
-                            },
-                            validator: (text) {
-                              if (text == null || text.trim() == '') {
-                                return 'Timetable name cannot be empty';
-                              } else {
-                                return null;
-                              }
-                            },
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5.0),
+                            child: LabelTextInput(
+                              label: 'Name',
+                              formKey: _formKey,
+                              initialValue:
+                                  tempTTB != null && tempTTB.value != null
+                                      ? tempTTB.value.docId
+                                      : 'Timetable Name',
+                              valSetText: (text) {
+                                tempTTBSub.docId = text;
+                              },
+                              validator: (text) {
+                                if (text == null || text.trim() == '') {
+                                  return 'Timetable name cannot be empty';
+                                } else {
+                                  return null;
+                                }
+                              },
+                            ),
                           ),
                           SizedBox(height: 10.0),
 
