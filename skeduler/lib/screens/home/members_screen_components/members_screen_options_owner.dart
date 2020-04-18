@@ -19,60 +19,54 @@ class MembersScreenOptionsOwner extends StatelessWidget {
 
           return group == null
               ? Container()
-              : Align(
-                  alignment: Alignment.bottomRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 20.0, right: 20.0),
-                    child: SpeedDial(
+              : SpeedDial(
+                  foregroundColor: getFABIconForegroundColor(context),
+                  backgroundColor: getFABIconBackgroundColor(context),
+                  overlayColor: Colors.grey,
+                  overlayOpacity: 0.8,
+                  curve: Curves.easeOutCubic,
+                  animatedIcon: AnimatedIcons.menu_close,
+
+                  /// Delete group
+                  children: <SpeedDialChild>[
+                    /// Add member
+                    SpeedDialChild(
                       foregroundColor: getFABIconForegroundColor(context),
                       backgroundColor: getFABIconBackgroundColor(context),
-                      overlayColor: Colors.grey,
-                      overlayOpacity: 0.8,
-                      curve: Curves.easeOutCubic,
-                      animatedIcon: AnimatedIcons.menu_close,
-
-                      /// Delete group
-                      children: <SpeedDialChild>[
-                        /// Add member
-                        SpeedDialChild(
-                          foregroundColor: getFABIconForegroundColor(context),
-                          backgroundColor: getFABIconBackgroundColor(context),
-                          child: Icon(
-                            Icons.person_add,
-                            size: 25.0,
-                          ),
-                          labelWidget: Container(
-                            height: 40.0,
-                            width: 150.0,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: getFABIconBackgroundColor(context),
-                              borderRadius: BorderRadius.circular(20.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  offset: Offset(0.0, 5.0),
-                                  blurRadius: 10.0,
-                                ),
-                              ],
+                      child: Icon(
+                        Icons.person_add,
+                        size: 25.0,
+                      ),
+                      labelWidget: Container(
+                        height: 40.0,
+                        width: 150.0,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: getFABIconBackgroundColor(context),
+                          borderRadius: BorderRadius.circular(20.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              offset: Offset(0.0, 5.0),
+                              blurRadius: 10.0,
                             ),
-                            child: Text(
-                              'ADD MEMBER',
-                              style: TextStyle(
-                                color: getFABTextColor(context),
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 1.5,
-                              ),
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).pushNamed('/group/addMember');
-                          },
+                          ],
                         ),
-                      ],
+                        child: Text(
+                          'ADD MEMBER',
+                          style: TextStyle(
+                            color: getFABTextColor(context),
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/group/addMember');
+                      },
                     ),
-                  ),
+                  ],
                 );
         });
   }

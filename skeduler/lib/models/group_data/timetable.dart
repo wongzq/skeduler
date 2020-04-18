@@ -2,6 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:skeduler/models/group_data/time.dart';
 
+////////////////////////////////////////////////////////////////////////////////
+/// Timetable class
+////////////////////////////////////////////////////////////////////////////////
+
 class Timetable {
   /// Properties
   String _docId;
@@ -21,28 +25,41 @@ class Timetable {
     List<dynamic> axisTimes,
     List<dynamic> axisCustom,
   }) {
+    /// documentID
     _docId = docId;
-    _startDate =
-        DateTime.fromMillisecondsSinceEpoch(startDate.millisecondsSinceEpoch);
-    _endDate =
-        DateTime.fromMillisecondsSinceEpoch(endDate.millisecondsSinceEpoch);
 
-    axisDays.forEach((val) {
-      _axisDays.add(Weekday.values[val]);
-    });
+    /// timetable start date
+    if (startDate != null)
+      _startDate =
+          DateTime.fromMillisecondsSinceEpoch(startDate.millisecondsSinceEpoch);
 
-    axisTimes.forEach((val) {
-      _axisTimes.add(Time(
-        DateTime.fromMillisecondsSinceEpoch(
-            val['startTime'].millisecondsSinceEpoch),
-        DateTime.fromMillisecondsSinceEpoch(
-            val['endTime'].millisecondsSinceEpoch),
-      ));
-    });
+    /// timetable end date
+    if (endDate != null)
+      _endDate =
+          DateTime.fromMillisecondsSinceEpoch(endDate.millisecondsSinceEpoch);
 
-    axisCustom.forEach((val) {
-      _axisCustom.add(val);
-    });
+    /// timetable days axis
+    if (axisDays != null)
+      axisDays.forEach((val) {
+        _axisDays.add(Weekday.values[val]);
+      });
+
+    /// timetable times axis
+    if (axisTimes != null)
+      axisTimes.forEach((val) {
+        _axisTimes.add(Time(
+          DateTime.fromMillisecondsSinceEpoch(
+              val['startTime'].millisecondsSinceEpoch),
+          DateTime.fromMillisecondsSinceEpoch(
+              val['endTime'].millisecondsSinceEpoch),
+        ));
+      });
+
+    /// timetable custom axis
+    if (axisCustom != null)
+      axisCustom.forEach((val) {
+        _axisCustom.add(val);
+      });
   }
 
   /// getter methods
@@ -54,8 +71,12 @@ class Timetable {
   List<String> get axisCustom => _axisCustom;
 }
 
-class TempTimetable {
-  /// Properties
+////////////////////////////////////////////////////////////////////////////////
+/// EditTimetable class
+////////////////////////////////////////////////////////////////////////////////
+
+class EditTimetable {
+  /// properties
   String _docId;
   DateTime _startDate;
   DateTime _endDate;
@@ -64,37 +85,40 @@ class TempTimetable {
   List<Time> _axisTimes = [];
   List<String> _axisCustom = [];
 
-  TempTimetable({
+  /// constructors
+  EditTimetable({
     String docId,
     DateTime startDate,
     DateTime endDate,
     List<Weekday> axisDays,
     List<Time> axisTimes,
     List<String> axisCustom,
-    Timetable timetable,
-    TempTimetable tempTTB,
   })  : _docId = docId,
         _startDate = startDate,
         _endDate = endDate,
         _axisDays = axisDays,
         _axisTimes = axisTimes,
-        _axisCustom = axisCustom {
-    if (timetable != null) {
-      _docId = timetable.docId;
-      _startDate = timetable.startDate;
-      _endDate = timetable.endDate;
-      _axisDays = timetable.axisDays;
-      _axisTimes = timetable.axisTimes;
-      _axisCustom = timetable.axisCustom;
-    } else if (tempTTB != null) {
-      _docId = tempTTB.docId;
-      _startDate = tempTTB.startDate;
-      _endDate = tempTTB.endDate;
-      _axisDays = tempTTB.axisDays;
-      _axisTimes = tempTTB.axisTimes;
-      _axisCustom = tempTTB.axisCustom;
-    }
-  }
+        _axisCustom = axisCustom;
+
+  EditTimetable.fromTimetable(Timetable timetable)
+      : this(
+          docId: timetable.docId,
+          startDate: timetable.startDate,
+          endDate: timetable.endDate,
+          axisDays: timetable.axisDays,
+          axisTimes: timetable.axisTimes,
+          axisCustom: timetable.axisCustom,
+        );
+
+  EditTimetable.copy(EditTimetable timetable)
+      : this(
+          docId: timetable.docId,
+          startDate: timetable.startDate,
+          endDate: timetable.endDate,
+          axisDays: timetable.axisDays,
+          axisTimes: timetable.axisTimes,
+          axisCustom: timetable.axisCustom,
+        );
 
   /// getter methods
   String get docId => this._docId;
@@ -111,35 +135,51 @@ class TempTimetable {
   set axisDays(List<Weekday> axisDays) => this._axisDays = axisDays;
   set axisTimes(List<Time> axisTimes) => this._axisTimes = axisTimes;
   set axisCustom(List<String> axisCustom) => this._axisCustom = axisCustom;
+
+  void updateTimetableSettings({
+    String docId,
+    DateTime startDate,
+    DateTime endDate,
+    List<Weekday> axisDays,
+    List<Time> axisTimes,
+    List<String> axisCustom,
+  }) {
+    this.docId = docId ?? this.docId;
+    this.startDate = startDate ?? this.startDate;
+    this.endDate = endDate ?? this.endDate;
+    this.axisDays = axisDays ?? this.axisDays;
+    this.axisTimes = axisTimes ?? this.axisTimes;
+    this.axisCustom = axisCustom ?? this.axisCustom;
+  }
 }
 
-/// convert from [TempTimetable] to Firestore's [Map<String, dynamic>] format
-Map<String, dynamic> firestoreMapFromTimetable(TempTimetable tempTimetable) {
+////////////////////////////////////////////////////////////////////////////////
+/// Auxiliary functions
+////////////////////////////////////////////////////////////////////////////////
+
+/// convert from [EditTimetable] to Firestore's [Map<String, dynamic>] format
+Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTTB) {
   Map<String, dynamic> firestoreMap = {};
 
   /// convert startDate and endDate
-  firestoreMap['startDate'] = Timestamp.fromMillisecondsSinceEpoch(
-      tempTimetable.startDate.millisecondsSinceEpoch);
-  firestoreMap['endDate'] = Timestamp.fromMillisecondsSinceEpoch(
-      tempTimetable.endDate.millisecondsSinceEpoch);
+  firestoreMap['startDate'] = Timestamp.fromDate(editTTB.startDate);
+  firestoreMap['endDate'] = Timestamp.fromDate(editTTB.endDate);
 
   /// convert axisDays
-  if (tempTimetable.axisDays != null) {
+  if (editTTB.axisDays != null) {
     List<int> axisDaysInt = [];
-    tempTimetable.axisDays.forEach((weekday) => axisDaysInt.add(weekday.index));
+    editTTB.axisDays.forEach((weekday) => axisDaysInt.add(weekday.index));
     axisDaysInt.sort((a, b) => a.compareTo(b));
     firestoreMap['axisDays'] = axisDaysInt;
   }
 
   /// convert axisTimes
-  if (tempTimetable.axisTimes != null) {
+  if (editTTB.axisTimes != null) {
     List<Map<String, Timestamp>> axisTimesTimestamps = [];
-    tempTimetable.axisTimes.forEach((time) {
+    editTTB.axisTimes.forEach((time) {
       axisTimesTimestamps.add({
-        'startTime': Timestamp.fromMillisecondsSinceEpoch(
-            time.startTime.millisecondsSinceEpoch),
-        'endTime': Timestamp.fromMillisecondsSinceEpoch(
-            time.endTime.millisecondsSinceEpoch),
+        'startTime': Timestamp.fromDate(time.startTime),
+        'endTime': Timestamp.fromDate(time.endTime),
       });
     });
     axisTimesTimestamps

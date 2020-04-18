@@ -17,87 +17,81 @@ class GroupScreenOptionsMember extends StatelessWidget {
         builder: (context, snapshot) {
           Group group = snapshot.data;
 
-          return Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 20.0, right: 20.0),
-              child: SpeedDial(
-                foregroundColor: getFABIconForegroundColor(context),
-                backgroundColor: getFABIconBackgroundColor(context),
-                overlayColor: Colors.grey,
-                overlayOpacity: 0.8,
-                curve: Curves.easeOutCubic,
-                animatedIcon: AnimatedIcons.menu_close,
+          return SpeedDial(
+            foregroundColor: getFABIconForegroundColor(context),
+            backgroundColor: getFABIconBackgroundColor(context),
+            overlayColor: Colors.grey,
+            overlayOpacity: 0.8,
+            curve: Curves.easeOutCubic,
+            animatedIcon: AnimatedIcons.menu_close,
 
-                /// Delete group
-                children: <SpeedDialChild>[
-                  SpeedDialChild(
-                    backgroundColor: Colors.red,
-                    foregroundColor: getFABIconForegroundColor(context),
-                    child: Icon(
-                      Icons.exit_to_app,
-                      size: 25.0,
-                    ),
-                    labelWidget: Container(
-                      height: 40.0,
-                      width: 150.0,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(20.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            offset: Offset(0.0, 5.0),
-                            blurRadius: 10.0,
-                          ),
-                        ],
+            /// Delete group
+            children: <SpeedDialChild>[
+              SpeedDialChild(
+                backgroundColor: Colors.red,
+                foregroundColor: getFABIconForegroundColor(context),
+                child: Icon(
+                  Icons.exit_to_app,
+                  size: 25.0,
+                ),
+                labelWidget: Container(
+                  height: 40.0,
+                  width: 150.0,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(20.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        offset: Offset(0.0, 5.0),
+                        blurRadius: 10.0,
                       ),
-                      child: Text(
-                        'EXIT GROUP',
-                        style: TextStyle(
-                          color: getFABTextColor(context),
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ),
-                    onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: Text('Exit \'${group.name}\' group?'),
-                              actions: <Widget>[
-                                FlatButton(
-                                  child: Text('CANCEL'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                                FlatButton(
-                                  child: Text(
-                                    'EXIT',
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    dbService.leaveGroup(groupDocId.value);
-                                    groupDocId.value = null;
-                                    Navigator.popUntil(
-                                        context, (route) => route.isFirst);
-                                  },
-                                ),
-                              ],
-                            );
-                          });
-                    },
+                    ],
                   ),
-                ],
+                  child: Text(
+                    'EXIT GROUP',
+                    style: TextStyle(
+                      color: getFABTextColor(context),
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ),
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Text('Exit \'${group.name}\' group?'),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text('CANCEL'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                            FlatButton(
+                              child: Text(
+                                'EXIT',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                              onPressed: () {
+                                dbService.leaveGroup(groupDocId.value);
+                                groupDocId.value = null;
+                                Navigator.popUntil(
+                                    context, (route) => route.isFirst);
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                },
               ),
-            ),
+            ],
           );
         });
   }

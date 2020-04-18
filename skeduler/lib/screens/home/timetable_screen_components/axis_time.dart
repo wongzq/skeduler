@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_view.dart';
 import 'package:skeduler/shared/components/edit_time_dialog.dart';
 import 'package:skeduler/shared/functions.dart';

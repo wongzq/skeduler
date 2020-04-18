@@ -18,12 +18,12 @@ class TimetableSettings extends StatelessWidget {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
-    ValueNotifier<TempTimetable> tempTTB =
-        Provider.of<ValueNotifier<TempTimetable>>(context);
+    ValueNotifier<EditTimetable> editTTB =
+        Provider.of<ValueNotifier<EditTimetable>>(context);
 
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-    TempTimetable tempTTBSub = TempTimetable(tempTTB: tempTTB.value);
+    EditTimetable tempEditTTB = EditTimetable.copy(editTTB.value);
 
     return StreamBuilder<Object>(
         stream: dbService.getGroup(groupDocId.value),
@@ -59,44 +59,40 @@ class TimetableSettings extends StatelessWidget {
                           icon: Icon(Icons.check),
                           onPressed: () async {
                             if (_formKey.currentState.validate()) {
-                              print(tempTTB.value);
-                              print(tempTTB.value.docId);
-
                               /// if new timetable or update previous timetable
-                              if (tempTTB.value == null ||
-                                  tempTTB.value.docId == tempTTBSub.docId) {
-                                tempTTB.value.docId = tempTTBSub.docId;
-                                tempTTB.value.startDate = tempTTBSub.startDate;
-                                tempTTB.value.endDate = tempTTBSub.endDate;
-                                tempTTB.value.axisDays = tempTTBSub.axisDays;
-                                tempTTB.value.axisTimes = tempTTBSub.axisTimes;
+                              if (editTTB.value == null ||
+                                  editTTB.value.docId == tempEditTTB.docId) {
+                                editTTB.value.updateTimetableSettings(
+                                  docId: tempEditTTB.docId,
+                                  startDate: tempEditTTB.startDate,
+                                  endDate: tempEditTTB.endDate,
+                                  axisDays: tempEditTTB.axisDays,
+                                  axisTimes: tempEditTTB.axisTimes,
+                                );
 
                                 await dbService.updateGroupTimetable(
-                                    groupDocId.value, tempTTB.value);
-                              } else if (tempTTB.value != null &&
-                                  tempTTB.value.docId != null &&
-                                  tempTTB.value.docId.trim() != '' &&
-                                  tempTTB.value.docId != tempTTBSub.docId) {
-                                print('here');
-
+                                    groupDocId.value, editTTB.value);
+                              } else if (editTTB.value != null &&
+                                  editTTB.value.docId != null &&
+                                  editTTB.value.docId.trim() != '' &&
+                                  editTTB.value.docId != tempEditTTB.docId) {
                                 /// Change ID by cloning old document with new ID
                                 await dbService
                                     .updateGroupTimetableDocId(groupDocId.value,
-                                        tempTTB.value.docId, tempTTBSub.docId)
+                                        editTTB.value.docId, tempEditTTB.docId)
                                     .then((changed) async {
                                   if (changed) {
                                     /// Update document with new data
-                                    tempTTB.value.docId = tempTTBSub.docId;
-                                    tempTTB.value.startDate =
-                                        tempTTBSub.startDate;
-                                    tempTTB.value.endDate = tempTTBSub.endDate;
-                                    tempTTB.value.axisDays =
-                                        tempTTBSub.axisDays;
-                                    tempTTB.value.axisTimes =
-                                        tempTTBSub.axisTimes;
+                                    editTTB.value.updateTimetableSettings(
+                                      docId: tempEditTTB.docId,
+                                      startDate: tempEditTTB.startDate,
+                                      endDate: tempEditTTB.endDate,
+                                      axisDays: tempEditTTB.axisDays,
+                                      axisTimes: tempEditTTB.axisTimes,
+                                    );
 
                                     await dbService.updateGroupTimetable(
-                                        groupDocId.value, tempTTB.value);
+                                        groupDocId.value, editTTB.value);
                                   } else {
                                     Fluttertoast.showToast(
                                       msg: 'Timetable ID already exists',
@@ -125,11 +121,11 @@ class TimetableSettings extends StatelessWidget {
                               label: 'Name',
                               formKey: _formKey,
                               initialValue:
-                                  tempTTB != null && tempTTB.value != null
-                                      ? tempTTB.value.docId
+                                  editTTB != null && editTTB.value != null
+                                      ? editTTB.value.docId
                                       : 'Timetable Name',
                               valSetText: (text) {
-                                tempTTBSub.docId = text;
+                                tempEditTTB.docId = text;
                               },
                               validator: (text) {
                                 if (text == null || text.trim() == '') {
@@ -143,29 +139,29 @@ class TimetableSettings extends StatelessWidget {
                           SizedBox(height: 10.0),
 
                           DateRange(
-                            initialStartDate: tempTTB.value.startDate,
-                            initialEndDate: tempTTB.value.endDate,
+                            initialStartDate: editTTB.value.startDate,
+                            initialEndDate: editTTB.value.endDate,
                             valSetStartDate: (startDate) {
-                              tempTTBSub.startDate = startDate;
+                              tempEditTTB.startDate = startDate;
                             },
                             valSetEndDate: (endDate) {
-                              tempTTBSub.endDate = endDate;
+                              tempEditTTB.endDate = endDate;
                             },
                           ),
                           SizedBox(height: 10.0),
 
                           AxisDay(
-                            initialWeekdaysSelected: tempTTB.value.axisDays,
+                            initialWeekdaysSelected: editTTB.value.axisDays,
                             valSetWeekdaysSelected:
                                 (timetableWeekdaysSelected) {
-                              tempTTBSub.axisDays = timetableWeekdaysSelected;
+                              tempEditTTB.axisDays = timetableWeekdaysSelected;
                             },
                           ),
 
                           AxisTime(
-                            initialTimes: tempTTB.value.axisTimes,
+                            initialTimes: editTTB.value.axisTimes,
                             valSetTimes: (times) {
-                              tempTTBSub.axisTimes = times;
+                              tempEditTTB.axisTimes = times;
                             },
                           ),
                           // AxisCustom(),

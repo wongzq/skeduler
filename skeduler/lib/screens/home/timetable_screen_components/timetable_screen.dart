@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_display.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
@@ -18,8 +19,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
-    ValueNotifier<TempTimetable> tempTTB =
-        Provider.of<ValueNotifier<TempTimetable>>(context);
+    ValueNotifier<EditTimetable> editTTB =
+        Provider.of<ValueNotifier<EditTimetable>>(context);
 
     return StreamBuilder<Object>(
         stream: dbService.getGroup(groupDocId.value),
@@ -89,12 +90,16 @@ class _TimetableScreenState extends State<TimetableScreen> {
                           },
                           onSelected: (value) async {
                             if (value == 0) {
+                              editTTB.value = null;
                               Navigator.of(context)
                                   .pushNamed('/timetableEditor');
                             } else {
-                              tempTTB.value = TempTimetable(
-                                  timetable: await dbService.getGroupTimetable(
-                                      groupDocId.value, value));
+                              editTTB.value = EditTimetable.fromTimetable(
+                                await dbService.getGroupTimetable(
+                                  groupDocId.value,
+                                  value,
+                                ),
+                              );
 
                               Navigator.of(context)
                                   .pushNamed('/timetableEditor');
@@ -106,26 +111,19 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     ],
                   ),
                   drawer: HomeDrawer(),
+                  floatingActionButton: FloatingActionButton(
+                    foregroundColor: getFABIconForegroundColor(context),
+                    backgroundColor: getFABIconBackgroundColor(context),
+                    child: Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('/timetableEditor',
+                          arguments: editTTB.value);
+                    },
+                  ),
                   body: Stack(
                     children: <Widget>[
-                      Container(),
-                      Visibility(
-                        visible: true,
-                        child: Positioned(
-                          right: 20.0,
-                          bottom: 20.0,
-                          child: FloatingActionButton(
-                            foregroundColor: getFABIconForegroundColor(context),
-                            backgroundColor: getFABIconBackgroundColor(context),
-                            child: Icon(Icons.edit),
-                            onPressed: () {
-                              TempTimetable tempTimetable = TempTimetable();
-                              Navigator.of(context).pushNamed(
-                                  '/timetableEditor',
-                                  arguments: tempTimetable);
-                            },
-                          ),
-                        ),
+                      Container(
+                        child: TimetableDisplay(),
                       ),
                     ],
                   ),

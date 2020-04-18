@@ -55,174 +55,160 @@ class _EditGroupState extends State<EditGroup> {
           style: textStyleAppBarTitle,
         ),
       ),
-      body: Stack(
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => unfocus(),
-            child: Column(
-              children: <Widget>[
-                /// Required fields
-                /// Name
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: LabelTextInput(
-                    initialValue: _groupName,
-                    hintText: widget.group.name,
-                    label: 'Name',
-                    valSetText: (value) {
-                      _groupName = value;
-                    },
-                    formKey: _formKeyName,
-                    validator: (value) {
-                      if (value == null || value.trim().length == 0) {
-                        return 'Name cannot be empty';
-                      } else if (value.trim().length > 30) {
-                        return 'Name must be 30 characters or less';
-                      } else {
-                        return null;
-                      }
-                    },
-                  ),
-                ),
-
-                /// Description
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: LabelTextInput(
-                    initialValue: _groupDescription,
-                    hintText: widget.group.description,
-                    label: 'Description',
-                    valSetText: (value) {
-                      _groupDescription = value;
-                    },
-                    formKey: _formKeyDesc,
-                    validator: (value) {
-                      if (value.trim().length >= 100) {
-                        return 'Description must be 100 characters or less';
-                      } else {
-                        return null;
-                      }
-                    },
-                  ),
-                ),
-
-                /// Color
-                Provider<bool>.value(
-                  value: _expanded.value,
-                  child: ColorSelector(
-                    initialValue: _groupColorShade,
-                    initialExpanded: _expanded.value,
-                    valSetColorShade: (value) {
-                      setState(() {
-                        _groupColorShade = value;
-                      });
-                    },
-                    valSetExpanded: (value) {
-                      setState(() {
-                        _expanded.value = value;
-                      });
-                    },
-                  ),
-                ),
-
-                Visibility(
-                  visible: _expanded.value,
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(height: 10.0),
-
-                      Text(
-                        'Preview in dashboard',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 15.0,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                      SizedBox(height: 10.0),
-
-                      /// Preview
-                      GroupCard(
-                        groupName: _groupName,
-                        ownerName: _groupOwnerName,
-                        groupColor: () {
-                          if (_groupColorShade.color == null) {
-                            _groupColorShade.color = getOriginThemeData(
-                                    ThemeProvider.themeOf(context).id)
-                                .primaryColor;
-                          }
-                          return _groupColorShade.color;
-                        }(),
-                        hasNotification: false,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          /// Cancel changes
+          FloatingActionButton(
+            heroTag: 'Cancel',
+            backgroundColor: Colors.red,
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Icon(
+              Icons.close,
+              color: Colors.white,
             ),
           ),
 
-          /// Editing mode
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 20.0, right: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+          SizedBox(width: 20.0),
+
+          /// Confirm amd make changes
+          FloatingActionButton(
+            heroTag: 'Confirm',
+            backgroundColor: Colors.green,
+            onPressed: () {
+              if (_formKeyName.currentState.validate() &&
+                  _formKeyDesc.currentState.validate()) {
+                if (_groupName.trim() != widget.group.name ||
+                    _groupDescription.trim() != widget.group.description ||
+                    _groupColorShade.themeId !=
+                        widget.group.colorShade.themeId ||
+                    _groupColorShade.shade != widget.group.colorShade.shade) {
+                  dbService.updateGroupData(
+                    widget.group.groupDocId,
+                    name: _groupName.trim(),
+                    description: _groupDescription.trim(),
+                    colorShade: _groupColorShade,
+                    ownerName: _groupOwnerName.trim(),
+                    ownerEmail: _groupOwnerEmail.trim(),
+                  );
+                }
+                Navigator.of(context).pop();
+              }
+            },
+            child: Icon(
+              Icons.check,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => unfocus(),
+        child: Column(
+          children: <Widget>[
+            /// Required fields
+            /// Name
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: LabelTextInput(
+                initialValue: _groupName,
+                hintText: widget.group.name,
+                label: 'Name',
+                valSetText: (value) {
+                  _groupName = value;
+                },
+                formKey: _formKeyName,
+                validator: (value) {
+                  if (value == null || value.trim().length == 0) {
+                    return 'Name cannot be empty';
+                  } else if (value.trim().length > 30) {
+                    return 'Name must be 30 characters or less';
+                  } else {
+                    return null;
+                  }
+                },
+              ),
+            ),
+
+            /// Description
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: LabelTextInput(
+                initialValue: _groupDescription,
+                hintText: widget.group.description,
+                label: 'Description',
+                valSetText: (value) {
+                  _groupDescription = value;
+                },
+                formKey: _formKeyDesc,
+                validator: (value) {
+                  if (value.trim().length >= 100) {
+                    return 'Description must be 100 characters or less';
+                  } else {
+                    return null;
+                  }
+                },
+              ),
+            ),
+
+            /// Color
+            Provider<bool>.value(
+              value: _expanded.value,
+              child: ColorSelector(
+                initialValue: _groupColorShade,
+                initialExpanded: _expanded.value,
+                valSetColorShade: (value) {
+                  setState(() {
+                    _groupColorShade = value;
+                  });
+                },
+                valSetExpanded: (value) {
+                  setState(() {
+                    _expanded.value = value;
+                  });
+                },
+              ),
+            ),
+
+            Visibility(
+              visible: _expanded.value,
+              child: Column(
                 children: <Widget>[
-                  /// Cancel changes
-                  FloatingActionButton(
-                    heroTag: 'Cancel',
-                    backgroundColor: Colors.red,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.white,
+                  SizedBox(height: 10.0),
+
+                  Text(
+                    'Preview in dashboard',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 15.0,
+                      letterSpacing: 1.5,
                     ),
                   ),
+                  SizedBox(height: 10.0),
 
-                  SizedBox(width: 20.0),
-
-                  /// Confirm amd make changes
-                  FloatingActionButton(
-                    heroTag: 'Confirm',
-                    backgroundColor: Colors.green,
-                    onPressed: () {
-                      if (_formKeyName.currentState.validate() &&
-                          _formKeyDesc.currentState.validate()) {
-                        if (_groupName.trim() != widget.group.name ||
-                            _groupDescription.trim() !=
-                                widget.group.description ||
-                            _groupColorShade.themeId !=
-                                widget.group.colorShade.themeId ||
-                            _groupColorShade.shade !=
-                                widget.group.colorShade.shade) {
-                          dbService.updateGroupData(
-                            widget.group.groupDocId,
-                            name: _groupName.trim(),
-                            description: _groupDescription.trim(),
-                            colorShade: _groupColorShade,
-                            ownerName: _groupOwnerName.trim(),
-                            ownerEmail: _groupOwnerEmail.trim(),
-                          );
-                        }
-                        Navigator.of(context).pop();
+                  /// Preview
+                  GroupCard(
+                    groupName: _groupName,
+                    ownerName: _groupOwnerName,
+                    groupColor: () {
+                      if (_groupColorShade.color == null) {
+                        _groupColorShade.color = getOriginThemeData(
+                                ThemeProvider.themeOf(context).id)
+                            .primaryColor;
                       }
-                    },
-                    child: Icon(
-                      Icons.check,
-                      color: Colors.white,
-                    ),
+                      return _groupColorShade.color;
+                    }(),
+                    hasNotification: false,
                   ),
                 ],
               ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }

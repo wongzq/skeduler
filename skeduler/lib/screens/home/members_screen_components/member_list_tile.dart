@@ -155,13 +155,13 @@ class MemberListTile extends StatelessWidget {
                                               if (formKey.currentState
                                                   .validate()) {
                                                 await dbService
-                                                    .changeMemberRoleInGroup(
+                                                    .updateMemberRoleInGroup(
                                                   groupDocId: groupDocId.value,
                                                   memberDocId: member.email,
                                                   role: MemberRole.owner,
                                                 );
                                                 await dbService
-                                                    .changeMemberRoleInGroup(
+                                                    .updateMemberRoleInGroup(
                                                   groupDocId: groupDocId.value,
                                                   memberDocId: me.email,
                                                   role: MemberRole.admin,
@@ -174,13 +174,13 @@ class MemberListTile extends StatelessWidget {
                                       );
                                     });
                               } else if (value == MemberOption.makeAdmin) {
-                                await dbService.changeMemberRoleInGroup(
+                                await dbService.updateMemberRoleInGroup(
                                   groupDocId: groupDocId.value,
                                   memberDocId: member.email,
                                   role: MemberRole.admin,
                                 );
                               } else if (value == MemberOption.makeMember) {
-                                await dbService.changeMemberRoleInGroup(
+                                await dbService.updateMemberRoleInGroup(
                                   groupDocId: groupDocId.value,
                                   memberDocId: member.email,
                                   role: MemberRole.member,

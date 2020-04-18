@@ -44,66 +44,61 @@ class _GroupScreenState extends State<GroupScreen> {
 
               return snapshot == null || snapshot.data == null
                   ? Loading()
-                  : Scaffold(
-                      appBar: AppBar(
-                        title: group.name == null
-                            ? Text(
-                                'Group',
-                                style: textStyleAppBarTitle,
-                              )
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    group.name,
-                                    style: textStyleAppBarTitle,
-                                  ),
-                                  Text(
-                                    'Group',
-                                    style: textStyleBody,
-                                  )
-                                ],
-                              ),
-                      ),
-                      drawer: HomeDrawer(),
-                      body: StreamBuilder(
-                          stream:
-                              dbService.getGroupMemberMyData(groupDocId.value),
-                          builder: (context, snapshot) {
-                            Member me = snapshot != null ? snapshot.data : null;
+                  : StreamBuilder(
+                      stream: dbService.getGroupMemberMyData(groupDocId.value),
+                      builder: (context, snapshot) {
+                        Member me = snapshot != null ? snapshot.data : null;
 
-                            return me != null && me.role == MemberRole.pending
-                                ? Container()
-                                : Stack(
-                                    children: <Widget>[
-                                      /// Text: Group name
-                                      Container(
-                                        padding: EdgeInsets.all(20.0),
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          group.description,
-                                          style: textStyleBody,
+                        return snapshot == null || snapshot.data == null
+                            ? Loading()
+                            : Scaffold(
+                                appBar: AppBar(
+                                  title: group.name == null
+                                      ? Text(
+                                          'Group',
+                                          style: textStyleAppBarTitle,
+                                        )
+                                      : Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              group.name,
+                                              style: textStyleAppBarTitle,
+                                            ),
+                                            Text(
+                                              'Group',
+                                              style: textStyleBody,
+                                            )
+                                          ],
                                         ),
-                                      ),
-
-                                      /// SpeedDial: Options
-                                      me != null
-                                          ? () {
-                                              if (me.role == MemberRole.owner)
-                                                return GroupScreenOptionsOwner();
-                                              else if (me.role ==
-                                                  MemberRole.admin)
-                                                return GroupScreenOptionsAdmin();
-                                              else if (me.role ==
-                                                  MemberRole.member)
-                                                return GroupScreenOptionsMember();
-                                              else
-                                                return Container();
-                                            }()
-                                          : Container(),
-                                    ],
-                                  );
-                          }),
+                                ),
+                                drawer: HomeDrawer(),
+                                floatingActionButton: me != null
+                                    ? () {
+                                        if (me.role == MemberRole.owner)
+                                          return GroupScreenOptionsOwner();
+                                        else if (me.role == MemberRole.admin)
+                                          return GroupScreenOptionsAdmin();
+                                        else if (me.role == MemberRole.member)
+                                          return GroupScreenOptionsMember();
+                                        else
+                                          return Container();
+                                      }()
+                                    : Container(),
+                                body:
+                                    me != null && me.role == MemberRole.pending
+                                        ? Container()
+                                        : Container(
+                                            padding: EdgeInsets.all(20.0),
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              group.description,
+                                              style: textStyleBody,
+                                            ),
+                                          ),
+                              );
+                      },
                     );
             },
           );

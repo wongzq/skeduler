@@ -51,102 +51,88 @@ class _AddMemberState extends State<AddMember> {
                     ],
                   ),
                 ),
-                body: Stack(
+                floatingActionButton: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => unfocus(),
-                      child: Column(
-                        children: <Widget>[
-                          /// Required fields
-                          /// Email
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: LabelTextInput(
-                              initialValue: _newMemberEmail,
-                              hintText: 'Required',
-                              label: 'Email',
-                              valSetText: (value) {
-                                _newMemberEmail = value;
-                              },
-                              formKey: _formKeyName,
-                              validator: (value) {
-                                RegExp regExp = RegExp(
-                                    r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)");
-                                return _newMemberEmail != null &&
-                                        _newMemberEmail.trim().length > 0 &&
-                                        regExp.hasMatch(_newMemberEmail)
-                                    ? null
-                                    : 'Invalid email address';
-                              },
-                            ),
-                          ),
-                        ],
+                    /// Cancel changes
+                    FloatingActionButton(
+                      heroTag: 'Cancel',
+                      backgroundColor: Colors.red,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.white,
                       ),
                     ),
 
-                    /// Editing mode
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 20.0, right: 20.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            /// Cancel changes
-                            FloatingActionButton(
-                              heroTag: 'Cancel',
-                              backgroundColor: Colors.red,
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Icon(
-                                Icons.close,
-                                color: Colors.white,
-                              ),
-                            ),
+                    SizedBox(width: 20.0),
 
-                            SizedBox(width: 20.0),
-
-                            /// Confirm amd make changes
-                            FloatingActionButton(
-                              heroTag: 'Confirm',
-                              backgroundColor: Colors.green,
-                              onPressed: () async {
-                                if (_formKeyName.currentState.validate()) {
-                                  await dbService
-                                      .inviteMemberToGroup(
-                                    groupDocId: groupDocId.value,
-                                    newMemberEmail: _newMemberEmail,
-                                  )
-                                      .then((errorMsg) {
-                                    if (errorMsg == null) {
-                                      Fluttertoast.showToast(
-                                        msg: _newMemberEmail +
-                                            ' has been invited',
-                                        toastLength: Toast.LENGTH_LONG,
-                                      );
-                                      Navigator.of(context).pop();
-                                    } else {
-                                      Fluttertoast.showToast(
-                                        msg: errorMsg,
-                                        toastLength: Toast.LENGTH_LONG,
-                                      );
-                                    }
-                                  });
-                                }
-                              },
-                              child: Icon(
-                                Icons.check,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
+                    /// Confirm amd make changes
+                    FloatingActionButton(
+                      heroTag: 'Confirm',
+                      backgroundColor: Colors.green,
+                      onPressed: () async {
+                        if (_formKeyName.currentState.validate()) {
+                          await dbService
+                              .inviteMemberToGroup(
+                            groupDocId: groupDocId.value,
+                            newMemberEmail: _newMemberEmail,
+                          )
+                              .then((errorMsg) {
+                            if (errorMsg == null) {
+                              Fluttertoast.showToast(
+                                msg: _newMemberEmail + ' has been invited',
+                                toastLength: Toast.LENGTH_LONG,
+                              );
+                              Navigator.of(context).pop();
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: errorMsg,
+                                toastLength: Toast.LENGTH_LONG,
+                              );
+                            }
+                          });
+                        }
+                      },
+                      child: Icon(
+                        Icons.check,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                body: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => unfocus(),
+                  child: Column(
+                    children: <Widget>[
+                      /// Required fields
+                      /// Email
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: LabelTextInput(
+                          initialValue: _newMemberEmail,
+                          hintText: 'Required',
+                          label: 'Email',
+                          valSetText: (value) {
+                            _newMemberEmail = value;
+                          },
+                          formKey: _formKeyName,
+                          validator: (value) {
+                            RegExp regExp = RegExp(
+                                r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)");
+                            return _newMemberEmail != null &&
+                                    _newMemberEmail.trim().length > 0 &&
+                                    regExp.hasMatch(_newMemberEmail)
+                                ? null
+                                : 'Invalid email address';
+                          },
                         ),
                       ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
               );
       },

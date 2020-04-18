@@ -18,7 +18,6 @@ class DatabaseService {
   /// Collection References
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// collection reference
   final CollectionReference usersCollection =
       Firestore.instance.collection('users');
   final CollectionReference groupsCollection =
@@ -28,18 +27,17 @@ class DatabaseService {
   /// Getter methods
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// getter methods
-  /// get [User] data
+  /// get [User] data as stream
   Stream<User> get user {
     return usersCollection.document(userId).snapshots().map(_userFromSnapshot);
   }
 
-  /// get ['users'] collection
+  /// get ['users'] collection of [Group] as stream
   Stream<List<User>> get users {
     return usersCollection.snapshots().map(_usersFromSnapshots);
   }
 
-  /// get ['groups'] collection
+  /// get ['groups'] collection as stream
   Stream<List<Group>> get groups {
     return groupsCollection
         .where('members', arrayContains: userId)
@@ -47,7 +45,7 @@ class DatabaseService {
         .map(_groupsFromSnapshots);
   }
 
-  /// get [Group] data
+  /// get [Group] data as stream
   Stream<Group> getGroup(String groupDocId) {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
@@ -57,7 +55,7 @@ class DatabaseService {
             .map(_groupFromSnapshot);
   }
 
-  /// get [Group][Member] data of me
+  /// get [Group][Member] data of me as stream
   Stream<Member> getGroupMemberMyData(String groupDocId) {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
@@ -69,7 +67,7 @@ class DatabaseService {
             .map(_memberFromSnapshot);
   }
 
-  /// get [Group][Member]s' data
+  /// get [Group][Member]s' data as stream
   Stream<List<Member>> getGroupMembers(String groupDocId) {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
@@ -80,7 +78,7 @@ class DatabaseService {
             .map(_membersFromSnapshots);
   }
 
-  /// get [Group][Timetable] data
+  /// get [Group][Timetable] data as stream
   Stream<List<Timetable>> getGroupTimetables(String groupDocId) {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
@@ -91,47 +89,42 @@ class DatabaseService {
             .map(_timetablesFromSnapshots);
   }
 
+  /// get [Group][Timetable] data
   Future<Timetable> getGroupTimetable(
       String groupDocId, String timetableDocId) async {
-    if (groupDocId == null ||
-        groupDocId.trim() == '' ||
-        timetableDocId == null ||
-        timetableDocId.trim() == '') {
-      return null;
-    } else {
-      return await groupsCollection
-          .document(groupDocId)
-          .collection('timetables')
-          .document(timetableDocId)
-          .get()
-          .then((timetable) {
-        if (timetable.exists) {
-          return _timetableFromSnapshot(timetable);
-        } else {
-          return null;
-        }
-      });
-    }
+    return groupDocId == null ||
+            groupDocId.trim() == '' ||
+            timetableDocId == null ||
+            timetableDocId.trim() == ''
+        ? null
+        : await groupsCollection
+            .document(groupDocId)
+            .collection('timetables')
+            .document(timetableDocId)
+            .get()
+            .then((timetable) {
+            return timetable.exists ? _timetableFromSnapshot(timetable) : null;
+          });
   }
 
+  /// get [Group][Timetable] data of today as stream
   Stream<List<Timetable>> getGroupTimetableForToday(String groupDocId) {
-    return groupDocId != null && groupDocId.trim() != ''
-        ? groupsCollection
+    return groupDocId == null && groupDocId.trim() == ''
+        ? null
+        : groupsCollection
             .document(groupDocId)
             .collection('timetables')
             .where('startTime', isLessThanOrEqualTo: Timestamp.now())
             .where('endTime', isGreaterThanOrEqualTo: Timestamp.now())
             .limit(1)
             .snapshots()
-            .map(_timetablesFromSnapshots)
-        : null;
+            .map(_timetablesFromSnapshots);
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Setter methods
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// setter methods
   /// set [User] data
   Future setUserData(String email, String name) async {
     return await usersCollection.document(email).setData({
@@ -160,20 +153,20 @@ class DatabaseService {
         'name': ownerName,
       },
       'members': [ownerEmail],
-    }).then((onValue) async {
+    }).then((_) async {
       await inviteMemberToGroup(
         groupDocId: newGroupDoc.documentID,
         newMemberEmail: ownerEmail,
         memberRole: MemberRole.owner,
       );
-      await usersCollection.document(userId).get().then((onValue) async {
+      await usersCollection.document(userId).get().then((groupData) async {
         await groupsCollection
             .document(newGroupDoc.documentID)
             .collection('members')
             .document(userId)
             .updateData({
-          'name': onValue.data['name'],
-          'nickname': onValue.data['name'],
+          'name': groupData.data['name'],
+          'nickname': groupData.data['name'],
         });
       });
     });
@@ -217,7 +210,7 @@ class DatabaseService {
     }
   }
 
-  /// add [User] to [Group]
+  /// add [Member] to [Group]
   Future<String> inviteMemberToGroup({
     @required String groupDocId,
     @required String newMemberEmail,
@@ -231,40 +224,40 @@ class DatabaseService {
         .document(newMemberEmail);
 
     await usersCollection.document(newMemberEmail).get().then((user) async {
-      if (user.exists) {
-        await groupMemberRef.get().then((member) async {
-          if (!member.exists) {
-            await groupsCollection.document(groupDocId).updateData({
-              'members': FieldValue.arrayUnion([newMemberEmail])
-            });
-            await groupMemberRef.setData({'role': memberRole.index});
-          } else {
-            errorMsg = 'User is already in the group';
-          }
-        });
-      } else {
-        errorMsg = 'User not found';
-      }
+      user.exists
+          ? await groupMemberRef.get().then((member) async {
+              !member.exists
+                  ? await groupsCollection.document(groupDocId).updateData({
+                      'members': FieldValue.arrayUnion([newMemberEmail])
+                    }).then((_) async {
+                      await groupMemberRef.setData({'role': memberRole.index});
+                    })
+                  : errorMsg = 'User is already in the group';
+            })
+          : errorMsg = 'User not found';
     });
+
     return errorMsg;
   }
 
-  /// remove [User] from [Group]
+  /// remove [Member] from [Group]
   Future removeMemberFromGroup({
     @required String groupDocId,
     @required String memberDocId,
   }) async {
-    await groupsCollection.document(groupDocId).updateData({
+    return await groupsCollection.document(groupDocId).updateData({
       'members': FieldValue.arrayRemove([memberDocId])
+    }).then((_) async {
+      await groupsCollection
+          .document(groupDocId)
+          .collection('members')
+          .document(memberDocId)
+          .delete();
     });
-    return await groupsCollection
-        .document(groupDocId)
-        .collection('members')
-        .document(memberDocId)
-        .delete();
   }
 
-  Future changeMemberRoleInGroup({
+  /// update [Member]'s role in group
+  Future updateMemberRoleInGroup({
     @required String groupDocId,
     @required String memberDocId,
     @required MemberRole role,
@@ -276,154 +269,151 @@ class DatabaseService {
         .updateData({'role': role.index});
   }
 
+  /// [Member] accepts [Group] invitation
   Future acceptGroupInvitation(String groupDocId) async {
-    if (groupDocId == null || groupDocId.trim() == '') {
-      return null;
-    } else {
-      return await usersCollection.document(userId).get().then((onValue) async {
-        if (onValue.exists) {
-          DocumentReference groupMemberRef = groupsCollection
-              .document(groupDocId)
-              .collection('members')
-              .document(userId);
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : await usersCollection.document(userId).get().then((userData) async {
+            if (userData.exists) {
+              DocumentReference groupMemberRef = groupsCollection
+                  .document(groupDocId)
+                  .collection('members')
+                  .document(userId);
 
-          await groupMemberRef.updateData({
-            'role': MemberRole.member.index,
-            'name': onValue.data['name'],
-            'nickname': onValue.data['name'],
+              await groupMemberRef.updateData({
+                'role': MemberRole.member.index,
+                'name': userData.data['name'],
+                'nickname': userData.data['name'],
+              });
+            }
           });
-        }
-      });
-    }
   }
 
+  /// [Member] declines [Group] invitation
   Future declineGroupInvitation(String groupDocId) async {
-    if (groupDocId == null || groupDocId.trim() == '') {
-      return null;
-    } else {
-      await groupsCollection.document(groupDocId).updateData({
-        'members': FieldValue.arrayRemove([userId])
-      });
-
-      return await groupsCollection
-          .document(groupDocId)
-          .collection('members')
-          .document(userId)
-          .delete();
-    }
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : await groupsCollection.document(groupDocId).updateData({
+            'members': FieldValue.arrayRemove([userId])
+          }).then((_) async {
+            await groupsCollection
+                .document(groupDocId)
+                .collection('members')
+                .document(userId)
+                .delete();
+          });
   }
 
+  /// [Member] leaves [Group]
+  Future leaveGroup(String groupDocId) async {
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : await groupsCollection
+            .document(groupDocId)
+            .get()
+            .then((groupData) async {
+            if (groupData.exists) {
+              await groupsCollection.document(groupDocId).updateData({
+                'members': FieldValue.arrayRemove([userId])
+              }).then((_) async {
+                await groupsCollection
+                    .document(groupDocId)
+                    .collection('members')
+                    .document(userId)
+                    .delete();
+              });
+            }
+          });
+  }
+
+  /// Delete [Group]
   Future deleteGroup(String groupDocId) async {
     // Cloud function to delete all subcollections
     // temporary replacement
-    if (groupDocId == null || groupDocId.trim() == '') {
-      return null;
-    } else {
-      await groupsCollection
-          .document(groupDocId)
-          .collection('members')
-          .getDocuments()
-          .then((onValue) {
-        for (DocumentSnapshot snap in onValue.documents) {
-          snap.reference.delete();
-        }
-      });
-
-      return await groupsCollection.document(groupDocId).delete();
-    }
-  }
-
-  Future leaveGroup(String groupDocId) async {
-    if (groupDocId == null || groupDocId.trim() == '') {
-      return null;
-    } else {
-      return await groupsCollection
-          .document(groupDocId)
-          .get()
-          .then((onValue) async {
-        if (onValue.exists) {
-          await groupsCollection.document(groupDocId).updateData({
-            'members': FieldValue.arrayRemove([userId])
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : await groupsCollection
+            .document(groupDocId)
+            .collection('members')
+            .getDocuments()
+            .then((members) {
+            for (DocumentSnapshot snap in members.documents) {
+              snap.reference.delete();
+            }
+          }).then((_) async {
+            await groupsCollection.document(groupDocId).delete();
           });
-          await groupsCollection
-              .document(groupDocId)
-              .collection('members')
-              .document(userId)
-              .delete();
-        }
-      });
-    }
   }
 
+  /// update [Group][Timetable]'s data
   Future updateGroupTimetable(
     String groupDocId,
-    TempTimetable tempTimetable,
+    EditTimetable editTTB,
   ) async {
-    if (groupDocId != null && groupDocId.trim() != '') {
-      DocumentReference timetableRef = groupsCollection
-          .document(groupDocId)
-          .collection('timetables')
-          .document(tempTimetable.docId);
+    DocumentReference timetableRef = groupsCollection
+        .document(groupDocId)
+        .collection('timetables')
+        .document(editTTB.docId);
 
-      return await timetableRef.get().then((timetable) async {
-        if (!timetable.exists) {
-          await timetableRef.setData(firestoreMapFromTimetable(tempTimetable));
-          await groupsCollection.document(groupDocId).updateData({
-            'timetables': FieldValue.arrayUnion([tempTimetable.docId])
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : await timetableRef.get().then((timetable) async {
+            !timetable.exists
+                ? await timetableRef
+                    .setData(firestoreMapFromTimetable(editTTB))
+                    .then((_) async {
+                    await groupsCollection.document(groupDocId).updateData({
+                      'timetables': FieldValue.arrayUnion([editTTB.docId])
+                    });
+                  })
+                : await timetableRef
+                    .updateData(firestoreMapFromTimetable(editTTB));
           });
-        } else {
-          await timetableRef
-              .updateData(firestoreMapFromTimetable(tempTimetable));
-        }
-      });
-    } else {
-      return null;
-    }
   }
 
+  /// update [Group][Timetable]'s documentID by cloning document with a new ID
   Future<bool> updateGroupTimetableDocId(
     String groupDocId,
     String oldTimetableId,
     String newTimetableId,
   ) async {
-    if (groupDocId != null && groupDocId.trim() != '') {
-      CollectionReference timetablesRef =
-          groupsCollection.document(groupDocId).collection('timetables');
+    CollectionReference timetablesRef =
+        groupsCollection.document(groupDocId).collection('timetables');
+    return groupDocId == null || groupDocId.trim() == ''
+        ? false
+        : await timetablesRef
+            .document(newTimetableId)
+            .get()
+            .then((groupData) async {
+            /// If there is another timetable with the same ID
+            /// Then, it doesn't replace the pre-existing timetable
+            if (!groupData.exists) {
+              await timetablesRef
+                  .document(oldTimetableId)
+                  .get()
+                  .then((groupData) async {
+                await timetablesRef
+                    .document(newTimetableId)
+                    .setData(groupData.data);
 
-      return await timetablesRef
-          .document(newTimetableId)
-          .get()
-          .then((groupData) async {
-        /// If there is another timetable with same ID, doesn't replace
-        if (!groupData.exists) {
-          await timetablesRef
-              .document(oldTimetableId)
-              .get()
-              .then((groupData) async {
-            await timetablesRef
-                .document(newTimetableId)
-                .setData(groupData.data);
+                await timetablesRef.document(oldTimetableId).delete();
 
-            await timetablesRef.document(oldTimetableId).delete();
+                await groupsCollection.document(groupDocId).updateData({
+                  'timetables': FieldValue.arrayUnion([newTimetableId])
+                });
 
-            await groupsCollection.document(groupDocId).updateData({
-              'timetables': FieldValue.arrayUnion([newTimetableId])
-            });
-
-            await groupsCollection.document(groupDocId).updateData({
-              'timetables': FieldValue.arrayRemove([oldTimetableId])
-            });
+                await groupsCollection.document(groupDocId).updateData({
+                  'timetables': FieldValue.arrayRemove([oldTimetableId])
+                });
+              });
+              return true;
+            } else {
+              return false;
+            }
           });
-          return true;
-        } else {
-          return false;
-        }
-      });
-    } else {
-      return false;
-    }
   }
 
+  /// update [Group][Member]'s available schedule times
   Future updateGroupMemberTimes(
     String groupDocId,
     String memberDocId,
@@ -432,64 +422,66 @@ class DatabaseService {
     memberDocId =
         memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
 
-    if (groupDocId != null && groupDocId.trim() != '') {
-      return await groupsCollection
-          .document(groupDocId)
-          .collection('members')
-          .document(memberDocId)
-          .get()
-          .then((member) async {
-        if (member.exists) {
-          List<Time> prevTimes;
-          List<Time> timesRemoveSameDay;
-          List<Map<String, Timestamp>> timestamps = [];
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : await groupsCollection
+            .document(groupDocId)
+            .collection('members')
+            .document(memberDocId)
+            .get()
+            .then((member) async {
+            if (member.exists) {
+              List<Time> prevTimes;
+              List<Time> timesRemoveSameDay;
+              List<Map<String, Timestamp>> timestamps = [];
 
-          if (member.data['times'] != null) {
-            prevTimes = _timesFromDynamicList(member.data['times']);
-            timesRemoveSameDay =
-                generateTimesRemoveSameDay(prevTimes, newTimes);
+              if (member.data['times'] != null) {
+                /// get previous times
+                prevTimes = _timesFromDynamicList(member.data['times']);
 
-            /// remove previous times
-            await groupsCollection
-                .document(groupDocId)
-                .collection('members')
-                .document(memberDocId)
-                .updateData({'times': FieldValue.delete()});
+                /// generate new times that overwrites previous times on the same day
+                timesRemoveSameDay =
+                    generateTimesRemoveSameDay(prevTimes, newTimes);
 
-            timesRemoveSameDay.forEach((time) {
-              Timestamp startTimestamp =
-                  Timestamp(time.startTime.millisecondsSinceEpoch ~/ 1000, 0);
-              Timestamp endTimestamp =
-                  Timestamp(time.endTime.millisecondsSinceEpoch ~/ 1000, 0);
+                /// remove previous times
+                await groupsCollection
+                    .document(groupDocId)
+                    .collection('members')
+                    .document(memberDocId)
+                    .updateData({'times': FieldValue.delete()});
 
-              timestamps
-                  .add({'startTime': startTimestamp, 'endTime': endTimestamp});
-            });
-          } else {
-            newTimes.forEach((time) {
-              Timestamp startTimestamp =
-                  Timestamp(time.startTime.millisecondsSinceEpoch ~/ 1000, 0);
-              Timestamp endTimestamp =
-                  Timestamp(time.endTime.millisecondsSinceEpoch ~/ 1000, 0);
+                /// convert [List<Time>] into [List<Map<String, Timestamp>] to be stored in Firestore
+                timesRemoveSameDay.forEach((time) {
+                  Timestamp startTimestamp = Timestamp.fromDate(time.startTime);
+                  Timestamp endTimestamp = Timestamp.fromDate(time.endTime);
+                  timestamps.add({
+                    'startTime': startTimestamp,
+                    'endTime': endTimestamp,
+                  });
+                });
+              } else {
+                /// convert [List<Time>] into [List<Map<String, Timestamp>] to be stored in Firestore
+                newTimes.forEach((time) {
+                  Timestamp startTimestamp = Timestamp.fromDate(time.startTime);
+                  Timestamp endTimestamp = Timestamp.fromDate(time.endTime);
+                  timestamps.add({
+                    'startTime': startTimestamp,
+                    'endTime': endTimestamp,
+                  });
+                });
+              }
 
-              timestamps
-                  .add({'startTime': startTimestamp, 'endTime': endTimestamp});
-            });
-          }
-
-          /// add new times
-          await groupsCollection
-              .document(groupDocId)
-              .collection('members')
-              .document(memberDocId)
-              .updateData({'times': FieldValue.arrayUnion(timestamps)});
-        }
-      });
-    } else {
-      return null;
-    }
+              /// add new times to Firestore
+              await groupsCollection
+                  .document(groupDocId)
+                  .collection('members')
+                  .document(memberDocId)
+                  .updateData({'times': FieldValue.arrayUnion(timestamps)});
+            }
+          });
   }
 
+  /// remove [Group][Member]'s available schedule times
   Future removeGroupMemberTimes(
     String groupDocId,
     String memberDocId,
@@ -499,67 +491,65 @@ class DatabaseService {
         memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
 
     List<Time> prevTimes = [];
-    List<Time> timesOfSameDay = [];
+    List<Time> timesOnSameDay = [];
     List<Map<String, Timestamp>> removeTimestamps = [];
 
-    if (groupDocId != null && groupDocId.trim() != '') {
-      return await groupsCollection
-          .document(groupDocId)
-          .collection('members')
-          .document(memberDocId)
-          .get()
-          .then((member) async {
-        if (member.data['times'] != null) {
-          prevTimes = _timesFromDynamicList(member.data['times']);
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : await groupsCollection
+            .document(groupDocId)
+            .collection('members')
+            .document(memberDocId)
+            .get()
+            .then((member) async {
+            if (member.data['times'] != null) {
+              prevTimes = _timesFromDynamicList(member.data['times']);
 
-          for (int p = 0; p < prevTimes.length; p++) {
-            for (int r = 0; r < removeTimes.length; r++) {
-              if ((prevTimes[p].startTime.year ==
-                          removeTimes[r].startTime.year &&
-                      prevTimes[p].startTime.month ==
-                          removeTimes[r].startTime.month &&
-                      prevTimes[p].startTime.day ==
-                          removeTimes[r].startTime.day) ||
-                  (prevTimes[p].endTime.year == removeTimes[r].endTime.year &&
-                      prevTimes[p].endTime.month ==
-                          removeTimes[r].endTime.month &&
-                      prevTimes[p].endTime.day == removeTimes[r].endTime.day)) {
-                timesOfSameDay.add(prevTimes[p]);
+              for (int p = 0; p < prevTimes.length; p++) {
+                for (int r = 0; r < removeTimes.length; r++) {
+                  /// keep times with times on same day
+                  if ((prevTimes[p].startTime.year ==
+                              removeTimes[r].startTime.year &&
+                          prevTimes[p].startTime.month ==
+                              removeTimes[r].startTime.month &&
+                          prevTimes[p].startTime.day ==
+                              removeTimes[r].startTime.day) ||
+                      (prevTimes[p].endTime.year ==
+                              removeTimes[r].endTime.year &&
+                          prevTimes[p].endTime.month ==
+                              removeTimes[r].endTime.month &&
+                          prevTimes[p].endTime.day ==
+                              removeTimes[r].endTime.day)) {
+                    /// add to list
+                    timesOnSameDay.add(prevTimes[p]);
+                  }
+                }
               }
+
+              /// convert [List<Time>] to [List<Map<String, Timestamp>]
+              timesOnSameDay.forEach((time) {
+                Timestamp startTimestamp = Timestamp.fromDate(time.startTime);
+                Timestamp endTimestamp = Timestamp.fromDate(time.endTime);
+                removeTimestamps.add({
+                  'startTime': startTimestamp,
+                  'endTime': endTimestamp,
+                });
+              });
+
+              await groupsCollection
+                  .document(groupDocId)
+                  .collection('members')
+                  .document(memberDocId)
+                  .updateData(
+                      {'times': FieldValue.arrayRemove(removeTimestamps)});
             }
-          }
-
-          timesOfSameDay.forEach((time) {
-            Timestamp startTimestamp =
-                Timestamp(time.startTime.millisecondsSinceEpoch ~/ 1000, 0);
-            Timestamp endTimestamp =
-                Timestamp(time.endTime.millisecondsSinceEpoch ~/ 1000, 0);
-
-            Map<String, Timestamp> removeTimestamp = {
-              'startTime': startTimestamp,
-              'endTime': endTimestamp
-            };
-
-            removeTimestamps.add(removeTimestamp);
           });
-
-          await groupsCollection
-              .document(groupDocId)
-              .collection('members')
-              .document(memberDocId)
-              .updateData({'times': FieldValue.arrayRemove(removeTimestamps)});
-        }
-      });
-    } else {
-      return null;
-    }
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   /// Auxiliary methods
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// auxiliary methods
   /// convert snapshot to [User]
   User _userFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
@@ -589,6 +579,7 @@ class DatabaseService {
         : Group(groupDocId: null);
   }
 
+  /// convert snapshot to [Member]
   Member _memberFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
         ? Member(
@@ -597,23 +588,22 @@ class DatabaseService {
             nickname: snapshot.data['nickname'] ?? snapshot.data['name'],
             description: snapshot.data['description'],
             role: MemberRole.values[snapshot.data['role']],
-            colorShade: snapshot.data['colorShade'] != null
-                ? ColorShade(
-                    themeId: snapshot.data['colorShade']['themeId'],
-                    shade: snapshot.data['colorShade']['shade'],
-                  )
-                : null,
+            // colorShade: ColorShade(
+            //   themeId: snapshot.data['colorShade']['themeId'],
+            //   shade: snapshot.data['colorShade']['shade'],
+            // ),
             times: _timesFromDynamicList(snapshot.data['times'] ?? []),
           )
         : Member(email: null);
   }
 
+  /// convert snapshot to [Timetable]
   Timetable _timetableFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
         ? Timetable(
             docId: snapshot.documentID,
-            startDate: snapshot.data['startDate'] ?? Timestamp.now(),
-            endDate: snapshot.data['endDate'] ?? Timestamp.now(),
+            startDate: snapshot.data['startDate'] ?? null,
+            endDate: snapshot.data['endDate'] ?? null,
             axisDays: snapshot.data['axisDays'] ?? [],
             axisTimes: snapshot.data['axisTimes'] ?? [],
             axisCustom: snapshot.data['axisCustom'] ?? [],
@@ -641,13 +631,16 @@ class DatabaseService {
     return query.documents.map(_timetableFromSnapshot).toList();
   }
 
-  List<Time> _timesFromDynamicList(List timesDynamic) {
+  /// convert [List<dynamic>] into [List<Time>]
+  List<Time> _timesFromDynamicList(List<dynamic> timesDynamic) {
     List<Time> times = [];
 
     timesDynamic.forEach((elem) {
       Map map = elem as Map;
-
-      times.add(Time(map['startTime'].toDate(), map['endTime'].toDate()));
+      times.add(Time(
+        map['startTime'].toDate(),
+        map['endTime'].toDate(),
+      ));
     });
 
     return times;

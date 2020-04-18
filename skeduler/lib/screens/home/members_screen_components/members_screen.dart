@@ -83,43 +83,38 @@ class _MembersScreenState extends State<MembersScreen> {
                                                   ),
                                           ),
                                           drawer: HomeDrawer(),
-                                          body: Stack(
-                                            children: <Widget>[
-                                              ListView.builder(
-                                                physics: BouncingScrollPhysics(
-                                                  parent:
-                                                      AlwaysScrollableScrollPhysics(),
-                                                ),
-                                                itemCount: members != null
-                                                    ? members.length
-                                                    : 0,
-                                                itemBuilder: (context, index) {
-                                                  if (members != null) {
-                                                    members.sort((member1,
-                                                            member2) =>
+                                          floatingActionButton: me.role ==
+                                                  MemberRole.owner
+                                              ? MembersScreenOptionsOwner()
+                                              : me.role == MemberRole.admin
+                                                  ? MembersScreenOptionsAdmin()
+                                                  : me.role == MemberRole.member
+                                                      ? MembersScreenOptionsMember()
+                                                      : Container(),
+                                          body: ListView.builder(
+                                            physics: BouncingScrollPhysics(
+                                              parent:
+                                                  AlwaysScrollableScrollPhysics(),
+                                            ),
+                                            itemCount: members != null
+                                                ? members.length
+                                                : 0,
+                                            itemBuilder: (context, index) {
+                                              if (members != null) {
+                                                members.sort(
+                                                    (member1, member2) =>
                                                         member2.role.index
                                                             .compareTo(member1
                                                                 .role.index));
-                                                  }
+                                              }
 
-                                                  return members != null
-                                                      ? MemberListTile(
-                                                          me: me,
-                                                          member:
-                                                              members[index],
-                                                        )
-                                                      : Container();
-                                                },
-                                              ),
-                                              me.role == MemberRole.owner
-                                                  ? MembersScreenOptionsOwner()
-                                                  : me.role == MemberRole.admin
-                                                      ? MembersScreenOptionsAdmin()
-                                                      : me.role ==
-                                                              MemberRole.member
-                                                          ? MembersScreenOptionsMember()
-                                                          : Container(),
-                                            ],
+                                              return members != null
+                                                  ? MemberListTile(
+                                                      me: me,
+                                                      member: members[index],
+                                                    )
+                                                  : Container();
+                                            },
                                           ),
                                         );
                                 });
