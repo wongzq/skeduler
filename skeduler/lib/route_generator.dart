@@ -9,7 +9,7 @@ import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_edi
 import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_editor.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_screen.dart';
-import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/timetable_settings.dart';
 import 'package:skeduler/screens/wrapper.dart';
 import 'package:skeduler/shared/components/add_member.dart';
 import 'package:skeduler/shared/components/custom_transition_route.dart';

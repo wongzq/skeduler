@@ -3,11 +3,36 @@ import 'package:flutter/foundation.dart';
 import 'package:skeduler/models/group_data/time.dart';
 
 ////////////////////////////////////////////////////////////////////////////////
+/// TimetableMetadata class
+////////////////////////////////////////////////////////////////////////////////
+
+class TimetableMetadata {
+  /// properties
+  String id;
+  Timestamp startDate;
+  Timestamp endDate;
+
+  TimetableMetadata({
+    this.id,
+    this.startDate,
+    this.endDate,
+  });
+
+  Map<String, dynamic> get asMap {
+    return {
+      'id': id,
+      'startDate': startDate,
+      'endDate': endDate,
+    };
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 /// Timetable class
 ////////////////////////////////////////////////////////////////////////////////
 
 class Timetable {
-  /// Properties
+  /// properties
   String _docId;
   DateTime _startDate;
   DateTime _endDate;
@@ -16,7 +41,7 @@ class Timetable {
   List<Time> _axisTimes = [];
   List<String> _axisCustom = [];
 
-  /// Constructor
+  /// constructors
   Timetable({
     @required String docId,
     Timestamp startDate,
@@ -127,6 +152,11 @@ class EditTimetable {
   List<Weekday> get axisDays => this._axisDays;
   List<Time> get axisTimes => this._axisTimes;
   List<String> get axisCustom => this._axisCustom;
+  TimetableMetadata get metadata => TimetableMetadata(
+        id: this._docId,
+        startDate: Timestamp.fromDate(this._startDate),
+        endDate: Timestamp.fromDate(this._endDate),
+      );
 
   /// setter methods
   set docId(String id) => this._docId = id;
@@ -158,25 +188,25 @@ class EditTimetable {
 ////////////////////////////////////////////////////////////////////////////////
 
 /// convert from [EditTimetable] to Firestore's [Map<String, dynamic>] format
-Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTTB) {
+Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTtb) {
   Map<String, dynamic> firestoreMap = {};
 
   /// convert startDate and endDate
-  firestoreMap['startDate'] = Timestamp.fromDate(editTTB.startDate);
-  firestoreMap['endDate'] = Timestamp.fromDate(editTTB.endDate);
+  firestoreMap['startDate'] = Timestamp.fromDate(editTtb.startDate);
+  firestoreMap['endDate'] = Timestamp.fromDate(editTtb.endDate);
 
   /// convert axisDays
-  if (editTTB.axisDays != null) {
+  if (editTtb.axisDays != null) {
     List<int> axisDaysInt = [];
-    editTTB.axisDays.forEach((weekday) => axisDaysInt.add(weekday.index));
+    editTtb.axisDays.forEach((weekday) => axisDaysInt.add(weekday.index));
     axisDaysInt.sort((a, b) => a.compareTo(b));
     firestoreMap['axisDays'] = axisDaysInt;
   }
 
   /// convert axisTimes
-  if (editTTB.axisTimes != null) {
+  if (editTtb.axisTimes != null) {
     List<Map<String, Timestamp>> axisTimesTimestamps = [];
-    editTTB.axisTimes.forEach((time) {
+    editTtb.axisTimes.forEach((time) {
       axisTimesTimestamps.add({
         'startTime': Timestamp.fromDate(time.startTime),
         'endTime': Timestamp.fromDate(time.endTime),
@@ -192,7 +222,7 @@ Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTTB) {
 }
 
 /// auxiliary function to check if all [Timetable] in [List<Timetable>] is consecutive with no conflicts of date
-bool isConsecutiveTimetables(List<Timetable> timetables) {
+bool isConsecutiveTimetables(List<TimetableMetadata> timetables) {
   bool isConsecutive = true;
 
   /// sort the area in terms of startDate
@@ -205,12 +235,22 @@ bool isConsecutiveTimetables(List<Timetable> timetables) {
   for (int i = 0; i < timetables.length; i++) {
     if (i != 0) {
       /// if conflict is found, returns [hasNoConflict] as [false]
-      if (!(timetables[i - 1].startDate.isBefore(timetables[i].startDate) &&
-          timetables[i - 1].endDate.isBefore(timetables[i].endDate) &&
-          (timetables[i - 1].endDate.isBefore(timetables[i].startDate) ||
+      if (!(timetables[i - 1]
+              .startDate
+              .toDate()
+              .isBefore(timetables[i].startDate.toDate()) &&
+          timetables[i - 1]
+              .endDate
+              .toDate()
+              .isBefore(timetables[i].endDate.toDate()) &&
+          (timetables[i - 1]
+                  .endDate
+                  .toDate()
+                  .isBefore(timetables[i].startDate.toDate()) ||
               timetables[i - 1]
                   .endDate
-                  .isAtSameMomentAs(timetables[i].startDate)))) {
+                  .toDate()
+                  .isAtSameMomentAs(timetables[i].startDate.toDate())))) {
         isConsecutive = false;
         break;
       }

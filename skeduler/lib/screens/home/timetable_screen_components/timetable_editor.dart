@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
@@ -20,7 +21,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
-    ValueNotifier<EditTimetable> editTTB =
+    ValueNotifier<EditTimetable> editTtb =
         Provider.of<ValueNotifier<EditTimetable>>(context);
 
     return Scaffold(
@@ -30,10 +31,10 @@ class _TimetableEditorState extends State<TimetableEditor> {
               Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
             ),
             onPressed: () {
-              editTTB.value = null;
+              editTtb.value = null;
               Navigator.of(context).pop();
             }),
-        title: editTTB.value == null
+        title: editTtb.value == null
             ? Text(
                 'Timetable Editor',
                 style: textStyleAppBarTitle,
@@ -42,7 +43,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    editTTB.value.docId,
+                    editTtb.value.docId ?? '',
                     style: textStyleAppBarTitle,
                   ),
                   Text(
@@ -65,11 +66,18 @@ class _TimetableEditorState extends State<TimetableEditor> {
         foregroundColor: getFABIconForegroundColor(context),
         backgroundColor: getFABIconBackgroundColor(context),
         child: Icon(Icons.save),
-        onPressed: () {
-          dbService.updateGroupTimetable(
-            groupDocId.value,
-            editTTB.value,
-          );
+        onPressed: () async {
+          await dbService
+              .updateGroupTimetable(groupDocId.value, editTtb.value)
+              .then((_) {
+            Fluttertoast.showToast(
+                msg: 'Successfully saved timetable',
+                toastLength: Toast.LENGTH_LONG);
+          }).catchError((_) {
+            Fluttertoast.showToast(
+                msg: 'Failed to save timetable',
+                toastLength: Toast.LENGTH_LONG);
+          });
         },
       ),
       body: TimetableDisplay(),

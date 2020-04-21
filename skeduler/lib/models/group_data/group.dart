@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
+import 'package:skeduler/models/group_data/timetable.dart';
 
 class Group {
   /// properties
@@ -12,9 +13,9 @@ class Group {
   String _ownerName;
 
   List<String> _members;
-  List<String> _timetables;
+  List<TimetableMetadata> _timetables;
 
-  /// constructor
+  /// constructors
   Group({
     @required String groupDocId,
     String name = '',
@@ -22,8 +23,8 @@ class Group {
     ColorShade colorShade,
     String ownerEmail = '',
     String ownerName = '',
-    List<dynamic> members = const [],
-    List<dynamic> timetables = const [],
+    List<String> members = const [],
+    List<TimetableMetadata> timetableMetadatas = const [],
   }) {
     _groupDocId = groupDocId;
 
@@ -36,7 +37,7 @@ class Group {
     _members = [];
     members.forEach((member) => _members.add(member));
     _timetables = [];
-    timetables.forEach((timetable) => _timetables.add(timetable));
+    timetableMetadatas.forEach((timetable) => _timetables.add(timetable));
   }
 
   /// getter methods
@@ -50,7 +51,7 @@ class Group {
   // int get numOfMembers => 1;
   int get numOfMembers => _members.length;
   List<String> get members => _members;
-  List<String> get timetables => _timetables;
+  List<TimetableMetadata> get timetables => _timetables;
 }
 
 class GroupMetadata extends ChangeNotifier {

@@ -19,7 +19,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
-    ValueNotifier<EditTimetable> editTTB =
+    ValueNotifier<EditTimetable> editTtb =
         Provider.of<ValueNotifier<EditTimetable>>(context);
 
     return StreamBuilder<Object>(
@@ -59,8 +59,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
                             /// Add timetables to options
                             group.timetables.forEach((timetableDocId) {
                               timetableOptions.add(PopupMenuItem(
-                                value: timetableDocId,
-                                child: Text(timetableDocId),
+                                value: timetableDocId.id,
+                                child: Text(timetableDocId.id),
                               ));
                             });
 
@@ -90,11 +90,11 @@ class _TimetableScreenState extends State<TimetableScreen> {
                           },
                           onSelected: (value) async {
                             if (value == 0) {
-                              editTTB.value = null;
+                              editTtb.value = EditTimetable();
                               Navigator.of(context)
                                   .pushNamed('/timetableEditor');
                             } else {
-                              editTTB.value = EditTimetable.fromTimetable(
+                              editTtb.value = EditTimetable.fromTimetable(
                                 await dbService.getGroupTimetable(
                                   groupDocId.value,
                                   value,
@@ -116,17 +116,10 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     backgroundColor: getFABIconBackgroundColor(context),
                     child: Icon(Icons.edit),
                     onPressed: () {
-                      Navigator.of(context).pushNamed('/timetableEditor',
-                          arguments: editTTB.value);
+                      Navigator.of(context).pushNamed('/timetableEditor');
                     },
                   ),
-                  body: Stack(
-                    children: <Widget>[
-                      Container(
-                        child: TimetableDisplay(),
-                      ),
-                    ],
-                  ),
+                  body: TimetableDisplay(),
                 );
         });
   }

@@ -26,7 +26,7 @@ class EditTimeDialog extends StatefulWidget {
 }
 
 class _EditTimeDialogState extends State<EditTimeDialog> {
-  /// Properties
+  /// properties
   DateTime _startTime = DateTime(DateTime.now().year);
   DateTime _endTime = DateTime(DateTime.now().year);
   String _startTimeStr;

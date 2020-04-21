@@ -12,7 +12,7 @@ class ColorSelector extends StatefulWidget {
   final ValueSetter<bool> valSetExpanded;
   final ValueSetter<ColorShade> valSetColorShade;
 
-  /// constructor
+  /// constructors
   const ColorSelector({
     this.initialExpanded = true,
     this.initialValue,

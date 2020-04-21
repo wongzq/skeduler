@@ -24,7 +24,7 @@ class DateRange extends StatefulWidget {
 }
 
 class _DateRangeState extends State<DateRange> {
-  /// Properties
+  /// properties
   DateTime _startDate;
   DateTime _endDate;
   String _startDateStr;

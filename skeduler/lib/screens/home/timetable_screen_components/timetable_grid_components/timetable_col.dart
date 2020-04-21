@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:skeduler/screens/home/timetable_screen_components/timetable_test/skeduler_timetable_2.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid_box.dart';
 
-class SkedulerHeaderY extends StatelessWidget {
+////////////////////////////////////////////////////////////////////////////////
+/// Col header
+////////////////////////////////////////////////////////////////////////////////
+
+class TimetableHeaderY extends StatelessWidget {
   final List<String> axisY;
   final int index;
 
-  const SkedulerHeaderY({
+  const TimetableHeaderY({
     Key key,
     this.axisY,
     this.index = -1,
@@ -14,14 +18,14 @@ class SkedulerHeaderY extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String display = axisY[index];
-    return buildBox(context, display);
+    return TimetableGridBox(context, display);
   }
 }
 
-class SkedulerHeaderZ extends StatelessWidget {
+class TimetableHeaderZ extends StatelessWidget {
   final List<String> axisZ;
 
-  const SkedulerHeaderZ({
+  const TimetableHeaderZ({
     Key key,
     this.axisZ,
   }) : super(key: key);
@@ -33,7 +37,7 @@ class SkedulerHeaderZ extends StatelessWidget {
     axisZ.forEach((z) {
       String display = z;
 
-      colContents.add(buildBox(context, display));
+      colContents.add(TimetableGridBox(context, display));
     });
 
     return Expanded(
@@ -46,14 +50,18 @@ class SkedulerHeaderZ extends StatelessWidget {
   }
 }
 
-class SkedulerCol extends StatelessWidget {
+////////////////////////////////////////////////////////////////////////////////
+/// Col header
+////////////////////////////////////////////////////////////////////////////////
+
+class TimetableCol extends StatelessWidget {
   final List<String> axisX;
   final List<String> axisY;
   final List<String> axisZ;
   final int indexX;
   final int indexY;
 
-  const SkedulerCol({
+  const TimetableCol({
     Key key,
     this.axisX,
     this.axisY,
@@ -67,10 +75,9 @@ class SkedulerCol extends StatelessWidget {
     List<Widget> colContents = [];
 
     axisZ.forEach((z) {
-      // String display = axisX[indexX] + axisY[indexY] + z;
       String display = '-';
 
-      colContents.add(buildBox(context, display, content: true));
+      colContents.add(TimetableGridBox(context, display, content: true));
     });
 
     return Expanded(

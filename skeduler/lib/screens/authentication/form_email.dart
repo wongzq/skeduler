@@ -8,7 +8,7 @@ class FormEmail extends StatefulWidget {
   final GlobalKey<FormState> formKeyEmail;
   final Function refresh;
 
-  /// constructor
+  /// constructors
   FormEmail({this.formKeyEmail, this.refresh});
 
   /// methods

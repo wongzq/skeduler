@@ -8,7 +8,7 @@ class FormPassword extends StatefulWidget {
   final GlobalKey<FormState> formKeyPassword;
   final Function refresh;
 
-  /// constructor
+  /// constructors
   FormPassword({this.formKeyPassword, this.refresh});
 
   /// methods

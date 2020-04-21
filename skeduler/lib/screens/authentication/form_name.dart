@@ -9,7 +9,7 @@ class FormName extends StatefulWidget {
   final GlobalKey<FormState> formKeyName;
   final Function refresh;
 
-  /// constructor
+  /// constructors
   FormName({this.formKeyName, this.refresh});
 
   /// methods

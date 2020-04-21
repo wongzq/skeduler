@@ -11,7 +11,7 @@ class DatabaseService {
   /// properties
   final String userId;
 
-  /// constructor method
+  /// constructors method
   DatabaseService({this.userId});
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -348,62 +348,125 @@ class DatabaseService {
   /// update [Group][Timetable]'s data
   Future updateGroupTimetable(
     String groupDocId,
-    EditTimetable editTTB,
+    EditTimetable editTtb,
   ) async {
-    DocumentReference timetableRef = groupsCollection
-        .document(groupDocId)
-        .collection('timetables')
-        .document(editTTB.docId);
+    CollectionReference timetablesRef =
+        groupsCollection.document(groupDocId).collection('timetables');
 
     return groupDocId == null || groupDocId.trim() == ''
         ? null
-        : await timetableRef.get().then((timetable) async {
-            !timetable.exists
-                ? await timetableRef
-                    .setData(firestoreMapFromTimetable(editTTB))
-                    .then((_) async {
-                    await groupsCollection.document(groupDocId).updateData({
-                      'timetables': FieldValue.arrayUnion([editTTB.docId])
-                    });
-                  })
-                : await timetableRef
-                    .updateData(firestoreMapFromTimetable(editTTB));
+        : await timetablesRef
+            .document(editTtb.docId)
+            .get()
+            .then((timetable) async {
+            /// update timetable metadata to Group
+            await groupsCollection
+                .document(groupDocId)
+                .get()
+                .then((group) async {
+              /// update field value
+              List<Map<String, dynamic>> timetableMetadatas =
+                  _getUpdatedGroupTimetablesMetadatas(
+                timetablesSnapshot: group.data['timetables'],
+                newTimetableMetadata: editTtb.metadata,
+              );
+
+              if (timetableMetadatas != null) {
+                await groupsCollection.document(groupDocId).updateData(
+                    {'timetables': timetableMetadatas}).then((_) async {
+                  if (timetable.exists) {
+                    await timetablesRef
+                        .document(editTtb.docId)
+                        .updateData(firestoreMapFromTimetable(editTtb));
+                  } else {
+                    await timetablesRef
+                        .document(editTtb.docId)
+                        .setData(firestoreMapFromTimetable(editTtb));
+                  }
+                });
+              } else {
+                throw Error();
+              }
+            });
           });
+  }
+
+  /// update [Group]'s [timetablesSnapshot] field value
+  List<Map<String, dynamic>> _getUpdatedGroupTimetablesMetadatas({
+    List<dynamic> timetablesSnapshot = const [],
+    TimetableMetadata newTimetableMetadata,
+    TimetableMetadata oldTimetableMetadata,
+  }) {
+    /// convert to [Lis<TimetableMetadata>]
+    List<TimetableMetadata> timetableMetadatas =
+        _timetableMetadatasFromDynamicList(timetablesSnapshot);
+
+    /// remove previous metadata
+    timetableMetadatas.removeWhere((meta) {
+      if (oldTimetableMetadata != null) {
+        return meta.id == oldTimetableMetadata.id;
+      } else {
+        return meta.id == newTimetableMetadata.id;
+      }
+    });
+
+    /// add new metadata
+    timetableMetadatas.add(
+      TimetableMetadata(
+        id: newTimetableMetadata.id,
+        startDate: newTimetableMetadata.startDate,
+        endDate: newTimetableMetadata.endDate,
+      ),
+    );
+
+    /// update if timetable dates are consecutive
+    if (isConsecutiveTimetables(timetableMetadatas)) {
+      return List.generate(timetableMetadatas.length, (index) {
+        return timetableMetadatas[index].asMap;
+      });
+    } else {
+      return null;
+    }
   }
 
   /// update [Group][Timetable]'s documentID by cloning document with a new ID
   Future<bool> updateGroupTimetableDocId(
     String groupDocId,
-    String oldTimetableId,
-    String newTimetableId,
+    TimetableMetadata oldTimetableMetadata,
+    TimetableMetadata newTimetableMetadata,
   ) async {
     CollectionReference timetablesRef =
         groupsCollection.document(groupDocId).collection('timetables');
     return groupDocId == null || groupDocId.trim() == ''
         ? false
         : await timetablesRef
-            .document(newTimetableId)
+            .document(newTimetableMetadata.id)
             .get()
             .then((groupData) async {
             /// If there is another timetable with the same ID
             /// Then, it doesn't replace the pre-existing timetable
             if (!groupData.exists) {
               await timetablesRef
-                  .document(oldTimetableId)
+                  .document(oldTimetableMetadata.id)
                   .get()
                   .then((groupData) async {
                 await timetablesRef
-                    .document(newTimetableId)
+                    .document(newTimetableMetadata.id)
                     .setData(groupData.data);
 
-                await timetablesRef.document(oldTimetableId).delete();
+                await timetablesRef.document(oldTimetableMetadata.id).delete();
 
-                await groupsCollection.document(groupDocId).updateData({
-                  'timetables': FieldValue.arrayUnion([newTimetableId])
-                });
-
-                await groupsCollection.document(groupDocId).updateData({
-                  'timetables': FieldValue.arrayRemove([oldTimetableId])
+                await groupsCollection
+                    .document(groupDocId)
+                    .get()
+                    .then((group) async {
+                  await groupsCollection.document(groupDocId).updateData({
+                    'timetables': _getUpdatedGroupTimetablesMetadatas(
+                      timetablesSnapshot: group.data['timetables'],
+                      newTimetableMetadata: newTimetableMetadata,
+                      oldTimetableMetadata: oldTimetableMetadata,
+                    )
+                  });
                 });
               });
               return true;
@@ -573,8 +636,9 @@ class DatabaseService {
             ),
             ownerEmail: snapshot.data['owner']['email'] ?? '',
             ownerName: snapshot.data['owner']['name'] ?? '',
-            members: snapshot.data['members'] ?? [],
-            timetables: snapshot.data['timetables'] ?? [],
+            members: _stringsFromDynamicList(snapshot.data['members'] ?? []),
+            timetableMetadatas: _timetableMetadatasFromDynamicList(
+                snapshot.data['timetables'] ?? []),
           )
         : Group(groupDocId: null);
   }
@@ -637,12 +701,44 @@ class DatabaseService {
 
     timesDynamic.forEach((elem) {
       Map map = elem as Map;
-      times.add(Time(
-        map['startTime'].toDate(),
-        map['endTime'].toDate(),
-      ));
+      times.add(
+        Time(
+          map['startTime'].toDate(),
+          map['endTime'].toDate(),
+        ),
+      );
     });
 
     return times;
+  }
+
+  /// convert [List<String>] into [List<String>]
+  List<String> _stringsFromDynamicList(List<dynamic> list) {
+    List<String> listStr = [];
+
+    list.forEach((elem) {
+      listStr.add(elem as String);
+    });
+
+    return listStr;
+  }
+
+  /// convert [List<dynamic>] into [List<TimetableMetadata]
+  List<TimetableMetadata> _timetableMetadatasFromDynamicList(
+      List<dynamic> timetables) {
+    List<TimetableMetadata> timetableMetadatas = [];
+
+    timetables.forEach((elem) {
+      Map map = elem as Map;
+      timetableMetadatas.add(
+        TimetableMetadata(
+          id: map['id'],
+          startDate: map['startDate'],
+          endDate: map['endDate'],
+        ),
+      );
+    });
+
+    return timetableMetadatas;
   }
 }

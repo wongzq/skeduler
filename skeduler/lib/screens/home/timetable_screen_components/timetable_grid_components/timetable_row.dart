@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:skeduler/screens/home/timetable_screen_components/timetable_test/skeduler_timetable_2.dart';
-import 'package:skeduler/screens/home/timetable_screen_components/timetable_test/skeduler_timetable_col.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_col.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid_box.dart';
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Row header
 ////////////////////////////////////////////////////////////////////////////////
 
-class SkedulerHeaderX extends StatelessWidget {
+class TimetableHeaderX extends StatelessWidget {
   final List<String> axisX;
 
-  const SkedulerHeaderX({
+  const TimetableHeaderX({
     Key key,
     this.axisX = const [],
   }) : super(key: key);
@@ -30,11 +30,11 @@ class SkedulerHeaderX extends StatelessWidget {
 
     /// Add Switch button
     String display = 'SWITCH';
-    rowContents.add(buildBox(context, display, flex:2,));
+    rowContents.add(TimetableGridBox(context, display, flex: 2));
 
     for (int i = 0; i < axisX.length; i++) {
       String display = axisX[i];
-      rowContents.add(buildBox(context, display));
+      rowContents.add(TimetableGridBox(context, display, flex: 1));
     }
 
     return rowContents;
@@ -45,13 +45,13 @@ class SkedulerHeaderX extends StatelessWidget {
 /// Row data
 ////////////////////////////////////////////////////////////////////////////////
 
-class SkedulerRow extends StatelessWidget {
+class TimetableRow extends StatelessWidget {
   final List<String> axisX;
   final List<String> axisY;
   final List<String> axisZ;
   final int indexY;
 
-  const SkedulerRow({
+  const TimetableRow({
     Key key,
     this.axisX = const [],
     this.axisY = const [],
@@ -64,12 +64,12 @@ class SkedulerRow extends StatelessWidget {
     List<Widget> rowContents = [];
 
     /// Row header
-    rowContents.add(SkedulerHeaderY(axisY: axisY, index: indexY));
-    rowContents.add(SkedulerHeaderZ(axisZ: axisZ));
+    rowContents.add(TimetableHeaderY(axisY: axisY, index: indexY));
+    rowContents.add(TimetableHeaderZ(axisZ: axisZ));
 
     /// Row data
     axisX.forEach((x) {
-      rowContents.add(SkedulerCol(
+      rowContents.add(TimetableCol(
         axisX: axisX,
         axisY: axisY,
         axisZ: axisZ,
@@ -79,6 +79,7 @@ class SkedulerRow extends StatelessWidget {
     });
 
     return Expanded(
+      flex: axisZ.length,
       child: Flex(
         direction: Axis.horizontal,
         mainAxisSize: MainAxisSize.max,

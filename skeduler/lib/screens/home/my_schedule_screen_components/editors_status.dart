@@ -33,7 +33,7 @@ class EditorsStatus extends ChangeNotifier {
   final Duration _duration = Duration(milliseconds: 500);
   final Curve _curve = Curves.easeOutCubic;
 
-  /// constructor
+  /// constructors
   EditorsStatus({
     CurrentEditor currentEditor,
     double monthEditorHeight,

@@ -63,7 +63,7 @@ class Member {
 
   List<Time> _times;
 
-  /// constructor
+  /// constructors
   Member({
     @required String email,
     String name,

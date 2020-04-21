@@ -17,7 +17,7 @@ class ColorShade {
   String _themeId;
   Shade _shade;
 
-  /// constructor
+  /// constructors
   ColorShade({
     Color color,
     String themeId,
