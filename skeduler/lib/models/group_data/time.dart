@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:quiver/time.dart';
 
 class Time {
@@ -9,9 +10,43 @@ class Time {
   Time(this.startTime, this.endTime);
 }
 
+String getTimeStr(Time time) {
+  return DateFormat('HHmm').format(time.startTime) +
+      ' ' +
+      DateFormat('HHmm').format(time.endTime);
+}
+
 enum Month { jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec }
 
 enum Weekday { mon, tue, wed, thu, fri, sat, sun }
+
+String getWeekdayShortStr(Weekday weekday) {
+  switch (weekday) {
+    case Weekday.mon:
+      return 'Mon';
+      break;
+    case Weekday.tue:
+      return 'Tue';
+      break;
+    case Weekday.wed:
+      return 'Wed';
+      break;
+    case Weekday.thu:
+      return 'Thu';
+      break;
+    case Weekday.fri:
+      return 'Fri';
+      break;
+    case Weekday.sat:
+      return 'Sat';
+      break;
+    case Weekday.sun:
+      return 'Sun';
+      break;
+    default:
+      return '';
+  }
+}
 
 String getWeekdayStr(Weekday weekday) {
   switch (weekday) {

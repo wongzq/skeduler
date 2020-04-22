@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
@@ -91,7 +93,9 @@ class DatabaseService {
 
   /// get [Group][Timetable] data
   Future<Timetable> getGroupTimetable(
-      String groupDocId, String timetableDocId) async {
+    String groupDocId,
+    String timetableDocId,
+  ) async {
     return groupDocId == null ||
             groupDocId.trim() == '' ||
             timetableDocId == null ||
@@ -108,17 +112,33 @@ class DatabaseService {
   }
 
   /// get [Group][Timetable] data of today as stream
-  Stream<List<Timetable>> getGroupTimetableForToday(String groupDocId) {
-    return groupDocId == null && groupDocId.trim() == ''
+  Stream<Timetable> getGroupTimetableForToday(
+    String groupDocId,
+    String timetableIdForToday,
+  ) {
+    return groupDocId == null || groupDocId.trim() == ''
         ? null
         : groupsCollection
             .document(groupDocId)
             .collection('timetables')
-            .where('startTime', isLessThanOrEqualTo: Timestamp.now())
-            .where('endTime', isGreaterThanOrEqualTo: Timestamp.now())
-            .limit(1)
+            .document(timetableIdForToday)
             .snapshots()
-            .map(_timetablesFromSnapshots);
+            .map(_timetableFromSnapshot);
+  }
+
+  Future<String> getGroupTimetableIdForToday(String groupDocId) async {
+    String timetableIdForToday;
+
+    return await groupsCollection.document(groupDocId).get().then((group) {
+      /// get timetable metadatas from group document's field value
+      _timetableMetadatasFromDynamicList(group.data['timetables'] ?? [])
+          .forEach((metadata) {
+        if (metadata.startDate.toDate().isBefore(DateTime.now()) &&
+            metadata.endDate.toDate().isAfter(DateTime.now())) {
+          timetableIdForToday = metadata.id;
+        }
+      });
+    }).then((_) => timetableIdForToday);
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -668,9 +688,10 @@ class DatabaseService {
             docId: snapshot.documentID,
             startDate: snapshot.data['startDate'] ?? null,
             endDate: snapshot.data['endDate'] ?? null,
-            axisDays: snapshot.data['axisDays'] ?? [],
-            axisTimes: snapshot.data['axisTimes'] ?? [],
-            axisCustom: snapshot.data['axisCustom'] ?? [],
+            axisDays: _weekdaysFromDynamicList(snapshot.data['axisDays'] ?? []),
+            axisTimes: _timesFromDynamicList(snapshot.data['axisTimes'] ?? []),
+            axisCustom:
+                _stringsFromDynamicList(snapshot.data['axisCustom'] ?? []),
           )
         : Timetable(docId: '');
   }
@@ -695,6 +716,34 @@ class DatabaseService {
     return query.documents.map(_timetableFromSnapshot).toList();
   }
 
+  /// convert [List<dynamic>] into [List<TimetableMetadata]
+  List<TimetableMetadata> _timetableMetadatasFromDynamicList(
+      List<dynamic> timetables) {
+    List<TimetableMetadata> timetableMetadatas = [];
+
+    timetables.forEach((elem) {
+      Map map = elem as Map;
+      timetableMetadatas.add(
+        TimetableMetadata(
+          id: map['id'],
+          startDate: map['startDate'],
+          endDate: map['endDate'],
+        ),
+      );
+    });
+
+    return timetableMetadatas;
+  }
+
+  /// convert [List<dynamic>] into [List<Weekday]
+  List<Weekday> _weekdaysFromDynamicList(List<dynamic> weekdaysDynamic) {
+    List<Weekday> weekdays = [];
+
+    weekdaysDynamic.forEach((elem) => weekdays.add(Weekday.values[elem]));
+
+    return weekdays;
+  }
+
   /// convert [List<dynamic>] into [List<Time>]
   List<Time> _timesFromDynamicList(List<dynamic> timesDynamic) {
     List<Time> times = [];
@@ -716,29 +765,8 @@ class DatabaseService {
   List<String> _stringsFromDynamicList(List<dynamic> list) {
     List<String> listStr = [];
 
-    list.forEach((elem) {
-      listStr.add(elem as String);
-    });
+    list.forEach((elem) => listStr.add(elem as String));
 
     return listStr;
-  }
-
-  /// convert [List<dynamic>] into [List<TimetableMetadata]
-  List<TimetableMetadata> _timetableMetadatasFromDynamicList(
-      List<dynamic> timetables) {
-    List<TimetableMetadata> timetableMetadatas = [];
-
-    timetables.forEach((elem) {
-      Map map = elem as Map;
-      timetableMetadatas.add(
-        TimetableMetadata(
-          id: map['id'],
-          startDate: map['startDate'],
-          endDate: map['endDate'],
-        ),
-      );
-    });
-
-    return timetableMetadatas;
   }
 }

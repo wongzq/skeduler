@@ -46,9 +46,9 @@ class Timetable {
     @required String docId,
     Timestamp startDate,
     Timestamp endDate,
-    List<dynamic> axisDays,
-    List<dynamic> axisTimes,
-    List<dynamic> axisCustom,
+    List<Weekday> axisDays,
+    List<Time> axisTimes,
+    List<String> axisCustom,
   }) {
     /// documentID
     _docId = docId;
@@ -64,27 +64,15 @@ class Timetable {
           DateTime.fromMillisecondsSinceEpoch(endDate.millisecondsSinceEpoch);
 
     /// timetable days axis
-    if (axisDays != null)
-      axisDays.forEach((val) {
-        _axisDays.add(Weekday.values[val]);
-      });
+    print('Days ' + axisDays.toString());
+
+    if (axisDays != null) _axisDays = axisDays;
 
     /// timetable times axis
-    if (axisTimes != null)
-      axisTimes.forEach((val) {
-        _axisTimes.add(Time(
-          DateTime.fromMillisecondsSinceEpoch(
-              val['startTime'].millisecondsSinceEpoch),
-          DateTime.fromMillisecondsSinceEpoch(
-              val['endTime'].millisecondsSinceEpoch),
-        ));
-      });
+    if (axisTimes != null) _axisTimes = axisTimes;
 
     /// timetable custom axis
-    if (axisCustom != null)
-      axisCustom.forEach((val) {
-        _axisCustom.add(val);
-      });
+    if (axisCustom != null) _axisCustom = axisCustom;
   }
 
   /// getter methods
@@ -92,7 +80,11 @@ class Timetable {
   DateTime get startDate => _startDate;
   DateTime get endDate => _endDate;
   List<Weekday> get axisDays => _axisDays;
+  List<String> get axisDaysStr => List.generate(
+      _axisDays.length, (index) => getWeekdayStr(_axisDays[index]));
   List<Time> get axisTimes => _axisTimes;
+  List<String> get axisTimesStr => List.generate(
+      _axisTimes.length, (index) => getTimeStr(_axisTimes[index]));
   List<String> get axisCustom => _axisCustom;
 }
 

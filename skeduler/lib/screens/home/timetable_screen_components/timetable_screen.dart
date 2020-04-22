@@ -72,7 +72,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                 children: <Widget>[
                                   Visibility(
                                     visible: group.timetables.isNotEmpty,
-                                    // visible: true,
                                     child: Divider(thickness: 1.0),
                                   ),
                                   Row(
@@ -119,7 +118,26 @@ class _TimetableScreenState extends State<TimetableScreen> {
                       Navigator.of(context).pushNamed('/timetableEditor');
                     },
                   ),
-                  body: TimetableDisplay(),
+                  body: FutureBuilder(
+                      future: dbService
+                          .getGroupTimetableIdForToday(groupDocId.value),
+                      builder: (context, snapshot) {
+                        return StreamBuilder<Object>(
+                          stream: dbService.getGroupTimetableForToday(
+                            groupDocId.value,
+                            snapshot.data,
+                          ),
+                          builder: (context, snapshot) {
+                            print('Snap: ' + snapshot.data.toString());
+                            Timetable timetable =
+                                snapshot != null ? snapshot.data : null;
+                            print(timetable);
+                            print(timetable.axisDays);
+                            print(timetable.axisTimes);
+                            return TimetableDisplay(timetable: timetable);
+                          },
+                        );
+                      }),
                 );
         });
   }

@@ -8,17 +8,19 @@ import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid
 class TimetableHeaderY extends StatelessWidget {
   final List<String> axisY;
   final int index;
+  final int flex;
 
   const TimetableHeaderY({
     Key key,
     this.axisY,
     this.index = -1,
+    this.flex = 1,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String display = axisY[index];
-    return TimetableGridBox(context, display);
+    return TimetableGridBox(context, display, flex: flex);
   }
 }
 
@@ -74,11 +76,16 @@ class TimetableCol extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> colContents = [];
 
-    axisZ.forEach((z) {
-      String display = '-';
+    if (axisZ != null && axisZ.isNotEmpty) {
+      axisZ.forEach((z) {
+        String display = '-';
 
+        colContents.add(TimetableGridBox(context, display, content: true));
+      });
+    } else {
+      String display = '-';
       colContents.add(TimetableGridBox(context, display, content: true));
-    });
+    }
 
     return Expanded(
       child: Flex(

@@ -64,8 +64,14 @@ class TimetableRow extends StatelessWidget {
     List<Widget> rowContents = [];
 
     /// Row header
-    rowContents.add(TimetableHeaderY(axisY: axisY, index: indexY));
-    rowContents.add(TimetableHeaderZ(axisZ: axisZ));
+    if (axisY != null && axisY.isNotEmpty) {
+      if (axisZ != null && axisZ.isNotEmpty) {
+        rowContents.add(TimetableHeaderY(axisY: axisY, index: indexY, flex: 1));
+        rowContents.add(TimetableHeaderZ(axisZ: axisZ));
+      } else {
+        rowContents.add(TimetableHeaderY(axisY: axisY, index: indexY, flex: 2));
+      }
+    }
 
     /// Row data
     axisX.forEach((x) {
@@ -79,7 +85,7 @@ class TimetableRow extends StatelessWidget {
     });
 
     return Expanded(
-      flex: axisZ.length,
+      flex: axisZ != null && axisZ.isNotEmpty ? axisZ.length : 1,
       child: Flex(
         direction: Axis.horizontal,
         mainAxisSize: MainAxisSize.max,
