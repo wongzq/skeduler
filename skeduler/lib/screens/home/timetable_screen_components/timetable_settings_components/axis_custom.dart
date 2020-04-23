@@ -22,10 +22,10 @@ class _AxisCustomState extends State<AxisCustom> {
   bool _expanded;
 
   List<Widget> _generateCustoms() {
-    List<Widget> customs = [];
+    List<Widget> customValWidgets = [];
 
     _customs.forEach((custom) {
-      customs.add(
+      customValWidgets.add(
         ListTile(
           dense: true,
           title: Text(custom),
@@ -48,7 +48,7 @@ class _AxisCustomState extends State<AxisCustom> {
                 case CustomOption.edit:
                   break;
                 case CustomOption.remove:
-                  _customs.remove(val);
+                  setState(() => _customs.remove(custom));
                   break;
               }
             },
@@ -57,9 +57,9 @@ class _AxisCustomState extends State<AxisCustom> {
       );
     });
 
-    customs.add(_generateAddCustomButton());
+    customValWidgets.add(_generateAddCustomButton());
 
-    return customs;
+    return customValWidgets;
   }
 
   Widget _generateAddCustomButton() {

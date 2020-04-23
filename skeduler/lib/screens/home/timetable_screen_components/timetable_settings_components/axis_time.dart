@@ -29,10 +29,10 @@ class _AxisTimeState extends State<AxisTime> {
   bool _expanded;
 
   List<Widget> _generateTimetableTimes() {
-    List<Widget> timeslots = [];
+    List<Widget> timeslotWidgets = [];
 
     _times.forEach((time) {
-      timeslots.add(
+      timeslotWidgets.add(
         ListTile(
           dense: true,
           title: Row(
@@ -213,9 +213,9 @@ class _AxisTimeState extends State<AxisTime> {
       );
     });
 
-    timeslots.add(_generateAddTimeButton());
+    timeslotWidgets.add(_generateAddTimeButton());
 
-    return timeslots;
+    return timeslotWidgets;
   }
 
   Widget _generateAddTimeButton() {

@@ -71,16 +71,18 @@ class _TimetableEditorState extends State<TimetableEditor> {
               .updateGroupTimetable(groupDocId.value, editTtb.value)
               .then((_) {
             Fluttertoast.showToast(
-                msg: 'Successfully saved timetable',
-                toastLength: Toast.LENGTH_LONG);
+              msg: 'Successfully saved timetable',
+              toastLength: Toast.LENGTH_LONG,
+            );
           }).catchError((_) {
             Fluttertoast.showToast(
-                msg: 'Failed to save timetable',
-                toastLength: Toast.LENGTH_LONG);
+              msg: 'Failed to save timetable',
+              toastLength: Toast.LENGTH_LONG,
+            );
           });
         },
       ),
-      body: editTtb.value != null
+      body: editTtb.value != null && editTtb.value.isValid()
           ? TimetableDisplay(
               timetable: Timetable.fromEditTimetable(editTtb.value))
           : Container(),

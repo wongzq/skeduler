@@ -12,6 +12,8 @@ import 'package:skeduler/models/group_data/user.dart';
 class DatabaseService {
   /// properties
   final String userId;
+  final String _members = 'members';
+  final String _timetables = 'timetables';
 
   /// constructors method
   DatabaseService({this.userId});
@@ -42,7 +44,7 @@ class DatabaseService {
   /// get ['groups'] collection as stream
   Stream<List<Group>> get groups {
     return groupsCollection
-        .where('members', arrayContains: userId)
+        .where(_members, arrayContains: userId)
         .snapshots()
         .map(_groupsFromSnapshots);
   }
@@ -63,7 +65,7 @@ class DatabaseService {
         ? null
         : groupsCollection
             .document(groupDocId)
-            .collection('members')
+            .collection(_members)
             .document(userId)
             .snapshots()
             .map(_memberFromSnapshot);
@@ -75,20 +77,9 @@ class DatabaseService {
         ? null
         : groupsCollection
             .document(groupDocId)
-            .collection('members')
+            .collection(_members)
             .snapshots()
             .map(_membersFromSnapshots);
-  }
-
-  /// get [Group][Timetable] data as stream
-  Stream<List<Timetable>> getGroupTimetables(String groupDocId) {
-    return groupDocId == null || groupDocId.trim() == ''
-        ? null
-        : groupsCollection
-            .document(groupDocId)
-            .collection('timetables')
-            .snapshots()
-            .map(_timetablesFromSnapshots);
   }
 
   /// get [Group][Timetable] data
@@ -103,7 +94,7 @@ class DatabaseService {
         ? null
         : await groupsCollection
             .document(groupDocId)
-            .collection('timetables')
+            .collection(_timetables)
             .document(timetableDocId)
             .get()
             .then((timetable) {
@@ -120,7 +111,7 @@ class DatabaseService {
         ? null
         : groupsCollection
             .document(groupDocId)
-            .collection('timetables')
+            .collection(_timetables)
             .document(timetableIdForToday)
             .snapshots()
             .map(_timetableFromSnapshot);
@@ -131,7 +122,7 @@ class DatabaseService {
 
     return await groupsCollection.document(groupDocId).get().then((group) {
       /// get timetable metadatas from group document's field value
-      _timetableMetadatasFromDynamicList(group.data['timetables'] ?? [])
+      _timetableMetadatasFromDynamicList(group.data[_timetables] ?? [])
           .forEach((metadata) {
         if (metadata.startDate.toDate().isBefore(DateTime.now()) &&
             metadata.endDate.toDate().isAfter(DateTime.now())) {
@@ -172,7 +163,7 @@ class DatabaseService {
         'email': ownerEmail,
         'name': ownerName,
       },
-      'members': [ownerEmail],
+      _members: [ownerEmail],
     }).then((_) async {
       await inviteMemberToGroup(
         groupDocId: newGroupDoc.documentID,
@@ -182,7 +173,7 @@ class DatabaseService {
       await usersCollection.document(userId).get().then((groupData) async {
         await groupsCollection
             .document(newGroupDoc.documentID)
-            .collection('members')
+            .collection(_members)
             .document(userId)
             .updateData({
           'name': groupData.data['name'],
@@ -193,7 +184,7 @@ class DatabaseService {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Modifying methods
+  /// Modifying methods for User
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// update [User] data
@@ -202,6 +193,10 @@ class DatabaseService {
       'name': name,
     });
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Modifying methods for Group
+  ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// update [Group] data
   Future updateGroupData(
@@ -230,6 +225,29 @@ class DatabaseService {
     }
   }
 
+  /// Delete [Group]
+  Future deleteGroup(String groupDocId) async {
+    // Cloud function to delete all subcollections
+    // temporary replacement
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : await groupsCollection
+            .document(groupDocId)
+            .collection(_members)
+            .getDocuments()
+            .then((members) {
+            for (DocumentSnapshot snap in members.documents) {
+              snap.reference.delete();
+            }
+          }).then((_) async {
+            await groupsCollection.document(groupDocId).delete();
+          });
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Modifying methods for Member
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+
   /// add [Member] to [Group]
   Future<String> inviteMemberToGroup({
     @required String groupDocId,
@@ -240,7 +258,7 @@ class DatabaseService {
 
     DocumentReference groupMemberRef = groupsCollection
         .document(groupDocId)
-        .collection('members')
+        .collection(_members)
         .document(newMemberEmail);
 
     await usersCollection.document(newMemberEmail).get().then((user) async {
@@ -248,7 +266,7 @@ class DatabaseService {
           ? await groupMemberRef.get().then((member) async {
               !member.exists
                   ? await groupsCollection.document(groupDocId).updateData({
-                      'members': FieldValue.arrayUnion([newMemberEmail])
+                      _members: FieldValue.arrayUnion([newMemberEmail])
                     }).then((_) async {
                       await groupMemberRef.setData({'role': memberRole.index});
                     })
@@ -266,11 +284,11 @@ class DatabaseService {
     @required String memberDocId,
   }) async {
     return await groupsCollection.document(groupDocId).updateData({
-      'members': FieldValue.arrayRemove([memberDocId])
+      _members: FieldValue.arrayRemove([memberDocId])
     }).then((_) async {
       await groupsCollection
           .document(groupDocId)
-          .collection('members')
+          .collection(_members)
           .document(memberDocId)
           .delete();
     });
@@ -284,7 +302,7 @@ class DatabaseService {
   }) async {
     return await groupsCollection
         .document(groupDocId)
-        .collection('members')
+        .collection(_members)
         .document(memberDocId)
         .updateData({'role': role.index});
   }
@@ -297,7 +315,7 @@ class DatabaseService {
             if (userData.exists) {
               DocumentReference groupMemberRef = groupsCollection
                   .document(groupDocId)
-                  .collection('members')
+                  .collection(_members)
                   .document(userId);
 
               await groupMemberRef.updateData({
@@ -314,11 +332,11 @@ class DatabaseService {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
         : await groupsCollection.document(groupDocId).updateData({
-            'members': FieldValue.arrayRemove([userId])
+            _members: FieldValue.arrayRemove([userId])
           }).then((_) async {
             await groupsCollection
                 .document(groupDocId)
-                .collection('members')
+                .collection(_members)
                 .document(userId)
                 .delete();
           });
@@ -334,11 +352,11 @@ class DatabaseService {
             .then((groupData) async {
             if (groupData.exists) {
               await groupsCollection.document(groupDocId).updateData({
-                'members': FieldValue.arrayRemove([userId])
+                _members: FieldValue.arrayRemove([userId])
               }).then((_) async {
                 await groupsCollection
                     .document(groupDocId)
-                    .collection('members')
+                    .collection(_members)
                     .document(userId)
                     .delete();
               });
@@ -346,24 +364,9 @@ class DatabaseService {
           });
   }
 
-  /// Delete [Group]
-  Future deleteGroup(String groupDocId) async {
-    // Cloud function to delete all subcollections
-    // temporary replacement
-    return groupDocId == null || groupDocId.trim() == ''
-        ? null
-        : await groupsCollection
-            .document(groupDocId)
-            .collection('members')
-            .getDocuments()
-            .then((members) {
-            for (DocumentSnapshot snap in members.documents) {
-              snap.reference.delete();
-            }
-          }).then((_) async {
-            await groupsCollection.document(groupDocId).delete();
-          });
-  }
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Modifying methods for Timetable
+  ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// update [Group][Timetable]'s data
   Future updateGroupTimetable(
@@ -371,7 +374,7 @@ class DatabaseService {
     EditTimetable editTtb,
   ) async {
     CollectionReference timetablesRef =
-        groupsCollection.document(groupDocId).collection('timetables');
+        groupsCollection.document(groupDocId).collection(_timetables);
 
     return groupDocId == null || groupDocId.trim() == ''
         ? null
@@ -386,14 +389,14 @@ class DatabaseService {
                 .then((group) async {
               /// update field value
               List<Map<String, dynamic>> timetableMetadatas =
-                  _getUpdatedGroupTimetablesMetadatas(
-                timetablesSnapshot: group.data['timetables'],
+                  _getUpdatedGroupTimetablesMetadatasAfterAdd(
+                timetablesSnapshot: group.data[_timetables] ?? [],
                 newTimetableMetadata: editTtb.metadata,
               );
 
               if (timetableMetadatas != null) {
                 await groupsCollection.document(groupDocId).updateData(
-                    {'timetables': timetableMetadatas}).then((_) async {
+                    {_timetables: timetableMetadatas}).then((_) async {
                   if (timetable.exists) {
                     await timetablesRef
                         .document(editTtb.docId)
@@ -411,8 +414,8 @@ class DatabaseService {
           });
   }
 
-  /// update [Group]'s [timetablesSnapshot] field value
-  List<Map<String, dynamic>> _getUpdatedGroupTimetablesMetadatas({
+  /// get updated [Group]'s [timetablesSnapshot] after adding new [TimetableMetadata]
+  List<Map<String, dynamic>> _getUpdatedGroupTimetablesMetadatasAfterAdd({
     List<dynamic> timetablesSnapshot = const [],
     TimetableMetadata newTimetableMetadata,
     TimetableMetadata oldTimetableMetadata,
@@ -431,13 +434,15 @@ class DatabaseService {
     });
 
     /// add new metadata
-    timetableMetadatas.add(
-      TimetableMetadata(
-        id: newTimetableMetadata.id,
-        startDate: newTimetableMetadata.startDate,
-        endDate: newTimetableMetadata.endDate,
-      ),
-    );
+    if (newTimetableMetadata != null) {
+      timetableMetadatas.add(
+        TimetableMetadata(
+          id: newTimetableMetadata.id,
+          startDate: newTimetableMetadata.startDate,
+          endDate: newTimetableMetadata.endDate,
+        ),
+      );
+    }
 
     /// update if timetable dates are consecutive
     if (isConsecutiveTimetables(timetableMetadatas)) {
@@ -449,6 +454,24 @@ class DatabaseService {
     }
   }
 
+  /// get updated [Group]'s [timetablesSnapshot] after removing [TimetableMetadata]
+  List<Map<String, dynamic>> _getUpdatedGroupTimetablesMetadataAfterRemove({
+    List<dynamic> timetablesSnapshot = const [],
+    String timetableId = '',
+  }) {
+    /// convert to [Lis<TimetableMetadata>]
+    List<TimetableMetadata> timetableMetadatas =
+        _timetableMetadatasFromDynamicList(timetablesSnapshot);
+
+    timetableMetadatas.removeWhere((timetableMetadata) {
+      return timetableMetadata.id == timetableId;
+    });
+
+    return List.generate(timetableMetadatas.length, (index) {
+      return timetableMetadatas[index].asMap;
+    });
+  }
+
   /// update [Group][Timetable]'s documentID by cloning document with a new ID
   Future<bool> updateGroupTimetableDocId(
     String groupDocId,
@@ -456,7 +479,7 @@ class DatabaseService {
     TimetableMetadata newTimetableMetadata,
   ) async {
     CollectionReference timetablesRef =
-        groupsCollection.document(groupDocId).collection('timetables');
+        groupsCollection.document(groupDocId).collection(_timetables);
     return groupDocId == null || groupDocId.trim() == ''
         ? false
         : await timetablesRef
@@ -481,8 +504,8 @@ class DatabaseService {
                     .get()
                     .then((group) async {
                   await groupsCollection.document(groupDocId).updateData({
-                    'timetables': _getUpdatedGroupTimetablesMetadatas(
-                      timetablesSnapshot: group.data['timetables'],
+                    _timetables: _getUpdatedGroupTimetablesMetadatasAfterAdd(
+                      timetablesSnapshot: group.data[_timetables],
                       newTimetableMetadata: newTimetableMetadata,
                       oldTimetableMetadata: oldTimetableMetadata,
                     )
@@ -495,6 +518,31 @@ class DatabaseService {
             }
           });
   }
+
+  Future deleteGroupTimetable(
+    String groupDocId,
+    String timetableId,
+  ) async {
+    return await groupsCollection
+        .document(groupDocId)
+        .collection(_timetables)
+        .document(timetableId)
+        .delete()
+        .then((_) {
+      groupsCollection.document(groupDocId).get().then((group) async {
+        return await groupsCollection.document(groupDocId).updateData({
+          _timetables: _getUpdatedGroupTimetablesMetadataAfterRemove(
+            timetablesSnapshot: group.data[_timetables],
+            timetableId: timetableId,
+          )
+        });
+      });
+    });
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////
+  /// Modifying methods for Times
+  ////////////////////////////////////////////////////////////////////////////////////////////////
 
   /// update [Group][Member]'s available schedule times
   Future updateGroupMemberTimes(
@@ -509,7 +557,7 @@ class DatabaseService {
         ? null
         : await groupsCollection
             .document(groupDocId)
-            .collection('members')
+            .collection(_members)
             .document(memberDocId)
             .get()
             .then((member) async {
@@ -529,7 +577,7 @@ class DatabaseService {
                 /// remove previous times
                 await groupsCollection
                     .document(groupDocId)
-                    .collection('members')
+                    .collection(_members)
                     .document(memberDocId)
                     .updateData({'times': FieldValue.delete()});
 
@@ -557,7 +605,7 @@ class DatabaseService {
               /// add new times to Firestore
               await groupsCollection
                   .document(groupDocId)
-                  .collection('members')
+                  .collection(_members)
                   .document(memberDocId)
                   .updateData({'times': FieldValue.arrayUnion(timestamps)});
             }
@@ -581,7 +629,7 @@ class DatabaseService {
         ? null
         : await groupsCollection
             .document(groupDocId)
-            .collection('members')
+            .collection(_members)
             .document(memberDocId)
             .get()
             .then((member) async {
@@ -621,7 +669,7 @@ class DatabaseService {
 
               await groupsCollection
                   .document(groupDocId)
-                  .collection('members')
+                  .collection(_members)
                   .document(memberDocId)
                   .updateData(
                       {'times': FieldValue.arrayRemove(removeTimestamps)});
@@ -656,9 +704,9 @@ class DatabaseService {
             ),
             ownerEmail: snapshot.data['owner']['email'] ?? '',
             ownerName: snapshot.data['owner']['name'] ?? '',
-            members: _stringsFromDynamicList(snapshot.data['members'] ?? []),
+            members: _stringsFromDynamicList(snapshot.data[_members] ?? []),
             timetableMetadatas: _timetableMetadatasFromDynamicList(
-                snapshot.data['timetables'] ?? []),
+                snapshot.data[_timetables] ?? []),
           )
         : Group(groupDocId: null);
   }
@@ -688,10 +736,10 @@ class DatabaseService {
             docId: snapshot.documentID,
             startDate: snapshot.data['startDate'] ?? null,
             endDate: snapshot.data['endDate'] ?? null,
-            axisDays: _weekdaysFromDynamicList(snapshot.data['axisDays'] ?? []),
-            axisTimes: _timesFromDynamicList(snapshot.data['axisTimes'] ?? []),
-            axisCustoms:
-                _stringsFromDynamicList(snapshot.data['axisCustoms'] ?? []),
+            axisDay: _weekdaysFromDynamicList(snapshot.data['axisDay'] ?? []),
+            axisTime: _timesFromDynamicList(snapshot.data['axisTime'] ?? []),
+            axisCustom:
+                _stringsFromDynamicList(snapshot.data['axisCustom'] ?? []),
           )
         : Timetable(docId: '');
   }
@@ -709,11 +757,6 @@ class DatabaseService {
   /// convert document snapshots into [Member]s
   List<Member> _membersFromSnapshots(QuerySnapshot query) {
     return query.documents.map(_memberFromSnapshot).toList();
-  }
-
-  /// convert document snapshots into [Timetable]s
-  List<Timetable> _timetablesFromSnapshots(QuerySnapshot query) {
-    return query.documents.map(_timetableFromSnapshot).toList();
   }
 
   /// convert [List<dynamic>] into [List<TimetableMetadata]

@@ -23,121 +23,127 @@ class _TimetableScreenState extends State<TimetableScreen> {
         Provider.of<ValueNotifier<EditTimetable>>(context);
 
     return StreamBuilder<Object>(
-        stream: dbService.getGroup(groupDocId.value),
-        builder: (context, snapshot) {
-          Group group = snapshot != null ? snapshot.data : null;
+      stream: dbService.getGroup(groupDocId.value),
+      builder: (context, snapshot) {
+        Group group = snapshot != null ? snapshot.data : null;
 
-          return group == null
-              ? Container()
-              : Scaffold(
-                  appBar: AppBar(
-                    title: group.name == null
-                        ? Text(
-                            'Timetable',
-                            style: textStyleAppBarTitle,
-                          )
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                group.name,
-                                style: textStyleAppBarTitle,
-                              ),
-                              Text(
-                                'Timetable',
-                                style: textStyleBody,
-                              )
-                            ],
-                          ),
-                    actions: <Widget>[
-                      IconButton(
-                        icon: PopupMenuButton(
-                          child: Icon(Icons.more_vert),
-                          itemBuilder: (BuildContext context) {
-                            List<PopupMenuEntry> timetableOptions = [];
+        return FutureBuilder(
+          future: dbService.getGroupTimetableIdForToday(groupDocId.value),
+          builder: (context, snapshotTtbId) {
+            return StreamBuilder<Object>(
+                stream: dbService.getGroupTimetableForToday(
+                  groupDocId.value,
+                  snapshotTtbId.data,
+                ),
+                builder: (context, snapshotTtb) {
+                  Timetable timetable =
+                      snapshotTtb != null ? snapshotTtb.data : null;
 
-                            /// Add timetables to options
-                            group.timetables.forEach((timetableDocId) {
-                              timetableOptions.add(PopupMenuItem(
-                                value: timetableDocId.id,
-                                child: Text(timetableDocId.id),
-                              ));
-                            });
-
-                            /// Add 'add timetable' button to options
-                            timetableOptions.add(PopupMenuItem(
-                              value: 0,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Visibility(
-                                    visible: group.timetables.isNotEmpty,
-                                    child: Divider(thickness: 1.0),
-                                  ),
-                                  Row(
+                  return group == null
+                      ? Container()
+                      : Scaffold(
+                          appBar: AppBar(
+                            title: group.name == null ||
+                                    timetable == null ||
+                                    !timetable.isValid()
+                                ? Text(
+                                    'Timetable',
+                                    style: textStyleAppBarTitle,
+                                  )
+                                : Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
-                                      Icon(Icons.add),
-                                      SizedBox(width: 10.0),
-                                      Text('Add timetable'),
+                                      Text(
+                                        group.name,
+                                        style: textStyleAppBarTitle,
+                                      ),
+                                      Text(
+                                        'Timetable: ${timetable.docId}',
+                                        style: textStyleBody,
+                                      )
                                     ],
                                   ),
-                                ],
-                              ),
-                            ));
+                            actions: <Widget>[
+                              IconButton(
+                                icon: PopupMenuButton(
+                                  child: Icon(Icons.more_vert),
+                                  itemBuilder: (BuildContext context) {
+                                    List<PopupMenuEntry> timetableOptions = [];
 
-                            return timetableOptions;
-                          },
-                          onSelected: (value) async {
-                            if (value == 0) {
-                              editTtb.value = EditTimetable();
-                              Navigator.of(context)
-                                  .pushNamed('/timetableEditor');
-                            } else {
-                              editTtb.value = EditTimetable.fromTimetable(
-                                await dbService.getGroupTimetable(
-                                  groupDocId.value,
-                                  value,
+                                    /// Add timetables to options
+                                    group.timetables.forEach((timetableDocId) {
+                                      timetableOptions.add(PopupMenuItem(
+                                        value: timetableDocId.id,
+                                        child: Text(timetableDocId.id),
+                                      ));
+                                    });
+
+                                    /// Add 'add timetable' button to options
+                                    timetableOptions.add(PopupMenuItem(
+                                      value: 0,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Visibility(
+                                            visible:
+                                                group.timetables.isNotEmpty,
+                                            child: Divider(thickness: 1.0),
+                                          ),
+                                          Row(
+                                            children: <Widget>[
+                                              Icon(Icons.add),
+                                              SizedBox(width: 10.0),
+                                              Text('Add timetable'),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ));
+
+                                    return timetableOptions;
+                                  },
+                                  onSelected: (value) async {
+                                    if (value == 0) {
+                                      editTtb.value = EditTimetable();
+                                      Navigator.of(context)
+                                          .pushNamed('/timetableEditor');
+                                    } else {
+                                      editTtb.value =
+                                          EditTimetable.fromTimetable(
+                                        await dbService.getGroupTimetable(
+                                          groupDocId.value,
+                                          value,
+                                        ),
+                                      );
+
+                                      Navigator.of(context)
+                                          .pushNamed('/timetableEditor');
+                                    }
+                                  },
                                 ),
-                              );
-
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
+                          drawer: HomeDrawer(),
+                          floatingActionButton: FloatingActionButton(
+                            foregroundColor: getFABIconForegroundColor(context),
+                            backgroundColor: getFABIconBackgroundColor(context),
+                            child: Icon(Icons.edit),
+                            onPressed: () {
                               Navigator.of(context)
                                   .pushNamed('/timetableEditor');
-                            }
-                          },
-                        ),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                  drawer: HomeDrawer(),
-                  floatingActionButton: FloatingActionButton(
-                    foregroundColor: getFABIconForegroundColor(context),
-                    backgroundColor: getFABIconBackgroundColor(context),
-                    child: Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed('/timetableEditor');
-                    },
-                  ),
-                  body: FutureBuilder(
-                      future: dbService
-                          .getGroupTimetableIdForToday(groupDocId.value),
-                      builder: (context, snapshot) {
-                        return StreamBuilder<Object>(
-                          stream: dbService.getGroupTimetableForToday(
-                            groupDocId.value,
-                            snapshot.data,
+                            },
                           ),
-                          builder: (context, snapshot) {
-                            Timetable timetable =
-                                snapshot != null ? snapshot.data : null;
-
-                            return timetable != null
-                                ? TimetableDisplay(timetable: timetable)
-                                : Container();
-                          },
+                          body: timetable != null && timetable.isValid()
+                              ? TimetableDisplay(timetable: timetable)
+                              : Container(),
                         );
-                      }),
-                );
-        });
+                });
+          },
+        );
+      },
+    );
   }
 }

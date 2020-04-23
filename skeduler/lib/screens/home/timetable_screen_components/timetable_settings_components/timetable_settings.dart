@@ -61,8 +61,8 @@ class TimetableSettings extends StatelessWidget {
                       docId: tempEditTtb.docId,
                       startDate: tempEditTtb.startDate,
                       endDate: tempEditTtb.endDate,
-                      axisDays: tempEditTtb.axisDays,
-                      axisTimes: tempEditTtb.axisTimes,
+                      axisDay: tempEditTtb.axisDay,
+                      axisTime: tempEditTtb.axisTime,
                     );
 
                     Navigator.of(context).pop();
@@ -86,8 +86,8 @@ class TimetableSettings extends StatelessWidget {
                           docId: tempEditTtb.docId,
                           startDate: tempEditTtb.startDate,
                           endDate: tempEditTtb.endDate,
-                          axisDays: tempEditTtb.axisDays,
-                          axisTimes: tempEditTtb.axisTimes,
+                          axisDay: tempEditTtb.axisDay,
+                          axisTime: tempEditTtb.axisTime,
                         );
                         Navigator.of(context).pop();
                       } else {
@@ -103,73 +103,135 @@ class TimetableSettings extends StatelessWidget {
             )
           ],
         ),
-        body: Theme(
-          data: Theme.of(context).copyWith(
-            dividerColor: Colors.transparent,
+        body: ListView(
+          physics: BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
           ),
-          child: ListView(
-            physics: BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
+          children: <Widget>[
+            /// Timetable name
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.0),
+              child: LabelTextInput(
+                label: 'Name',
+                formKey: formKey,
+                hintText: 'Timetable Name',
+                initialValue: editTtb.value.docId,
+                valSetText: (text) {
+                  tempEditTtb.docId = text;
+                },
+                validator: (text) {
+                  if (text == null || text.trim() == '') {
+                    return 'Timetable name cannot be empty';
+                  } else {
+                    return null;
+                  }
+                },
+              ),
             ),
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5.0),
-                child: LabelTextInput(
-                  label: 'Name',
-                  formKey: formKey,
-                  hintText: 'Timetable Name',
-                  initialValue: editTtb.value.docId,
-                  valSetText: (text) {
-                    tempEditTtb.docId = text;
-                  },
-                  validator: (text) {
-                    if (text == null || text.trim() == '') {
-                      return 'Timetable name cannot be empty';
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
+            SizedBox(height: 10.0),
+
+            /// Date range
+            DateRange(
+              initialStartDate: editTtb.value.startDate,
+              initialEndDate: editTtb.value.endDate,
+              valSetStartDate: (startDate) {
+                tempEditTtb.startDate = startDate;
+              },
+              valSetEndDate: (endDate) {
+                tempEditTtb.endDate = endDate;
+              },
+            ),
+            SizedBox(height: 10.0),
+            Divider(thickness: 1.0),
+
+            /// Axis Day
+            Theme(
+              data: Theme.of(context).copyWith(
+                dividerColor: Colors.transparent,
               ),
-
-              SizedBox(height: 10.0),
-
-              DateRange(
-                initialStartDate: editTtb.value.startDate,
-                initialEndDate: editTtb.value.endDate,
-                valSetStartDate: (startDate) {
-                  tempEditTtb.startDate = startDate;
-                },
-                valSetEndDate: (endDate) {
-                  tempEditTtb.endDate = endDate;
-                },
-              ),
-
-              SizedBox(height: 10.0),
-
-              AxisDay(
-                initialWeekdaysSelected: editTtb.value.axisDays,
+              child: AxisDay(
+                initialWeekdaysSelected: editTtb.value.axisDay,
                 valSetWeekdaysSelected: (timetableWeekdaysSelected) {
-                  tempEditTtb.axisDays = timetableWeekdaysSelected;
+                  tempEditTtb.axisDay = timetableWeekdaysSelected;
                 },
               ),
+            ),
+            Divider(thickness: 1.0),
 
-              AxisTime(
-                initialTimes: editTtb.value.axisTimes,
+            /// Axis Time
+            Theme(
+              data: Theme.of(context).copyWith(
+                dividerColor: Colors.transparent,
+              ),
+              child: AxisTime(
+                initialTimes: editTtb.value.axisTime,
                 valSetTimes: (times) {
-                  tempEditTtb.axisTimes = times;
+                  tempEditTtb.axisTime = times;
                 },
               ),
+            ),
+            Divider(thickness: 1.0),
 
-              AxisCustom(
-                initialCustoms: editTtb.value.axisCustoms,
+            /// Axis Custom
+            Theme(
+              data: Theme.of(context).copyWith(
+                dividerColor: Colors.transparent,
+              ),
+              child: AxisCustom(
+                initialCustoms: editTtb.value.axisCustom,
                 valSetCustoms: (customs) {
-                  tempEditTtb.axisCustoms = customs;
+                  tempEditTtb.axisCustom = customs;
                 },
               ),
-              // AxisCustom(),
-            ],
-          ),
+            ),
+            Divider(thickness: 1.0),
+            Padding(
+              padding: EdgeInsets.all(5.0),
+              child: FlatButton(
+                color: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+                child: Text(
+                  'DELETE TIMETABLE',
+                  style: textStyleBody,
+                ),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          content: Text(
+                              'Do you want to delete \'${editTtb.value.docId}\' timetable?'),
+                          actions: <Widget>[
+                            /// CANCEL button
+                            FlatButton(
+                              child: Text('CANCEL'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+
+                            /// OK button
+                            FlatButton(
+                              child: Text(
+                                'DELETE',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              onPressed: () async {
+                                await dbService.deleteGroupTimetable(
+                                    groupDocId.value, editTtb.value.docId);
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                },
+              ),
+            ),
+            SizedBox(height: 100.0),
+          ],
         ),
       ),
     );

@@ -34,10 +34,10 @@ class _AxisDayState extends State<AxisDay> {
   ];
 
   List<Widget> _generateTimetableDays() {
-    List<Widget> weekdayOptions = [];
+    List<Widget> weekdayOptionWidgets = [];
 
     _weekdays.forEach((weekdayOption) {
-      weekdayOptions.add(ListTile(
+      weekdayOptionWidgets.add(ListTile(
         dense: true,
 
         /// Checkbox
@@ -67,7 +67,7 @@ class _AxisDayState extends State<AxisDay> {
       ));
     });
 
-    return weekdayOptions;
+    return weekdayOptionWidgets;
   }
 
   @override

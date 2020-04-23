@@ -16,7 +16,7 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
   Widget build(BuildContext context) {
     List<String> axis1 = widget.timetable.axisDaysShortStr ?? [];
     List<String> axis2 = widget.timetable.axisTimesStr ?? [];
-    List<String> axis3 = widget.timetable.axisCustoms ?? [];
+    List<String> axis3 = widget.timetable.axisCustom ?? [];
 
     return TimetableGrid(
       axisX: axis1,
