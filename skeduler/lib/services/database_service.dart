@@ -690,8 +690,8 @@ class DatabaseService {
             endDate: snapshot.data['endDate'] ?? null,
             axisDays: _weekdaysFromDynamicList(snapshot.data['axisDays'] ?? []),
             axisTimes: _timesFromDynamicList(snapshot.data['axisTimes'] ?? []),
-            axisCustom:
-                _stringsFromDynamicList(snapshot.data['axisCustom'] ?? []),
+            axisCustoms:
+                _stringsFromDynamicList(snapshot.data['axisCustoms'] ?? []),
           )
         : Timetable(docId: '');
   }

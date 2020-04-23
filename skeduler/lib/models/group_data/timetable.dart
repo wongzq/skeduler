@@ -48,7 +48,7 @@ class Timetable {
     Timestamp endDate,
     List<Weekday> axisDays,
     List<Time> axisTimes,
-    List<String> axisCustom,
+    List<String> axisCustoms,
   }) {
     /// documentID
     _docId = docId;
@@ -64,28 +64,40 @@ class Timetable {
           DateTime.fromMillisecondsSinceEpoch(endDate.millisecondsSinceEpoch);
 
     /// timetable days axis
-    print('Days ' + axisDays.toString());
-
     if (axisDays != null) _axisDays = axisDays;
 
     /// timetable times axis
     if (axisTimes != null) _axisTimes = axisTimes;
 
     /// timetable custom axis
-    if (axisCustom != null) _axisCustom = axisCustom;
+    if (axisCustoms != null) _axisCustom = axisCustoms;
   }
+
+  Timetable.fromEditTimetable(EditTimetable editTtb)
+      : this(
+          docId: editTtb.docId,
+          startDate: Timestamp.fromDate(editTtb.startDate),
+          endDate: Timestamp.fromDate(editTtb.endDate),
+          axisDays: editTtb.axisDays,
+          axisTimes: editTtb.axisTimes,
+          axisCustoms: editTtb.axisCustoms,
+        );
 
   /// getter methods
   String get docId => _docId;
   DateTime get startDate => _startDate;
   DateTime get endDate => _endDate;
   List<Weekday> get axisDays => _axisDays;
+  List<Time> get axisTimes => _axisTimes;
+  List<String> get axisCustoms => _axisCustom;
+
+  /// getter as [List<String>]
   List<String> get axisDaysStr => List.generate(
       _axisDays.length, (index) => getWeekdayStr(_axisDays[index]));
-  List<Time> get axisTimes => _axisTimes;
+  List<String> get axisDaysShortStr => List.generate(
+      _axisDays.length, (index) => getWeekdayShortStr(_axisDays[index]));
   List<String> get axisTimesStr => List.generate(
       _axisTimes.length, (index) => getTimeStr(_axisTimes[index]));
-  List<String> get axisCustom => _axisCustom;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -109,13 +121,13 @@ class EditTimetable {
     DateTime endDate,
     List<Weekday> axisDays,
     List<Time> axisTimes,
-    List<String> axisCustom,
+    List<String> axisCustoms,
   })  : _docId = docId,
         _startDate = startDate,
         _endDate = endDate,
         _axisDays = axisDays,
         _axisTimes = axisTimes,
-        _axisCustom = axisCustom;
+        _axisCustom = axisCustoms;
 
   EditTimetable.fromTimetable(Timetable timetable)
       : this(
@@ -124,7 +136,7 @@ class EditTimetable {
           endDate: timetable.endDate,
           axisDays: timetable.axisDays,
           axisTimes: timetable.axisTimes,
-          axisCustom: timetable.axisCustom,
+          axisCustoms: timetable.axisCustoms,
         );
 
   EditTimetable.copy(EditTimetable timetable)
@@ -134,7 +146,7 @@ class EditTimetable {
           endDate: timetable.endDate,
           axisDays: timetable.axisDays,
           axisTimes: timetable.axisTimes,
-          axisCustom: timetable.axisCustom,
+          axisCustoms: timetable.axisCustoms,
         );
 
   /// getter methods
@@ -143,7 +155,7 @@ class EditTimetable {
   DateTime get endDate => this._endDate;
   List<Weekday> get axisDays => this._axisDays;
   List<Time> get axisTimes => this._axisTimes;
-  List<String> get axisCustom => this._axisCustom;
+  List<String> get axisCustoms => this._axisCustom;
   TimetableMetadata get metadata => TimetableMetadata(
         id: this._docId,
         startDate: Timestamp.fromDate(this._startDate),
@@ -156,7 +168,7 @@ class EditTimetable {
   set endDate(DateTime endDate) => this._endDate = endDate;
   set axisDays(List<Weekday> axisDays) => this._axisDays = axisDays;
   set axisTimes(List<Time> axisTimes) => this._axisTimes = axisTimes;
-  set axisCustom(List<String> axisCustom) => this._axisCustom = axisCustom;
+  set axisCustoms(List<String> axisCustoms) => this._axisCustom = axisCustoms;
 
   void updateTimetableSettings({
     String docId,
@@ -164,14 +176,14 @@ class EditTimetable {
     DateTime endDate,
     List<Weekday> axisDays,
     List<Time> axisTimes,
-    List<String> axisCustom,
+    List<String> axisCustoms,
   }) {
     this.docId = docId ?? this.docId;
     this.startDate = startDate ?? this.startDate;
     this.endDate = endDate ?? this.endDate;
     this.axisDays = axisDays ?? this.axisDays;
     this.axisTimes = axisTimes ?? this.axisTimes;
-    this.axisCustom = axisCustom ?? this.axisCustom;
+    this.axisCustoms = axisCustoms ?? this.axisCustoms;
   }
 }
 
@@ -207,6 +219,11 @@ Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTtb) {
     axisTimesTimestamps
         .sort((a, b) => a['startTime'].compareTo(b['startTime']));
     firestoreMap['axisTimes'] = axisTimesTimestamps;
+  }
+
+  /// convert axisCustoms
+  if (editTtb.axisCustoms != null) {
+    firestoreMap['axisCustoms'] = editTtb.axisCustoms;
   }
 
   /// return final map in firestore format

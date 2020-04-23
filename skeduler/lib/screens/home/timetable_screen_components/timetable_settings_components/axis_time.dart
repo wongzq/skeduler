@@ -84,9 +84,14 @@ class _AxisTimeState extends State<AxisTime> {
             icon: Icon(Icons.more_vert),
             itemBuilder: (context) {
               return [
-                PopupMenuItem(child: Text('Edit'), value: TimeslotOption.edit),
                 PopupMenuItem(
-                    child: Text('Remove'), value: TimeslotOption.remove),
+                  child: Text('Edit'),
+                  value: TimeslotOption.edit,
+                ),
+                PopupMenuItem(
+                  child: Text('Remove'),
+                  value: TimeslotOption.remove,
+                ),
               ];
             },
             onSelected: (val) {
@@ -219,46 +224,44 @@ class _AxisTimeState extends State<AxisTime> {
         Icons.add_circle,
         size: 30.0,
       ),
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (context) {
-            DateTime newStartTime;
-            DateTime newEndTime;
+      onTap: () => showDialog(
+        context: context,
+        builder: (context) {
+          DateTime newStartTime;
+          DateTime newEndTime;
 
-            return EditTimeDialog(
-              contentText: 'Add time slot',
-              valSetStartTime: (dateTime) => newStartTime = dateTime,
-              valSetEndTime: (dateTime) => newEndTime = dateTime,
-              onSave: () {
-                setState(() {
-                  if (newEndTime.isAfter(newStartTime)) {
-                    List<Time> tempTimes = List<Time>.from(_times);
-                    tempTimes.add(Time(newStartTime, newEndTime));
+          return EditTimeDialog(
+            contentText: 'Add time slot',
+            valSetStartTime: (dateTime) => newStartTime = dateTime,
+            valSetEndTime: (dateTime) => newEndTime = dateTime,
+            onSave: () {
+              setState(() {
+                if (newEndTime.isAfter(newStartTime)) {
+                  List<Time> tempTimes = List<Time>.from(_times);
+                  tempTimes.add(Time(newStartTime, newEndTime));
 
-                    /// If no conflict in temporary, then add to main
-                    if (isConsecutiveTimes(tempTimes)) {
-                      _times.add(Time(newStartTime, newEndTime));
+                  /// If no conflict in temporary, then add to main
+                  if (isConsecutiveTimes(tempTimes)) {
+                    _times.add(Time(newStartTime, newEndTime));
 
-                      _times.sort((a, b) => a.startTime.millisecondsSinceEpoch
-                          .compareTo(b.startTime.millisecondsSinceEpoch));
-                    } else {
-                      Fluttertoast.showToast(
-                        msg: 'There was a conflict in the time',
-                        toastLength: Toast.LENGTH_LONG,
-                      );
-                    }
-
-                    if (widget.valSetTimes != null) {
-                      widget.valSetTimes(_times);
-                    }
+                    _times.sort((a, b) => a.startTime.millisecondsSinceEpoch
+                        .compareTo(b.startTime.millisecondsSinceEpoch));
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: 'There was a conflict in the time',
+                      toastLength: Toast.LENGTH_LONG,
+                    );
                   }
-                });
-              },
-            );
-          },
-        );
-      },
+
+                  if (widget.valSetTimes != null) {
+                    widget.valSetTimes(_times);
+                  }
+                }
+              });
+            },
+          );
+        },
+      ),
     );
   }
 

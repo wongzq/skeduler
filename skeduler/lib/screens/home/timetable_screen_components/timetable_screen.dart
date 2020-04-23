@@ -128,13 +128,12 @@ class _TimetableScreenState extends State<TimetableScreen> {
                             snapshot.data,
                           ),
                           builder: (context, snapshot) {
-                            print('Snap: ' + snapshot.data.toString());
                             Timetable timetable =
                                 snapshot != null ? snapshot.data : null;
-                            print(timetable);
-                            print(timetable.axisDays);
-                            print(timetable.axisTimes);
-                            return TimetableDisplay(timetable: timetable);
+
+                            return timetable != null
+                                ? TimetableDisplay(timetable: timetable)
+                                : Container();
                           },
                         );
                       }),

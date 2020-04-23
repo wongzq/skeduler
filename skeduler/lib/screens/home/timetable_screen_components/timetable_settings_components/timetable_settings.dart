@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_custom.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_day.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_time.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/date_range.dart';
@@ -157,6 +158,13 @@ class TimetableSettings extends StatelessWidget {
                 initialTimes: editTtb.value.axisTimes,
                 valSetTimes: (times) {
                   tempEditTtb.axisTimes = times;
+                },
+              ),
+
+              AxisCustom(
+                initialCustoms: editTtb.value.axisCustoms,
+                valSetCustoms: (customs) {
+                  tempEditTtb.axisCustoms = customs;
                 },
               ),
               // AxisCustom(),

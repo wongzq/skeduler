@@ -80,7 +80,10 @@ class _TimetableEditorState extends State<TimetableEditor> {
           });
         },
       ),
-      body: TimetableDisplay(),
+      body: editTtb.value != null
+          ? TimetableDisplay(
+              timetable: Timetable.fromEditTimetable(editTtb.value))
+          : Container(),
     );
   }
 }
