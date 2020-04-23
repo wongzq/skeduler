@@ -25,6 +25,9 @@ class _AxisCustomState extends State<AxisCustom> {
     List<Widget> customValWidgets = [];
 
     _customs.forEach((custom) {
+      GlobalKey<FormState> formKey = GlobalKey<FormState>();
+      String newCustom;
+
       customValWidgets.add(
         ListTile(
           dense: true,
@@ -46,6 +49,57 @@ class _AxisCustomState extends State<AxisCustom> {
             onSelected: (val) {
               switch (val) {
                 case CustomOption.edit:
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(
+                          'Add custom value',
+                          style: TextStyle(fontSize: 15.0),
+                        ),
+                        content: Form(
+                          key: formKey,
+                          child: TextFormField(
+                            initialValue: custom,
+                            decoration: InputDecoration(
+                              hintText: 'Type something here',
+                              hintStyle: TextStyle(fontSize: 15.0),
+                            ),
+                            onChanged: (value) => newCustom = value,
+                            validator: (value) =>
+                                value == null || value.trim() == ''
+                                    ? 'Value cannot be empty'
+                                    : null,
+                          ),
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text('CANCEL'),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                          FlatButton(
+                            child: Text('SAVE'),
+                            onPressed: () {
+                              if (formKey.currentState.validate()) {
+                                setState(() {
+                                  int index = _customs.indexOf(custom);
+                                  _customs.removeAt(index);
+                                  _customs.insert(index, newCustom);
+                                });
+                              }
+
+                              /// update through valueSetter
+                              if (widget.valSetCustoms != null) {
+                                widget.valSetCustoms(_customs);
+                              }
+
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                   break;
                 case CustomOption.remove:
                   setState(() => _customs.remove(custom));
