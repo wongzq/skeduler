@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -17,20 +19,31 @@ class TimetableSettings extends StatelessWidget {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
-    ValueNotifier<EditTimetable> editTtb =
-        Provider.of<ValueNotifier<EditTimetable>>(context);
+    ValueNotifier<EditTimetableStatus> editTtb =
+        Provider.of<ValueNotifier<EditTimetableStatus>>(context);
 
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-    EditTimetable tempEditTtb = editTtb.value != null
-        ? EditTimetable.copy(editTtb.value)
-        : EditTimetable();
+    editTtb.value.temp =
+        editTtb.value.temp != null && editTtb.value.temp.isValid()
+            ? editTtb.value.temp
+            : editTtb.value.perm != null && editTtb.value.perm.isValid()
+                ? EditTimetable.copy(editTtb.value.perm)
+                : EditTimetable();
 
     return GestureDetector(
       onTap: () => unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          title: editTtb.value.docId == null
+          leading: IconButton(
+              icon: Icon(
+                  Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
+              onPressed: () {
+                editTtb.value.temp = EditTimetable();
+
+                Navigator.of(context).pop();
+              }),
+          title: editTtb.value.temp.docId == null
               ? Text(
                   'Timetable Settings',
                   style: textStyleAppBarTitle,
@@ -39,7 +52,7 @@ class TimetableSettings extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      editTtb.value.docId,
+                      editTtb.value.temp.docId,
                       style: textStyleAppBarTitle,
                     ),
                     Text(
@@ -55,39 +68,41 @@ class TimetableSettings extends StatelessWidget {
                 if (formKey.currentState.validate()) {
                   /// check if new timetable (docId is null)
                   /// check if update same timetable (docId is same)
-                  if (editTtb.value.docId == null ||
-                      editTtb.value.docId == tempEditTtb.docId) {
-                    editTtb.value.updateTimetableSettings(
-                      docId: tempEditTtb.docId,
-                      startDate: tempEditTtb.startDate,
-                      endDate: tempEditTtb.endDate,
-                      axisDay: tempEditTtb.axisDay,
-                      axisTime: tempEditTtb.axisTime,
+                  if (editTtb.value.perm.docId == null ||
+                      editTtb.value.perm.docId == editTtb.value.temp.docId) {
+                    editTtb.value.perm.updateTimetableSettings(
+                      docId: editTtb.value.temp.docId,
+                      startDate: editTtb.value.temp.startDate,
+                      endDate: editTtb.value.temp.endDate,
+                      axisDay: editTtb.value.temp.axisDay,
+                      axisTime: editTtb.value.temp.axisTime,
+                      axisCustom: editTtb.value.temp.axisCustom,
                     );
 
                     Navigator.of(context).pop();
                   }
 
                   /// check if timetable docId changed
-                  else if (editTtb.value.docId != null &&
-                      editTtb.value.docId.trim() != '' &&
-                      editTtb.value.docId != tempEditTtb.docId) {
+                  else if (editTtb.value.perm.docId != null &&
+                      editTtb.value.perm.docId.trim() != '' &&
+                      editTtb.value.perm.docId != editTtb.value.temp.docId) {
                     /// change ID by cloning old document with new ID
                     await dbService
                         .updateGroupTimetableDocId(
                       groupDocId.value,
-                      editTtb.value.metadata,
-                      tempEditTtb.metadata,
+                      editTtb.value.perm.metadata,
+                      editTtb.value.temp.metadata,
                     )
                         .then((changed) async {
                       if (changed) {
                         /// Update document with new data
-                        editTtb.value.updateTimetableSettings(
-                          docId: tempEditTtb.docId,
-                          startDate: tempEditTtb.startDate,
-                          endDate: tempEditTtb.endDate,
-                          axisDay: tempEditTtb.axisDay,
-                          axisTime: tempEditTtb.axisTime,
+                        editTtb.value.perm.updateTimetableSettings(
+                          docId: editTtb.value.temp.docId,
+                          startDate: editTtb.value.temp.startDate,
+                          endDate: editTtb.value.temp.endDate,
+                          axisDay: editTtb.value.temp.axisDay,
+                          axisTime: editTtb.value.temp.axisTime,
+                          axisCustom: editTtb.value.temp.axisCustom,
                         );
                         Navigator.of(context).pop();
                       } else {
@@ -115,9 +130,9 @@ class TimetableSettings extends StatelessWidget {
                 label: 'Name',
                 formKey: formKey,
                 hintText: 'Timetable Name',
-                initialValue: editTtb.value.docId,
+                initialValue: editTtb.value.temp.docId,
                 valSetText: (text) {
-                  tempEditTtb.docId = text;
+                  editTtb.value.temp.docId = text;
                 },
                 validator: (text) {
                   if (text == null || text.trim() == '') {
@@ -132,13 +147,13 @@ class TimetableSettings extends StatelessWidget {
 
             /// Date range
             DateRange(
-              initialStartDate: editTtb.value.startDate,
-              initialEndDate: editTtb.value.endDate,
+              initialStartDate: editTtb.value.temp.startDate,
+              initialEndDate: editTtb.value.temp.endDate,
               valSetStartDate: (startDate) {
-                tempEditTtb.startDate = startDate;
+                editTtb.value.temp.startDate = startDate;
               },
               valSetEndDate: (endDate) {
-                tempEditTtb.endDate = endDate;
+                editTtb.value.temp.endDate = endDate;
               },
             ),
             SizedBox(height: 10.0),
@@ -150,9 +165,9 @@ class TimetableSettings extends StatelessWidget {
                 dividerColor: Colors.transparent,
               ),
               child: AxisDay(
-                initialWeekdaysSelected: editTtb.value.axisDay,
+                initialWeekdaysSelected: editTtb.value.temp.axisDay,
                 valSetWeekdaysSelected: (timetableWeekdaysSelected) {
-                  tempEditTtb.axisDay = timetableWeekdaysSelected;
+                  editTtb.value.temp.axisDay = timetableWeekdaysSelected;
                 },
               ),
             ),
@@ -164,9 +179,9 @@ class TimetableSettings extends StatelessWidget {
                 dividerColor: Colors.transparent,
               ),
               child: AxisTime(
-                initialTimes: editTtb.value.axisTime,
+                initialTimes: editTtb.value.temp.axisTime,
                 valSetTimes: (times) {
-                  tempEditTtb.axisTime = times;
+                  editTtb.value.temp.axisTime = times;
                 },
               ),
             ),
@@ -178,9 +193,9 @@ class TimetableSettings extends StatelessWidget {
                 dividerColor: Colors.transparent,
               ),
               child: AxisCustom(
-                initialCustoms: editTtb.value.axisCustom,
-                valSetCustoms: (customs) {
-                  tempEditTtb.axisCustom = customs;
+                initialCustoms: editTtb.value.temp.axisCustom,
+                valSetCustoms: (customVals) {
+                  editTtb.value.temp.axisCustom = customVals;
                 },
               ),
             ),
@@ -202,7 +217,7 @@ class TimetableSettings extends StatelessWidget {
                       builder: (context) {
                         return AlertDialog(
                           content: Text(
-                              'Do you want to delete \'${editTtb.value.docId}\' timetable?'),
+                              'Do you want to delete \'${editTtb.value.temp.docId}\' timetable?'),
                           actions: <Widget>[
                             /// CANCEL button
                             FlatButton(
@@ -220,7 +235,7 @@ class TimetableSettings extends StatelessWidget {
                               ),
                               onPressed: () async {
                                 await dbService.deleteGroupTimetable(
-                                    groupDocId.value, editTtb.value.docId);
+                                    groupDocId.value, editTtb.value.perm.docId);
                                 Navigator.of(context).pop();
                               },
                             ),

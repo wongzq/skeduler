@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class AxisCustom extends StatefulWidget {
-  final ValueSetter<List<String>> valSetCustoms;
   final List<String> initialCustoms;
+  final ValueSetter<List<String>> valSetCustoms;
   final bool initiallyExpanded;
 
   const AxisCustom({
     Key key,
-    this.valSetCustoms,
     this.initialCustoms,
+    this.valSetCustoms,
     this.initiallyExpanded = false,
   }) : super(key: key);
 
@@ -17,19 +17,19 @@ class AxisCustom extends StatefulWidget {
 }
 
 class _AxisCustomState extends State<AxisCustom> {
-  List<String> _customs;
-
+  List<String> _customVals;
   bool _expanded;
 
   List<Widget> _generateCustoms() {
     List<Widget> customValWidgets = [];
 
-    _customs.forEach((custom) {
+    _customVals.forEach((custom) {
       GlobalKey<FormState> formKey = GlobalKey<FormState>();
       String newCustom;
 
       customValWidgets.add(
         ListTile(
+          key: UniqueKey(),
           dense: true,
           title: Text(custom),
           trailing: PopupMenuButton(
@@ -39,6 +39,10 @@ class _AxisCustomState extends State<AxisCustom> {
                 PopupMenuItem(
                   child: Text('Edit'),
                   value: CustomOption.edit,
+                ),
+                PopupMenuItem(
+                  child: Text('Reorder'),
+                  value: CustomOption.reorder,
                 ),
                 PopupMenuItem(
                   child: Text('Remove'),
@@ -54,7 +58,7 @@ class _AxisCustomState extends State<AxisCustom> {
                     builder: (context) {
                       return AlertDialog(
                         title: Text(
-                          'Add custom value',
+                          'Edit custom value',
                           style: TextStyle(fontSize: 15.0),
                         ),
                         content: Form(
@@ -82,18 +86,18 @@ class _AxisCustomState extends State<AxisCustom> {
                             onPressed: () {
                               if (formKey.currentState.validate()) {
                                 setState(() {
-                                  int index = _customs.indexOf(custom);
-                                  _customs.removeAt(index);
-                                  _customs.insert(index, newCustom);
+                                  int index = _customVals.indexOf(custom);
+                                  _customVals.removeAt(index);
+                                  _customVals.insert(index, newCustom);
                                 });
-                              }
 
-                              /// update through valueSetter
-                              if (widget.valSetCustoms != null) {
-                                widget.valSetCustoms(_customs);
-                              }
+                                /// update through valueSetter
+                                if (widget.valSetCustoms != null) {
+                                  widget.valSetCustoms(_customVals);
+                                }
 
-                              Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                              }
                             },
                           ),
                         ],
@@ -101,8 +105,31 @@ class _AxisCustomState extends State<AxisCustom> {
                     },
                   );
                   break;
+                case CustomOption.reorder:
+                  Navigator.of(context).pushNamed(
+                    '/timetable/editor/settings/reorderAxisCustom',
+                    arguments: {
+                      'axisCustom': _customVals,
+                      'valSetAxisCustom': (val) {
+                        setState(() {
+                          _customVals = val;
+                        });
+
+                        /// Update through valueSetter
+                        if (widget.valSetCustoms != null) {
+                          widget.valSetCustoms(_customVals);
+                        }
+                      },
+                    },
+                  );
+                  break;
                 case CustomOption.remove:
-                  setState(() => _customs.remove(custom));
+                  setState(() => _customVals.remove(custom));
+
+                  /// Update through valueSetter
+                  if (widget.valSetCustoms != null) {
+                    widget.valSetCustoms(_customVals);
+                  }
                   break;
               }
             },
@@ -118,6 +145,7 @@ class _AxisCustomState extends State<AxisCustom> {
 
   Widget _generateAddCustomButton() {
     return ListTile(
+      key: UniqueKey(),
       title: Icon(
         Icons.add_circle,
         size: 30.0,
@@ -155,15 +183,15 @@ class _AxisCustomState extends State<AxisCustom> {
                   child: Text('SAVE'),
                   onPressed: () {
                     if (formKey.currentState.validate()) {
-                      setState(() => _customs.add(newCustom));
-                    }
+                      setState(() => _customVals.add(newCustom));
 
-                    /// update through valueSetter
-                    if (widget.valSetCustoms != null) {
-                      widget.valSetCustoms(_customs);
-                    }
+                      /// update through valueSetter
+                      if (widget.valSetCustoms != null) {
+                        widget.valSetCustoms(_customVals);
+                      }
 
-                    Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    }
                   },
                 ),
               ],
@@ -175,7 +203,7 @@ class _AxisCustomState extends State<AxisCustom> {
   @override
   void initState() {
     _expanded = widget.initiallyExpanded;
-    _customs = widget.initialCustoms ?? [];
+    _customVals = widget.initialCustoms ?? [];
     super.initState();
   }
 
@@ -205,5 +233,6 @@ class _AxisCustomState extends State<AxisCustom> {
 
 enum CustomOption {
   edit,
+  reorder,
   remove,
 }

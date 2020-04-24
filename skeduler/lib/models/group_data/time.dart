@@ -20,6 +20,49 @@ enum Month { jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec }
 
 enum Weekday { mon, tue, wed, thu, fri, sat, sun }
 
+String getMonthShortStr(Month month) {
+  switch (month) {
+    case Month.jan:
+      return 'Jan';
+      break;
+    case Month.feb:
+      return 'Feb';
+      break;
+    case Month.mar:
+      return 'Mar';
+      break;
+    case Month.apr:
+      return 'Apr';
+      break;
+    case Month.may:
+      return 'May';
+      break;
+    case Month.jun:
+      return 'Jun';
+      break;
+    case Month.jul:
+      return 'Jul';
+      break;
+    case Month.aug:
+      return 'Aug';
+      break;
+    case Month.sep:
+      return 'Sep';
+      break;
+    case Month.oct:
+      return 'Oct';
+      break;
+    case Month.nov:
+      return 'Nov';
+      break;
+    case Month.dec:
+      return 'Dec';
+      break;
+    default:
+      return '';
+  }
+}
+
 String getWeekdayShortStr(Weekday weekday) {
   switch (weekday) {
     case Weekday.mon:

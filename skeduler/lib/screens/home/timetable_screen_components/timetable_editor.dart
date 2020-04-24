@@ -21,8 +21,8 @@ class _TimetableEditorState extends State<TimetableEditor> {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
-    ValueNotifier<EditTimetable> editTtb =
-        Provider.of<ValueNotifier<EditTimetable>>(context);
+    ValueNotifier<EditTimetableStatus> editTtb =
+        Provider.of<ValueNotifier<EditTimetableStatus>>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -31,10 +31,10 @@ class _TimetableEditorState extends State<TimetableEditor> {
               Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
             ),
             onPressed: () {
-              editTtb.value = null;
+              editTtb.value.perm = null;
               Navigator.of(context).pop();
             }),
-        title: editTtb.value == null
+        title: editTtb.value.perm == null
             ? Text(
                 'Timetable Editor',
                 style: textStyleAppBarTitle,
@@ -43,7 +43,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    editTtb.value.docId ?? '',
+                    editTtb.value.perm.docId ?? '',
                     style: textStyleAppBarTitle,
                   ),
                   Text(
@@ -56,7 +56,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: () => Navigator.of(context).pushNamed(
-              '/timetableSettings',
+              '/timetable/editor/settings',
             ),
           ),
         ],
@@ -68,7 +68,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
         child: Icon(Icons.save),
         onPressed: () async {
           await dbService
-              .updateGroupTimetable(groupDocId.value, editTtb.value)
+              .updateGroupTimetable(groupDocId.value, editTtb.value.perm)
               .then((_) {
             Fluttertoast.showToast(
               msg: 'Successfully saved timetable',
@@ -82,9 +82,9 @@ class _TimetableEditorState extends State<TimetableEditor> {
           });
         },
       ),
-      body: editTtb.value != null && editTtb.value.isValid()
+      body: editTtb.value.perm != null && editTtb.value.perm.isValid()
           ? TimetableDisplay(
-              timetable: Timetable.fromEditTimetable(editTtb.value))
+              timetable: Timetable.fromEditTimetable(editTtb.value.perm))
           : Container(),
     );
   }

@@ -28,20 +28,9 @@ class _MonthEditorState extends State<MonthEditor> {
   EditorsStatus _editorsStatus;
 
   List<Month> _monthsSelected = [];
-  List<String> _months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-  ];
+  List<String> _months = List.generate(Month.values.length, (index) {
+    return getMonthShortStr(Month.values[index]);
+  });
 
   double _bodyPadding = 10.0;
   double _sizedBoxPadding = 8.0;

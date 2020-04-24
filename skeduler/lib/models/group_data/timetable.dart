@@ -64,13 +64,13 @@ class Timetable {
           DateTime.fromMillisecondsSinceEpoch(endDate.millisecondsSinceEpoch);
 
     /// timetable days axis
-    if (axisDay != null) _axisDays = axisDay;
+    if (axisDay != null) _axisDays = List<Weekday>.from(axisDay ?? []);
 
     /// timetable times axis
-    if (axisTime != null) _axisTimes = axisTime;
+    if (axisTime != null) _axisTimes = List<Time>.from(axisTime ?? []);
 
     /// timetable custom axis
-    if (axisCustom != null) _axisCustom = axisCustom;
+    if (axisCustom != null) _axisCustom = List<String>.from(axisCustom ?? []);
   }
 
   Timetable.fromEditTimetable(EditTimetable editTtb)
@@ -134,9 +134,9 @@ class EditTimetable {
   })  : _docId = docId,
         _startDate = startDate,
         _endDate = endDate,
-        _axisDays = axisDay ?? [],
-        _axisTimes = axisTime ?? [],
-        _axisCustom = axisCustom ?? [];
+        _axisDays = List<Weekday>.from(axisDay ?? []),
+        _axisTimes = List<Time>.from(axisTime ?? []),
+        _axisCustom = List<String>.from(axisCustom ?? []);
 
   EditTimetable.fromTimetable(Timetable timetable)
       : this(
@@ -203,6 +203,18 @@ class EditTimetable {
     this.axisTime = axisTime ?? this.axisTime;
     this.axisCustom = axisCustom ?? this.axisCustom;
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// EditTimetableStatus class
+////////////////////////////////////////////////////////////////////////////////
+
+class EditTimetableStatus {
+  /// permanent
+  EditTimetable perm;
+
+  /// temporary
+  EditTimetable temp;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

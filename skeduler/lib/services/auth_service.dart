@@ -29,7 +29,6 @@ class AuthService {
           email: email, password: password);
       return _userFromFirebaseUser(result.user);
     } catch (e) {
-      print(e.toString());
       return null;
     }
   }
@@ -48,7 +47,6 @@ class AuthService {
 
       return _userFromFirebaseUser(result.user);
     } catch (e) {
-      print(e.toString());
       return null;
     }
   }
@@ -57,7 +55,6 @@ class AuthService {
     try {
       return await _authService.signOut();
     } catch (e) {
-      print(e.toString());
       return null;
     }
   }

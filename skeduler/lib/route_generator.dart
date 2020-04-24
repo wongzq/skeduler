@@ -9,6 +9,7 @@ import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_edi
 import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_editor.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_screen.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_custom_reorder.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/timetable_settings.dart';
 import 'package:skeduler/screens/wrapper.dart';
 import 'package:skeduler/shared/components/add_member.dart';
@@ -56,15 +57,28 @@ class RouteGenerator {
         }
         break;
 
-      case '/timetableEditor':
+      case '/timetable/editor':
         if (args == null) {
           return CustomTransitionRoute(page: wrapWidget(TimetableEditor()));
         }
         break;
 
-      case '/timetableSettings':
+      case '/timetable/editor/settings':
         if (args == null) {
           return CustomTransitionRoute(page: wrapWidget(TimetableSettings()));
+        }
+        break;
+
+      case '/timetable/editor/settings/reorderAxisCustom':
+        if (args is Map<String, dynamic>) {
+          return CustomTransitionRoute(
+            page: wrapWidget(
+              AxisCustomReoder(
+                axisCustom: args['axisCustom'],
+                valSetAxisCustom: args['valSetAxisCustom'],
+              ),
+            ),
+          );
         }
         break;
 

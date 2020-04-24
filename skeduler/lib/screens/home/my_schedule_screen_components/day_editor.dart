@@ -29,7 +29,9 @@ class _DayEditorState extends State<DayEditor> {
 
   EditorsStatus _editorsStatus;
 
-  List<String> _days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  List<String> _days = List.generate(Weekday.values.length, (index) {
+    return getWeekdayShortStr(Weekday.values[index]);
+  });
 
   List<Weekday> _weekdaysSelected = [];
 

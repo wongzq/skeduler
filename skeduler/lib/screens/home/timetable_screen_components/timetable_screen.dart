@@ -19,8 +19,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
-    ValueNotifier<EditTimetable> editTtb =
-        Provider.of<ValueNotifier<EditTimetable>>(context);
+    ValueNotifier<EditTimetableStatus> editTtb =
+        Provider.of<ValueNotifier<EditTimetableStatus>>(context);
 
     return StreamBuilder<Object>(
       stream: dbService.getGroup(groupDocId.value),
@@ -105,11 +105,11 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                   },
                                   onSelected: (value) async {
                                     if (value == 0) {
-                                      editTtb.value = EditTimetable();
+                                      editTtb.value.perm = EditTimetable();
                                       Navigator.of(context)
-                                          .pushNamed('/timetableEditor');
+                                          .pushNamed('/timetable/editor');
                                     } else {
-                                      editTtb.value =
+                                      editTtb.value.perm =
                                           EditTimetable.fromTimetable(
                                         await dbService.getGroupTimetable(
                                           groupDocId.value,
@@ -118,7 +118,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                       );
 
                                       Navigator.of(context)
-                                          .pushNamed('/timetableEditor');
+                                          .pushNamed('/timetable/editor');
                                     }
                                   },
                                 ),
@@ -133,7 +133,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                             child: Icon(Icons.edit),
                             onPressed: () {
                               Navigator.of(context)
-                                  .pushNamed('/timetableEditor');
+                                  .pushNamed('/timetable/editor');
                             },
                           ),
                           body: timetable != null && timetable.isValid()

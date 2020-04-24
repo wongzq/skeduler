@@ -110,9 +110,11 @@ class MyApp extends StatelessWidget {
                           create: (_) => ValueNotifier<String>(''),
                         ),
 
-                        /// Temp Timetable
-                        ChangeNotifierProvider<ValueNotifier<EditTimetable>>(
-                          create: (_) => ValueNotifier<EditTimetable>(null),
+                        /// Edit Timetable
+                        ChangeNotifierProvider<
+                            ValueNotifier<EditTimetableStatus>>(
+                          create: (_) => ValueNotifier<EditTimetableStatus>(
+                              EditTimetableStatus()),
                         ),
                       ],
                       child: MaterialApp(
