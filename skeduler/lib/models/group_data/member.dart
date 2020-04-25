@@ -4,6 +4,50 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/group_data/time.dart';
 
+class Member {
+  /// properties
+  String _email;
+  String _name;
+  String _nickname;
+  String _description;
+
+  MemberRole _role;
+  ColorShade _colorShade;
+
+  List<Time> _times;
+
+  /// constructors
+  Member({
+    @required String email,
+    String name,
+    String nickname,
+    String description,
+    MemberRole role,
+    ColorShade colorShade,
+    List<Time> times,
+  }) {
+    _email = email;
+    _name = name;
+    _nickname = nickname;
+    _description = description;
+    _role = role;
+    _colorShade = colorShade;
+    _times = times;
+  }
+
+  /// getter methods
+  String get email => _email;
+  String get name => _name;
+  String get nickname => _nickname;
+  String get display => _nickname ?? _name ?? _email;
+  String get description => _description;
+  MemberRole get role => _role;
+  String get roleStr => _memberRole(_role);
+  IconData get roleIcon => _memberRoleIcon(_role);
+  ColorShade get colorShade => _colorShade;
+  List<Time> get times => _times;
+}
+
 enum MemberRole {
   pending,
   dummy,
@@ -56,47 +100,4 @@ IconData _memberRoleIcon(MemberRole role) {
       return Icons.close;
       break;
   }
-}
-
-class Member {
-  /// properties
-  String _email;
-  String _name;
-  String _nickname;
-  String _description;
-
-  MemberRole _role;
-  ColorShade _colorShade;
-
-  List<Time> _times;
-
-  /// constructors
-  Member({
-    @required String email,
-    String name,
-    String nickname,
-    String description,
-    MemberRole role,
-    ColorShade colorShade,
-    List<Time> times,
-  }) {
-    _email = email;
-    _name = name;
-    _nickname = nickname;
-    _description = description;
-    _role = role;
-    _colorShade = colorShade;
-    _times = times;
-  }
-
-  /// getter methods
-  String get email => _email;
-  String get name => _name;
-  String get nickname => _nickname;
-  String get description => _description;
-  MemberRole get role => _role;
-  String get roleStr => _memberRole(_role);
-  IconData get roleIcon => _memberRoleIcon(_role);
-  ColorShade get colorShade => _colorShade;
-  List<Time> get times => _times;
 }

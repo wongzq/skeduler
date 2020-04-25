@@ -5,7 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
-import 'package:skeduler/screens/home/timetable_screen_components/member_selector_display.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/member_selector.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_display.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -86,15 +86,16 @@ class _TimetableEditorState extends State<TimetableEditor> {
       body: editTtb.value.perm != null && editTtb.value.perm.isValid()
           ? LayoutBuilder(
               builder: (context, constraints) {
-                double timetableDisplayHeight = constraints.maxHeight * 0.8;
-                double memberSelectorHeight =
-                    constraints.maxHeight - timetableDisplayHeight;
+                double memberSelectorHeight = 150;
+                double timetableDisplayHeight =
+                    constraints.maxHeight - memberSelectorHeight;
 
                 return Container(
                   height: constraints.maxHeight,
                   child: ListView(
                     physics: BouncingScrollPhysics(
-                        parent: AlwaysScrollableScrollPhysics()),
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
                     children: <Widget>[
                       Container(
                         height: timetableDisplayHeight,
@@ -104,7 +105,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                       ),
                       Container(
                         height: memberSelectorHeight,
-                        child: MemberSelectorDisplay(),
+                        child: MemberSelector(),
                       ),
                     ],
                   ),

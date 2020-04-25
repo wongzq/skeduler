@@ -12,10 +12,12 @@ class TimetableDisplay extends StatelessWidget {
     List<String> axis2 = timetable.axisTimesStr ?? [];
     List<String> axis3 = timetable.axisCustom ?? [];
 
-    return TimetableGrid(
-      axisX: axis1,
-      axisY: axis2,
-      axisZ: axis3,
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      return TimetableGrid(
+        axisX: axis1,
+        axisY: axis2,
+        axisZ: axis3,
+      );
+    });
   }
 }

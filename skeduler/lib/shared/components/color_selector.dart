@@ -117,6 +117,9 @@ class _ColorSelectorState extends State<ColorSelector> {
               gradientFractionOnStart: 0.05,
               gradientFractionOnEnd: 0.05,
               child: ListView.builder(
+                physics: BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
                 scrollDirection: Axis.horizontal,
                 controller: controller,
                 itemCount: myAppThemes.length * _shades,

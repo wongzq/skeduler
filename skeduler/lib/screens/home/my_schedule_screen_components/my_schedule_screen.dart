@@ -43,7 +43,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
 
-    return StreamBuilder<Object>(
+    return StreamBuilder(
         stream: dbService.getGroup(groupDocId.value),
         builder: (context, snapshot) {
           Group group = snapshot != null ? snapshot.data : null;

@@ -22,7 +22,7 @@ class ScheduleEditor extends StatelessWidget {
     EditorsStatus editorsStatus =
         EditorsStatus(currentEditor: CurrentEditor.month);
 
-    return StreamBuilder<Object>(
+    return StreamBuilder(
         stream: dbService.getGroup(groupDocId.value),
         builder: (context, snapshot) {
           Group group = snapshot != null ? snapshot.data : null;

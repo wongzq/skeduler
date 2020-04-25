@@ -49,7 +49,7 @@ class _MembersScreenState extends State<MembersScreen> {
 
                         return members == null || members.isEmpty
                             ? Container()
-                            : StreamBuilder<Object>(
+                            : StreamBuilder(
                                 stream: dbService
                                     .getGroupMemberMyData(groupDocId.value),
                                 builder: (context, snapshot) {

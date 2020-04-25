@@ -3,10 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
-import 'package:skeduler/screens/home/timetable_screen_components/member_selector_display.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_display.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class TimetableScreen extends StatefulWidget {
@@ -23,7 +21,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
     ValueNotifier<EditTimetableStatus> editTtb =
         Provider.of<ValueNotifier<EditTimetableStatus>>(context);
 
-    return StreamBuilder<Object>(
+    return StreamBuilder(
       stream: dbService.getGroup(groupDocId.value),
       builder: (context, snapshot) {
         Group group = snapshot != null ? snapshot.data : null;
@@ -31,7 +29,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
         return FutureBuilder(
           future: dbService.getGroupTimetableIdForToday(groupDocId.value),
           builder: (context, snapshotTtbId) {
-            return StreamBuilder<Object>(
+            return StreamBuilder(
               stream: dbService.getGroupTimetableForToday(
                 groupDocId.value,
                 snapshotTtbId.data,

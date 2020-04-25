@@ -67,7 +67,7 @@ ThemeData getOriginThemeData(String themeId) {
   }
 }
 
-Color getOriginThemeColorShade(ColorShade colorShade) {
+Color getColorFromColorShade(ColorShade colorShade) {
   ThemeData theme = getOriginThemeData(colorShade.themeId);
 
   switch (colorShade.shade) {

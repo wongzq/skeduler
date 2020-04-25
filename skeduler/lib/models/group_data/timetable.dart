@@ -233,6 +233,8 @@ class TimetableGridData {
   TimetableCoord coord;
   String subject;
   Member member;
+
+  TimetableGridData(TimetableCoord coord, String subject, Member member);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
