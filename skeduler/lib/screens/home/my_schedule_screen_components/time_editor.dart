@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:quiver/time.dart';
 import 'package:skeduler/models/auxiliary/native_theme.dart';
+import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/editors_status.dart';
 import 'package:skeduler/services/database_service.dart';
@@ -359,8 +360,7 @@ class _TimeEditorState extends State<TimeEditor> {
   Widget build(BuildContext context) {
     OriginTheme originTheme = Provider.of<OriginTheme>(context);
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<String> groupDocId =
-        Provider.of<ValueNotifier<String>>(context);
+    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
     _editorsStatus = Provider.of<EditorsStatus>(context);
 
     return AbsorbPointer(
@@ -495,7 +495,7 @@ class _TimeEditorState extends State<TimeEditor> {
                                           _endDate ?? getLastDayOfLastMonth(),
                                     );
                                     await dbService.updateGroupMemberTimes(
-                                        groupDocId.value, null, newTimes);
+                                        group.value.docId, null, newTimes);
                                   }
                                 : null,
                             child: Text(
@@ -605,7 +605,7 @@ class _TimeEditorState extends State<TimeEditor> {
 
                                                     await dbService
                                                         .removeGroupMemberTimes(
-                                                      groupDocId.value,
+                                                      group.value.docId,
                                                       null,
                                                       removeTimes,
                                                     );

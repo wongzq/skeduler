@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/member_selector.dart';
@@ -20,8 +21,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<String> groupDocId =
-        Provider.of<ValueNotifier<String>>(context);
+    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
     ValueNotifier<EditTimetableStatus> editTtb =
         Provider.of<ValueNotifier<EditTimetableStatus>>(context);
 
@@ -69,7 +69,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
         child: Icon(Icons.save),
         onPressed: () async {
           await dbService
-              .updateGroupTimetable(groupDocId.value, editTtb.value.perm)
+              .updateGroupTimetable(group.value.docId, editTtb.value.perm)
               .then((_) {
             Fluttertoast.showToast(
               msg: 'Successfully saved timetable',

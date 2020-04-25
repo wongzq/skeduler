@@ -4,7 +4,7 @@ import 'package:skeduler/models/group_data/timetable.dart';
 
 class Group {
   /// properties
-  String _groupDocId;
+  String _docId;
 
   String _name;
   String _description;
@@ -17,7 +17,7 @@ class Group {
 
   /// constructors
   Group({
-    @required String groupDocId,
+    @required String docId,
     String name = '',
     String description = '',
     ColorShade colorShade,
@@ -26,7 +26,7 @@ class Group {
     List<String> members = const [],
     List<TimetableMetadata> timetableMetadatas = const [],
   }) {
-    _groupDocId = groupDocId;
+    _docId = docId;
 
     _name = name;
     _description = description;
@@ -41,7 +41,7 @@ class Group {
   }
 
   /// getter methods
-  String get groupDocId => _groupDocId;
+  String get docId => _docId;
 
   String get name => _name;
   String get description => _description;
@@ -58,8 +58,8 @@ class GroupMetadata extends ChangeNotifier {
   String _docId;
   String _name;
 
-  GroupMetadata({groupDocId, groupName}) {
-    _docId = groupDocId;
+  GroupMetadata({docId, groupName}) {
+    _docId = docId;
     _name = groupName;
     notifyListeners();
   }

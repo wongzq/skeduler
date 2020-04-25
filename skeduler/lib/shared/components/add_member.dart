@@ -20,117 +20,109 @@ class _AddMemberState extends State<AddMember> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<String> groupDocId =
-        Provider.of<ValueNotifier<String>>(context);
+    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
 
-    return StreamBuilder(
-      stream: dbService.getGroup(groupDocId.value),
-      builder: (context, snapshot) {
-        Group group = snapshot != null ? snapshot.data : null;
+    return group.value == null
+        ? Loading()
+        : Scaffold(
+            appBar: AppBar(
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    group.value.name,
+                    style: textStyleAppBarTitle,
+                  ),
+                  Text(
+                    'Add member',
+                    style: textStyleBody,
+                  )
+                ],
+              ),
+            ),
+            floatingActionButton: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                /// Cancel changes
+                FloatingActionButton(
+                  heroTag: 'Cancel',
+                  backgroundColor: Colors.red,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Icon(
+                    Icons.close,
+                    color: Colors.white,
+                  ),
+                ),
 
-        return group == null
-            ? Loading()
-            : Scaffold(
-                appBar: AppBar(
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        group.name,
-                        style: textStyleAppBarTitle,
-                      ),
-                      Text(
-                        'Add member',
-                        style: textStyleBody,
+                SizedBox(width: 20.0),
+
+                /// Confirm amd make changes
+                FloatingActionButton(
+                  heroTag: 'Confirm',
+                  backgroundColor: Colors.green,
+                  onPressed: () async {
+                    if (_formKeyEmail.currentState.validate()) {
+                      await dbService
+                          .inviteMemberToGroup(
+                        groupDocId: group.value.docId,
+                        newMemberEmail: _newMemberEmail,
                       )
-                    ],
-                  ),
-                ),
-                floatingActionButton: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    /// Cancel changes
-                    FloatingActionButton(
-                      heroTag: 'Cancel',
-                      backgroundColor: Colors.red,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.white,
-                      ),
-                    ),
-
-                    SizedBox(width: 20.0),
-
-                    /// Confirm amd make changes
-                    FloatingActionButton(
-                      heroTag: 'Confirm',
-                      backgroundColor: Colors.green,
-                      onPressed: () async {
-                        if (_formKeyEmail.currentState.validate()) {
-                          await dbService
-                              .inviteMemberToGroup(
-                            groupDocId: groupDocId.value,
-                            newMemberEmail: _newMemberEmail,
-                          )
-                              .then((errorMsg) {
-                            if (errorMsg == null) {
-                              Fluttertoast.showToast(
-                                msg: _newMemberEmail + ' has been invited',
-                                toastLength: Toast.LENGTH_LONG,
-                              );
-                              Navigator.of(context).pop();
-                            } else {
-                              Fluttertoast.showToast(
-                                msg: errorMsg,
-                                toastLength: Toast.LENGTH_LONG,
-                              );
-                            }
-                          });
+                          .then((errorMsg) {
+                        if (errorMsg == null) {
+                          Fluttertoast.showToast(
+                            msg: _newMemberEmail + ' has been invited',
+                            toastLength: Toast.LENGTH_LONG,
+                          );
+                          Navigator.of(context).pop();
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: errorMsg,
+                            toastLength: Toast.LENGTH_LONG,
+                          );
                         }
-                      },
-                      child: Icon(
-                        Icons.check,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-                body: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => unfocus(),
-                  child: Column(
-                    children: <Widget>[
-                      /// Required fields
-                      /// Email
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: LabelTextInput(
-                          initialValue: _newMemberEmail,
-                          hintText: 'Required',
-                          label: 'Email',
-                          valSetText: (value) {
-                            _newMemberEmail = value;
-                          },
-                          formKey: _formKeyEmail,
-                          validator: (value) {
-                            RegExp regExp = RegExp(
-                                r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)");
-                            return _newMemberEmail != null &&
-                                    _newMemberEmail.trim().length > 0 &&
-                                    regExp.hasMatch(_newMemberEmail)
-                                ? null
-                                : 'Invalid email address';
-                          },
-                        ),
-                      ),
-                    ],
+                      });
+                    }
+                  },
+                  child: Icon(
+                    Icons.check,
+                    color: Colors.white,
                   ),
                 ),
-              );
-      },
-    );
+              ],
+            ),
+            body: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => unfocus(),
+              child: Column(
+                children: <Widget>[
+                  /// Required fields
+                  /// Email
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: LabelTextInput(
+                      initialValue: _newMemberEmail,
+                      hintText: 'Required',
+                      label: 'Email',
+                      valSetText: (value) {
+                        _newMemberEmail = value;
+                      },
+                      formKey: _formKeyEmail,
+                      validator: (value) {
+                        RegExp regExp = RegExp(
+                            r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)");
+                        return _newMemberEmail != null &&
+                                _newMemberEmail.trim().length > 0 &&
+                                regExp.hasMatch(_newMemberEmail)
+                            ? null
+                            : 'Invalid email address';
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
   }
 }

@@ -24,6 +24,7 @@ class DashboardScreen extends StatelessWidget {
         Provider.of<ValueNotifier<DrawerEnum>>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
+    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -137,7 +138,7 @@ class DashboardScreen extends StatelessWidget {
                 if (groups[index] != null) {
                   return StreamBuilder(
                       stream: dbService
-                          .getGroupMemberMyData(groups[index].groupDocId),
+                          .getGroupMemberMyData(groups[index].docId),
                       builder: (context, snapshot) {
                         Member me = snapshot != null ? snapshot.data : null;
 
@@ -147,8 +148,9 @@ class DashboardScreen extends StatelessWidget {
                             if (me != null &&
                                 me.role != null &&
                                 me.role != MemberRole.pending) {
-                              groupDocId.value = groups[index].groupDocId;
+                              groupDocId.value = groups[index].docId;
                               selected.value = DrawerEnum.group;
+                              group.value = groups[index];
                               Navigator.of(context).pushNamed('/group');
                             } else {
                               showDialog(
@@ -156,7 +158,7 @@ class DashboardScreen extends StatelessWidget {
                                   builder: (context) {
                                     return StreamBuilder(
                                         stream: dbService
-                                            .getGroup(groups[index].groupDocId),
+                                            .getGroup(groups[index].docId),
                                         builder: (context, snapshot) {
                                           Group group = snapshot != null
                                               ? snapshot.data
@@ -176,7 +178,7 @@ class DashboardScreen extends StatelessWidget {
                                                         await dbService
                                                             .declineGroupInvitation(
                                                                 groups[index]
-                                                                    .groupDocId);
+                                                                    .docId);
 
                                                         selected.value =
                                                             DrawerEnum
@@ -194,13 +196,13 @@ class DashboardScreen extends StatelessWidget {
                                                         await dbService
                                                             .acceptGroupInvitation(
                                                                 groups[index]
-                                                                    .groupDocId);
+                                                                    .docId);
 
                                                         selected.value =
                                                             DrawerEnum.group;
                                                         groupDocId.value =
                                                             groups[index]
-                                                                .groupDocId;
+                                                                .docId;
                                                         Navigator.of(context)
                                                             .popAndPushNamed(
                                                                 '/group');

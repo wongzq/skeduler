@@ -20,106 +20,102 @@ class _MembersScreenState extends State<MembersScreen> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<String> groupDocId =
-        Provider.of<ValueNotifier<String>>(context);
+    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
 
-    return groupDocId.value == null || groupDocId.value == ''
-        ? Scaffold(
-            appBar: AppBar(
-              
-              title: Text(
-                'Members',
-                style: textStyleAppBarTitle,
-              ),
-            ),
-            drawer: HomeDrawer(),
-          )
+    return group.value == null
+        ? Loading()
         : StreamBuilder(
-            stream: dbService.getGroup(groupDocId.value),
+            stream: dbService.getGroupMembers(group.value.docId),
             builder: (context, snapshot) {
-              Group group = snapshot != null ? snapshot.data : null;
+              List<Member> members = snapshot != null ? snapshot.data : null;
 
-              return group == null
-                  ? Container()
+              return members == null || members.isEmpty
+                  ? Scaffold(
+                      appBar: AppBar(
+                        title: group.value.name == null
+                            ? Text(
+                                'Members',
+                                style: textStyleAppBarTitle,
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    group.value.name,
+                                    style: textStyleAppBarTitle,
+                                  ),
+                                  Text(
+                                    'Members',
+                                    style: textStyleBody,
+                                  )
+                                ],
+                              ),
+                      ),
+                      drawer: HomeDrawer(),
+                    )
                   : StreamBuilder(
-                      stream: dbService.getGroupMembers(groupDocId.value),
+                      stream: dbService
+                          .getGroupMemberMyData(group.value.docId),
                       builder: (context, snapshot) {
-                        List<Member> members =
-                            snapshot != null ? snapshot.data : null;
+                        Member me = snapshot != null ? snapshot.data : null;
 
-                        return members == null || members.isEmpty
-                            ? Container()
-                            : StreamBuilder(
-                                stream: dbService
-                                    .getGroupMemberMyData(groupDocId.value),
-                                builder: (context, snapshot) {
-                                  Member me =
-                                      snapshot != null ? snapshot.data : null;
-
-                                  return me == null
-                                      ? Loading()
-                                      : Scaffold(
-                                          appBar: AppBar(
-                                            title: group.name == null
-                                                ? Text(
-                                                    'Members',
-                                                    style: textStyleAppBarTitle,
-                                                  )
-                                                : Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: <Widget>[
-                                                      Text(
-                                                        group.name,
-                                                        style:
-                                                            textStyleAppBarTitle,
-                                                      ),
-                                                      Text(
-                                                        'Members',
-                                                        style: textStyleBody,
-                                                      )
-                                                    ],
-                                                  ),
-                                          ),
-                                          drawer: HomeDrawer(),
-                                          floatingActionButton: me.role ==
-                                                  MemberRole.owner
-                                              ? MembersScreenOptionsOwner()
-                                              : me.role == MemberRole.admin
-                                                  ? MembersScreenOptionsAdmin()
-                                                  : me.role == MemberRole.member
-                                                      ? MembersScreenOptionsMember()
-                                                      : Container(),
-                                          body: ListView.builder(
-                                            physics: BouncingScrollPhysics(
-                                              parent:
-                                                  AlwaysScrollableScrollPhysics(),
+                        return me == null
+                            ? Loading()
+                            : Scaffold(
+                                appBar: AppBar(
+                                  title: group.value.name == null
+                                      ? Text(
+                                          'Members',
+                                          style: textStyleAppBarTitle,
+                                        )
+                                      : Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              group.value.name,
+                                              style: textStyleAppBarTitle,
                                             ),
-                                            itemCount: members != null
-                                                ? members.length
-                                                : 0,
-                                            itemBuilder: (context, index) {
-                                              if (members != null) {
-                                                members.sort(
-                                                    (member1, member2) =>
-                                                        member2.role.index
-                                                            .compareTo(member1
-                                                                .role.index));
-                                              }
+                                            Text(
+                                              'Members',
+                                              style: textStyleBody,
+                                            )
+                                          ],
+                                        ),
+                                ),
+                                drawer: HomeDrawer(),
+                                floatingActionButton:
+                                    me.role == MemberRole.owner
+                                        ? MembersScreenOptionsOwner()
+                                        : me.role == MemberRole.admin
+                                            ? MembersScreenOptionsAdmin()
+                                            : me.role == MemberRole.member
+                                                ? MembersScreenOptionsMember()
+                                                : Container(),
+                                body: ListView.builder(
+                                  physics: BouncingScrollPhysics(
+                                    parent: AlwaysScrollableScrollPhysics(),
+                                  ),
+                                  itemCount:
+                                      members != null ? members.length : 0,
+                                  itemBuilder: (context, index) {
+                                    if (members != null) {
+                                      members.sort((member1, member2) => member2
+                                          .role.index
+                                          .compareTo(member1.role.index));
+                                    }
 
-                                              return members != null
-                                                  ? MemberListTile(
-                                                      me: me,
-                                                      member: members[index],
-                                                    )
-                                                  : Container();
-                                            },
-                                          ),
-                                        );
-                                });
-                      },
-                    );
-            });
+                                    return members != null
+                                        ? MemberListTile(
+                                            me: me,
+                                            member: members[index],
+                                          )
+                                        : Container();
+                                  },
+                                ),
+                              );
+                      });
+            },
+          );
   }
 }

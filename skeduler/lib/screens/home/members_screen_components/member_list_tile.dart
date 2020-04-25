@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -18,8 +19,8 @@ class MemberListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<String> groupDocId =
-        Provider.of<ValueNotifier<String>>(context);
+    ValueNotifier<Group> group =
+        Provider.of<ValueNotifier<Group>>(context);
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     if (me.role == MemberRole.pending) {
@@ -179,13 +180,13 @@ class MemberListTile extends StatelessWidget {
                                                   .validate()) {
                                                 await dbService
                                                     .updateMemberRoleInGroup(
-                                                  groupDocId: groupDocId.value,
+                                                  groupDocId: group.value.docId,
                                                   memberDocId: member.email,
                                                   role: MemberRole.owner,
                                                 );
                                                 await dbService
                                                     .updateMemberRoleInGroup(
-                                                  groupDocId: groupDocId.value,
+                                                  groupDocId: group.value.docId,
                                                   memberDocId: me.email,
                                                   role: MemberRole.admin,
                                                 );
@@ -198,19 +199,19 @@ class MemberListTile extends StatelessWidget {
                                     });
                               } else if (value == MemberOption.makeAdmin) {
                                 await dbService.updateMemberRoleInGroup(
-                                  groupDocId: groupDocId.value,
+                                  groupDocId: group.value.docId,
                                   memberDocId: member.email,
                                   role: MemberRole.admin,
                                 );
                               } else if (value == MemberOption.makeMember) {
                                 await dbService.updateMemberRoleInGroup(
-                                  groupDocId: groupDocId.value,
+                                  groupDocId: group.value.docId,
                                   memberDocId: member.email,
                                   role: MemberRole.member,
                                 );
                               } else if (value == MemberOption.remove) {
                                 await dbService.removeMemberFromGroup(
-                                  groupDocId: groupDocId.value,
+                                  groupDocId: group.value.docId,
                                   memberDocId: member.email,
                                 );
                               }

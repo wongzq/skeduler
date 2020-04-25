@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_custom.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_day.dart';
@@ -17,8 +18,7 @@ class TimetableSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<String> groupDocId =
-        Provider.of<ValueNotifier<String>>(context);
+    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
     ValueNotifier<EditTimetableStatus> editTtb =
         Provider.of<ValueNotifier<EditTimetableStatus>>(context);
 
@@ -89,7 +89,7 @@ class TimetableSettings extends StatelessWidget {
                     /// change ID by cloning old document with new ID
                     await dbService
                         .updateGroupTimetableDocId(
-                      groupDocId.value,
+                      group.value.docId,
                       editTtb.value.perm.metadata,
                       editTtb.value.temp.metadata,
                     )
@@ -235,7 +235,8 @@ class TimetableSettings extends StatelessWidget {
                               ),
                               onPressed: () async {
                                 await dbService.deleteGroupTimetable(
-                                    groupDocId.value, editTtb.value.perm.docId);
+                                    group.value.docId,
+                                    editTtb.value.perm.docId);
                                 Navigator.of(context).pop();
                               },
                             ),

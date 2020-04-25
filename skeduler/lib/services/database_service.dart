@@ -724,7 +724,7 @@ class DatabaseService {
   Group _groupFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
         ? Group(
-            groupDocId: snapshot.documentID,
+            docId: snapshot.documentID,
             name: snapshot.data['name'] ?? '',
             description: snapshot.data['description'] ?? '',
             colorShade: ColorShade(
@@ -737,7 +737,7 @@ class DatabaseService {
             timetableMetadatas: _timetableMetadatasFromDynamicList(
                 snapshot.data[_timetables] ?? []),
           )
-        : Group(groupDocId: null);
+        : Group(docId: null);
   }
 
   /// convert snapshot to [Member]

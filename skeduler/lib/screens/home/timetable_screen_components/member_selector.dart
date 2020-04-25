@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -39,8 +40,7 @@ class MemberSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<String> groupDocId =
-        Provider.of<ValueNotifier<String>>(context);
+    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
 
     double _chipWidth =
         (MediaQuery.of(context).size.width - 2 * _bodyHoriPadding) / 5 -
@@ -51,7 +51,7 @@ class MemberSelector extends StatelessWidget {
     ScrollController controller = ScrollController();
 
     return StreamBuilder(
-        stream: dbService.getGroupMembers(groupDocId.value),
+        stream: dbService.getGroupMembers(group.value.docId),
         builder: (context, snapshot) {
           List<Member> members =
               snapshot != null && snapshot.data != null ? snapshot.data : [];

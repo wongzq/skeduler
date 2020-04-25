@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
-import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 
 class TimetableGridBox extends StatelessWidget {
@@ -49,55 +48,47 @@ class TimetableGridBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<String> groupDocId =
-        Provider.of<ValueNotifier<String>>(context);
+    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
     ValueNotifier<bool> editMode = Provider.of<ValueNotifier<bool>>(context);
 
     Member member;
 
-    return StreamBuilder<Object>(
-      stream: dbService.getGroup(groupDocId.value),
-      builder: (context, snapshot) {
-        Group group = snapshot != null ? snapshot.data : null;
-
-        return group == null
-            ? Container()
-            : Expanded(
-                flex: flex,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return editMode.value == true
-                        ? Padding(
-                            padding: EdgeInsets.all(2.0),
-                            child: DragTarget<Member>(
-                              onAccept: (newMember) {
-                                member = newMember;
-                              },
-                              onLeave: (prevMember) {
-                                member = null;
-                              },
-                              builder: (context, _, __) {
-                                return member == null
-                                    ? _buildGridBox(group, member, constraints)
-                                    : LongPressDraggable<Member>(
-                                        data: member,
-                                        feedback: _buildGridBox(
-                                            group, member, constraints),
-                                        child: _buildGridBox(
-                                            group, member, constraints),
-                                      );
-                              },
-                            ),
-                          )
-                        : Padding(
-                            padding: EdgeInsets.all(2.0),
-                            child: _buildGridBox(group, member, constraints),
-                          );
-                  },
-                ),
-              );
-      },
-    );
+    return group == null
+        ? Container()
+        : Expanded(
+            flex: flex,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return editMode.value == true
+                    ? Padding(
+                        padding: EdgeInsets.all(2.0),
+                        child: DragTarget<Member>(
+                          onAccept: (newMember) {
+                            member = newMember;
+                          },
+                          onLeave: (prevMember) {
+                            member = null;
+                          },
+                          builder: (context, _, __) {
+                            return member == null
+                                ? _buildGridBox(
+                                    group.value, member, constraints)
+                                : LongPressDraggable<Member>(
+                                    data: member,
+                                    feedback: _buildGridBox(
+                                        group.value, member, constraints),
+                                    child: _buildGridBox(
+                                        group.value, member, constraints),
+                                  );
+                          },
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.all(2.0),
+                        child: _buildGridBox(group.value, member, constraints),
+                      );
+              },
+            ),
+          );
   }
 }

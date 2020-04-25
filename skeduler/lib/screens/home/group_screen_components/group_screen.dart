@@ -23,10 +23,9 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<String> groupDocId =
-        Provider.of<ValueNotifier<String>>(context);
+    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
 
-    return groupDocId.value == null || groupDocId.value == ''
+    return group.value == null
         ? Scaffold(
             appBar: AppBar(
               title: Text(
@@ -37,67 +36,56 @@ class _GroupScreenState extends State<GroupScreen> {
             drawer: HomeDrawer(),
           )
         : StreamBuilder(
-            stream: dbService.getGroup(groupDocId.value),
+            stream: dbService.getGroupMemberMyData(group.value.docId),
             builder: (context, snapshot) {
-              Group group = snapshot != null ? snapshot.data : null;
+              Member me = snapshot != null ? snapshot.data : null;
 
               return snapshot == null || snapshot.data == null
                   ? Loading()
-                  : StreamBuilder(
-                      stream: dbService.getGroupMemberMyData(groupDocId.value),
-                      builder: (context, snapshot) {
-                        Member me = snapshot != null ? snapshot.data : null;
-
-                        return snapshot == null || snapshot.data == null
-                            ? Loading()
-                            : Scaffold(
-                                appBar: AppBar(
-                                  title: group.name == null
-                                      ? Text(
-                                          'Group',
-                                          style: textStyleAppBarTitle,
-                                        )
-                                      : Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              group.name,
-                                              style: textStyleAppBarTitle,
-                                            ),
-                                            Text(
-                                              'Group',
-                                              style: textStyleBody,
-                                            )
-                                          ],
-                                        ),
-                                ),
-                                drawer: HomeDrawer(),
-                                floatingActionButton: me != null
-                                    ? () {
-                                        if (me.role == MemberRole.owner)
-                                          return GroupScreenOptionsOwner();
-                                        else if (me.role == MemberRole.admin)
-                                          return GroupScreenOptionsAdmin();
-                                        else if (me.role == MemberRole.member)
-                                          return GroupScreenOptionsMember();
-                                        else
-                                          return Container();
-                                      }()
-                                    : Container(),
-                                body:
-                                    me != null && me.role == MemberRole.pending
-                                        ? Container()
-                                        : Container(
-                                            padding: EdgeInsets.all(20.0),
-                                            alignment: Alignment.topLeft,
-                                            child: Text(
-                                              group.description,
-                                              style: textStyleBody,
-                                            ),
-                                          ),
-                              );
-                      },
+                  : Scaffold(
+                      appBar: AppBar(
+                        title: group.value.name == null
+                            ? Text(
+                                'Group',
+                                style: textStyleAppBarTitle,
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    group.value.name,
+                                    style: textStyleAppBarTitle,
+                                  ),
+                                  Text(
+                                    'Group',
+                                    style: textStyleBody,
+                                  )
+                                ],
+                              ),
+                      ),
+                      drawer: HomeDrawer(),
+                      floatingActionButton: me != null
+                          ? () {
+                              if (me.role == MemberRole.owner)
+                                return GroupScreenOptionsOwner();
+                              else if (me.role == MemberRole.admin)
+                                return GroupScreenOptionsAdmin();
+                              else if (me.role == MemberRole.member)
+                                return GroupScreenOptionsMember();
+                              else
+                                return Container();
+                            }()
+                          : Container(),
+                      body: me != null && me.role == MemberRole.pending
+                          ? Container()
+                          : Container(
+                              padding: EdgeInsets.all(20.0),
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                group.value.description,
+                                style: textStyleBody,
+                              ),
+                            ),
                     );
             },
           );

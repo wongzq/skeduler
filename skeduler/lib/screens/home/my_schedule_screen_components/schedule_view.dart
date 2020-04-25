@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/services/database_service.dart';
@@ -13,11 +14,10 @@ class ScheduleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<String> groupDocId =
-        Provider.of<ValueNotifier<String>>(context);
+    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
 
     return StreamBuilder(
-      stream: dbService.getGroupMemberMyData(groupDocId.value),
+      stream: dbService.getGroupMemberMyData(group.value.docId),
       builder: (context, snapshot) {
         Member member = snapshot.data;
 
@@ -187,7 +187,7 @@ class ScheduleView extends StatelessWidget {
                                               onSave: () async {
                                                 await dbService
                                                     .updateGroupMemberTimes(
-                                                  groupDocId.value,
+                                                  group.value.docId,
                                                   null,
                                                   [
                                                     Time(
@@ -246,7 +246,7 @@ class ScheduleView extends StatelessWidget {
                                                     onPressed: () async {
                                                       await dbService
                                                           .removeGroupMemberTimes(
-                                                        groupDocId.value,
+                                                        group.value.docId,
                                                         null,
                                                         [member.times[index]],
                                                       );

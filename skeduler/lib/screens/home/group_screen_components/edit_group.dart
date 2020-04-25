@@ -86,7 +86,7 @@ class _EditGroupState extends State<EditGroup> {
                         widget.group.colorShade.themeId ||
                     _groupColorShade.shade != widget.group.colorShade.shade) {
                   dbService.updateGroupData(
-                    widget.group.groupDocId,
+                    widget.group.docId,
                     name: _groupName.trim(),
                     description: _groupDescription.trim(),
                     colorShade: _groupColorShade,
