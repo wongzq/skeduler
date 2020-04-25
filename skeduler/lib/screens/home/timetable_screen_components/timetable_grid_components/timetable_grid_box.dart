@@ -4,7 +4,7 @@ import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/shared/functions.dart';
 
-class TimetableGridBox extends StatelessWidget {
+class TimetableGridBox extends StatefulWidget {
   /// properties
   final BuildContext context;
   final String initialDisplay;
@@ -12,13 +12,21 @@ class TimetableGridBox extends StatelessWidget {
   final bool content;
 
   /// constructors
-  const TimetableGridBox(
-    this.context,
-    this.initialDisplay, {
+  const TimetableGridBox({
+    Key key,
+    @required this.context,
+    @required this.initialDisplay,
     this.flex = 1,
     this.content = false,
-    Key key,
   }) : super(key: key);
+
+  @override
+  _TimetableGridBoxState createState() => _TimetableGridBoxState();
+}
+
+class _TimetableGridBoxState extends State<TimetableGridBox> {
+  /// properties
+  Member member;
 
   /// methods
   Widget _buildGridBox(Group group, Member member, BoxConstraints constraints) {
@@ -31,12 +39,12 @@ class TimetableGridBox extends StatelessWidget {
         padding: EdgeInsets.all(2.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5.0),
-          color: content
+          color: widget.content
               ? getOriginThemeData(group.colorShade.themeId).primaryColorLight
               : getOriginThemeData(group.colorShade.themeId).primaryColor,
         ),
         child: Text(
-          member != null ? member.display : initialDisplay ?? '',
+          member != null ? member.display : widget.initialDisplay ?? '',
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.black, fontSize: 10.0),
           maxLines: 1,
@@ -51,12 +59,10 @@ class TimetableGridBox extends StatelessWidget {
     ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
     ValueNotifier<bool> editMode = Provider.of<ValueNotifier<bool>>(context);
 
-    Member member;
-
     return group == null
         ? Container()
         : Expanded(
-            flex: flex,
+            flex: widget.flex,
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return editMode.value == true
@@ -66,10 +72,9 @@ class TimetableGridBox extends StatelessWidget {
                           onAccept: (newMember) {
                             member = newMember;
                           },
-                          onLeave: (prevMember) {
-                            member = null;
-                          },
                           builder: (context, _, __) {
+                            // return _buildGridBox(
+                            //     group.value, member, constraints);
                             return member == null
                                 ? _buildGridBox(
                                     group.value, member, constraints)
@@ -79,6 +84,7 @@ class TimetableGridBox extends StatelessWidget {
                                         group.value, member, constraints),
                                     child: _buildGridBox(
                                         group.value, member, constraints),
+                                    onDragStarted: () => member = null,
                                   );
                           },
                         ),

@@ -30,11 +30,13 @@ class TimetableHeaderX extends StatelessWidget {
 
     /// Add Switch button
     String display = 'SWITCH';
-    rowContents.add(TimetableGridBox(context, display, flex: 2));
+    rowContents.add(
+        TimetableGridBox(context: context, initialDisplay: display, flex: 2));
 
     for (int i = 0; i < axisX.length; i++) {
       String display = axisX[i];
-      rowContents.add(TimetableGridBox(context, display, flex: 1));
+      rowContents.add(
+          TimetableGridBox(context: context, initialDisplay: display, flex: 1));
     }
 
     return rowContents;

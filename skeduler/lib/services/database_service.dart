@@ -124,8 +124,23 @@ class DatabaseService {
       /// get timetable metadatas from group document's field value
       _timetableMetadatasFromDynamicList(group.data[_timetables] ?? [])
           .forEach((metadata) {
-        if (metadata.startDate.toDate().isBefore(DateTime.now()) &&
-            metadata.endDate.toDate().isAfter(DateTime.now())) {
+        if (
+
+            /// If startDate is before or equal to now
+            (metadata.startDate.toDate().isBefore(DateTime.now()) ||
+                    metadata.startDate
+                        .toDate()
+                        .isAtSameMomentAs(DateTime.now())) &&
+
+                /// If endDate + 1 day is after or equal to now
+                (metadata.endDate
+                        .toDate()
+                        .add(Duration(days: 1))
+                        .isAfter(DateTime.now()) ||
+                    metadata.endDate
+                        .toDate()
+                        .add(Duration(days: 1))
+                        .isAtSameMomentAs(DateTime.now()))) {
           timetableIdForToday = metadata.id;
         }
       });

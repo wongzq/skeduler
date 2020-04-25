@@ -24,11 +24,6 @@ class _GroupScreenState extends State<GroupScreen> {
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
-    
-    if (group.value != null)
-      print('4 ${group.value.docId}');
-    else
-      print('4 null');
 
     return group.value == null
         ? Scaffold(

@@ -20,7 +20,8 @@ class TimetableHeaderY extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String display = axisY[index];
-    return TimetableGridBox(context, display, flex: flex);
+    return TimetableGridBox(
+        context: context, initialDisplay: display, flex: flex);
   }
 }
 
@@ -39,7 +40,8 @@ class TimetableHeaderZ extends StatelessWidget {
     axisZ.forEach((z) {
       String display = z;
 
-      colContents.add(TimetableGridBox(context, display));
+      colContents
+          .add(TimetableGridBox(context: context, initialDisplay: display));
     });
 
     return Expanded(
@@ -80,11 +82,13 @@ class TimetableCol extends StatelessWidget {
       axisZ.forEach((z) {
         String display = '-';
 
-        colContents.add(TimetableGridBox(context, display, content: true));
+        colContents.add(TimetableGridBox(
+            context: context, initialDisplay: display, content: true));
       });
     } else {
       String display = '-';
-      colContents.add(TimetableGridBox(context, display, content: true));
+      colContents.add(TimetableGridBox(
+          context: context, initialDisplay: display, content: true));
     }
 
     return Expanded(
