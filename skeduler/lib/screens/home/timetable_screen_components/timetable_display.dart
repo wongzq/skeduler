@@ -4,8 +4,14 @@ import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid
 
 class TimetableDisplay extends StatelessWidget {
   final Timetable timetable;
+  final bool editMode;
 
-  const TimetableDisplay({Key key, this.timetable}) : super(key: key);
+  const TimetableDisplay({
+    Key key,
+    this.timetable,
+    this.editMode = false,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     List<String> axis1 = timetable.axisDaysShortStr ?? [];
@@ -14,6 +20,7 @@ class TimetableDisplay extends StatelessWidget {
 
     return LayoutBuilder(builder: (context, constraints) {
       return TimetableGrid(
+        editMode: this.editMode,
         axisX: axis1,
         axisY: axis2,
         axisZ: axis3,

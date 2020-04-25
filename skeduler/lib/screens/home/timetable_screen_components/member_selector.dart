@@ -5,29 +5,14 @@ import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 
-class MemberSelector extends StatefulWidget {
-  /// properties
-  // final bool initialExpanded;
-  // final ColorShade initialValue;
-  // final ValueSetter<bool> valSetExpanded;
-  // final ValueSetter<ColorShade> valSetColorShade;
+class MemberSelector extends StatelessWidget {
+  final double _bodyHoriPadding = 5.0;
+  final double _chipPadding = 5;
+  final double _chipPaddingExtra = 2;
+  final double _chipLabelHoriPadding = 5;
+  final double _chipLabelVertPadding = 5;
 
-  /// constructors
-  const MemberSelector();
-
-  @override
-  _MemberSelectorState createState() => _MemberSelectorState();
-}
-
-class _MemberSelectorState extends State<MemberSelector> {
-  double _bodyHoriPadding = 5.0;
-  double _chipPadding = 5;
-  double _chipPaddingExtra = 2;
-  double _chipLabelHoriPadding = 5;
-  double _chipLabelVertPadding = 5;
-  double _chipWidth;
-
-  Widget _buildMaterialActionChip(Member member) {
+  Widget _buildMaterialActionChip(Member member, double chipWidth) {
     return Material(
       color: Colors.transparent,
       child: ActionChip(
@@ -40,7 +25,7 @@ class _MemberSelectorState extends State<MemberSelector> {
           vertical: _chipLabelVertPadding,
         ),
         label: Container(
-          width: _chipWidth,
+          width: chipWidth,
           child: Text(
             member.display,
             textAlign: TextAlign.center,
@@ -57,7 +42,7 @@ class _MemberSelectorState extends State<MemberSelector> {
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
 
-    _chipWidth =
+    double _chipWidth =
         (MediaQuery.of(context).size.width - 2 * _bodyHoriPadding) / 5 -
             (2 * _chipLabelHoriPadding) -
             (2 * _chipPadding) -
@@ -90,8 +75,10 @@ class _MemberSelectorState extends State<MemberSelector> {
                         children: [
                           LongPressDraggable<Member>(
                             data: members[index],
-                            feedback: _buildMaterialActionChip(members[index]),
-                            child: _buildMaterialActionChip(members[index]),
+                            feedback: _buildMaterialActionChip(
+                                members[index], _chipWidth),
+                            child: _buildMaterialActionChip(
+                                members[index], _chipWidth),
                           ),
                         ],
                       ),

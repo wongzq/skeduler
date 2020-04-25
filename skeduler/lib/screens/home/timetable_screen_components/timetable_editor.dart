@@ -100,8 +100,10 @@ class _TimetableEditorState extends State<TimetableEditor> {
                       Container(
                         height: timetableDisplayHeight,
                         child: TimetableDisplay(
-                            timetable: Timetable.fromEditTimetable(
-                                editTtb.value.perm)),
+                          editMode: true,
+                          timetable:
+                              Timetable.fromEditTimetable(editTtb.value.perm),
+                        ),
                       ),
                       Container(
                         height: memberSelectorHeight,
