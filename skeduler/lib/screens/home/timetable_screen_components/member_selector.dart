@@ -27,6 +27,30 @@ class _MemberSelectorState extends State<MemberSelector> {
   double _chipLabelVertPadding = 5;
   double _chipWidth;
 
+  Widget _buildMaterialActionChip(Member member) {
+    return Material(
+      color: Colors.transparent,
+      child: ActionChip(
+        backgroundColor: member.colorShade != null
+            ? getColorFromColorShade(member.colorShade)
+            : null,
+        elevation: 3.0,
+        labelPadding: EdgeInsets.symmetric(
+          horizontal: _chipLabelHoriPadding,
+          vertical: _chipLabelVertPadding,
+        ),
+        label: Container(
+          width: _chipWidth,
+          child: Text(
+            member.display,
+            textAlign: TextAlign.center,
+          ),
+        ),
+        onPressed: () {},
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
@@ -66,46 +90,8 @@ class _MemberSelectorState extends State<MemberSelector> {
                         children: [
                           LongPressDraggable<Member>(
                             data: members[index],
-                            feedback: Material(
-                              color: Colors.transparent,
-                              child: ActionChip(
-                                backgroundColor:
-                                    members[index].colorShade != null
-                                        ? getColorFromColorShade(
-                                            members[index].colorShade)
-                                        : null,
-                                elevation: 3.0,
-                                labelPadding: EdgeInsets.symmetric(
-                                  horizontal: _chipLabelHoriPadding,
-                                  vertical: _chipLabelVertPadding,
-                                ),
-                                label: Container(
-                                  width: _chipWidth,
-                                  child: Text(members[index].display),
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-                            child: Material(
-                              color: Colors.transparent,
-                              child: ActionChip(
-                                backgroundColor:
-                                    members[index].colorShade != null
-                                        ? getColorFromColorShade(
-                                            members[index].colorShade)
-                                        : null,
-                                elevation: 3.0,
-                                labelPadding: EdgeInsets.symmetric(
-                                  horizontal: _chipLabelHoriPadding,
-                                  vertical: _chipLabelVertPadding,
-                                ),
-                                label: Container(
-                                  width: _chipWidth,
-                                  child: Text(members[index].display),
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
+                            feedback: _buildMaterialActionChip(members[index]),
+                            child: _buildMaterialActionChip(members[index]),
                           ),
                         ],
                       ),
