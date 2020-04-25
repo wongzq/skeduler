@@ -24,7 +24,6 @@ class DashboardScreen extends StatelessWidget {
         Provider.of<ValueNotifier<DrawerEnum>>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -137,8 +136,8 @@ class DashboardScreen extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 if (groups[index] != null) {
                   return StreamBuilder(
-                      stream: dbService
-                          .getGroupMemberMyData(groups[index].docId),
+                      stream:
+                          dbService.getGroupMemberMyData(groups[index].docId),
                       builder: (context, snapshot) {
                         Member me = snapshot != null ? snapshot.data : null;
 
@@ -150,7 +149,7 @@ class DashboardScreen extends StatelessWidget {
                                 me.role != MemberRole.pending) {
                               groupDocId.value = groups[index].docId;
                               selected.value = DrawerEnum.group;
-                              group.value = groups[index];
+                              // group.value = groups[index];
                               Navigator.of(context).pushNamed('/group');
                             } else {
                               showDialog(
@@ -201,8 +200,7 @@ class DashboardScreen extends StatelessWidget {
                                                         selected.value =
                                                             DrawerEnum.group;
                                                         groupDocId.value =
-                                                            groups[index]
-                                                                .docId;
+                                                            groups[index].docId;
                                                         Navigator.of(context)
                                                             .popAndPushNamed(
                                                                 '/group');

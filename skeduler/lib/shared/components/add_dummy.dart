@@ -72,7 +72,7 @@ class _AddDummyState extends State<AddDummy> {
                           .then((errorMsg) {
                         if (errorMsg == null) {
                           Fluttertoast.showToast(
-                            msg: _newDummyName + ' has been invited',
+                            msg: _newDummyName + ' has been added',
                             toastLength: Toast.LENGTH_LONG,
                           );
                           Navigator.of(context).pop();

@@ -111,11 +111,6 @@ class MyApp extends StatelessWidget {
                           create: (_) => ValueNotifier<String>(''),
                         ),
 
-                        /// Group
-                        ChangeNotifierProvider<ValueNotifier<Group>>(
-                          create: (_) => ValueNotifier<Group>(null),
-                        ),
-
                         /// Edit Timetable
                         ChangeNotifierProvider<
                             ValueNotifier<EditTimetableStatus>>(
@@ -123,17 +118,39 @@ class MyApp extends StatelessWidget {
                               EditTimetableStatus()),
                         ),
                       ],
-                      child: MaterialApp(
-                        title: 'Skeduler',
-                        debugShowCheckedModeBanner: false,
-                        theme:
-                            ThemeProvider.themeOf(themeContext).data.copyWith(
-                                  splashColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  splashFactory: InkRipple.splashFactory,
-                                ),
-                        initialRoute: '/dashboard',
-                        onGenerateRoute: RouteGenerator.generateRoute,
+                      child: Consumer<DatabaseService>(
+                        builder: (_, dbService, __) {
+                          return Consumer<ValueNotifier<String>>(
+                            builder: (_, groupDocId, __) {
+                              return StreamBuilder(
+                                stream: dbService.getGroup(groupDocId.value),
+                                builder: (_, snapshot) {
+                                  return ChangeNotifierProvider<
+                                      ValueNotifier<Group>>.value(
+                                    value: ValueNotifier<Group>(
+                                      snapshot != null ? snapshot.data : null,
+                                    ),
+                                    child: MaterialApp(
+                                      title: 'Skeduler',
+                                      debugShowCheckedModeBanner: false,
+                                      theme: ThemeProvider.themeOf(themeContext)
+                                          .data
+                                          .copyWith(
+                                            splashColor: Colors.transparent,
+                                            highlightColor: Colors.transparent,
+                                            splashFactory:
+                                                InkRipple.splashFactory,
+                                          ),
+                                      initialRoute: '/dashboard',
+                                      onGenerateRoute:
+                                          RouteGenerator.generateRoute,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        },
                       ),
                     );
                   },
