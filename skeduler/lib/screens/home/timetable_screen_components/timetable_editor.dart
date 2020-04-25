@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/member_selector_display.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_display.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -83,8 +84,33 @@ class _TimetableEditorState extends State<TimetableEditor> {
         },
       ),
       body: editTtb.value.perm != null && editTtb.value.perm.isValid()
-          ? TimetableDisplay(
-              timetable: Timetable.fromEditTimetable(editTtb.value.perm))
+          ? LayoutBuilder(
+              builder: (context, constraints) {
+                double timetableDisplayHeight = constraints.maxHeight * 0.8;
+                double memberSelectorHeight =
+                    constraints.maxHeight - timetableDisplayHeight;
+
+                return Container(
+                  height: constraints.maxHeight,
+                  child: ListView(
+                    physics: BouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics()),
+                    children: <Widget>[
+                      Container(
+                        height: timetableDisplayHeight,
+                        child: TimetableDisplay(
+                            timetable: Timetable.fromEditTimetable(
+                                editTtb.value.perm)),
+                      ),
+                      Container(
+                        height: memberSelectorHeight,
+                        child: MemberSelectorDisplay(),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            )
           : Container(),
     );
   }

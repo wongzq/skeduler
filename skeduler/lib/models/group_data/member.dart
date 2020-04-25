@@ -6,6 +6,7 @@ import 'package:skeduler/models/group_data/time.dart';
 
 enum MemberRole {
   pending,
+  dummy,
   member,
   admin,
   owner,
@@ -15,6 +16,9 @@ String _memberRole(MemberRole role) {
   switch (role) {
     case MemberRole.pending:
       return 'Pending';
+      break;
+    case MemberRole.dummy:
+      return 'Dummy';
       break;
     case MemberRole.member:
       return 'Member';
@@ -35,6 +39,9 @@ IconData _memberRoleIcon(MemberRole role) {
   switch (role) {
     case MemberRole.pending:
       return FontAwesomeIcons.clock;
+      break;
+    case MemberRole.dummy:
+      return FontAwesomeIcons.user;
       break;
     case MemberRole.member:
       return FontAwesomeIcons.userAlt;

@@ -26,7 +26,7 @@ class _MembersScreenState extends State<MembersScreen> {
     return groupDocId.value == null || groupDocId.value == ''
         ? Scaffold(
             appBar: AppBar(
-              backgroundColor: Theme.of(context).primaryColor,
+              
               title: Text(
                 'Members',
                 style: textStyleAppBarTitle,

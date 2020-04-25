@@ -24,8 +24,12 @@ class MemberListTile extends StatelessWidget {
 
     if (me.role == MemberRole.pending) {
       return Container();
-    } else if (me.role == MemberRole.member) {
-      return member.role == MemberRole.pending
+    }
+
+    /// If I am Member
+    else if (me.role == MemberRole.member) {
+      return member.role == MemberRole.pending ||
+              member.role == MemberRole.dummy
           ? Container()
           : Column(
               children: <Widget>[
@@ -43,7 +47,10 @@ class MemberListTile extends StatelessWidget {
                 Divider(),
               ],
             );
-    } else if (me.role == MemberRole.admin || me.role == MemberRole.owner) {
+    }
+
+    /// If I am Owner or Admin
+    else if (me.role == MemberRole.owner || me.role == MemberRole.admin) {
       return Column(
         children: <Widget>[
           Padding(
@@ -59,6 +66,7 @@ class MemberListTile extends StatelessWidget {
                         icon: PopupMenuButton(
                           icon: Icon(Icons.more_vert),
                           itemBuilder: (BuildContext context) {
+                            /// If member is admin
                             if (member.role == MemberRole.admin) {
                               return [
                                 me.role == MemberRole.owner
@@ -76,7 +84,10 @@ class MemberListTile extends StatelessWidget {
                                   value: MemberOption.remove,
                                 ),
                               ];
-                            } else if (member.role == MemberRole.member) {
+                            }
+
+                            ///If member is member
+                            else if (member.role == MemberRole.member) {
                               return [
                                 me.role == MemberRole.owner
                                     ? PopupMenuItem(
@@ -93,7 +104,20 @@ class MemberListTile extends StatelessWidget {
                                   value: MemberOption.remove,
                                 ),
                               ];
-                            } else if (member.role == MemberRole.pending) {
+                            }
+
+                            /// If member is Pending
+                            else if (member.role == MemberRole.pending) {
+                              return [
+                                PopupMenuItem(
+                                  child: Text('Remove'),
+                                  value: MemberOption.remove,
+                                ),
+                              ];
+                            }
+
+                            /// If member is Dummy
+                            else if (member.role == MemberRole.dummy) {
                               return [
                                 PopupMenuItem(
                                   child: Text('Remove'),
@@ -105,8 +129,7 @@ class MemberListTile extends StatelessWidget {
                             }
                           },
                           onSelected: (value) async {
-                            bool hasConn = await checkInternetConnection();
-                            if (hasConn) {
+                            if (await checkInternetConnection()) {
                               if (value == MemberOption.makeOwner) {
                                 showDialog(
                                     context: context,

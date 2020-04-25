@@ -29,7 +29,6 @@ class _GroupScreenState extends State<GroupScreen> {
     return groupDocId.value == null || groupDocId.value == ''
         ? Scaffold(
             appBar: AppBar(
-              backgroundColor: Theme.of(context).primaryColor,
               title: Text(
                 'Group',
                 style: textStyleAppBarTitle,

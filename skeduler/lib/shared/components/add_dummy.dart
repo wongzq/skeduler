@@ -8,14 +8,14 @@ import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
-class AddMember extends StatefulWidget {
+class AddDummy extends StatefulWidget {
   @override
-  _AddMemberState createState() => _AddMemberState();
+  _AddDummyState createState() => _AddDummyState();
 }
 
-class _AddMemberState extends State<AddMember> {
-  String _newMemberEmail;
-  GlobalKey<FormState> _formKeyEmail = GlobalKey<FormState>();
+class _AddDummyState extends State<AddDummy> {
+  String _newDummyName;
+  GlobalKey<FormState> _formKeyName = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class _AddMemberState extends State<AddMember> {
                         style: textStyleAppBarTitle,
                       ),
                       Text(
-                        'Add member',
+                        'Add dummy',
                         style: textStyleBody,
                       )
                     ],
@@ -69,16 +69,16 @@ class _AddMemberState extends State<AddMember> {
                       heroTag: 'Confirm',
                       backgroundColor: Colors.green,
                       onPressed: () async {
-                        if (_formKeyEmail.currentState.validate()) {
+                        if (_formKeyName.currentState.validate()) {
                           await dbService
-                              .inviteMemberToGroup(
+                              .inviteDummyToGroup(
                             groupDocId: groupDocId.value,
-                            newMemberEmail: _newMemberEmail,
+                            newDummyName: _newDummyName,
                           )
                               .then((errorMsg) {
                             if (errorMsg == null) {
                               Fluttertoast.showToast(
-                                msg: _newMemberEmail + ' has been invited',
+                                msg: _newDummyName + ' has been invited',
                                 toastLength: Toast.LENGTH_LONG,
                               );
                               Navigator.of(context).pop();
@@ -108,21 +108,17 @@ class _AddMemberState extends State<AddMember> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: LabelTextInput(
-                          initialValue: _newMemberEmail,
+                          initialValue: _newDummyName,
                           hintText: 'Required',
-                          label: 'Email',
+                          label: 'Name',
                           valSetText: (value) {
-                            _newMemberEmail = value;
+                            _newDummyName = value;
                           },
-                          formKey: _formKeyEmail,
+                          formKey: _formKeyName,
                           validator: (value) {
-                            RegExp regExp = RegExp(
-                                r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)");
-                            return _newMemberEmail != null &&
-                                    _newMemberEmail.trim().length > 0 &&
-                                    regExp.hasMatch(_newMemberEmail)
+                            return value != null && value.trim() != ''
                                 ? null
-                                : 'Invalid email address';
+                                : 'Name cannot be empty';
                           },
                         ),
                       ),

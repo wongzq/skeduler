@@ -49,7 +49,7 @@ class _EditGroupState extends State<EditGroup> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
+        
         title: Text(
           'Group',
           style: textStyleAppBarTitle,

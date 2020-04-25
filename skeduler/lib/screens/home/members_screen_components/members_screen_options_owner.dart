@@ -34,6 +34,43 @@ class MembersScreenOptionsOwner extends StatelessWidget {
                       foregroundColor: getFABIconForegroundColor(context),
                       backgroundColor: getFABIconBackgroundColor(context),
                       child: Icon(
+                        Icons.person_outline,
+                        size: 25.0,
+                      ),
+                      labelWidget: Container(
+                        height: 40.0,
+                        width: 150.0,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: getFABIconBackgroundColor(context),
+                          borderRadius: BorderRadius.circular(20.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              offset: Offset(0.0, 5.0),
+                              blurRadius: 10.0,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          'ADD DUMMY',
+                          style: TextStyle(
+                            color: getFABTextColor(context),
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('/group/addDummy');
+                      },
+                    ),
+                    /// Add member
+                    SpeedDialChild(
+                      foregroundColor: getFABIconForegroundColor(context),
+                      backgroundColor: getFABIconBackgroundColor(context),
+                      child: Icon(
                         Icons.person_add,
                         size: 25.0,
                       ),

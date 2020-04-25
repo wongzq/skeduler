@@ -12,6 +12,7 @@ import 'package:skeduler/screens/home/timetable_screen_components/timetable_scre
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_custom_reorder.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/timetable_settings.dart';
 import 'package:skeduler/screens/wrapper.dart';
+import 'package:skeduler/shared/components/add_dummy.dart';
 import 'package:skeduler/shared/components/add_member.dart';
 import 'package:skeduler/shared/components/custom_transition_route.dart';
 
@@ -42,6 +43,12 @@ class RouteGenerator {
       case '/group/addMember':
         if (args == null) {
           return CustomTransitionRoute(page: wrapWidget(AddMember()));
+        }
+        break;
+
+      case '/group/addDummy':
+        if (args == null) {
+          return CustomTransitionRoute(page: wrapWidget(AddDummy()));
         }
         break;
 

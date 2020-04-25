@@ -27,7 +27,6 @@ class DashboardScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
         title: Text(
           'Dashboard',
           style: textStyleAppBarTitle,

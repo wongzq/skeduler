@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/home_drawer.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/member_selector_display.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_display.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -31,116 +32,106 @@ class _TimetableScreenState extends State<TimetableScreen> {
           future: dbService.getGroupTimetableIdForToday(groupDocId.value),
           builder: (context, snapshotTtbId) {
             return StreamBuilder<Object>(
-                stream: dbService.getGroupTimetableForToday(
-                  groupDocId.value,
-                  snapshotTtbId.data,
-                ),
-                builder: (context, snapshotTtb) {
-                  Timetable timetable =
-                      snapshotTtb != null ? snapshotTtb.data : null;
+              stream: dbService.getGroupTimetableForToday(
+                groupDocId.value,
+                snapshotTtbId.data,
+              ),
+              builder: (context, snapshotTtb) {
+                Timetable timetable =
+                    snapshotTtb != null ? snapshotTtb.data : null;
 
-                  return group == null
-                      ? Container()
-                      : Scaffold(
-                          appBar: AppBar(
-                            title: group.name == null ||
-                                    timetable == null ||
-                                    !timetable.isValid()
-                                ? Text(
-                                    'Timetable',
-                                    style: textStyleAppBarTitle,
-                                  )
-                                : Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        group.name,
-                                        style: textStyleAppBarTitle,
-                                      ),
-                                      Text(
-                                        'Timetable: ${timetable.docId}',
-                                        style: textStyleBody,
-                                      )
-                                    ],
-                                  ),
-                            actions: <Widget>[
-                              IconButton(
-                                icon: PopupMenuButton(
-                                  child: Icon(Icons.more_vert),
-                                  itemBuilder: (BuildContext context) {
-                                    List<PopupMenuEntry> timetableOptions = [];
-
-                                    /// Add timetables to options
-                                    group.timetables.forEach((timetableDocId) {
-                                      timetableOptions.add(PopupMenuItem(
-                                        value: timetableDocId.id,
-                                        child: Text(timetableDocId.id),
-                                      ));
-                                    });
-
-                                    /// Add 'add timetable' button to options
-                                    timetableOptions.add(PopupMenuItem(
-                                      value: 0,
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Visibility(
-                                            visible:
-                                                group.timetables.isNotEmpty,
-                                            child: Divider(thickness: 1.0),
-                                          ),
-                                          Row(
-                                            children: <Widget>[
-                                              Icon(Icons.add),
-                                              SizedBox(width: 10.0),
-                                              Text('Add timetable'),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ));
-
-                                    return timetableOptions;
-                                  },
-                                  onSelected: (value) async {
-                                    if (value == 0) {
-                                      editTtb.value.perm = EditTimetable();
-                                      Navigator.of(context)
-                                          .pushNamed('/timetable/editor');
-                                    } else {
-                                      editTtb.value.perm =
-                                          EditTimetable.fromTimetable(
-                                        await dbService.getGroupTimetable(
-                                          groupDocId.value,
-                                          value,
-                                        ),
-                                      );
-
-                                      Navigator.of(context)
-                                          .pushNamed('/timetable/editor');
-                                    }
-                                  },
+                return group == null
+                    ? Container()
+                    : Scaffold(
+                        appBar: AppBar(
+                          title: group.name == null ||
+                                  timetable == null ||
+                                  !timetable.isValid()
+                              ? Text(
+                                  'Timetable',
+                                  style: textStyleAppBarTitle,
+                                )
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      group.name,
+                                      style: textStyleAppBarTitle,
+                                    ),
+                                    Text(
+                                      'Timetable: ${timetable.docId}',
+                                      style: textStyleBody,
+                                    )
+                                  ],
                                 ),
-                                onPressed: () {},
+                          actions: <Widget>[
+                            IconButton(
+                              icon: PopupMenuButton(
+                                child: Icon(Icons.more_vert),
+                                itemBuilder: (BuildContext context) {
+                                  List<PopupMenuEntry> timetableOptions = [];
+
+                                  /// Add timetables to options
+                                  group.timetables.forEach((timetableDocId) {
+                                    timetableOptions.add(PopupMenuItem(
+                                      value: timetableDocId.id,
+                                      child: Text(timetableDocId.id),
+                                    ));
+                                  });
+
+                                  /// Add 'add timetable' button to options
+                                  timetableOptions.add(PopupMenuItem(
+                                    value: 0,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Visibility(
+                                          visible: group.timetables.isNotEmpty,
+                                          child: Divider(thickness: 1.0),
+                                        ),
+                                        Row(
+                                          children: <Widget>[
+                                            Icon(Icons.add),
+                                            SizedBox(width: 10.0),
+                                            Text('Add timetable'),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ));
+
+                                  return timetableOptions;
+                                },
+                                onSelected: (value) async {
+                                  if (value == 0) {
+                                    editTtb.value.perm = EditTimetable();
+                                    Navigator.of(context)
+                                        .pushNamed('/timetable/editor');
+                                  } else {
+                                    editTtb.value.perm =
+                                        EditTimetable.fromTimetable(
+                                      await dbService.getGroupTimetable(
+                                        groupDocId.value,
+                                        value,
+                                      ),
+                                    );
+
+                                    Navigator.of(context)
+                                        .pushNamed('/timetable/editor');
+                                  }
+                                },
                               ),
-                            ],
-                          ),
-                          drawer: HomeDrawer(),
-                          floatingActionButton: FloatingActionButton(
-                            foregroundColor: getFABIconForegroundColor(context),
-                            backgroundColor: getFABIconBackgroundColor(context),
-                            child: Icon(Icons.edit),
-                            onPressed: () {
-                              Navigator.of(context)
-                                  .pushNamed('/timetable/editor');
-                            },
-                          ),
-                          body: timetable != null && timetable.isValid()
-                              ? TimetableDisplay(timetable: timetable)
-                              : Container(),
-                        );
-                });
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
+                        drawer: HomeDrawer(),
+                        body: timetable == null || !timetable.isValid()
+                            ? Container()
+                            : TimetableDisplay(timetable: timetable),
+                      );
+              },
+            );
           },
         );
       },

@@ -248,6 +248,35 @@ class DatabaseService {
   /// Modifying methods for Member
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
+  /// add Dummy to [Group]
+  Future<String> inviteDummyToGroup({
+    @required String groupDocId,
+    @required String newDummyName,
+  }) async {
+    String errorMsg;
+
+    DocumentReference groupDummyRef = groupsCollection
+        .document(groupDocId)
+        .collection(_members)
+        .document(newDummyName);
+
+    await groupDummyRef.get().then((member) async {
+      !member.exists
+          ? await groupsCollection.document(groupDocId).updateData({
+              _members: FieldValue.arrayUnion([newDummyName])
+            }).then((_) async {
+              await groupDummyRef.setData({
+                'role': MemberRole.dummy.index,
+                'name': newDummyName,
+                'nickname': newDummyName,
+              });
+            })
+          : errorMsg = 'Dummy is already in the group';
+    });
+
+    return errorMsg;
+  }
+
   /// add [Member] to [Group]
   Future<String> inviteMemberToGroup({
     @required String groupDocId,
