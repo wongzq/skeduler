@@ -1,45 +1,70 @@
 import 'package:flutter/material.dart';
-import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_row.dart';
+import 'package:provider/provider.dart';
+import 'package:skeduler/models/group_data/timetable.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_headers.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_slots.dart';
 
-class TimetableGrid extends StatelessWidget {
+class TimetableGrid extends StatefulWidget {
   /// properties
-  final List<String> axisX;
-  final List<String> axisY;
-  final List<String> axisZ;
+  final Timetable timetable;
 
   /// constructors
-  const TimetableGrid({
+  TimetableGrid({
     Key key,
-    this.axisX = const [],
-    this.axisY = const [],
-    this.axisZ = const [],
+    this.timetable,
   }) : super(key: key);
 
-  /// methods
   @override
-  Widget build(BuildContext context) {
-    return Flex(
-      direction: Axis.vertical,
-      mainAxisSize: MainAxisSize.max,
-      children: _generateRows(context),
-    );
-  }
+  _TimetableGridState createState() => _TimetableGridState();
+}
 
+class _TimetableGridState extends State<TimetableGrid> {
+  List<String> axisX;
+  List<String> axisY;
+  List<String> axisZ;
+
+  /// methods
   List<Widget> _generateRows(BuildContext context) {
-    List<Widget> rows = [];
+    List<Widget> gridStruct = [];
 
-    rows.add(TimetableHeaderX(axisX: axisX));
+    gridStruct.add(TimetableHeaderX(axisX: axisX));
 
-    rows += List.generate(
-      axisY.length,
-      (index) => TimetableRow(
-        axisX: axisX,
-        axisY: axisY,
-        axisZ: axisZ,
-        indexY: index,
+    gridStruct.add(
+      Expanded(
+        flex: (axisY.length ?? 0) * (axisZ.length ?? 0),
+        child: Flex(
+          direction: Axis.horizontal,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            TimetableHeaderYZ(axisY: axisY, axisZ: axisZ),
+            TimetableSlots(axisX: axisX, axisY: axisY, axisZ: axisZ),
+          ],
+        ),
       ),
     );
 
-    return rows;
+    return gridStruct;
+  }
+
+  @override
+  void initState() {
+    if (widget.timetable != null) {
+      axisX = widget.timetable.axisDayShortStr;
+      axisY = widget.timetable.axisTimeStr;
+      axisZ = widget.timetable.axisCustom;
+    }
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<TimetableGridDataList>(
+      create: (_) => TimetableGridDataList(),
+      child: Flex(
+        direction: Axis.vertical,
+        mainAxisSize: MainAxisSize.max,
+        children: _generateRows(context),
+      ),
+    );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
+import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/shared/functions.dart';
 
@@ -12,6 +13,10 @@ class TimetableGridBox extends StatefulWidget {
   final int flex;
   final bool content;
   final ValueSetter<bool> valSetBinVisible;
+  final Weekday axisDayVal;
+  final Time axisTimeVal;
+  final String axisCustomVal;
+  final bool textOverFlowFade;
 
   /// constructors
   const TimetableGridBox({
@@ -21,6 +26,10 @@ class TimetableGridBox extends StatefulWidget {
     this.flex = 1,
     this.content = false,
     this.valSetBinVisible,
+    this.axisDayVal,
+    this.axisTimeVal,
+    this.axisCustomVal,
+    this.textOverFlowFade = true,
   }) : super(key: key);
 
   @override
@@ -51,8 +60,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
           member != null ? member.display : widget.initialDisplay ?? '',
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.black, fontSize: 10.0),
-          maxLines: 1,
-          overflow: TextOverflow.fade,
+          maxLines: widget.textOverFlowFade ? 1 : null,
+          overflow: widget.textOverFlowFade ? TextOverflow.fade : null,
         ),
       ),
     );
@@ -61,11 +70,15 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   @override
   Widget build(BuildContext context) {
     ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    TimetableGridDataList gridDataList =
+        Provider.of<TimetableGridDataList>(context);
+
     EditModeBool editMode = Provider.of<EditModeBool>(context);
     BinVisibleBool binVisible;
 
-    if (editMode.value == true)
+    if (editMode.value == true) {
       binVisible = Provider.of<BinVisibleBool>(context);
+    }
 
     return group == null
         ? Container()
@@ -79,6 +92,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                         child: DragTarget<Member>(
                           onAccept: (newMember) {
                             member = newMember;
+                            gridDataList.add(TimetableGridData());
+                            print(gridDataList.value);
                           },
                           builder: (context, _, __) {
                             return member == null

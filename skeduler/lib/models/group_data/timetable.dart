@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:skeduler/models/group_data/time.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid.dart';
 
 import 'member.dart';
 
@@ -124,11 +125,11 @@ class Timetable {
   List<String> get axisCustom => _axisCustom;
 
   /// getter as [List<String>]
-  List<String> get axisDaysStr => List.generate(
+  List<String> get axisDayStr => List.generate(
       _axisDays.length, (index) => getWeekdayStr(_axisDays[index]));
-  List<String> get axisDaysShortStr => List.generate(
+  List<String> get axisDayShortStr => List.generate(
       _axisDays.length, (index) => getWeekdayShortStr(_axisDays[index]));
-  List<String> get axisTimesStr => List.generate(
+  List<String> get axisTimeStr => List.generate(
       _axisTimes.length, (index) => getTimeStr(_axisTimes[index]));
 
   bool isValid() {
@@ -257,14 +258,90 @@ class TimetableCoord {
   Weekday weekday;
   Time time;
   String custom;
+
+  bool isSameAs(TimetableCoord coord) {
+    return this.weekday == coord.weekday &&
+            this.time.startTime == coord.time.startTime &&
+            this.time.endTime == coord.time.endTime &&
+            this.custom == coord.custom
+        ? true
+        : false;
+  }
 }
 
 class TimetableGridData {
-  TimetableCoord coord;
-  String subject;
-  Member member;
+  TimetableCoord _coord;
+  String _subject;
+  Member _member;
 
-  TimetableGridData(TimetableCoord coord, String subject, Member member);
+  TimetableGridData({
+    TimetableCoord coord,
+    String subject,
+    Member member,
+  })  : _coord = coord,
+        _subject = subject,
+        _member = member;
+
+  TimetableCoord get coord => this._coord;
+  String get subject => this._subject;
+  Member get member => this._member;
+
+  set coord(TimetableCoord val) => this._coord = val;
+  set subject(String val) => this._subject = val;
+  set member(Member val) => this._member = val;
+
+  bool hasSameCoordAs(TimetableGridData gridData) {
+    return gridData._coord == null
+        ? true
+        : this._coord.isSameAs(gridData.coord);
+  }
+}
+
+class TimetableGridDataList extends ChangeNotifier {
+  List<TimetableGridData> _value;
+
+  TimetableGridDataList({dataList}) : _value = dataList ?? [];
+
+  List<TimetableGridData> get value => List.unmodifiable(this._value);
+
+  void add(TimetableGridData newGridData) {
+    TimetableGridData toRemove;
+
+    for (TimetableGridData gridData in this._value) {
+      if (gridData.hasSameCoordAs(newGridData)) {
+        toRemove = gridData;
+        break;
+      }
+    }
+
+    if (toRemove != null) {
+      this._value.remove(toRemove);
+    }
+
+    this._value.add(newGridData);
+
+    notifyListeners();
+  }
+
+  bool remove(TimetableGridData newGridData) {
+    TimetableGridData toRemove;
+
+    for (TimetableGridData gridData in this._value) {
+      if (gridData.hasSameCoordAs(newGridData)) {
+        toRemove = gridData;
+        break;
+      }
+    }
+
+    if (toRemove != null) {
+      this._value.remove(toRemove);
+      notifyListeners();
+      return true;
+    } else {
+      notifyListeners();
+      return false;
+    }
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

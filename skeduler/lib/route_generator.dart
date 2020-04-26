@@ -20,6 +20,7 @@ import 'package:skeduler/shared/components/custom_transition_route.dart';
 ////////////////////////////////////////////////////////////////////////////////
 /// Route Generator class
 ////////////////////////////////////////////////////////////////////////////////
+
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     /// getting arguments passed in while calling Navigator.pushNamed
