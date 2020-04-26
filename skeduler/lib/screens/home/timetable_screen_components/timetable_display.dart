@@ -22,10 +22,13 @@ class TimetableDisplay extends StatelessWidget {
     return ChangeNotifierProvider<EditModeBool>(
       create: (_) => EditModeBool(value: this.editMode),
       child: LayoutBuilder(builder: (context, constraints) {
-        return TimetableGrid(
-          axisX: axis1,
-          axisY: axis2,
-          axisZ: axis3,
+        return Padding(
+          padding: EdgeInsets.all(10.0),
+          child: TimetableGrid(
+            axisX: axis1,
+            axisY: axis2,
+            axisZ: axis3,
+          ),
         );
       }),
     );

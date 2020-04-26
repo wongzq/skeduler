@@ -201,15 +201,24 @@ class TimetableSettings extends StatelessWidget {
             ),
             Divider(thickness: 1.0),
             Padding(
-              padding: EdgeInsets.all(5.0),
-              child: FlatButton(
-                color: Colors.red,
+              padding: EdgeInsets.all(20.0),
+              child: RaisedButton(
+                color: Colors.red[300],
+                highlightColor: Colors.red[500],
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.0),
+                  borderRadius: BorderRadius.circular(30.0),
                 ),
-                child: Text(
-                  'DELETE TIMETABLE',
-                  style: textStyleBody,
+                child: Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Text(
+                    'DELETE',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
                 ),
                 onPressed: () {
                   showDialog(
