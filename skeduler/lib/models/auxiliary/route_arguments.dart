@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:skeduler/models/group_data/group.dart';
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Route Arguments related classes
+/// Route Arguments Template
 ////////////////////////////////////////////////////////////////////////////////
-class _RouteArgsTemplate {
+abstract class _RouteArgsTemplate {
   /// properties
   BuildContext _context;
   Group _group;
@@ -15,10 +15,12 @@ class _RouteArgsTemplate {
   _RouteArgsTemplate(
     this._context,
   );
+
   _RouteArgsTemplate.group(
     this._context,
     this._group,
   );
+
   _RouteArgsTemplate.reorderAxisCustom(
     this._context,
     this._axisCustom,
@@ -26,6 +28,9 @@ class _RouteArgsTemplate {
   );
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// Route Arguments related classes
+////////////////////////////////////////////////////////////////////////////////
 class RouteArgs extends _RouteArgsTemplate {
   RouteArgs(BuildContext context) : super(context);
 

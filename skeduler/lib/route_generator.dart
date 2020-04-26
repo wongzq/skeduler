@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/create_group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/dashboard_screen.dart';
@@ -30,8 +28,6 @@ class RouteGenerator {
     switch (settings.name) {
       case '/dashboard':
         if (args is RouteArgs) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false)
-              .add(DrawerEnum.dashboard);
           return CustomTransitionRoute(page: wrapWidget(DashboardScreen()));
         } else if (args == null) {
           return CustomTransitionRoute(page: wrapWidget(DashboardScreen()));
@@ -40,75 +36,60 @@ class RouteGenerator {
 
       case '/dashboard/createGroup':
         if (args is RouteArgs) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false)
-              .add(DrawerEnum.dashboard);
           return CustomTransitionRoute(page: wrapWidget(CreateGroup()));
         }
         break;
 
       case '/group':
         if (args is RouteArgs) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false).add(DrawerEnum.group);
           return CustomTransitionRoute(page: wrapWidget(GroupScreen()));
         }
         break;
 
       case '/group/edit':
         if (args is RouteArgsGroup) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false).add(DrawerEnum.group);
           return CustomTransitionRoute(page: wrapWidget(EditGroup(args.group)));
         }
         break;
 
       case '/group/addMember':
         if (args is RouteArgs) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false).add(DrawerEnum.group);
           return CustomTransitionRoute(page: wrapWidget(AddMember()));
         }
         break;
 
       case '/group/addDummy':
         if (args is RouteArgs) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false).add(DrawerEnum.group);
           return CustomTransitionRoute(page: wrapWidget(AddDummy()));
         }
         break;
 
       case '/members':
         if (args is RouteArgs) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false).add(DrawerEnum.members);
           return CustomTransitionRoute(page: wrapWidget(MembersScreen()));
         }
         break;
 
       case '/timetable':
         if (args is RouteArgs) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false)
-              .add(DrawerEnum.timetable);
           return CustomTransitionRoute(page: wrapWidget(TimetableScreen()));
         }
         break;
 
       case '/timetable/editor':
         if (args is RouteArgs) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false)
-              .add(DrawerEnum.timetable);
           return CustomTransitionRoute(page: wrapWidget(TimetableEditor()));
         }
         break;
 
       case '/timetable/editor/settings':
         if (args is RouteArgs) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false)
-              .add(DrawerEnum.timetable);
           return CustomTransitionRoute(page: wrapWidget(TimetableSettings()));
         }
         break;
 
       case '/timetable/editor/settings/reorderAxisCustom':
         if (args is RouteArgsReorderAxisCustom) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false)
-              .add(DrawerEnum.timetable);
           return CustomTransitionRoute(
             page: wrapWidget(
               AxisCustomReoder(
@@ -122,23 +103,18 @@ class RouteGenerator {
 
       case '/mySchedule':
         if (args is RouteArgs) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false)
-              .add(DrawerEnum.mySchedule);
           return CustomTransitionRoute(page: wrapWidget(MyScheduleScreen()));
         }
         break;
 
       case '/mySchedule/scheduleEditor':
         if (args is RouteArgs) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false)
-              .add(DrawerEnum.mySchedule);
           return CustomTransitionRoute(page: wrapWidget(ScheduleEditor()));
         }
         break;
 
       case '/settings':
         if (args is RouteArgs) {
-          Provider.of<DrawerEnumHistory>(args.context, listen: false).add(DrawerEnum.settings);
           return CustomTransitionRoute(page: wrapWidget(SettingsScreen()));
         }
         break;

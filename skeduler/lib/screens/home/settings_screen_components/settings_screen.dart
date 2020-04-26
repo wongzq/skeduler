@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/home_drawer.dart';
+import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/screens/home/settings_screen_components/change_theme.dart';
 import 'package:skeduler/screens/home/settings_screen_components/change_user_data.dart';
 import 'package:skeduler/shared/ui_settings.dart';
@@ -14,13 +15,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        
         title: Text(
           'Group',
           style: textStyleAppBarTitle,
         ),
       ),
-      drawer: HomeDrawer(),
+      drawer: HomeDrawer(DrawerEnum.settings),
       body: Column(
         children: <Widget>[
           ChangeUserData(),

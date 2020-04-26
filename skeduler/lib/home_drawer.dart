@@ -11,7 +11,9 @@ import 'package:skeduler/shared/functions.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class HomeDrawer extends StatelessWidget {
+  /// properties
   final AuthService _authService = AuthService();
+  final DrawerEnum _selected;
 
   final Map<DrawerEnum, Map<String, dynamic>> _screens = {
     DrawerEnum.dashboard: {'title': 'Dashboard', 'icon': null},
@@ -24,6 +26,10 @@ class HomeDrawer extends StatelessWidget {
     DrawerEnum.logout: {'title': 'Logout', 'icon': null},
   };
 
+  /// constructors
+  HomeDrawer(this._selected);
+
+  /// methods
   Color _tileSelectedBackgroundColor(BuildContext context) =>
       Theme.of(context).brightness == Brightness.light ? null : null;
 
@@ -34,7 +40,6 @@ class HomeDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DrawerEnumHistory enumHistory = Provider.of<DrawerEnumHistory>(context);
     ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
 
     User user = Provider.of<User>(context);
@@ -62,16 +67,14 @@ class HomeDrawer extends StatelessWidget {
 
               /// Dashboard
               Container(
-                color: enumHistory.current == DrawerEnum.dashboard
+                color: _selected == DrawerEnum.dashboard
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
                   dense: true,
                   leading: Icon(Icons.dashboard),
                   title: Text(_screens[DrawerEnum.dashboard]['title']),
-                  selected: enumHistory.current == DrawerEnum.dashboard
-                      ? true
-                      : false,
+                  selected: _selected == DrawerEnum.dashboard ? true : false,
                   onTap: () {
                     Navigator.of(context).popAndPushNamed(
                       '/dashboard',
@@ -85,7 +88,7 @@ class HomeDrawer extends StatelessWidget {
 
               /// Group
               Container(
-                color: enumHistory.current == DrawerEnum.group
+                color: _selected == DrawerEnum.group
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
@@ -98,8 +101,7 @@ class HomeDrawer extends StatelessWidget {
                       : Text(
                           _screens[DrawerEnum.group]['title'],
                         ),
-                  selected:
-                      enumHistory.current == DrawerEnum.group ? true : false,
+                  selected: _selected == DrawerEnum.group ? true : false,
                   onTap: () {
                     Navigator.of(context).popAndPushNamed(
                       '/group',
@@ -111,7 +113,7 @@ class HomeDrawer extends StatelessWidget {
 
               /// members
               Container(
-                color: enumHistory.current == DrawerEnum.members
+                color: _selected == DrawerEnum.members
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
@@ -119,8 +121,7 @@ class HomeDrawer extends StatelessWidget {
                   dense: true,
                   leading: Icon(Icons.people),
                   title: Text(_screens[DrawerEnum.members]['title']),
-                  selected:
-                      enumHistory.current == DrawerEnum.members ? true : false,
+                  selected: _selected == DrawerEnum.members ? true : false,
                   onTap: () {
                     Navigator.of(context).popAndPushNamed(
                       '/members',
@@ -132,7 +133,7 @@ class HomeDrawer extends StatelessWidget {
 
               /// Classes
               Container(
-                color: enumHistory.current == DrawerEnum.classes
+                color: _selected == DrawerEnum.classes
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
@@ -140,8 +141,7 @@ class HomeDrawer extends StatelessWidget {
                   dense: true,
                   leading: Icon(Icons.class_),
                   title: Text(_screens[DrawerEnum.classes]['title']),
-                  selected:
-                      enumHistory.current == DrawerEnum.classes ? true : false,
+                  selected: _selected == DrawerEnum.classes ? true : false,
                   onTap: () {
                     Navigator.of(context).maybePop();
                   },
@@ -150,7 +150,7 @@ class HomeDrawer extends StatelessWidget {
 
               /// Timetable
               Container(
-                color: enumHistory.current == DrawerEnum.timetable
+                color: _selected == DrawerEnum.timetable
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
@@ -158,9 +158,7 @@ class HomeDrawer extends StatelessWidget {
                   dense: true,
                   leading: Icon(Icons.table_chart),
                   title: Text(_screens[DrawerEnum.timetable]['title']),
-                  selected: enumHistory.current == DrawerEnum.timetable
-                      ? true
-                      : false,
+                  selected: _selected == DrawerEnum.timetable ? true : false,
                   onTap: () {
                     Navigator.of(context).popAndPushNamed(
                       '/timetable',
@@ -172,7 +170,7 @@ class HomeDrawer extends StatelessWidget {
 
               /// My Schedule
               Container(
-                color: enumHistory.current == DrawerEnum.mySchedule
+                color: _selected == DrawerEnum.mySchedule
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
@@ -180,9 +178,7 @@ class HomeDrawer extends StatelessWidget {
                   dense: true,
                   leading: Icon(Icons.schedule),
                   title: Text(_screens[DrawerEnum.mySchedule]['title']),
-                  selected: enumHistory.current == DrawerEnum.mySchedule
-                      ? true
-                      : false,
+                  selected: _selected == DrawerEnum.mySchedule ? true : false,
                   onTap: () {
                     Navigator.of(context).popAndPushNamed(
                       '/mySchedule',
@@ -195,15 +191,14 @@ class HomeDrawer extends StatelessWidget {
 
               /// Settings
               Container(
-                color: enumHistory.current == DrawerEnum.settings
+                color: _selected == DrawerEnum.settings
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
                   dense: true,
                   leading: Icon(Icons.settings),
                   title: Text(_screens[DrawerEnum.settings]['title']),
-                  selected:
-                      enumHistory.current == DrawerEnum.settings ? true : false,
+                  selected: _selected == DrawerEnum.settings ? true : false,
                   onTap: () {
                     Navigator.of(context).popAndPushNamed(
                       '/settings',
@@ -215,15 +210,14 @@ class HomeDrawer extends StatelessWidget {
 
               /// Logout
               Container(
-                color: enumHistory.current == DrawerEnum.logout
+                color: _selected == DrawerEnum.logout
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
                   dense: true,
                   leading: Icon(Icons.exit_to_app),
                   title: Text(_screens[DrawerEnum.logout]['title']),
-                  selected:
-                      enumHistory.current == DrawerEnum.logout ? true : false,
+                  selected: _selected == DrawerEnum.logout ? true : false,
                   onTap: () {
                     showDialog(
                       context: context,

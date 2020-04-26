@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
@@ -70,7 +71,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
           ),
         ],
       ),
-      drawer: HomeDrawer(),
+      drawer: HomeDrawer(DrawerEnum.timetable),
       floatingActionButton: FloatingActionButton(
         foregroundColor: getFABIconForegroundColor(context),
         backgroundColor: getFABIconBackgroundColor(context),

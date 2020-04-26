@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/drawer_enum.dart';
+import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/home_drawer.dart';
@@ -97,8 +99,10 @@ class _TimetableScreenState extends State<TimetableScreen> {
                             onSelected: (value) async {
                               if (value == 0) {
                                 editTtb.value.perm = EditTimetable();
-                                Navigator.of(context)
-                                    .pushNamed('/timetable/editor');
+                                Navigator.of(context).pushNamed(
+                                  '/timetable/editor',
+                                  arguments: RouteArgs(context),
+                                );
                               } else {
                                 editTtb.value.perm =
                                     EditTimetable.fromTimetable(
@@ -108,8 +112,10 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                   ),
                                 );
 
-                                Navigator.of(context)
-                                    .pushNamed('/timetable/editor');
+                                Navigator.of(context).pushNamed(
+                                  '/timetable/editor',
+                                  arguments: RouteArgs(context),
+                                );
                               }
                             },
                           ),
@@ -117,7 +123,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                         ),
                       ],
                     ),
-                    drawer: HomeDrawer(),
+                    drawer: HomeDrawer(DrawerEnum.timetable),
                     body: timetable == null || !timetable.isValid()
                         ? Container()
                         : TimetableDisplay(

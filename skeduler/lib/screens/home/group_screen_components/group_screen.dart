@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen_options_owner.dart';
@@ -33,7 +34,7 @@ class _GroupScreenState extends State<GroupScreen> {
                 style: textStyleAppBarTitle,
               ),
             ),
-            drawer: HomeDrawer(),
+            drawer: HomeDrawer(DrawerEnum.group),
           )
         : StreamBuilder(
             stream: dbService.getGroupMemberMyData(group.value.docId),
@@ -63,7 +64,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                 ],
                               ),
                       ),
-                      drawer: HomeDrawer(),
+                      drawer: HomeDrawer(DrawerEnum.group),
                       floatingActionButton: me != null
                           ? () {
                               if (me.role == MemberRole.owner)

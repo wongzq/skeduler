@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/home_drawer.dart';
@@ -51,11 +52,10 @@ class _MembersScreenState extends State<MembersScreen> {
                                 ],
                               ),
                       ),
-                      drawer: HomeDrawer(),
+                      drawer: HomeDrawer(DrawerEnum.members),
                     )
                   : StreamBuilder(
-                      stream: dbService
-                          .getGroupMemberMyData(group.value.docId),
+                      stream: dbService.getGroupMemberMyData(group.value.docId),
                       builder: (context, snapshot) {
                         Member me = snapshot != null ? snapshot.data : null;
 
@@ -83,7 +83,7 @@ class _MembersScreenState extends State<MembersScreen> {
                                           ],
                                         ),
                                 ),
-                                drawer: HomeDrawer(),
+                                drawer: HomeDrawer(DrawerEnum.members),
                                 floatingActionButton:
                                     me.role == MemberRole.owner
                                         ? MembersScreenOptionsOwner()

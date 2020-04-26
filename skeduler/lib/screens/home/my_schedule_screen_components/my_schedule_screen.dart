@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_tab.dart';
@@ -107,7 +108,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                 ],
               ),
             ),
-            drawer: HomeDrawer(),
+            drawer: HomeDrawer(DrawerEnum.mySchedule),
             body: TabBarView(
               controller: _tabController,
               children: <Widget>[

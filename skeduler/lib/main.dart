@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
@@ -98,12 +97,6 @@ class MyApp extends StatelessWidget {
                         ),
                         StreamProvider<User>.value(
                           value: dbService.user,
-                        ),
-
-                        /// Current Drawer Selected
-                        ChangeNotifierProvider<DrawerEnumHistory>(
-                          create: (_) => DrawerEnumHistory(
-                              history: [DrawerEnum.dashboard]),
                         ),
 
                         /// Group Doc ID
