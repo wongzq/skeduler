@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_row.dart';
 
 class TimetableGrid extends StatelessWidget {
@@ -8,27 +7,21 @@ class TimetableGrid extends StatelessWidget {
   final List<String> axisY;
   final List<String> axisZ;
 
-  final bool editMode;
-
   /// constructors
   const TimetableGrid({
     Key key,
     this.axisX = const [],
     this.axisY = const [],
     this.axisZ = const [],
-    this.editMode = false,
   }) : super(key: key);
 
   /// methods
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: ValueNotifier<bool>(editMode),
-      child: Flex(
-        direction: Axis.vertical,
-        mainAxisSize: MainAxisSize.max,
-        children: _generateRows(context),
-      ),
+    return Flex(
+      direction: Axis.vertical,
+      mainAxisSize: MainAxisSize.max,
+      children: _generateRows(context),
     );
   }
 

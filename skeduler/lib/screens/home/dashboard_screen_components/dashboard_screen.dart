@@ -149,7 +149,6 @@ class DashboardScreen extends StatelessWidget {
                                 me.role != MemberRole.pending) {
                               groupDocId.value = groups[index].docId;
                               selected.value = DrawerEnum.group;
-                              // group.value = groups[index];
                               Navigator.of(context).pushNamed('/group');
                             } else {
                               showDialog(

@@ -242,8 +242,6 @@ class DatabaseService {
 
   /// Delete [Group]
   Future deleteGroup(String groupDocId) async {
-    // Cloud function to delete all subcollections
-    // temporary replacement
     return groupDocId == null || groupDocId.trim() == ''
         ? null
         : await groupsCollection

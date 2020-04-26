@@ -30,6 +30,36 @@ class TimetableMetadata {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+/// TimetableDisplayInfo class for Provider
+////////////////////////////////////////////////////////////////////////////////
+
+class EditModeBool extends ChangeNotifier {
+  bool _value;
+
+  EditModeBool({bool value = false}) : _value = value;
+
+  bool get value => this._value;
+
+  set value(bool newValue) {
+    _value = newValue;
+    notifyListeners();
+  }
+}
+
+class BinVisibleBool extends ChangeNotifier {
+  bool _value;
+
+  BinVisibleBool({bool value = false}) : _value = value;
+
+  bool get value => this._value;
+
+  set value(bool newValue) {
+    _value = newValue;
+    notifyListeners();
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 /// Timetable class
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
+import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/shared/functions.dart';
 
 class TimetableGridBox extends StatefulWidget {
@@ -10,6 +11,7 @@ class TimetableGridBox extends StatefulWidget {
   final String initialDisplay;
   final int flex;
   final bool content;
+  final ValueSetter<bool> valSetBinVisible;
 
   /// constructors
   const TimetableGridBox({
@@ -18,6 +20,7 @@ class TimetableGridBox extends StatefulWidget {
     @required this.initialDisplay,
     this.flex = 1,
     this.content = false,
+    this.valSetBinVisible,
   }) : super(key: key);
 
   @override
@@ -57,7 +60,11 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   @override
   Widget build(BuildContext context) {
     ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
-    ValueNotifier<bool> editMode = Provider.of<ValueNotifier<bool>>(context);
+    EditModeBool editMode = Provider.of<EditModeBool>(context);
+    BinVisibleBool binVisible;
+
+    if (editMode.value == true)
+      binVisible = Provider.of<BinVisibleBool>(context);
 
     return group == null
         ? Container()
@@ -73,8 +80,6 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                             member = newMember;
                           },
                           builder: (context, _, __) {
-                            // return _buildGridBox(
-                            //     group.value, member, constraints);
                             return member == null
                                 ? _buildGridBox(
                                     group.value, member, constraints)
@@ -84,7 +89,23 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                                         group.value, member, constraints),
                                     child: _buildGridBox(
                                         group.value, member, constraints),
-                                    onDragStarted: () => member = null,
+                                    onDragStarted: () {
+                                      member = null;
+
+                                      if (editMode.value == true) {
+                                        binVisible.value = true;
+                                      }
+                                    },
+                                    onDragCompleted: () {
+                                      if (editMode.value == true) {
+                                        binVisible.value = false;
+                                      }
+                                    },
+                                    onDraggableCanceled: (_, __) {
+                                      if (editMode.value == true) {
+                                        binVisible.value = false;
+                                      }
+                                    },
                                   );
                           },
                         ),

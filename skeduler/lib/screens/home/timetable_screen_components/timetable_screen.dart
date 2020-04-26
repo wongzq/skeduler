@@ -120,7 +120,10 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     drawer: HomeDrawer(),
                     body: timetable == null || !timetable.isValid()
                         ? Container()
-                        : TimetableDisplay(timetable: timetable),
+                        : TimetableDisplay(
+                            editMode: false,
+                            timetable: timetable,
+                          ),
                   );
           },
         );

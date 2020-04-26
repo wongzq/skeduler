@@ -48,7 +48,6 @@ class Group {
   ColorShade get colorShade => _colorShade ?? ColorShade();
   String get ownerEmail => _ownerEmail;
   String get ownerName => _ownerName;
-  // int get numOfMembers => 1;
   int get numOfMembers => _members.length;
   List<String> get members => _members;
   List<TimetableMetadata> get timetables => _timetables;
