@@ -45,6 +45,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
           color: widget.content
               ? getOriginThemeData(group.colorShade.themeId).primaryColorLight
               : getOriginThemeData(group.colorShade.themeId).primaryColor,
+          boxShadow: [BoxShadow(offset: Offset(0.0, 0.5), blurRadius: 0.1)],
         ),
         child: Text(
           member != null ? member.display : widget.initialDisplay ?? '',
