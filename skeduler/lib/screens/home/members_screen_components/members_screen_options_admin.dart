@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -67,7 +68,7 @@ class MembersScreenOptionsAdmin extends StatelessWidget {
                             FlatButton(
                               child: Text('CANCEL'),
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.of(context).maybePop();
                               },
                             ),
                             FlatButton(
@@ -80,8 +81,8 @@ class MembersScreenOptionsAdmin extends StatelessWidget {
                               onPressed: () {
                                 dbService.leaveGroup(group.value.docId);
                                 groupDocId.value = null;
-                                Navigator.popUntil(
-                                    context, (route) => route.isFirst);
+                                Navigator.of(context)
+                                    .popUntil((route) => route.isFirst);
                               },
                             ),
                           ],
@@ -124,7 +125,10 @@ class MembersScreenOptionsAdmin extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/group/addMember');
+                  Navigator.of(context).pushNamed(
+                    '/group/addMember',
+                    arguments: RouteArgs(context),
+                  );
                 },
               ),
             ],

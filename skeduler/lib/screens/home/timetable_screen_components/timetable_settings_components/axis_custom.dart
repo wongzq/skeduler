@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeduler/models/auxiliary/route_arguments.dart';
 
 class AxisCustom extends StatefulWidget {
   final List<String> initialCustoms;
@@ -96,7 +97,7 @@ class _AxisCustomState extends State<AxisCustom> {
                                   widget.valSetCustoms(_customVals);
                                 }
 
-                                Navigator.of(context).pop();
+                                Navigator.of(context).maybePop();
                               }
                             },
                           ),
@@ -108,9 +109,10 @@ class _AxisCustomState extends State<AxisCustom> {
                 case CustomOption.reorder:
                   Navigator.of(context).pushNamed(
                     '/timetable/editor/settings/reorderAxisCustom',
-                    arguments: {
-                      'axisCustom': _customVals,
-                      'valSetAxisCustom': (val) {
+                    arguments: RouteArgsReorderAxisCustom(
+                      context,
+                      axisCustom: _customVals,
+                      valSetAxisCustom: (val) {
                         setState(() {
                           _customVals = val;
                         });
@@ -120,7 +122,7 @@ class _AxisCustomState extends State<AxisCustom> {
                           widget.valSetCustoms(_customVals);
                         }
                       },
-                    },
+                    ),
                   );
                   break;
                 case CustomOption.remove:
@@ -190,7 +192,7 @@ class _AxisCustomState extends State<AxisCustom> {
                         widget.valSetCustoms(_customVals);
                       }
 
-                      Navigator.of(context).pop();
+                      Navigator.of(context).maybePop();
                     }
                   },
                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/shared/functions.dart';
 
@@ -55,7 +56,10 @@ class MembersScreenOptionsOwner extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/group/addDummy');
+                  Navigator.of(context).pushNamed(
+                    '/group/addDummy',
+                    arguments: RouteArgs(context),
+                  );
                 },
               ),
 
@@ -93,7 +97,10 @@ class MembersScreenOptionsOwner extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/group/addMember');
+                  Navigator.of(context).pushNamed(
+                    '/group/addMember',
+                    arguments: RouteArgs(context),
+                  );
                 },
               ),
             ],

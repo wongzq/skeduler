@@ -48,7 +48,7 @@ class _AddMemberState extends State<AddMember> {
                   heroTag: 'Cancel',
                   backgroundColor: Colors.red,
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).maybePop();
                   },
                   child: Icon(
                     Icons.close,
@@ -75,7 +75,7 @@ class _AddMemberState extends State<AddMember> {
                             msg: _newMemberEmail + ' has been invited',
                             toastLength: Toast.LENGTH_LONG,
                           );
-                          Navigator.of(context).pop();
+                          Navigator.of(context).maybePop();
                         } else {
                           Fluttertoast.showToast(
                             msg: errorMsg,

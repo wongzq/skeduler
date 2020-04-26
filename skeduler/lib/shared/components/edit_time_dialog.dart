@@ -208,7 +208,7 @@ class _EditTimeDialogState extends State<EditTimeDialog> {
             if (_validTime && widget.onSave != null) {
               widget.onSave();
             }
-            Navigator.of(context).pop();
+            Navigator.of(context).maybePop();
           },
         ),
       ],

@@ -101,9 +101,9 @@ class MyApp extends StatelessWidget {
                         ),
 
                         /// Current Drawer Selected
-                        ChangeNotifierProvider<ValueNotifier<DrawerEnum>>(
-                          create: (_) =>
-                              ValueNotifier<DrawerEnum>(DrawerEnum.dashboard),
+                        ChangeNotifierProvider<DrawerEnumHistory>(
+                          create: (_) => DrawerEnumHistory(
+                              history: [DrawerEnum.dashboard]),
                         ),
 
                         /// Group Doc ID

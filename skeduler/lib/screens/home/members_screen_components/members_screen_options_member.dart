@@ -67,7 +67,7 @@ class MembersScreenOptionsMember extends StatelessWidget {
                             FlatButton(
                               child: Text('CANCEL'),
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.of(context).maybePop();
                               },
                             ),
                             FlatButton(
@@ -80,8 +80,8 @@ class MembersScreenOptionsMember extends StatelessWidget {
                               onPressed: () {
                                 dbService.leaveGroup(group.value.docId);
                                 groupDocId.value = null;
-                                Navigator.popUntil(
-                                    context, (route) => route.isFirst);
+                                Navigator.of(context)
+                                    .popUntil((route) => route.isFirst);
                               },
                             ),
                           ],

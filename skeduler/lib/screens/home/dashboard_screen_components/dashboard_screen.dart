@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/auxiliary/drawer_enum.dart';
+import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
-import 'package:skeduler/screens/home/dashboard_screen_components/create_group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
-import 'package:skeduler/screens/home/home_drawer.dart';
+import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
@@ -20,8 +19,6 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<DrawerEnum> selected =
-        Provider.of<ValueNotifier<DrawerEnum>>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
 
@@ -112,11 +109,9 @@ class DashboardScreen extends StatelessWidget {
               ),
             ),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CreateGroup(),
-                ),
+              Navigator.of(context).pushNamed(
+                '/dashboard/createGroup',
+                arguments: RouteArgs(context),
               );
             },
           ),
@@ -148,8 +143,10 @@ class DashboardScreen extends StatelessWidget {
                                 me.role != null &&
                                 me.role != MemberRole.pending) {
                               groupDocId.value = groups[index].docId;
-                              selected.value = DrawerEnum.group;
-                              Navigator.of(context).pushNamed('/group');
+                              Navigator.of(context).pushNamed(
+                                '/group',
+                                arguments: RouteArgs(context),
+                              );
                             } else {
                               showDialog(
                                   context: context,
@@ -178,10 +175,6 @@ class DashboardScreen extends StatelessWidget {
                                                                 groups[index]
                                                                     .docId);
 
-                                                        selected.value =
-                                                            DrawerEnum
-                                                                .dashboard;
-
                                                         Navigator.of(context)
                                                             .pop();
                                                       },
@@ -196,13 +189,14 @@ class DashboardScreen extends StatelessWidget {
                                                                 groups[index]
                                                                     .docId);
 
-                                                        selected.value =
-                                                            DrawerEnum.group;
                                                         groupDocId.value =
                                                             groups[index].docId;
                                                         Navigator.of(context)
                                                             .popAndPushNamed(
-                                                                '/group');
+                                                          '/group',
+                                                          arguments: RouteArgs(
+                                                              context),
+                                                        );
                                                       },
                                                     ),
                                                   ],

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:skeduler/screens/home/home_drawer.dart';
+import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/settings_screen_components/change_theme.dart';
 import 'package:skeduler/screens/home/settings_screen_components/change_user_data.dart';
 import 'package:skeduler/shared/ui_settings.dart';

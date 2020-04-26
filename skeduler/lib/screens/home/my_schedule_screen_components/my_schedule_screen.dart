@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/screens/home/home_drawer.dart';
+import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_tab.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/ui_settings.dart';

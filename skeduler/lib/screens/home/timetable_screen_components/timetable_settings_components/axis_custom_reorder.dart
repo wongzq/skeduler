@@ -93,7 +93,7 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                                   widget.valSetAxisCustom(_customVals);
                                 }
 
-                                Navigator.of(context).pop();
+                                Navigator.of(context).maybePop();
                               }
                             },
                           ),
@@ -177,7 +177,7 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                               widget.valSetAxisCustom(widget.axisCustom);
                             }
 
-                            Navigator.of(context).pop();
+                            Navigator.of(context).maybePop();
                           },
                         ),
                       ],

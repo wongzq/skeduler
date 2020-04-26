@@ -46,7 +46,7 @@ class _CreateGroupState extends State<CreateGroup> {
         leading: IconButton(
           icon: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context).maybePop();
           },
         ),
         title: Text(
@@ -70,7 +70,7 @@ class _CreateGroupState extends State<CreateGroup> {
                       _groupOwnerEmail,
                       _groupOwnerName,
                     );
-                    Navigator.of(context).pop();
+                    Navigator.of(context).maybePop();
                   }
                 : null,
           ),

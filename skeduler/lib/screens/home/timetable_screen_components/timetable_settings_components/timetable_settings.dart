@@ -41,7 +41,7 @@ class TimetableSettings extends StatelessWidget {
               onPressed: () {
                 editTtb.value.temp = EditTimetable();
 
-                Navigator.of(context).pop();
+                Navigator.of(context).maybePop();
               }),
           title: editTtb.value.temp.docId == null
               ? Text(
@@ -79,7 +79,7 @@ class TimetableSettings extends StatelessWidget {
                       axisCustom: editTtb.value.temp.axisCustom,
                     );
 
-                    Navigator.of(context).pop();
+                    Navigator.of(context).maybePop();
                   }
 
                   /// check if timetable docId changed
@@ -104,7 +104,7 @@ class TimetableSettings extends StatelessWidget {
                           axisTime: editTtb.value.temp.axisTime,
                           axisCustom: editTtb.value.temp.axisCustom,
                         );
-                        Navigator.of(context).pop();
+                        Navigator.of(context).maybePop();
                       } else {
                         Fluttertoast.showToast(
                           msg: 'Timetable ID already exists',
@@ -232,7 +232,7 @@ class TimetableSettings extends StatelessWidget {
                             FlatButton(
                               child: Text('CANCEL'),
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                Navigator.of(context).maybePop();
                               },
                             ),
 
@@ -246,7 +246,7 @@ class TimetableSettings extends StatelessWidget {
                                 await dbService.deleteGroupTimetable(
                                     group.value.docId,
                                     editTtb.value.perm.docId);
-                                Navigator.of(context).pop();
+                                Navigator.of(context).maybePop();
                               },
                             ),
                           ],

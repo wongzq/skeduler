@@ -609,7 +609,7 @@ class _TimeEditorState extends State<TimeEditor> {
                                                       null,
                                                       removeTimes,
                                                     );
-                                                    Navigator.of(context).pop();
+                                                    Navigator.of(context).maybePop();
                                                   }),
                                             ],
                                           );

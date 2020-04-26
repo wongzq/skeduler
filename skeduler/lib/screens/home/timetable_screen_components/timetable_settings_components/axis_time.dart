@@ -199,7 +199,8 @@ class _AxisTimeState extends State<AxisTime> {
                                     widget.valSetTimes(_times);
                                   }
                                 });
-                                Navigator.of(context).pop();
+                                
+                                Navigator.of(context).maybePop();
                               }),
                         ],
                       );

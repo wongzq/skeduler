@@ -63,7 +63,7 @@ class _EditGroupState extends State<EditGroup> {
             heroTag: 'Cancel',
             backgroundColor: Colors.red,
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).maybePop();
             },
             child: Icon(
               Icons.close,
@@ -94,7 +94,7 @@ class _EditGroupState extends State<EditGroup> {
                     ownerEmail: _groupOwnerEmail.trim(),
                   );
                 }
-                Navigator.of(context).pop();
+                Navigator.of(context).maybePop();
               }
             },
             child: Icon(

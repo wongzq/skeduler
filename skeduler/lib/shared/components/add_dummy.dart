@@ -48,7 +48,7 @@ class _AddDummyState extends State<AddDummy> {
                   heroTag: 'Cancel',
                   backgroundColor: Colors.red,
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).maybePop();
                   },
                   child: Icon(
                     Icons.close,
@@ -75,7 +75,8 @@ class _AddDummyState extends State<AddDummy> {
                             msg: _newDummyName + ' has been added',
                             toastLength: Toast.LENGTH_LONG,
                           );
-                          Navigator.of(context).pop();
+
+                          Navigator.of(context).maybePop();
                         } else {
                           Fluttertoast.showToast(
                             msg: errorMsg,

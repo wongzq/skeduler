@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/main.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
+import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/services/auth_service.dart';
@@ -33,8 +34,7 @@ class HomeDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<DrawerEnum> selected =
-        Provider.of<ValueNotifier<DrawerEnum>>(context);
+    DrawerEnumHistory enumHistory = Provider.of<DrawerEnumHistory>(context);
     ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
 
     User user = Provider.of<User>(context);
@@ -62,19 +62,21 @@ class HomeDrawer extends StatelessWidget {
 
               /// Dashboard
               Container(
-                color: selected.value == DrawerEnum.dashboard
+                color: enumHistory.current == DrawerEnum.dashboard
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
                   dense: true,
                   leading: Icon(Icons.dashboard),
                   title: Text(_screens[DrawerEnum.dashboard]['title']),
-                  selected:
-                      selected.value == DrawerEnum.dashboard ? true : false,
+                  selected: enumHistory.current == DrawerEnum.dashboard
+                      ? true
+                      : false,
                   onTap: () {
-                    selected.value = DrawerEnum.dashboard;
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed('/dashboard');
+                    Navigator.of(context).popAndPushNamed(
+                      '/dashboard',
+                      arguments: RouteArgs(context),
+                    );
                   },
                 ),
               ),
@@ -83,7 +85,7 @@ class HomeDrawer extends StatelessWidget {
 
               /// Group
               Container(
-                color: selected.value == DrawerEnum.group
+                color: enumHistory.current == DrawerEnum.group
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
@@ -96,18 +98,20 @@ class HomeDrawer extends StatelessWidget {
                       : Text(
                           _screens[DrawerEnum.group]['title'],
                         ),
-                  selected: selected.value == DrawerEnum.group ? true : false,
+                  selected:
+                      enumHistory.current == DrawerEnum.group ? true : false,
                   onTap: () {
-                    selected.value = DrawerEnum.group;
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed('/group');
+                    Navigator.of(context).popAndPushNamed(
+                      '/group',
+                      arguments: RouteArgs(context),
+                    );
                   },
                 ),
               ),
 
               /// members
               Container(
-                color: selected.value == DrawerEnum.members
+                color: enumHistory.current == DrawerEnum.members
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
@@ -115,18 +119,20 @@ class HomeDrawer extends StatelessWidget {
                   dense: true,
                   leading: Icon(Icons.people),
                   title: Text(_screens[DrawerEnum.members]['title']),
-                  selected: selected.value == DrawerEnum.members ? true : false,
+                  selected:
+                      enumHistory.current == DrawerEnum.members ? true : false,
                   onTap: () {
-                    selected.value = DrawerEnum.members;
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed('/members');
+                    Navigator.of(context).popAndPushNamed(
+                      '/members',
+                      arguments: RouteArgs(context),
+                    );
                   },
                 ),
               ),
 
               /// Classes
               Container(
-                color: selected.value == DrawerEnum.classes
+                color: enumHistory.current == DrawerEnum.classes
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
@@ -134,16 +140,17 @@ class HomeDrawer extends StatelessWidget {
                   dense: true,
                   leading: Icon(Icons.class_),
                   title: Text(_screens[DrawerEnum.classes]['title']),
-                  selected: selected.value == DrawerEnum.classes ? true : false,
+                  selected:
+                      enumHistory.current == DrawerEnum.classes ? true : false,
                   onTap: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).maybePop();
                   },
                 ),
               ),
 
               /// Timetable
               Container(
-                color: selected.value == DrawerEnum.timetable
+                color: enumHistory.current == DrawerEnum.timetable
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
@@ -151,19 +158,21 @@ class HomeDrawer extends StatelessWidget {
                   dense: true,
                   leading: Icon(Icons.table_chart),
                   title: Text(_screens[DrawerEnum.timetable]['title']),
-                  selected:
-                      selected.value == DrawerEnum.timetable ? true : false,
+                  selected: enumHistory.current == DrawerEnum.timetable
+                      ? true
+                      : false,
                   onTap: () {
-                    selected.value = DrawerEnum.timetable;
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed('/timetable');
+                    Navigator.of(context).popAndPushNamed(
+                      '/timetable',
+                      arguments: RouteArgs(context),
+                    );
                   },
                 ),
               ),
 
               /// My Schedule
               Container(
-                color: selected.value == DrawerEnum.mySchedule
+                color: enumHistory.current == DrawerEnum.mySchedule
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
@@ -171,12 +180,14 @@ class HomeDrawer extends StatelessWidget {
                   dense: true,
                   leading: Icon(Icons.schedule),
                   title: Text(_screens[DrawerEnum.mySchedule]['title']),
-                  selected:
-                      selected.value == DrawerEnum.mySchedule ? true : false,
+                  selected: enumHistory.current == DrawerEnum.mySchedule
+                      ? true
+                      : false,
                   onTap: () {
-                    selected.value = DrawerEnum.mySchedule;
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed('/mySchedule');
+                    Navigator.of(context).popAndPushNamed(
+                      '/mySchedule',
+                      arguments: RouteArgs(context),
+                    );
                   },
                 ),
               ),
@@ -184,7 +195,7 @@ class HomeDrawer extends StatelessWidget {
 
               /// Settings
               Container(
-                color: selected.value == DrawerEnum.settings
+                color: enumHistory.current == DrawerEnum.settings
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
@@ -192,25 +203,27 @@ class HomeDrawer extends StatelessWidget {
                   leading: Icon(Icons.settings),
                   title: Text(_screens[DrawerEnum.settings]['title']),
                   selected:
-                      selected.value == DrawerEnum.settings ? true : false,
+                      enumHistory.current == DrawerEnum.settings ? true : false,
                   onTap: () {
-                    selected.value = DrawerEnum.settings;
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed('/settings');
+                    Navigator.of(context).popAndPushNamed(
+                      '/settings',
+                      arguments: RouteArgs(context),
+                    );
                   },
                 ),
               ),
 
               /// Logout
               Container(
-                color: selected.value == DrawerEnum.logout
+                color: enumHistory.current == DrawerEnum.logout
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
                   dense: true,
                   leading: Icon(Icons.exit_to_app),
                   title: Text(_screens[DrawerEnum.logout]['title']),
-                  selected: selected.value == DrawerEnum.logout ? true : false,
+                  selected:
+                      enumHistory.current == DrawerEnum.logout ? true : false,
                   onTap: () {
                     showDialog(
                       context: context,
@@ -222,7 +235,7 @@ class HomeDrawer extends StatelessWidget {
                             FlatButton(
                               child: Text('CANCEL'),
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                Navigator.of(context).maybePop();
                               },
                             ),
 

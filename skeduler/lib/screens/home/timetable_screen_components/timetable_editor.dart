@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
-import 'package:skeduler/screens/home/home_drawer.dart';
+import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/member_selector.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_display.dart';
 import 'package:skeduler/services/database_service.dart';
@@ -39,7 +40,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
             ),
             onPressed: () {
               editTtb.value.perm = null;
-              Navigator.of(context).pop();
+              Navigator.of(context).maybePop();
             }),
         title: editTtb.value.perm == null
             ? Text(
@@ -64,6 +65,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
             icon: Icon(Icons.settings),
             onPressed: () => Navigator.of(context).pushNamed(
               '/timetable/editor/settings',
+              arguments: RouteArgs(context),
             ),
           ),
         ],

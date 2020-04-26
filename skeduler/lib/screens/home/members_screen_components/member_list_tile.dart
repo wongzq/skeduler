@@ -168,7 +168,7 @@ class MemberListTile extends StatelessWidget {
                                           FlatButton(
                                             child: Text('CANCEL'),
                                             onPressed: () {
-                                              Navigator.of(context).pop();
+                                              Navigator.of(context).maybePop();
                                             },
                                           ),
 
@@ -190,7 +190,7 @@ class MemberListTile extends StatelessWidget {
                                                   memberDocId: me.email,
                                                   role: MemberRole.admin,
                                                 );
-                                                Navigator.of(context).pop();
+                                                Navigator.of(context).maybePop();
                                               }
                                             },
                                           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -89,7 +90,7 @@ class GroupScreenOptionsOwner extends StatelessWidget {
                       FlatButton(
                         child: Text('CANCEL'),
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.of(context).maybePop();
                         },
                       ),
                       FlatButton(
@@ -103,8 +104,8 @@ class GroupScreenOptionsOwner extends StatelessWidget {
                           if (formKey.currentState.validate()) {
                             dbService.deleteGroup(group.value.docId);
                             groupDocId.value = null;
-                            Navigator.popUntil(
-                                context, (route) => route.isFirst);
+                            Navigator.of(context)
+                                .popUntil((route) => route.isFirst);
                           }
                         },
                       ),
@@ -153,7 +154,10 @@ class GroupScreenOptionsOwner extends StatelessWidget {
             ),
           ),
           onTap: () {
-            Navigator.of(context).pushNamed('/group/edit', arguments: group);
+            Navigator.of(context).pushNamed(
+              '/group/edit',
+              arguments: RouteArgsGroup(context, group: group.value),
+            );
           },
         ),
 
@@ -227,7 +231,10 @@ class GroupScreenOptionsOwner extends StatelessWidget {
             ),
           ),
           onTap: () {
-            Navigator.of(context).pushNamed('/group/addMember');
+            Navigator.of(context).pushNamed(
+              '/group/addMember',
+              arguments: RouteArgs(context),
+            );
           },
         ),
       ],
