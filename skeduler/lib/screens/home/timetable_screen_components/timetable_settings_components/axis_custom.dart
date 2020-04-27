@@ -80,7 +80,7 @@ class _AxisCustomState extends State<AxisCustom> {
                         actions: <Widget>[
                           FlatButton(
                             child: Text('CANCEL'),
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () => Navigator.of(context).maybePop(),
                           ),
                           FlatButton(
                             child: Text('SAVE'),
@@ -178,7 +178,7 @@ class _AxisCustomState extends State<AxisCustom> {
               actions: <Widget>[
                 FlatButton(
                   child: Text('CANCEL'),
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => Navigator.of(context).maybePop(),
                 ),
                 FlatButton(
                   child: Text('SAVE'),

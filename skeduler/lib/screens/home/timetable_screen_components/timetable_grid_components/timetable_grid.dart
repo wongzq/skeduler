@@ -27,33 +27,37 @@ class _TimetableGridState extends State<TimetableGrid> {
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
     EditModeBool editMode = Provider.of<EditModeBool>(context);
 
-    TimetableAxis _x = TimetableAxis(
-        type: TimetableAxisType.day,
-        list: editMode.value ? ttbStatus.perm.axisDay : ttbStatus.curr.axisDay,
-        listStr: editMode.value
-            ? ttbStatus.perm.axisDayShortStr
-            : ttbStatus.curr.axisDayShortStr);
+    TimetableAxis _day = TimetableAxis(
+      type: TimetableAxisType.day,
+      list: editMode.value ? ttbStatus.perm.axisDay : ttbStatus.curr.axisDay,
+      listStr: editMode.value
+          ? ttbStatus.perm.axisDayShortStr
+          : ttbStatus.curr.axisDayShortStr,
+    );
 
-    TimetableAxis _y = TimetableAxis(
-        type: TimetableAxisType.time,
-        list:
-            editMode.value ? ttbStatus.perm.axisTime : ttbStatus.curr.axisTime,
-        listStr: editMode.value
-            ? ttbStatus.perm.axisTimeStr
-            : ttbStatus.curr.axisTimeStr);
+    TimetableAxis _time = TimetableAxis(
+      type: TimetableAxisType.time,
+      list: editMode.value ? ttbStatus.perm.axisTime : ttbStatus.curr.axisTime,
+      listStr: editMode.value
+          ? ttbStatus.perm.axisTimeStr
+          : ttbStatus.curr.axisTimeStr,
+    );
 
-    TimetableAxis _z = TimetableAxis(
-        type: TimetableAxisType.custom,
-        list: editMode.value
-            ? ttbStatus.perm.axisCustom
-            : ttbStatus.curr.axisCustom,
-        listStr: editMode.value
-            ? ttbStatus.perm.axisCustom
-            : ttbStatus.curr.axisCustom);
+    TimetableAxis _custom = TimetableAxis(
+      type: TimetableAxisType.custom,
+      list: editMode.value
+          ? ttbStatus.perm.axisCustom
+          : ttbStatus.curr.axisCustom,
+      listStr: editMode.value
+          ? ttbStatus.perm.axisCustom
+          : ttbStatus.curr.axisCustom,
+    );
 
-    _axes = TimetableAxes(x: _x, y: _y, z: _z);
+    _axes = TimetableAxes(x: _day, y: _time, z: _custom);
 
-    _axes.yType = TimetableAxisType.custom;
+    _axes.xType = TimetableAxisType.day;
+    _axes.yType = TimetableAxisType.time;
+    _axes.zType = TimetableAxisType.custom;
 
     return MultiProvider(
       providers: [

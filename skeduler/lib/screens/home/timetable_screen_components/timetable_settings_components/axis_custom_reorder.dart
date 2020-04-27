@@ -76,7 +76,7 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                         actions: <Widget>[
                           FlatButton(
                             child: Text('CANCEL'),
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () => Navigator.of(context).maybePop(),
                           ),
                           FlatButton(
                             child: Text('SAVE'),
@@ -163,7 +163,7 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                       actions: <Widget>[
                         FlatButton(
                           child: Text('CANCEL'),
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () => Navigator.of(context).maybePop(),
                         ),
                         FlatButton(
                           child: Text('SAVE'),

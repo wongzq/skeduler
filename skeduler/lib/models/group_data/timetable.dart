@@ -30,36 +30,6 @@ class TimetableMetadata {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// TimetableDisplayInfo class for Provider
-////////////////////////////////////////////////////////////////////////////////
-
-class EditModeBool extends ChangeNotifier {
-  bool _value;
-
-  EditModeBool({bool value = false}) : _value = value;
-
-  bool get value => this._value;
-
-  set value(bool newValue) {
-    _value = newValue;
-    notifyListeners();
-  }
-}
-
-class BinVisibleBool extends ChangeNotifier {
-  bool _value;
-
-  BinVisibleBool({bool value = false}) : _value = value;
-
-  bool get value => this._value;
-
-  set value(bool newValue) {
-    _value = newValue;
-    notifyListeners();
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
 /// Timetable class
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -286,8 +256,77 @@ class TimetableStatus extends ChangeNotifier {
   EditTimetable temp;
 }
 
+/// auxiliary function to check if all [Timetable] in [List<Timetable>] is consecutive with no conflicts of date
+bool isConsecutiveTimetables(List<TimetableMetadata> timetables) {
+  bool isConsecutive = true;
+
+  /// sort the area in terms of startDate
+  timetables.sort((a, b) {
+    return a.startDate.millisecondsSinceEpoch
+        .compareTo(b.startDate.millisecondsSinceEpoch);
+  });
+
+  /// loop through the array to find any conflict
+  for (int i = 0; i < timetables.length; i++) {
+    if (i != 0) {
+      /// if conflict is found, returns [hasNoConflict] as [false]
+      if (!(timetables[i - 1]
+              .startDate
+              .toDate()
+              .isBefore(timetables[i].startDate.toDate()) &&
+          timetables[i - 1]
+              .endDate
+              .toDate()
+              .isBefore(timetables[i].endDate.toDate()) &&
+          (timetables[i - 1]
+                  .endDate
+                  .toDate()
+                  .isBefore(timetables[i].startDate.toDate()) ||
+              timetables[i - 1]
+                  .endDate
+                  .toDate()
+                  .isAtSameMomentAs(timetables[i].startDate.toDate())))) {
+        isConsecutive = false;
+        break;
+      }
+    }
+  }
+
+  return isConsecutive;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
-/// TimetableGrid related classes
+/// TimetableDisplayInfo class for Provider
+////////////////////////////////////////////////////////////////////////////////
+
+class EditModeBool extends ChangeNotifier {
+  bool _value;
+
+  EditModeBool({bool value = false}) : _value = value;
+
+  bool get value => this._value;
+
+  set value(bool newValue) {
+    _value = newValue;
+    notifyListeners();
+  }
+}
+
+class BinVisibleBool extends ChangeNotifier {
+  bool _value;
+
+  BinVisibleBool({bool value = false}) : _value = value;
+
+  bool get value => this._value;
+
+  set value(bool newValue) {
+    _value = newValue;
+    notifyListeners();
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// TimetableAxis related classes
 ////////////////////////////////////////////////////////////////////////////////
 
 enum TimetableAxisType { day, time, custom }
@@ -368,13 +407,13 @@ class TimetableAxes extends ChangeNotifier {
     notifyListeners();
   }
 
-  set yType(TimetableAxisType newX) {
-    _changeAxisType(this._y.type, newX);
+  set yType(TimetableAxisType newY) {
+    _changeAxisType(this._y.type, newY);
     notifyListeners();
   }
 
-  set zType(TimetableAxisType newX) {
-    _changeAxisType(this._y.type, newX);
+  set zType(TimetableAxisType newZ) {
+    _changeAxisType(this._z.type, newZ);
     notifyListeners();
   }
 
@@ -384,11 +423,11 @@ class TimetableAxes extends ChangeNotifier {
     y = y ?? this._y;
     z = z ?? this._z;
 
-    List<TimetableAxisType> axisTypes = [x.type, y.type, z.type];
+    List<TimetableAxisType> axesTypes = [x.type, y.type, z.type];
 
-    if (axisTypes.contains(TimetableAxisType.day) &&
-        axisTypes.contains(TimetableAxisType.time) &&
-        axisTypes.contains(TimetableAxisType.custom)) {
+    if (axesTypes.contains(TimetableAxisType.day) &&
+        axesTypes.contains(TimetableAxisType.time) &&
+        axesTypes.contains(TimetableAxisType.custom)) {
       this._x = x;
       this._y = y;
       this._z = z;
@@ -409,22 +448,22 @@ class TimetableAxes extends ChangeNotifier {
   void _changeAxisType(
       TimetableAxisType thisAxisType, TimetableAxisType newAxisType) {
     if (newAxisType != thisAxisType) {
-      if (thisAxisType != this._x.type) {
-        _checkAgainstAxisOfType(
-          thisAxisType: thisAxisType,
-          newAxisType: newAxisType,
-          checkAxis: this._x,
-        );
+      bool success = false;
+      if (!success && thisAxisType != this._x.type) {
+        success = _checkAgainstAxisOfType(
+            thisAxisType: thisAxisType,
+            newAxisType: newAxisType,
+            checkAxis: this._x);
       }
-      if (thisAxisType != this._y.type) {
-        _checkAgainstAxisOfType(
+      if (!success && thisAxisType != this._y.type) {
+        success = _checkAgainstAxisOfType(
           thisAxisType: thisAxisType,
           newAxisType: newAxisType,
           checkAxis: this._y,
         );
       }
-      if (thisAxisType != this._z.type) {
-        _checkAgainstAxisOfType(
+      if (!success && thisAxisType != this._z.type) {
+        success = _checkAgainstAxisOfType(
           thisAxisType: thisAxisType,
           newAxisType: newAxisType,
           checkAxis: this._z,
@@ -433,36 +472,53 @@ class TimetableAxes extends ChangeNotifier {
     }
   }
 
-  void _checkAgainstAxisOfType({
+  bool _checkAgainstAxisOfType({
     @required TimetableAxisType thisAxisType,
     @required TimetableAxisType newAxisType,
     @required TimetableAxis checkAxis,
   }) {
-    if (newAxisType == checkAxis.type) {
+    if (newAxisType == checkAxis.type && thisAxisType != newAxisType) {
       TimetableAxis thisAxis = _getAxisOfType(thisAxisType);
 
       TimetableAxisType tmpXType = this._x.type;
       TimetableAxisType tmpYType = this._y.type;
       TimetableAxisType tmpZType = this._z.type;
 
+      bool switchedThis = false;
+      bool switchedNew = false;
+
       if (thisAxis.type == tmpXType) {
         this._x = checkAxis;
+        switchedNew = true;
       } else if (thisAxis.type == tmpYType) {
         this._y = checkAxis;
+        switchedNew = true;
       } else if (thisAxis.type == tmpZType) {
         this._z = checkAxis;
+        switchedNew = true;
       }
 
       if (checkAxis.type == tmpXType) {
         this._x = thisAxis;
+        switchedThis = true;
       } else if (checkAxis.type == tmpYType) {
         this._y = thisAxis;
+        switchedThis = true;
       } else if (checkAxis.type == tmpZType) {
         this._z = thisAxis;
+        switchedThis = true;
       }
+
+      return switchedNew && switchedThis;
+    } else {
+      return false;
     }
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+/// TimetableSlot related classes
+////////////////////////////////////////////////////////////////////////////////
 
 class TimetableCoord {
   Weekday weekday;
@@ -595,43 +651,4 @@ Map<String, dynamic> firestoreMapFromTimetable(EditTimetable ttbStatus) {
 
   /// return final map in firestore format
   return firestoreMap;
-}
-
-/// auxiliary function to check if all [Timetable] in [List<Timetable>] is consecutive with no conflicts of date
-bool isConsecutiveTimetables(List<TimetableMetadata> timetables) {
-  bool isConsecutive = true;
-
-  /// sort the area in terms of startDate
-  timetables.sort((a, b) {
-    return a.startDate.millisecondsSinceEpoch
-        .compareTo(b.startDate.millisecondsSinceEpoch);
-  });
-
-  /// loop through the array to find any conflict
-  for (int i = 0; i < timetables.length; i++) {
-    if (i != 0) {
-      /// if conflict is found, returns [hasNoConflict] as [false]
-      if (!(timetables[i - 1]
-              .startDate
-              .toDate()
-              .isBefore(timetables[i].startDate.toDate()) &&
-          timetables[i - 1]
-              .endDate
-              .toDate()
-              .isBefore(timetables[i].endDate.toDate()) &&
-          (timetables[i - 1]
-                  .endDate
-                  .toDate()
-                  .isBefore(timetables[i].startDate.toDate()) ||
-              timetables[i - 1]
-                  .endDate
-                  .toDate()
-                  .isAtSameMomentAs(timetables[i].startDate.toDate())))) {
-        isConsecutive = false;
-        break;
-      }
-    }
-  }
-
-  return isConsecutive;
 }

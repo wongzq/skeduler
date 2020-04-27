@@ -177,7 +177,7 @@ class _AxisTimeState extends State<AxisTime> {
                         actions: <Widget>[
                           FlatButton(
                             child: Text('CANCEL'),
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () => Navigator.of(context).maybePop(),
                           ),
                           FlatButton(
                               child: Text(

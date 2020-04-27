@@ -579,7 +579,7 @@ class _TimeEditorState extends State<TimeEditor> {
                                               FlatButton(
                                                 child: Text('CANCEL'),
                                                 onPressed: () =>
-                                                    Navigator.of(context).pop(),
+                                                    Navigator.of(context).maybePop(),
                                               ),
                                               FlatButton(
                                                   child: Text(

@@ -200,7 +200,7 @@ class _EditTimeDialogState extends State<EditTimeDialog> {
       actions: <Widget>[
         FlatButton(
           child: Text('CANCEL'),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(context).maybePop(),
         ),
         FlatButton(
           child: Text('SAVE'),
