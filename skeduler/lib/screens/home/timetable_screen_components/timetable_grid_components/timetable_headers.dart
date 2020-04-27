@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid_box.dart';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -15,6 +17,8 @@ class TimetableHeaderX extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TimetableAxes axes = Provider.of<TimetableAxes>(context);
+
     return Expanded(
       flex: 1,
       child: Flex(
@@ -26,12 +30,21 @@ class TimetableHeaderX extends StatelessWidget {
           /// Add Switch button
           String display = 'SWITCH';
           rows.add(TimetableGridBox(
-              context: context, initialDisplay: display, flex: 2));
+            context: context,
+            initialDisplay: display,
+            type: GridBoxType.switchBox,
+            flex: 2,
+            axes: axes,
+          ));
 
           for (int i = 0; i < axisX.length; i++) {
             String display = axisX[i];
             rows.add(TimetableGridBox(
-                context: context, initialDisplay: display, flex: 1));
+              context: context,
+              initialDisplay: display,
+              type: GridBoxType.header,
+              flex: 1,
+            ));
           }
 
           return rows;
@@ -105,6 +118,7 @@ class TimetableHeaderY extends StatelessWidget {
     return TimetableGridBox(
       context: context,
       initialDisplay: display,
+      type: GridBoxType.header,
       flex: flex,
       textOverFlowFade: false,
     );
@@ -135,6 +149,7 @@ class TimetableHeaderZ extends StatelessWidget {
           context: context,
           initialDisplay: display,
           textOverFlowFade: false,
+          type: GridBoxType.header,
         ),
       );
     });

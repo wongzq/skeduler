@@ -20,6 +20,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
+    TimetableAxes _axes = Provider.of<TimetableAxes>(context);
 
     return FutureBuilder(
       future: dbService.getGroupTimetableIdForToday(group.value.docId),
@@ -103,6 +104,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                             onSelected: (value) async {
                               if (value == 0) {
                                 ttbStatus.perm = EditTimetable();
+                                _axes.clearAxes();
                                 Navigator.of(context).pushNamed(
                                   '/timetable/editor',
                                   arguments: RouteArgs(),
@@ -114,7 +116,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                     value,
                                   ),
                                 );
-
+                                _axes.clearAxes();
                                 Navigator.of(context).pushNamed(
                                   '/timetable/editor',
                                   arguments: RouteArgs(),

@@ -40,7 +40,7 @@ class TimetableSlots extends StatelessWidget {
                 rows.add(TimetableGridBox(
                   context: context,
                   initialDisplay: display,
-                  content: true,
+                  type: GridBoxType.content,
                 ));
               }
             }

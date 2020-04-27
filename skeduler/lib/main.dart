@@ -104,9 +104,14 @@ class MyApp extends StatelessWidget {
                           create: (_) => ValueNotifier<String>(''),
                         ),
 
-                        /// Edit Timetable
+                        /// TimetableStatus
                         ChangeNotifierProvider<TimetableStatus>(
                           create: (_) => TimetableStatus(),
+                        ),
+
+                        /// TimetableAxes
+                        ChangeNotifierProvider<TimetableAxes>(
+                          create: (_) => TimetableAxes.empty(),
                         ),
                       ],
                       child: Consumer<DatabaseService>(

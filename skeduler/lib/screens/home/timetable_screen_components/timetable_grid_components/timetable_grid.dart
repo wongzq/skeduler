@@ -17,7 +17,7 @@ class TimetableGrid extends StatefulWidget {
 class _TimetableGridState extends State<TimetableGrid> {
   /// properties
 
-  TimetableAxes _axes = TimetableAxes();
+  TimetableAxes _axes;
 
   TimetableSlotDataList _slotDataList = TimetableSlotDataList();
 
@@ -25,49 +25,64 @@ class _TimetableGridState extends State<TimetableGrid> {
   @override
   Widget build(BuildContext context) {
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
-    EditModeBool editMode = Provider.of<EditModeBool>(context);
+    _axes = Provider.of<TimetableAxes>(context);
+    EditModeBool _editMode = Provider.of<EditModeBool>(context);
 
     TimetableAxis _day = TimetableAxis(
       type: TimetableAxisType.day,
-      list: editMode.value ? ttbStatus.perm.axisDay : ttbStatus.curr.axisDay,
-      listStr: editMode.value
+      list: _editMode.value ? ttbStatus.perm.axisDay : ttbStatus.curr.axisDay,
+      listStr: _editMode.value
           ? ttbStatus.perm.axisDayShortStr
           : ttbStatus.curr.axisDayShortStr,
     );
 
     TimetableAxis _time = TimetableAxis(
       type: TimetableAxisType.time,
-      list: editMode.value ? ttbStatus.perm.axisTime : ttbStatus.curr.axisTime,
-      listStr: editMode.value
+      list: _editMode.value ? ttbStatus.perm.axisTime : ttbStatus.curr.axisTime,
+      listStr: _editMode.value
           ? ttbStatus.perm.axisTimeStr
           : ttbStatus.curr.axisTimeStr,
     );
 
     TimetableAxis _custom = TimetableAxis(
       type: TimetableAxisType.custom,
-      list: editMode.value
+      list: _editMode.value
           ? ttbStatus.perm.axisCustom
           : ttbStatus.curr.axisCustom,
-      listStr: editMode.value
+      listStr: _editMode.value
           ? ttbStatus.perm.axisCustom
           : ttbStatus.curr.axisCustom,
     );
 
-    _axes = TimetableAxes(x: _day, y: _time, z: _custom);
+    TimetableAxis _getAxisOfType(TimetableAxisType axisType) {
+      switch (axisType) {
+        case TimetableAxisType.day:
+          return _day;
+          break;
+        case TimetableAxisType.time:
+          return _time;
+          break;
+        case TimetableAxisType.custom:
+          return _custom;
+          break;
+        default:
+          return null;
+          break;
+      }
+    }
 
-    _axes.xType = TimetableAxisType.day;
-    _axes.yType = TimetableAxisType.time;
-    _axes.zType = TimetableAxisType.custom;
+    if (_axes.isEmpty) {
+      _axes.updateAxes(x: _day, y: _time, z: _custom);
+    } else {
+      _axes.updateAxes(
+        x: _getAxisOfType(_axes.xType),
+        y: _getAxisOfType(_axes.yType),
+        z: _getAxisOfType(_axes.zType),
+      );
+    }
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<TimetableSlotDataList>.value(
-          value: _slotDataList,
-        ),
-        ChangeNotifierProvider<TimetableAxes>.value(
-          value: _axes,
-        ),
-      ],
+    return ChangeNotifierProvider<TimetableSlotDataList>.value(
+      value: _slotDataList,
       child: Flex(
         direction: Axis.vertical,
         mainAxisSize: MainAxisSize.max,

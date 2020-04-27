@@ -331,8 +331,50 @@ class BinVisibleBool extends ChangeNotifier {
 
 enum TimetableAxisType { day, time, custom }
 
+String getAxisTypeStr(TimetableAxisType axisType) {
+  switch (axisType) {
+    case TimetableAxisType.day:
+      return 'Day';
+      break;
+    case TimetableAxisType.time:
+      return 'Time';
+      break;
+    case TimetableAxisType.custom:
+      return 'Custom';
+      break;
+    default:
+      return '';
+      break;
+  }
+}
+
+enum GridAxisType { x, y, z }
+
+class GridAxisLayout {
+  TimetableAxisType x;
+  TimetableAxisType y;
+  TimetableAxisType z;
+
+  TimetableAxisType timetableAxis(GridAxisType gridAxisType) {
+    switch (gridAxisType) {
+      case GridAxisType.x:
+        return x;
+        break;
+      case GridAxisType.y:
+        return y;
+        break;
+      case GridAxisType.z:
+        return z;
+        break;
+      default:
+        return null;
+        break;
+    }
+  }
+}
+
 class TimetableAxis {
-  TimetableAxisType _type;
+  TimetableAxisType _ttbAxisType;
   List<dynamic> _list;
   List<String> _listStr;
 
@@ -340,21 +382,21 @@ class TimetableAxis {
     @required TimetableAxisType type,
     List<dynamic> list,
     List<String> listStr,
-  })  : _type = type,
+  })  : _ttbAxisType = type,
         _list = list ?? [],
         _listStr = listStr ?? [];
 
-  TimetableAxisType get type => this._type;
-  List<dynamic> get list => () {
-        switch (this._type) {
+  TimetableAxisType get type => this._ttbAxisType;
+  List get list => () {
+        switch (this._ttbAxisType) {
           case TimetableAxisType.day:
-            return this._list as List<Weekday>;
+            return this._list;
             break;
           case TimetableAxisType.time:
-            return this._list as List<Time>;
+            return this._list;
             break;
           case TimetableAxisType.custom:
-            return this._list as List<String>;
+            return this._list;
             break;
           default:
             return null;
@@ -363,7 +405,7 @@ class TimetableAxis {
       }();
   List<String> get listStr => this._listStr;
 
-  set type(TimetableAxisType type) => this._type = type;
+  set type(TimetableAxisType type) => this._ttbAxisType = type;
 }
 
 class TimetableAxes extends ChangeNotifier {
@@ -371,8 +413,11 @@ class TimetableAxes extends ChangeNotifier {
   TimetableAxis _x;
   TimetableAxis _y;
   TimetableAxis _z;
+  bool _empty;
 
   /// constructors
+  TimetableAxes.empty() : _empty = true;
+
   TimetableAxes({TimetableAxis x, TimetableAxis y, TimetableAxis z}) {
     if (x == null) x = TimetableAxis(type: TimetableAxisType.day);
     if (y == null) y = TimetableAxis(type: TimetableAxisType.time);
@@ -383,16 +428,20 @@ class TimetableAxes extends ChangeNotifier {
       this._y = TimetableAxis(type: TimetableAxisType.time);
       this._z = TimetableAxis(type: TimetableAxisType.custom);
     }
+
+    _empty = false;
+
     notifyListeners();
   }
 
   /// getter methods
+  bool get isEmpty => this._empty;
   TimetableAxisType get xType => this._x.type;
   TimetableAxisType get yType => this._y.type;
   TimetableAxisType get zType => this._z.type;
-  List<dynamic> get xList => this._x.list;
-  List<dynamic> get yList => this._y.list;
-  List<dynamic> get zList => this._z.list;
+  List get xList => this._x.list;
+  List get yList => this._y.list;
+  List get zList => this._z.list;
   List<String> get xListStr => this._x.listStr;
   List<String> get yListStr => this._y.listStr;
   List<String> get zListStr => this._z.listStr;
@@ -431,10 +480,20 @@ class TimetableAxes extends ChangeNotifier {
       this._x = x;
       this._y = y;
       this._z = z;
+
+      _empty = false;
       return true;
     } else {
       return false;
     }
+  }
+
+  void clearAxes() {
+    this._x = null;
+    this._y = null;
+    this._z = null;
+
+    _empty = true;
   }
 
   TimetableAxis _getAxisOfType(TimetableAxisType axisType) {
