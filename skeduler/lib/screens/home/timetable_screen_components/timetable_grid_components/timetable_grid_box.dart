@@ -13,10 +13,11 @@ class TimetableGridBox extends StatefulWidget {
   final int flex;
   final bool content;
   final ValueSetter<bool> valSetBinVisible;
+  final bool textOverFlowFade;
+
   final Weekday axisDayVal;
   final Time axisTimeVal;
   final String axisCustomVal;
-  final bool textOverFlowFade;
 
   /// constructors
   const TimetableGridBox({
@@ -70,8 +71,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   @override
   Widget build(BuildContext context) {
     ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
-    TimetableGridDataList gridDataList =
-        Provider.of<TimetableGridDataList>(context);
+    TimetableSlotDataList slotDataList =
+        Provider.of<TimetableSlotDataList>(context);
 
     EditModeBool editMode = Provider.of<EditModeBool>(context);
     BinVisibleBool binVisible;
@@ -92,8 +93,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                         child: DragTarget<Member>(
                           onAccept: (newMember) {
                             member = newMember;
-                            gridDataList.add(TimetableGridData());
-                            print(gridDataList.value);
+                            slotDataList.add(TimetableSlotData());
                           },
                           builder: (context, _, __) {
                             return member == null

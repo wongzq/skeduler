@@ -19,8 +19,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
-    ValueNotifier<EditTimetableStatus> editTtb =
-        Provider.of<ValueNotifier<EditTimetableStatus>>(context);
+    TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
 
     return FutureBuilder(
       future: dbService.getGroupTimetableIdForToday(group.value.docId),
@@ -32,6 +31,11 @@ class _TimetableScreenState extends State<TimetableScreen> {
           ),
           builder: (context, snapshotTtb) {
             Timetable timetable = snapshotTtb != null ? snapshotTtb.data : null;
+
+            if (timetable != null) {
+              // ttbStatus.perm = EditTimetable.fromTimetable(timetable);
+              ttbStatus.curr = timetable;
+            }
 
             return group.value == null
                 ? Container()
@@ -98,14 +102,13 @@ class _TimetableScreenState extends State<TimetableScreen> {
                             },
                             onSelected: (value) async {
                               if (value == 0) {
-                                editTtb.value.perm = EditTimetable();
+                                ttbStatus.perm = EditTimetable();
                                 Navigator.of(context).pushNamed(
                                   '/timetable/editor',
-                                  arguments: RouteArgs(context),
+                                  arguments: RouteArgs(),
                                 );
                               } else {
-                                editTtb.value.perm =
-                                    EditTimetable.fromTimetable(
+                                ttbStatus.perm = EditTimetable.fromTimetable(
                                   await dbService.getGroupTimetable(
                                     group.value.docId,
                                     value,
@@ -114,7 +117,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
 
                                 Navigator.of(context).pushNamed(
                                   '/timetable/editor',
-                                  arguments: RouteArgs(context),
+                                  arguments: RouteArgs(),
                                 );
                               }
                             },
@@ -128,7 +131,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
                         ? Container()
                         : TimetableDisplay(
                             editMode: false,
-                            timetable: timetable,
                           ),
                   );
           },

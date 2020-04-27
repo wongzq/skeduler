@@ -30,8 +30,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
-    ValueNotifier<EditTimetableStatus> editTtb =
-        Provider.of<ValueNotifier<EditTimetableStatus>>(context);
+    TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -40,10 +39,10 @@ class _TimetableEditorState extends State<TimetableEditor> {
               Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
             ),
             onPressed: () {
-              editTtb.value.perm = null;
+              ttbStatus.perm = null;
               Navigator.of(context).maybePop();
             }),
-        title: editTtb.value.perm == null
+        title: ttbStatus.perm == null
             ? Text(
                 'Timetable Editor',
                 style: textStyleAppBarTitle,
@@ -52,7 +51,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    editTtb.value.perm.docId ?? '',
+                    ttbStatus.perm.docId ?? '',
                     style: textStyleAppBarTitle,
                   ),
                   Text(
@@ -64,10 +63,13 @@ class _TimetableEditorState extends State<TimetableEditor> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.settings),
-            onPressed: () => Navigator.of(context).pushNamed(
-              '/timetable/editor/settings',
-              arguments: RouteArgs(context),
-            ),
+            onPressed: () {
+              ttbStatus.temp = EditTimetable.copy(ttbStatus.perm);
+              Navigator.of(context).pushNamed(
+                '/timetable/editor/settings',
+                arguments: RouteArgs(),
+              );
+            },
           ),
         ],
       ),
@@ -78,7 +80,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
         child: Icon(Icons.save),
         onPressed: () async {
           await dbService
-              .updateGroupTimetable(group.value.docId, editTtb.value.perm)
+              .updateGroupTimetable(group.value.docId, ttbStatus.perm)
               .then((_) {
             Fluttertoast.showToast(
               msg: 'Successfully saved timetable',
@@ -92,7 +94,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
           });
         },
       ),
-      body: editTtb.value.perm == null || !editTtb.value.perm.isValid()
+      body: ttbStatus.perm == null || !ttbStatus.perm.isValid()
           ? Container()
           : SafeArea(
               child: LayoutBuilder(
@@ -113,8 +115,6 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                 height: timetableDisplayHeight,
                                 child: TimetableDisplay(
                                   editMode: true,
-                                  timetable: Timetable.fromEditTimetable(
-                                      editTtb.value.perm),
                                 ),
                               ),
                               Container(

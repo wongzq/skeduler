@@ -112,7 +112,7 @@ class DashboardScreen extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pushNamed(
                 '/dashboard/createGroup',
-                arguments: RouteArgs(context),
+                arguments: RouteArgs(),
               );
             },
           ),
@@ -146,7 +146,7 @@ class DashboardScreen extends StatelessWidget {
                               groupDocId.value = groups[index].docId;
                               Navigator.of(context).pushNamed(
                                 '/group',
-                                arguments: RouteArgs(context),
+                                arguments: RouteArgs(),
                               );
                             } else {
                               showDialog(
@@ -195,8 +195,8 @@ class DashboardScreen extends StatelessWidget {
                                                         Navigator.of(context)
                                                             .popAndPushNamed(
                                                           '/group',
-                                                          arguments: RouteArgs(
-                                                              context),
+                                                          arguments:
+                                                              RouteArgs(),
                                                         );
                                                       },
                                                     ),

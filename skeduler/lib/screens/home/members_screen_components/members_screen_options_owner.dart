@@ -58,7 +58,7 @@ class MembersScreenOptionsOwner extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).pushNamed(
                     '/group/addDummy',
-                    arguments: RouteArgs(context),
+                    arguments: RouteArgs(),
                   );
                 },
               ),
@@ -99,7 +99,7 @@ class MembersScreenOptionsOwner extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).pushNamed(
                     '/group/addMember',
-                    arguments: RouteArgs(context),
+                    arguments: RouteArgs(),
                   );
                 },
               ),

@@ -30,7 +30,7 @@ class _ScheduleTabState extends State<ScheduleTab> {
                     setState(() {
                       Navigator.of(context).pushNamed(
                         '/mySchedule/scheduleEditor',
-                        arguments: RouteArgs(context),
+                        arguments: RouteArgs(),
                       );
                     });
                   },

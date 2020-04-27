@@ -78,7 +78,7 @@ class HomeDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).popAndPushNamed(
                       '/dashboard',
-                      arguments: RouteArgs(context),
+                      arguments: RouteArgs(),
                     );
                   },
                 ),
@@ -105,7 +105,7 @@ class HomeDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).popAndPushNamed(
                       '/group',
-                      arguments: RouteArgs(context),
+                      arguments: RouteArgs(),
                     );
                   },
                 ),
@@ -125,7 +125,7 @@ class HomeDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).popAndPushNamed(
                       '/members',
-                      arguments: RouteArgs(context),
+                      arguments: RouteArgs(),
                     );
                   },
                 ),
@@ -162,7 +162,7 @@ class HomeDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).popAndPushNamed(
                       '/timetable',
-                      arguments: RouteArgs(context),
+                      arguments: RouteArgs(),
                     );
                   },
                 ),
@@ -182,7 +182,7 @@ class HomeDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).popAndPushNamed(
                       '/mySchedule',
-                      arguments: RouteArgs(context),
+                      arguments: RouteArgs(),
                     );
                   },
                 ),
@@ -202,7 +202,7 @@ class HomeDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).popAndPushNamed(
                       '/settings',
-                      arguments: RouteArgs(context),
+                      arguments: RouteArgs(),
                     );
                   },
                 ),

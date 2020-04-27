@@ -156,7 +156,7 @@ class GroupScreenOptionsOwner extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pushNamed(
               '/group/edit',
-              arguments: RouteArgsGroup(context, group: group.value),
+              arguments: RouteArgsGroup(group: group.value),
             );
           },
         ),
@@ -233,7 +233,7 @@ class GroupScreenOptionsOwner extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pushNamed(
               '/group/addMember',
-              arguments: RouteArgs(context),
+              arguments: RouteArgs(),
             );
           },
         ),

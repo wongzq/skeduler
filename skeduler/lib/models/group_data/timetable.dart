@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid.dart';
 
 import 'member.dart';
 
@@ -70,8 +69,8 @@ class Timetable {
   DateTime _startDate;
   DateTime _endDate;
 
-  List<Weekday> _axisDays = [];
-  List<Time> _axisTimes = [];
+  List<Weekday> _axisDay = [];
+  List<Time> _axisTime = [];
   List<String> _axisCustom = [];
 
   /// constructors
@@ -97,40 +96,40 @@ class Timetable {
           DateTime.fromMillisecondsSinceEpoch(endDate.millisecondsSinceEpoch);
 
     /// timetable days axis
-    if (axisDay != null) _axisDays = List<Weekday>.from(axisDay ?? []);
+    if (axisDay != null) _axisDay = List<Weekday>.from(axisDay ?? []);
 
     /// timetable times axis
-    if (axisTime != null) _axisTimes = List<Time>.from(axisTime ?? []);
+    if (axisTime != null) _axisTime = List<Time>.from(axisTime ?? []);
 
     /// timetable custom axis
     if (axisCustom != null) _axisCustom = List<String>.from(axisCustom ?? []);
   }
 
-  Timetable.fromEditTimetable(EditTimetable editTtb)
+  Timetable.fromEditTimetable(EditTimetable ttbStatus)
       : this(
-          docId: editTtb.docId,
-          startDate: Timestamp.fromDate(editTtb.startDate),
-          endDate: Timestamp.fromDate(editTtb.endDate),
-          axisDay: editTtb.axisDay,
-          axisTime: editTtb.axisTime,
-          axisCustom: editTtb.axisCustom,
+          docId: ttbStatus.docId,
+          startDate: Timestamp.fromDate(ttbStatus.startDate),
+          endDate: Timestamp.fromDate(ttbStatus.endDate),
+          axisDay: ttbStatus.axisDay,
+          axisTime: ttbStatus.axisTime,
+          axisCustom: ttbStatus.axisCustom,
         );
 
   /// getter methods
   String get docId => _docId;
   DateTime get startDate => _startDate;
   DateTime get endDate => _endDate;
-  List<Weekday> get axisDay => _axisDays;
-  List<Time> get axisTime => _axisTimes;
+  List<Weekday> get axisDay => _axisDay;
+  List<Time> get axisTime => _axisTime;
   List<String> get axisCustom => _axisCustom;
 
   /// getter as [List<String>]
-  List<String> get axisDayStr => List.generate(
-      _axisDays.length, (index) => getWeekdayStr(_axisDays[index]));
+  List<String> get axisDayStr =>
+      List.generate(_axisDay.length, (index) => getWeekdayStr(_axisDay[index]));
   List<String> get axisDayShortStr => List.generate(
-      _axisDays.length, (index) => getWeekdayShortStr(_axisDays[index]));
-  List<String> get axisTimeStr => List.generate(
-      _axisTimes.length, (index) => getTimeStr(_axisTimes[index]));
+      _axisDay.length, (index) => getWeekdayShortStr(_axisDay[index]));
+  List<String> get axisTimeStr =>
+      List.generate(_axisTime.length, (index) => getTimeStr(_axisTime[index]));
 
   bool isValid() {
     return this._docId != null &&
@@ -146,14 +145,14 @@ class Timetable {
 /// EditTimetable class
 ////////////////////////////////////////////////////////////////////////////////
 
-class EditTimetable {
+class EditTimetable extends ChangeNotifier {
   /// properties
   String _docId;
   DateTime _startDate;
   DateTime _endDate;
 
-  List<Weekday> _axisDays;
-  List<Time> _axisTimes;
+  List<Weekday> _axisDay;
+  List<Time> _axisTime;
   List<String> _axisCustom;
 
   /// constructors
@@ -167,8 +166,8 @@ class EditTimetable {
   })  : _docId = docId,
         _startDate = startDate,
         _endDate = endDate,
-        _axisDays = List<Weekday>.from(axisDay ?? []),
-        _axisTimes = List<Time>.from(axisTime ?? []),
+        _axisDay = List<Weekday>.from(axisDay ?? []),
+        _axisTime = List<Time>.from(axisTime ?? []),
         _axisCustom = List<String>.from(axisCustom ?? []);
 
   EditTimetable.fromTimetable(Timetable timetable)
@@ -195,8 +194,8 @@ class EditTimetable {
   String get docId => this._docId;
   DateTime get startDate => this._startDate;
   DateTime get endDate => this._endDate;
-  List<Weekday> get axisDay => this._axisDays;
-  List<Time> get axisTime => this._axisTimes;
+  List<Weekday> get axisDay => this._axisDay;
+  List<Time> get axisTime => this._axisTime;
   List<String> get axisCustom => this._axisCustom;
   TimetableMetadata get metadata => TimetableMetadata(
         id: this._docId,
@@ -204,13 +203,46 @@ class EditTimetable {
         endDate: Timestamp.fromDate(this._endDate),
       );
 
+  /// getter as [List<String>]
+  List<String> get axisDayStr =>
+      List.generate(_axisDay.length, (index) => getWeekdayStr(_axisDay[index]));
+  List<String> get axisDayShortStr => List.generate(
+      _axisDay.length, (index) => getWeekdayShortStr(_axisDay[index]));
+  List<String> get axisTimeStr =>
+      List.generate(_axisTime.length, (index) => getTimeStr(_axisTime[index]));
+
   /// setter methods
-  set docId(String id) => this._docId = id;
-  set startDate(DateTime startDate) => this._startDate = startDate;
-  set endDate(DateTime endDate) => this._endDate = endDate;
-  set axisDay(List<Weekday> axisDay) => this._axisDays = axisDay;
-  set axisTime(List<Time> axisTime) => this._axisTimes = axisTime;
-  set axisCustom(List<String> axisCustom) => this._axisCustom = axisCustom;
+  set docId(String id) {
+    this._docId = id;
+    notifyListeners();
+  }
+
+  set startDate(DateTime startDate) {
+    this._startDate = startDate;
+    notifyListeners();
+  }
+
+  set endDate(DateTime endDate) {
+    this._endDate = endDate;
+    notifyListeners();
+  }
+
+  set axisDay(List<Weekday> axisDay) {
+    this._axisDay = axisDay;
+    this._axisDay.sort((a, b) => a.index.compareTo(b.index));
+    notifyListeners();
+  }
+
+  set axisTime(List<Time> axisTime) {
+    this._axisTime = axisTime;
+    this._axisTime.sort((a, b) => a.startTime.compareTo(b.startTime));
+    notifyListeners();
+  }
+
+  set axisCustom(List<String> axisCustom) {
+    this._axisCustom = axisCustom;
+    notifyListeners();
+  }
 
   bool isValid() {
     return this._docId != null &&
@@ -235,14 +267,18 @@ class EditTimetable {
     this.axisDay = axisDay ?? this.axisDay;
     this.axisTime = axisTime ?? this.axisTime;
     this.axisCustom = axisCustom ?? this.axisCustom;
+    notifyListeners();
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// EditTimetableStatus class
+/// EditTimetableStatus class for Provider
 ////////////////////////////////////////////////////////////////////////////////
 
-class EditTimetableStatus {
+class TimetableStatus extends ChangeNotifier {
+  /// current
+  Timetable curr;
+
   /// permanent
   EditTimetable perm;
 
@@ -253,6 +289,180 @@ class EditTimetableStatus {
 ////////////////////////////////////////////////////////////////////////////////
 /// TimetableGrid related classes
 ////////////////////////////////////////////////////////////////////////////////
+
+enum TimetableAxisType { day, time, custom }
+
+class TimetableAxis {
+  TimetableAxisType _type;
+  List<dynamic> _list;
+  List<String> _listStr;
+
+  TimetableAxis({
+    @required TimetableAxisType type,
+    List<dynamic> list,
+    List<String> listStr,
+  })  : _type = type,
+        _list = list ?? [],
+        _listStr = listStr ?? [];
+
+  TimetableAxisType get type => this._type;
+  List<dynamic> get list => () {
+        switch (this._type) {
+          case TimetableAxisType.day:
+            return this._list as List<Weekday>;
+            break;
+          case TimetableAxisType.time:
+            return this._list as List<Time>;
+            break;
+          case TimetableAxisType.custom:
+            return this._list as List<String>;
+            break;
+          default:
+            return null;
+            break;
+        }
+      }();
+  List<String> get listStr => this._listStr;
+
+  set type(TimetableAxisType type) => this._type = type;
+}
+
+class TimetableAxes extends ChangeNotifier {
+  /// properties
+  TimetableAxis _x;
+  TimetableAxis _y;
+  TimetableAxis _z;
+
+  /// constructors
+  TimetableAxes({TimetableAxis x, TimetableAxis y, TimetableAxis z}) {
+    if (x == null) x = TimetableAxis(type: TimetableAxisType.day);
+    if (y == null) y = TimetableAxis(type: TimetableAxisType.time);
+    if (z == null) z = TimetableAxis(type: TimetableAxisType.custom);
+
+    if (!updateAxes(x: x, y: y, z: z)) {
+      this._x = TimetableAxis(type: TimetableAxisType.day);
+      this._y = TimetableAxis(type: TimetableAxisType.time);
+      this._z = TimetableAxis(type: TimetableAxisType.custom);
+    }
+    notifyListeners();
+  }
+
+  /// getter methods
+  TimetableAxisType get xType => this._x.type;
+  TimetableAxisType get yType => this._y.type;
+  TimetableAxisType get zType => this._z.type;
+  List<dynamic> get xList => this._x.list;
+  List<dynamic> get yList => this._y.list;
+  List<dynamic> get zList => this._z.list;
+  List<String> get xListStr => this._x.listStr;
+  List<String> get yListStr => this._y.listStr;
+  List<String> get zListStr => this._z.listStr;
+
+  TimetableAxis get axisDay => _getAxisOfType(TimetableAxisType.day);
+  TimetableAxis get axisTime => _getAxisOfType(TimetableAxisType.time);
+  TimetableAxis get axisCustom => _getAxisOfType(TimetableAxisType.custom);
+
+  /// setter methods
+  set xType(TimetableAxisType newX) {
+    _changeAxisType(this._x.type, newX);
+    notifyListeners();
+  }
+
+  set yType(TimetableAxisType newX) {
+    _changeAxisType(this._y.type, newX);
+    notifyListeners();
+  }
+
+  set zType(TimetableAxisType newX) {
+    _changeAxisType(this._y.type, newX);
+    notifyListeners();
+  }
+
+  /// auxiliary methods
+  bool updateAxes({TimetableAxis x, TimetableAxis y, TimetableAxis z}) {
+    x = x ?? this._x;
+    y = y ?? this._y;
+    z = z ?? this._z;
+
+    List<TimetableAxisType> axisTypes = [x.type, y.type, z.type];
+
+    if (axisTypes.contains(TimetableAxisType.day) &&
+        axisTypes.contains(TimetableAxisType.time) &&
+        axisTypes.contains(TimetableAxisType.custom)) {
+      this._x = x;
+      this._y = y;
+      this._z = z;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  TimetableAxis _getAxisOfType(TimetableAxisType axisType) {
+    return this._x.type == axisType
+        ? this._x
+        : this._y.type == axisType
+            ? this._y
+            : this._z.type == axisType ? this._z : null;
+  }
+
+  void _changeAxisType(
+      TimetableAxisType thisAxisType, TimetableAxisType newAxisType) {
+    if (newAxisType != thisAxisType) {
+      if (thisAxisType != this._x.type) {
+        _checkAgainstAxisOfType(
+          thisAxisType: thisAxisType,
+          newAxisType: newAxisType,
+          checkAxis: this._x,
+        );
+      }
+      if (thisAxisType != this._y.type) {
+        _checkAgainstAxisOfType(
+          thisAxisType: thisAxisType,
+          newAxisType: newAxisType,
+          checkAxis: this._y,
+        );
+      }
+      if (thisAxisType != this._z.type) {
+        _checkAgainstAxisOfType(
+          thisAxisType: thisAxisType,
+          newAxisType: newAxisType,
+          checkAxis: this._z,
+        );
+      }
+    }
+  }
+
+  void _checkAgainstAxisOfType({
+    @required TimetableAxisType thisAxisType,
+    @required TimetableAxisType newAxisType,
+    @required TimetableAxis checkAxis,
+  }) {
+    if (newAxisType == checkAxis.type) {
+      TimetableAxis thisAxis = _getAxisOfType(thisAxisType);
+
+      TimetableAxisType tmpXType = this._x.type;
+      TimetableAxisType tmpYType = this._y.type;
+      TimetableAxisType tmpZType = this._z.type;
+
+      if (thisAxis.type == tmpXType) {
+        this._x = checkAxis;
+      } else if (thisAxis.type == tmpYType) {
+        this._y = checkAxis;
+      } else if (thisAxis.type == tmpZType) {
+        this._z = checkAxis;
+      }
+
+      if (checkAxis.type == tmpXType) {
+        this._x = thisAxis;
+      } else if (checkAxis.type == tmpYType) {
+        this._y = thisAxis;
+      } else if (checkAxis.type == tmpZType) {
+        this._z = thisAxis;
+      }
+    }
+  }
+}
 
 class TimetableCoord {
   Weekday weekday;
@@ -269,12 +479,12 @@ class TimetableCoord {
   }
 }
 
-class TimetableGridData {
+class TimetableSlotData {
   TimetableCoord _coord;
   String _subject;
   Member _member;
 
-  TimetableGridData({
+  TimetableSlotData({
     TimetableCoord coord,
     String subject,
     Member member,
@@ -290,26 +500,26 @@ class TimetableGridData {
   set subject(String val) => this._subject = val;
   set member(Member val) => this._member = val;
 
-  bool hasSameCoordAs(TimetableGridData gridData) {
-    return gridData._coord == null
+  bool hasSameCoordAs(TimetableSlotData slotData) {
+    return slotData._coord == null
         ? true
-        : this._coord.isSameAs(gridData.coord);
+        : this._coord.isSameAs(slotData.coord);
   }
 }
 
-class TimetableGridDataList extends ChangeNotifier {
-  List<TimetableGridData> _value;
+class TimetableSlotDataList extends ChangeNotifier {
+  List<TimetableSlotData> _value;
 
-  TimetableGridDataList({dataList}) : _value = dataList ?? [];
+  TimetableSlotDataList({value}) : _value = value ?? [];
 
-  List<TimetableGridData> get value => List.unmodifiable(this._value);
+  List<TimetableSlotData> get value => List.unmodifiable(this._value);
 
-  void add(TimetableGridData newGridData) {
-    TimetableGridData toRemove;
+  void add(TimetableSlotData newSlotData) {
+    TimetableSlotData toRemove;
 
-    for (TimetableGridData gridData in this._value) {
-      if (gridData.hasSameCoordAs(newGridData)) {
-        toRemove = gridData;
+    for (TimetableSlotData slotData in this._value) {
+      if (slotData.hasSameCoordAs(newSlotData)) {
+        toRemove = slotData;
         break;
       }
     }
@@ -318,17 +528,17 @@ class TimetableGridDataList extends ChangeNotifier {
       this._value.remove(toRemove);
     }
 
-    this._value.add(newGridData);
+    this._value.add(newSlotData);
 
     notifyListeners();
   }
 
-  bool remove(TimetableGridData newGridData) {
-    TimetableGridData toRemove;
+  bool remove(TimetableSlotData newSlotData) {
+    TimetableSlotData toRemove;
 
-    for (TimetableGridData gridData in this._value) {
-      if (gridData.hasSameCoordAs(newGridData)) {
-        toRemove = gridData;
+    for (TimetableSlotData slotData in this._value) {
+      if (slotData.hasSameCoordAs(newSlotData)) {
+        toRemove = slotData;
         break;
       }
     }
@@ -349,25 +559,25 @@ class TimetableGridDataList extends ChangeNotifier {
 ////////////////////////////////////////////////////////////////////////////////
 
 /// convert from [EditTimetable] to Firestore's [Map<String, dynamic>] format
-Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTtb) {
+Map<String, dynamic> firestoreMapFromTimetable(EditTimetable ttbStatus) {
   Map<String, dynamic> firestoreMap = {};
 
   /// convert startDate and endDate
-  firestoreMap['startDate'] = Timestamp.fromDate(editTtb.startDate);
-  firestoreMap['endDate'] = Timestamp.fromDate(editTtb.endDate);
+  firestoreMap['startDate'] = Timestamp.fromDate(ttbStatus.startDate);
+  firestoreMap['endDate'] = Timestamp.fromDate(ttbStatus.endDate);
 
   /// convert axisDay
-  if (editTtb.axisDay != null) {
+  if (ttbStatus.axisDay != null) {
     List<int> axisDaysInt = [];
-    editTtb.axisDay.forEach((weekday) => axisDaysInt.add(weekday.index));
+    ttbStatus.axisDay.forEach((weekday) => axisDaysInt.add(weekday.index));
     axisDaysInt.sort((a, b) => a.compareTo(b));
     firestoreMap['axisDay'] = axisDaysInt;
   }
 
   /// convert axisTime
-  if (editTtb.axisTime != null) {
+  if (ttbStatus.axisTime != null) {
     List<Map<String, Timestamp>> axisTimesTimestamps = [];
-    editTtb.axisTime.forEach((time) {
+    ttbStatus.axisTime.forEach((time) {
       axisTimesTimestamps.add({
         'startTime': Timestamp.fromDate(time.startTime),
         'endTime': Timestamp.fromDate(time.endTime),
@@ -379,8 +589,8 @@ Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTtb) {
   }
 
   /// convert axisCustom
-  if (editTtb.axisCustom != null) {
-    firestoreMap['axisCustom'] = editTtb.axisCustom;
+  if (ttbStatus.axisCustom != null) {
+    firestoreMap['axisCustom'] = ttbStatus.axisCustom;
   }
 
   /// return final map in firestore format

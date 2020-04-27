@@ -20,26 +20,24 @@ class TimetableHeaderX extends StatelessWidget {
       child: Flex(
         direction: Axis.horizontal,
         mainAxisSize: MainAxisSize.max,
-        children: _generateRow(context),
+        children: () {
+          List<Widget> rows = [];
+
+          /// Add Switch button
+          String display = 'SWITCH';
+          rows.add(TimetableGridBox(
+              context: context, initialDisplay: display, flex: 2));
+
+          for (int i = 0; i < axisX.length; i++) {
+            String display = axisX[i];
+            rows.add(TimetableGridBox(
+                context: context, initialDisplay: display, flex: 1));
+          }
+
+          return rows;
+        }(),
       ),
     );
-  }
-
-  List<Widget> _generateRow(BuildContext context) {
-    List<Widget> rowContents = [];
-
-    /// Add Switch button
-    String display = 'SWITCH';
-    rowContents.add(
-        TimetableGridBox(context: context, initialDisplay: display, flex: 2));
-
-    for (int i = 0; i < axisX.length; i++) {
-      String display = axisX[i];
-      rowContents.add(
-          TimetableGridBox(context: context, initialDisplay: display, flex: 1));
-    }
-
-    return rowContents;
   }
 }
 
@@ -59,28 +57,29 @@ class TimetableHeaderYZ extends StatelessWidget {
       flex: (axisY == null ? 0 : 1) + (axisZ == null ? 0 : 1),
       child: Flex(
         direction: Axis.vertical,
-        children: _generateHeadersYZ(),
+        children: () {
+          List<Widget> headers = [];
+
+          axisY.forEach((y) {
+            headers.add(
+              Expanded(
+                flex: 1,
+                child: Flex(
+                  direction: Axis.horizontal,
+                  children: <Widget>[
+                    TimetableHeaderY(
+                        axisY: axisY, index: axisY.indexOf(y), flex: 1),
+                    TimetableHeaderZ(axisZ: axisZ),
+                  ],
+                ),
+              ),
+            );
+          });
+
+          return headers;
+        }(),
       ),
     );
-  }
-
-  List<Widget> _generateHeadersYZ() {
-    List<Widget> headers = [];
-    axisY.forEach((y) {
-      headers.add(
-        Expanded(
-          flex: 1,
-          child: Flex(
-            direction: Axis.horizontal,
-            children: <Widget>[
-              TimetableHeaderY(axisY: axisY, index: axisY.indexOf(y), flex: 1),
-              TimetableHeaderZ(axisZ: axisZ),
-            ],
-          ),
-        ),
-      );
-    });
-    return headers;
   }
 }
 

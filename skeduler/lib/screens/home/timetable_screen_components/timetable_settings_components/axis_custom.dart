@@ -110,7 +110,6 @@ class _AxisCustomState extends State<AxisCustom> {
                   Navigator.of(context).pushNamed(
                     '/timetable/editor/settings/reorderAxisCustom',
                     arguments: RouteArgsReorderAxisCustom(
-                      context,
                       axisCustom: _customVals,
                       valSetAxisCustom: (val) {
                         setState(() {

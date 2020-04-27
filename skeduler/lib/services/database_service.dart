@@ -413,7 +413,7 @@ class DatabaseService {
   /// update [Group][Timetable]'s data
   Future updateGroupTimetable(
     String groupDocId,
-    EditTimetable editTtb,
+    EditTimetable ttbStatus,
   ) async {
     CollectionReference timetablesRef =
         groupsCollection.document(groupDocId).collection(_timetables);
@@ -421,7 +421,7 @@ class DatabaseService {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
         : await timetablesRef
-            .document(editTtb.docId)
+            .document(ttbStatus.docId)
             .get()
             .then((timetable) async {
             /// update timetable metadata to Group
@@ -433,7 +433,7 @@ class DatabaseService {
               List<Map<String, dynamic>> timetableMetadatas =
                   _getUpdatedGroupTimetablesMetadatasAfterAdd(
                 timetablesSnapshot: group.data[_timetables] ?? [],
-                newTimetableMetadata: editTtb.metadata,
+                newTimetableMetadata: ttbStatus.metadata,
               );
 
               if (timetableMetadatas != null) {
@@ -441,12 +441,12 @@ class DatabaseService {
                     {_timetables: timetableMetadatas}).then((_) async {
                   if (timetable.exists) {
                     await timetablesRef
-                        .document(editTtb.docId)
-                        .updateData(firestoreMapFromTimetable(editTtb));
+                        .document(ttbStatus.docId)
+                        .updateData(firestoreMapFromTimetable(ttbStatus));
                   } else {
                     await timetablesRef
-                        .document(editTtb.docId)
-                        .setData(firestoreMapFromTimetable(editTtb));
+                        .document(ttbStatus.docId)
+                        .setData(firestoreMapFromTimetable(ttbStatus));
                   }
                 });
               } else {

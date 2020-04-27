@@ -6,23 +6,18 @@ import 'package:skeduler/models/group_data/group.dart';
 ////////////////////////////////////////////////////////////////////////////////
 abstract class _RouteArgsTemplate {
   /// properties
-  BuildContext _context;
   Group _group;
   List<String> _axisCustom;
   void Function(List<String>) _valSetAxisCustom;
 
   /// constructors
-  _RouteArgsTemplate(
-    this._context,
-  );
+  _RouteArgsTemplate();
 
   _RouteArgsTemplate.group(
-    this._context,
     this._group,
   );
 
   _RouteArgsTemplate.reorderAxisCustom(
-    this._context,
     this._axisCustom,
     this._valSetAxisCustom,
   );
@@ -33,27 +28,21 @@ abstract class _RouteArgsTemplate {
 ////////////////////////////////////////////////////////////////////////////////
 
 class RouteArgs extends _RouteArgsTemplate {
-  RouteArgs(BuildContext context) : super(context);
-
-  get context => super._context;
+  RouteArgs() : super();
 }
 
 class RouteArgsGroup extends _RouteArgsTemplate {
-  RouteArgsGroup(BuildContext context, {@required Group group})
-      : super.group(context, group);
+  RouteArgsGroup({@required Group group}) : super.group(group);
 
-  get context => super._context;
   get group => this._group;
 }
 
 class RouteArgsReorderAxisCustom extends _RouteArgsTemplate {
-  RouteArgsReorderAxisCustom(
-    BuildContext context, {
+  RouteArgsReorderAxisCustom({
     @required List<String> axisCustom,
     @required void Function(List<String>) valSetAxisCustom,
-  }) : super.reorderAxisCustom(context, axisCustom, valSetAxisCustom);
+  }) : super.reorderAxisCustom(axisCustom, valSetAxisCustom);
 
-  get context => super._context;
   get axisCustom => this._axisCustom;
   get valSetAxisCustom => this._valSetAxisCustom;
 }

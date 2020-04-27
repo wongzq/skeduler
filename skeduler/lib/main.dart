@@ -105,10 +105,8 @@ class MyApp extends StatelessWidget {
                         ),
 
                         /// Edit Timetable
-                        ChangeNotifierProvider<
-                            ValueNotifier<EditTimetableStatus>>(
-                          create: (_) => ValueNotifier<EditTimetableStatus>(
-                              EditTimetableStatus()),
+                        ChangeNotifierProvider<TimetableStatus>(
+                          create: (_) => TimetableStatus(),
                         ),
                       ],
                       child: Consumer<DatabaseService>(
