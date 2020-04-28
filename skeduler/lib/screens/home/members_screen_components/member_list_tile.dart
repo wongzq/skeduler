@@ -228,7 +228,7 @@ class MemberListTile extends StatelessWidget {
               ),
             ),
           ),
-          Divider(),
+          Divider(height: 1.0),
         ],
       );
     } else {

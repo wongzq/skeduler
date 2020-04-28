@@ -32,12 +32,11 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         widgets.add(SubjectListTile(
           key: UniqueKey(),
           subject: subject,
-          reordered: _reordered,
           valSetIsUpdating: (value) {
             setState(() {
               _tempSubjects = value ? List.from(_group.value.subjects) : [];
               if (value == false) _reordered = false;
-              return _isUpdating = value;
+              _isUpdating = value;
             });
           },
         ));
@@ -47,12 +46,11 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         widgets.add(SubjectListTile(
           key: UniqueKey(),
           subject: subject,
-          reordered: _reordered,
           valSetIsUpdating: (value) {
             setState(() {
               _tempSubjects = value ? List.from(_group.value.subjects) : [];
               if (value == false) _reordered = false;
-              return _isUpdating = value;
+              _isUpdating = value;
             });
           },
         ));
@@ -189,26 +187,24 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                                 if (formKey.currentState.validate()) {
                                   Navigator.of(context).maybePop();
 
-                                  if (_reordered) {
-                                    _tempSubjects =
-                                        List.from(_group.value.subjects);
-                                    setState(() => _isUpdating = true);
+                                  _tempSubjects =
+                                      List.from(_group.value.subjects);
+                                  setState(() => _isUpdating = true);
 
-                                    _group.value.subjects.add(Subject(
-                                      name: newSubjectName,
-                                      nickname: newSubjectNickname,
-                                    ));
+                                  _group.value.subjects.add(Subject(
+                                    name: newSubjectName,
+                                    nickname: newSubjectNickname,
+                                  ));
 
-                                    await dbService.updateGroupSubjects(
-                                      _group.value.docId,
-                                      _group.value.subjects,
-                                    );
+                                  await dbService.updateGroupSubjects(
+                                    _group.value.docId,
+                                    _group.value.subjects,
+                                  );
 
-                                    setState(() {
-                                      _isUpdating = false;
-                                      _reordered = false;
-                                    });
-                                  }
+                                  setState(() {
+                                    _isUpdating = false;
+                                    _reordered = false;
+                                  });
 
                                   String returnMsg =
                                       await dbService.addGroupSubject(
