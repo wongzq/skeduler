@@ -51,6 +51,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   // Member _member;
 
   bool _isHovered = false;
+  bool _showFootPrint = false;
 
   /// methods
   Widget _buildGridBox(
@@ -99,7 +100,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     color = Colors.transparent;
                     break;
                 }
-                return _isHovered ? color.withOpacity(0.5) : color;
+                return _showFootPrint || _isHovered ? color.withOpacity(0.5) : color;
               }(),
               boxShadow: [BoxShadow(offset: Offset(0.0, 0.5), blurRadius: 0.1)],
             ),
@@ -179,9 +180,6 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
           _isHovered = false;
           _slotData.member = newMember;
           _slotDataList.push(_slotData);
-
-          print(_slotDataList);
-          print('\n');
         },
         builder: (context, _, __) {
           return _slotData.member == null
@@ -191,22 +189,20 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                   feedback: _buildGridBox(constraints),
                   child: _buildGridBox(constraints),
                   onDragStarted: () {
-                    _slotData.member = null;
+                    _showFootPrint = true;
                     _slotDataList.pop(_slotData);
-
-                    print(_slotDataList);
-                    print('\n');
-
                     if (_editMode.value == true) {
                       _binVisible.value = true;
                     }
                   },
                   onDragCompleted: () {
+                    _showFootPrint = false;
                     if (_editMode.value == true) {
                       _binVisible.value = false;
                     }
                   },
                   onDraggableCanceled: (_, __) {
+                    _showFootPrint = false;
                     if (_editMode.value == true) {
                       _binVisible.value = false;
                     }
