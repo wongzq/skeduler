@@ -472,8 +472,6 @@ class DatabaseService {
               });
 
               if (subjectFound) {
-                print(toRemove.name);
-                print(toRemove.nickname);
                 await groupsCollection.document(groupDocId).updateData({
                   'subjects': FieldValue.arrayRemove([
                     {

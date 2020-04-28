@@ -73,12 +73,6 @@ class _TimetableGridState extends State<TimetableGrid> {
         z: _getAxisOfType(_axes.zType),
       );
     }
-    if (_editMode.value) {
-      print('Perm\n' + ttbStatus.perm.slotDataList.toString());
-      print('Curr\n' + ttbStatus.curr.slotDataList.toString());
-    } else {
-      print('Curr\n' + ttbStatus.curr.slotDataList.toString());
-    }
 
     return Flex(
       direction: Axis.vertical,

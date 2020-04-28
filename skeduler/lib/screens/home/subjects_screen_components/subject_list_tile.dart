@@ -110,10 +110,6 @@ class SubjectListTile extends StatelessWidget {
                                   int index =
                                       group.value.subjects.indexOf(subject);
 
-                                  group.value.subjects.forEach((subject) {
-                                    print(subject.display);
-                                  });
-
                                   group.value.subjects.insert(
                                       index,
                                       Subject(
@@ -121,15 +117,7 @@ class SubjectListTile extends StatelessWidget {
                                         nickname: newSubjectNickname,
                                       ));
 
-                                  group.value.subjects.forEach((subject) {
-                                    print(subject.display);
-                                  });
-
                                   group.value.subjects.removeAt(index + 1);
-
-                                  group.value.subjects.forEach((subject) {
-                                    print(subject.display);
-                                  });
 
                                   if (await dbService.updateGroupSubjects(
                                       group.value.docId,
@@ -160,7 +148,9 @@ class SubjectListTile extends StatelessWidget {
             },
           ),
         ),
-        Divider(height: 1.0,),
+        Divider(
+          height: 1.0,
+        ),
       ],
     );
   }

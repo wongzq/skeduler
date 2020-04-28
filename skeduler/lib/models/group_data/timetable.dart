@@ -784,10 +784,6 @@ Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTtb) {
     List<Map<String, dynamic>> slotDataList = [];
 
     editTtb.slotDataList.value.forEach((slotData) {
-      print(editTtb.axisDay.contains(slotData.coord.day));
-      print(editTtb.axisTime.contains(slotData.coord.time));
-      print(editTtb.axisCustom.contains(slotData.coord.custom));
-
       if (editTtb.axisDay.contains(slotData.coord.day) &&
           editTtb.axisTime.contains(slotData.coord.time) &&
           editTtb.axisCustom.contains(slotData.coord.custom)) {
