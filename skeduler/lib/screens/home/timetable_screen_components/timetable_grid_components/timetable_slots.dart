@@ -43,8 +43,6 @@ class TimetableSlots extends StatelessWidget {
 
             for (int y = 0; y < yListStr.length; y++) {
               for (int z = 0; z < zListStr.length; z++) {
-                String display = '-';
-
                 dynamic getAxisVal(TimetableAxisType axisType) =>
                     xType == axisType
                         ? xList[x]
@@ -57,8 +55,6 @@ class TimetableSlots extends StatelessWidget {
                 String customVal = getAxisVal(TimetableAxisType.custom);
 
                 rows.add(TimetableGridBox(
-                  context: context,
-                  initialDisplay: display,
                   gridBoxType: GridBoxType.content,
                   coord: TimetableCoord(
                     day: dayVal,

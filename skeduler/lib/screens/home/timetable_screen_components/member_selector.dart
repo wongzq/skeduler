@@ -73,8 +73,8 @@ class MemberSelector extends StatelessWidget {
                       padding: EdgeInsets.all(_chipPadding + _chipPaddingExtra),
                       child: Wrap(
                         children: [
-                          LongPressDraggable<Member>(
-                            data: members[index],
+                          LongPressDraggable<String>(
+                            data: members[index].display,
                             feedback: _buildMaterialActionChip(
                                 members[index], _chipWidth),
                             child: _buildMaterialActionChip(

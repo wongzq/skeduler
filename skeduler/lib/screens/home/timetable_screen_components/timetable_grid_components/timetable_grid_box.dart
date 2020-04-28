@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_switch_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -10,9 +9,8 @@ enum GridBoxType { header, content, switchBox, axisBox, placeholderBox }
 
 class TimetableGridBox extends StatefulWidget {
   /// properties
-  final BuildContext context;
-  final String initialDisplay;
   final GridBoxType gridBoxType;
+  final String initialDisplay;
   final int flex;
   final ValueSetter<bool> valSetBinVisible;
   final bool textOverFlowFade;
@@ -24,9 +22,8 @@ class TimetableGridBox extends StatefulWidget {
   /// constructors
   const TimetableGridBox({
     Key key,
-    @required this.context,
-    @required this.initialDisplay,
     @required this.gridBoxType,
+    this.initialDisplay = '',
     this.gridAxisType,
     this.flex = 1,
     this.valSetBinVisible,
@@ -43,12 +40,10 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   /// properties
   TimetableSlotData _slotData;
 
-  TimetableSlotDataList _slotDataList;
+  TimetableStatus _ttbStatus;
   TimetableAxes _axes;
   EditModeBool _editMode;
   BinVisibleBool _binVisible;
-
-  // Member _member;
 
   bool _isHovered = false;
   bool _showFootPrint = false;
@@ -83,7 +78,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     color = getOriginThemeData(themeId).primaryColor;
                     break;
                   case GridBoxType.content:
-                    color = _slotData.member == null
+                    color = _slotData.memberDisplay == null
                         ? Colors.grey
                         : getOriginThemeData(themeId).primaryColorLight;
                     break;
@@ -100,7 +95,9 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     color = Colors.transparent;
                     break;
                 }
-                return _showFootPrint || _isHovered ? color.withOpacity(0.5) : color;
+                return _showFootPrint || _isHovered
+                    ? color.withOpacity(0.5)
+                    : color;
               }(),
               boxShadow: [BoxShadow(offset: Offset(0.0, 0.5), blurRadius: 0.1)],
             ),
@@ -121,8 +118,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                           return widget.initialDisplay ?? '';
                       }
                     }()
-                  : _slotData.member != null
-                      ? _slotData.member.display
+                  : _slotData.memberDisplay != null
+                      ? _slotData.memberDisplay
                       : widget.initialDisplay ?? '',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -168,42 +165,50 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   Widget _buildGridBoxContent(BoxConstraints constraints) {
     return Padding(
       padding: EdgeInsets.all(2.0),
-      child: DragTarget<Member>(
+      child: DragTarget<String>(
         onWillAccept: (_) {
-          _isHovered = true;
-          return true;
+          if (_editMode.value == true) {
+            _isHovered = true;
+            return true;
+          } else {
+            return false;
+          }
         },
         onLeave: (_) {
-          _isHovered = false;
+          if (_editMode.value == true) {
+            _isHovered = false;
+          }
         },
-        onAccept: (newMember) {
-          _isHovered = false;
-          _slotData.member = newMember;
-          _slotDataList.push(_slotData);
+        onAccept: (newMemberDisplay) {
+          if (_editMode.value == true) {
+            _isHovered = false;
+            _slotData.memberDisplay = newMemberDisplay;
+            _ttbStatus.perm.slotDataList.push(_slotData);
+          }
         },
         builder: (context, _, __) {
-          return _slotData.member == null
+          return _slotData.memberDisplay == null
               ? _buildGridBox(constraints)
-              : LongPressDraggable<Member>(
-                  data: _slotData.member,
+              : LongPressDraggable<String>(
+                  data: _slotData.memberDisplay,
                   feedback: _buildGridBox(constraints),
                   child: _buildGridBox(constraints),
                   onDragStarted: () {
-                    _showFootPrint = true;
-                    _slotDataList.pop(_slotData);
                     if (_editMode.value == true) {
+                      _showFootPrint = true;
                       _binVisible.value = true;
+                      _ttbStatus.perm.slotDataList.pop(_slotData);
                     }
                   },
                   onDragCompleted: () {
-                    _showFootPrint = false;
                     if (_editMode.value == true) {
+                      _showFootPrint = false;
                       _binVisible.value = false;
                     }
                   },
                   onDraggableCanceled: (_, __) {
-                    _showFootPrint = false;
                     if (_editMode.value == true) {
+                      _showFootPrint = false;
                       _binVisible.value = false;
                     }
                   },
@@ -285,8 +290,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
         ? Provider.of<EditModeBool>(context)
         : null;
 
-    _slotDataList = widget.gridBoxType == GridBoxType.content
-        ? Provider.of<TimetableSlotDataList>(context)
+    _ttbStatus = widget.gridBoxType == GridBoxType.content
+        ? Provider.of<TimetableStatus>(context)
         : null;
 
     _slotData = TimetableSlotData();
@@ -296,11 +301,19 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
             ? () {
                 TimetableSlotData returnSlotData;
 
-                _slotDataList.value.forEach((slotData) {
-                  if (slotData.hasSameCoordAs(widget.coord)) {
-                    returnSlotData = TimetableSlotData.copy(slotData);
-                  }
-                });
+                if (_editMode.value == true) {
+                  _ttbStatus.perm.slotDataList.value.forEach((slotData) {
+                    if (slotData.hasSameCoordAs(widget.coord)) {
+                      returnSlotData = TimetableSlotData.copy(slotData);
+                    }
+                  });
+                } else {
+                  _ttbStatus.curr.slotDataList.value.forEach((slotData) {
+                    if (slotData.hasSameCoordAs(widget.coord)) {
+                      returnSlotData = TimetableSlotData.copy(slotData);
+                    }
+                  });
+                }
                 return returnSlotData ?? TimetableSlotData(coord: widget.coord);
               }()
             : TimetableSlotData();

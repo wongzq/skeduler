@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/member_selector.dart';
@@ -139,7 +138,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                 top: binVisible.value
                                     ? timetableDisplayHeight
                                     : constraints.maxHeight,
-                                child: DragTarget<Member>(
+                                child: DragTarget<String>(
                                   onWillAccept: (val) {
                                     containerColor = Colors.red;
                                     return true;

@@ -15,10 +15,6 @@ class TimetableGrid extends StatefulWidget {
 }
 
 class _TimetableGridState extends State<TimetableGrid> {
-  /// properties
-  TimetableSlotDataList _slotDataList = TimetableSlotDataList();
-
-  /// methods
   @override
   Widget build(BuildContext context) {
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
@@ -78,39 +74,36 @@ class _TimetableGridState extends State<TimetableGrid> {
       );
     }
 
-    return ChangeNotifierProvider<TimetableSlotDataList>.value(
-      value: _slotDataList,
-      child: Flex(
-        direction: Axis.vertical,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          TimetableHeaderX(axisX: _axes.xListStr),
-          Expanded(
-            flex: (_axes.yListStr.length ?? 0) * (_axes.zListStr.length ?? 0),
-            child: Flex(
-              direction: Axis.horizontal,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                TimetableHeaderYZ(
-                  axisY: _axes.yListStr,
-                  axisZ: _axes.zListStr,
-                ),
-                TimetableSlots(
-                  xType: _axes.xType,
-                  yType: _axes.yType,
-                  zType: _axes.zType,
-                  xList: _axes.xList,
-                  yList: _axes.yList,
-                  zList: _axes.zList,
-                  xListStr: _axes.xListStr,
-                  yListStr: _axes.yListStr,
-                  zListStr: _axes.zListStr,
-                ),
-              ],
-            ),
+    return Flex(
+      direction: Axis.vertical,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        TimetableHeaderX(axisX: _axes.xListStr),
+        Expanded(
+          flex: (_axes.yListStr.length ?? 0) * (_axes.zListStr.length ?? 0),
+          child: Flex(
+            direction: Axis.horizontal,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              TimetableHeaderYZ(
+                axisY: _axes.yListStr,
+                axisZ: _axes.zListStr,
+              ),
+              TimetableSlots(
+                xType: _axes.xType,
+                yType: _axes.yType,
+                zType: _axes.zType,
+                xList: _axes.xList,
+                yList: _axes.yList,
+                zList: _axes.zList,
+                xListStr: _axes.xListStr,
+                yListStr: _axes.yListStr,
+                zListStr: _axes.zListStr,
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

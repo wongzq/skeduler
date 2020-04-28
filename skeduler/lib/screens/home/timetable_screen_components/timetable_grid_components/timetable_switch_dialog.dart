@@ -36,15 +36,12 @@ class _TimetableSwitchDialogState extends State<TimetableSwitchDialog> {
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 TimetableGridBox(
-                  context: context,
-                  initialDisplay: '',
                   gridBoxType: GridBoxType.placeholderBox,
                   flex: 2,
                 ),
                 TimetableGridBox(
-                  context: context,
-                  initialDisplay: getAxisTypeStr(_axes.xType),
                   gridBoxType: GridBoxType.axisBox,
+                  initialDisplay: getAxisTypeStr(_axes.xType),
                   gridAxisType: GridAxisType.x,
                   flex: 3,
                 ),
@@ -63,9 +60,8 @@ class _TimetableSwitchDialogState extends State<TimetableSwitchDialog> {
                     direction: Axis.horizontal,
                     children: <Widget>[
                       TimetableGridBox(
-                        context: context,
-                        initialDisplay: getAxisTypeStr(_axes.yType),
                         gridBoxType: GridBoxType.axisBox,
+                        initialDisplay: getAxisTypeStr(_axes.yType),
                         gridAxisType: GridAxisType.y,
                         flex: 1,
                       ),
@@ -75,16 +71,14 @@ class _TimetableSwitchDialogState extends State<TimetableSwitchDialog> {
                           direction: Axis.vertical,
                           children: <Widget>[
                             TimetableGridBox(
-                              context: context,
-                              initialDisplay: getAxisTypeStr(_axes.zType),
                               gridBoxType: GridBoxType.axisBox,
+                              initialDisplay: getAxisTypeStr(_axes.zType),
                               gridAxisType: GridAxisType.z,
                               flex: 1,
                             ),
                             TimetableGridBox(
-                              context: context,
-                              initialDisplay: getAxisTypeStr(_axes.zType),
                               gridBoxType: GridBoxType.axisBox,
+                              initialDisplay: getAxisTypeStr(_axes.zType),
                               gridAxisType: GridAxisType.z,
                               flex: 1,
                             ),
@@ -95,8 +89,6 @@ class _TimetableSwitchDialogState extends State<TimetableSwitchDialog> {
                   ),
                 ),
                 TimetableGridBox(
-                  context: context,
-                  initialDisplay: '',
                   gridBoxType: GridBoxType.placeholderBox,
                   flex: 3,
                 ),

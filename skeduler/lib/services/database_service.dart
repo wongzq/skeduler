@@ -413,7 +413,7 @@ class DatabaseService {
   /// update [Group][Timetable]'s data
   Future updateGroupTimetable(
     String groupDocId,
-    EditTimetable ttbStatus,
+    EditTimetable editTtb,
   ) async {
     CollectionReference timetablesRef =
         groupsCollection.document(groupDocId).collection(_timetables);
@@ -421,7 +421,7 @@ class DatabaseService {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
         : await timetablesRef
-            .document(ttbStatus.docId)
+            .document(editTtb.docId)
             .get()
             .then((timetable) async {
             /// update timetable metadata to Group
@@ -433,7 +433,7 @@ class DatabaseService {
               List<Map<String, dynamic>> timetableMetadatas =
                   _getUpdatedGroupTimetablesMetadatasAfterAdd(
                 timetablesSnapshot: group.data[_timetables] ?? [],
-                newTimetableMetadata: ttbStatus.metadata,
+                newTimetableMetadata: editTtb.metadata,
               );
 
               if (timetableMetadatas != null) {
@@ -441,12 +441,12 @@ class DatabaseService {
                     {_timetables: timetableMetadatas}).then((_) async {
                   if (timetable.exists) {
                     await timetablesRef
-                        .document(ttbStatus.docId)
-                        .updateData(firestoreMapFromTimetable(ttbStatus));
+                        .document(editTtb.docId)
+                        .updateData(firestoreMapFromTimetable(editTtb));
                   } else {
                     await timetablesRef
-                        .document(ttbStatus.docId)
-                        .setData(firestoreMapFromTimetable(ttbStatus));
+                        .document(editTtb.docId)
+                        .setData(firestoreMapFromTimetable(editTtb));
                   }
                 });
               } else {
@@ -782,6 +782,8 @@ class DatabaseService {
             axisTime: _timesFromDynamicList(snapshot.data['axisTime'] ?? []),
             axisCustom:
                 _stringsFromDynamicList(snapshot.data['axisCustom'] ?? []),
+            slotDataList: _slotDataListFromDynamicList(
+                snapshot.data['slotDataList'] ?? []),
           )
         : Timetable(docId: '');
   }
@@ -853,5 +855,30 @@ class DatabaseService {
     list.forEach((elem) => listStr.add(elem as String));
 
     return listStr;
+  }
+
+  /// convert [List<dynamic>] into [List<TimetableSlotData]
+  TimetableSlotDataList _slotDataListFromDynamicList(List<dynamic> list) {
+    List<TimetableSlotData> slotDataList = [];
+
+    list.forEach((elem) {
+      Map map = elem as Map;
+
+      slotDataList.add(
+        TimetableSlotData(
+          coord: TimetableCoord(
+              day: Weekday.values[map['coord']['day']],
+              time: Time(
+                map['coord']['time']['startTime'].toDate(),
+                map['coord']['time']['endTime'].toDate(),
+              ),
+              custom: map['coord']['custom']),
+          subject: map['subject'],
+          memberDisplay: map['member'],
+        ),
+      );
+    });
+
+    return TimetableSlotDataList(value: slotDataList);
   }
 }

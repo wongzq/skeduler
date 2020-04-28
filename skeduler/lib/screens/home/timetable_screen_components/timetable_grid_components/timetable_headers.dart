@@ -30,9 +30,8 @@ class TimetableHeaderX extends StatelessWidget {
           /// Add Switch button
           String display = 'SWITCH';
           rows.add(TimetableGridBox(
-            context: context,
-            initialDisplay: display,
             gridBoxType: GridBoxType.switchBox,
+            initialDisplay: display,
             flex: 2,
             axes: axes,
           ));
@@ -40,9 +39,8 @@ class TimetableHeaderX extends StatelessWidget {
           for (int i = 0; i < axisX.length; i++) {
             String display = axisX[i];
             rows.add(TimetableGridBox(
-              context: context,
-              initialDisplay: display,
               gridBoxType: GridBoxType.header,
+              initialDisplay: display,
               flex: 1,
             ));
           }
@@ -116,9 +114,8 @@ class TimetableHeaderY extends StatelessWidget {
   Widget build(BuildContext context) {
     String display = axisY[index];
     return TimetableGridBox(
-      context: context,
-      initialDisplay: display,
       gridBoxType: GridBoxType.header,
+      initialDisplay: display,
       flex: flex,
       textOverFlowFade: false,
     );
@@ -146,10 +143,9 @@ class TimetableHeaderZ extends StatelessWidget {
 
       colContents.add(
         TimetableGridBox(
-          context: context,
+          gridBoxType: GridBoxType.header,
           initialDisplay: display,
           textOverFlowFade: false,
-          gridBoxType: GridBoxType.header,
         ),
       );
     });
