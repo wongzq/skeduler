@@ -1,46 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/models/group_data/time.dart';
+import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid_box.dart';
 
 class TimetableSlots extends StatelessWidget {
-  final List<String> axisXStr;
-  final List<String> axisYStr;
-  final List<String> axisZStr;
+  final TimetableAxisType xType;
+  final TimetableAxisType yType;
+  final TimetableAxisType zType;
 
-  final List<Weekday> axisDay;
-  final List<Time> axisTime;
-  final List<String> axisCustom;
+  final List xList;
+  final List yList;
+  final List zList;
+
+  final List<String> xListStr;
+  final List<String> yListStr;
+  final List<String> zListStr;
 
   const TimetableSlots({
     Key key,
-    this.axisXStr,
-    this.axisYStr,
-    this.axisZStr,
-    this.axisDay,
-    this.axisTime,
-    this.axisCustom,
+    @required this.xType,
+    @required this.yType,
+    @required this.zType,
+    @required this.xList,
+    @required this.yList,
+    @required this.zList,
+    @required this.xListStr,
+    @required this.yListStr,
+    @required this.zListStr,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      flex: axisXStr == null ? 0 : axisXStr.length,
+      flex: xListStr == null ? 0 : xListStr.length,
       child: Flex(
         direction: Axis.horizontal,
         children: () {
           List<Widget> cols = [];
 
-          for (int x = 0; x < axisXStr.length; x++) {
+          for (int x = 0; x < xListStr.length; x++) {
             List<Widget> rows = [];
 
-            for (int y = 0; y < axisYStr.length; y++) {
-              for (int z = 0; z < axisZStr.length; z++) {
+            for (int y = 0; y < yListStr.length; y++) {
+              for (int z = 0; z < zListStr.length; z++) {
                 String display = '-';
+
+                dynamic getAxisVal(TimetableAxisType axisType) =>
+                    xType == axisType
+                        ? xList[x]
+                        : yType == axisType
+                            ? yList[y]
+                            : zType == axisType ? zList[z] : null;
+
+                Weekday dayVal = getAxisVal(TimetableAxisType.day);
+                Time timeVal = getAxisVal(TimetableAxisType.time);
+                String customVal = getAxisVal(TimetableAxisType.custom);
 
                 rows.add(TimetableGridBox(
                   context: context,
                   initialDisplay: display,
-                  type: GridBoxType.content,
+                  gridBoxType: GridBoxType.content,
+                  coord: TimetableCoord(
+                    day: dayVal,
+                    time: timeVal,
+                    custom: customVal,
+                  ),
                 ));
               }
             }

@@ -32,7 +32,7 @@ class TimetableHeaderX extends StatelessWidget {
           rows.add(TimetableGridBox(
             context: context,
             initialDisplay: display,
-            type: GridBoxType.switchBox,
+            gridBoxType: GridBoxType.switchBox,
             flex: 2,
             axes: axes,
           ));
@@ -42,7 +42,7 @@ class TimetableHeaderX extends StatelessWidget {
             rows.add(TimetableGridBox(
               context: context,
               initialDisplay: display,
-              type: GridBoxType.header,
+              gridBoxType: GridBoxType.header,
               flex: 1,
             ));
           }
@@ -118,7 +118,7 @@ class TimetableHeaderY extends StatelessWidget {
     return TimetableGridBox(
       context: context,
       initialDisplay: display,
-      type: GridBoxType.header,
+      gridBoxType: GridBoxType.header,
       flex: flex,
       textOverFlowFade: false,
     );
@@ -149,7 +149,7 @@ class TimetableHeaderZ extends StatelessWidget {
           context: context,
           initialDisplay: display,
           textOverFlowFade: false,
-          type: GridBoxType.header,
+          gridBoxType: GridBoxType.header,
         ),
       );
     });

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/member.dart';
-import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_switch_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -13,31 +12,26 @@ class TimetableGridBox extends StatefulWidget {
   /// properties
   final BuildContext context;
   final String initialDisplay;
-  final GridBoxType type;
+  final GridBoxType gridBoxType;
   final int flex;
   final ValueSetter<bool> valSetBinVisible;
   final bool textOverFlowFade;
 
-  final Weekday axisDayVal;
-  final Time axisTimeVal;
-  final String axisCustomVal;
-
   final GridAxisType gridAxisType;
   final TimetableAxes axes;
+  final TimetableCoord coord;
 
   /// constructors
   const TimetableGridBox({
     Key key,
     @required this.context,
     @required this.initialDisplay,
-    @required this.type,
+    @required this.gridBoxType,
+    this.gridAxisType,
     this.flex = 1,
     this.valSetBinVisible,
     this.textOverFlowFade = true,
-    this.axisDayVal,
-    this.axisTimeVal,
-    this.axisCustomVal,
-    this.gridAxisType,
+    this.coord,
     this.axes,
   }) : super(key: key);
 
@@ -47,13 +41,14 @@ class TimetableGridBox extends StatefulWidget {
 
 class _TimetableGridBoxState extends State<TimetableGridBox> {
   /// properties
+  TimetableSlotData _slotData;
 
-  TimetableAxes _axes;
   TimetableSlotDataList _slotDataList;
+  TimetableAxes _axes;
   EditModeBool _editMode;
   BinVisibleBool _binVisible;
 
-  Member _member;
+  // Member _member;
 
   bool _isHovered = false;
 
@@ -82,12 +77,12 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
               color: () {
                 String themeId = ThemeProvider.themeOf(context).id;
                 Color color;
-                switch (widget.type) {
+                switch (widget.gridBoxType) {
                   case GridBoxType.header:
                     color = getOriginThemeData(themeId).primaryColor;
                     break;
                   case GridBoxType.content:
-                    color = _member == null
+                    color = _slotData.member == null
                         ? Colors.grey
                         : getOriginThemeData(themeId).primaryColorLight;
                     break;
@@ -109,7 +104,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
               boxShadow: [BoxShadow(offset: Offset(0.0, 0.5), blurRadius: 0.1)],
             ),
             child: Text(
-              widget.type == GridBoxType.axisBox
+              widget.gridBoxType == GridBoxType.axisBox
                   ? () {
                       switch (widget.gridAxisType) {
                         case GridAxisType.x:
@@ -125,13 +120,13 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                           return widget.initialDisplay ?? '';
                       }
                     }()
-                  : _member != null
-                      ? _member.display
+                  : _slotData.member != null
+                      ? _slotData.member.display
                       : widget.initialDisplay ?? '',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: widget.type == GridBoxType.header ||
-                          widget.type == GridBoxType.switchBox
+                  color: widget.gridBoxType == GridBoxType.header ||
+                          widget.gridBoxType == GridBoxType.switchBox
                       ? getOriginThemeData(ThemeProvider.themeOf(context).id)
                           .primaryTextTheme
                           .title
@@ -181,19 +176,25 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
           _isHovered = false;
         },
         onAccept: (newMember) {
-          _member = newMember;
           _isHovered = false;
-          _slotDataList.add(TimetableSlotData());
+          _slotData.member = newMember;
+          _slotDataList.push(_slotData);
+          
+          _slotDataList.printAll();
         },
         builder: (context, _, __) {
-          return _member == null
+          return _slotData.member == null
               ? _buildGridBox(constraints)
               : LongPressDraggable<Member>(
-                  data: _member,
+                  data: _slotData.member,
                   feedback: _buildGridBox(constraints),
                   child: _buildGridBox(constraints),
                   onDragStarted: () {
-                    _member = null;
+                    _slotData.member = null;
+                    _slotDataList.pop(_slotData);
+
+                    _slotDataList.printAll();
+
                     if (_editMode.value == true) {
                       _binVisible.value = true;
                     }
@@ -278,17 +279,33 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
   @override
   Widget build(BuildContext context) {
-    _axes = widget.type == GridBoxType.axisBox
+    _axes = widget.gridBoxType == GridBoxType.axisBox
         ? Provider.of<TimetableAxes>(context)
         : null;
 
-    _slotDataList = widget.type == GridBoxType.content
+    _editMode = widget.gridBoxType == GridBoxType.content
+        ? Provider.of<EditModeBool>(context)
+        : null;
+
+    _slotDataList = widget.gridBoxType == GridBoxType.content
         ? Provider.of<TimetableSlotDataList>(context)
         : null;
 
-    _editMode = widget.type == GridBoxType.content
-        ? Provider.of<EditModeBool>(context)
-        : null;
+    _slotData = TimetableSlotData();
+
+    _slotData =
+        widget.gridBoxType == GridBoxType.content && widget.coord != null
+            ? () {
+                TimetableSlotData returnSlotData;
+
+                _slotDataList.value.forEach((slotData) {
+                  if (slotData.hasSameCoordAs(widget.coord)) {
+                    returnSlotData = TimetableSlotData.copy(slotData);
+                  }
+                });
+                return returnSlotData ?? TimetableSlotData(coord: widget.coord);
+              }()
+            : TimetableSlotData();
 
     if (_editMode != null && _editMode.value == true) {
       _binVisible = Provider.of<BinVisibleBool>(context);
@@ -298,7 +315,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
       flex: widget.flex,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          switch (widget.type) {
+          switch (widget.gridBoxType) {
             case GridBoxType.header:
               return _buildGridBoxHeader(constraints);
               break;

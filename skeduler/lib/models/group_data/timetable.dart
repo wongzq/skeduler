@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:skeduler/models/group_data/time.dart';
 
 import 'member.dart';
@@ -580,17 +581,36 @@ class TimetableAxes extends ChangeNotifier {
 ////////////////////////////////////////////////////////////////////////////////
 
 class TimetableCoord {
-  Weekday weekday;
+  Weekday day;
   Time time;
   String custom;
 
+  TimetableCoord({this.day, this.time, this.custom});
+
+  TimetableCoord.copy(TimetableCoord coord)
+      : day = coord.day,
+        time = coord.time,
+        custom = coord.custom;
+
   bool isSameAs(TimetableCoord coord) {
-    return this.weekday == coord.weekday &&
-            this.time.startTime == coord.time.startTime &&
-            this.time.endTime == coord.time.endTime &&
-            this.custom == coord.custom
-        ? true
-        : false;
+    return this.day == null ||
+            this.time == null ||
+            this.time.startTime == null ||
+            this.time.endTime == null ||
+            this.custom == null ||
+            coord == null ||
+            coord.day == null ||
+            coord.time == null ||
+            coord.time.startTime == null ||
+            coord.time.endTime == null ||
+            coord.custom == null
+        ? false
+        : this.day == coord.day &&
+                this.time.startTime == coord.time.startTime &&
+                this.time.endTime == coord.time.endTime &&
+                this.custom == coord.custom
+            ? true
+            : false;
   }
 }
 
@@ -607,6 +627,11 @@ class TimetableSlotData {
         _subject = subject,
         _member = member;
 
+  TimetableSlotData.copy(TimetableSlotData slotData)
+      : _coord = slotData.coord,
+        _subject = slotData.subject,
+        _member = slotData.member;
+
   TimetableCoord get coord => this._coord;
   String get subject => this._subject;
   Member get member => this._member;
@@ -615,10 +640,25 @@ class TimetableSlotData {
   set subject(String val) => this._subject = val;
   set member(Member val) => this._member = val;
 
-  bool hasSameCoordAs(TimetableSlotData slotData) {
-    return slotData._coord == null
-        ? true
-        : this._coord.isSameAs(slotData.coord);
+  bool hasSameCoordAs(TimetableCoord coord) {
+    return coord == null ? false : this._coord.isSameAs(coord);
+  }
+
+  @override
+  String toString() {
+    String slotDataStr = '';
+    slotDataStr += '<';
+    slotDataStr += getWeekdayShortStr(coord.day);
+    slotDataStr += ' : ';
+    slotDataStr += DateFormat('hh:mm').format(coord.time.startTime);
+    slotDataStr += '-';
+    slotDataStr += DateFormat('hh:mm').format(coord.time.endTime);
+    slotDataStr += ' : ';
+    slotDataStr += coord.custom;
+    slotDataStr += ' | ';
+    slotDataStr += member.display;
+    slotDataStr += '>';
+    return slotDataStr;
   }
 }
 
@@ -629,30 +669,42 @@ class TimetableSlotDataList extends ChangeNotifier {
 
   List<TimetableSlotData> get value => List.unmodifiable(this._value);
 
-  void add(TimetableSlotData newSlotData) {
-    TimetableSlotData toRemove;
-
-    for (TimetableSlotData slotData in this._value) {
-      if (slotData.hasSameCoordAs(newSlotData)) {
-        toRemove = slotData;
-        break;
-      }
-    }
-
-    if (toRemove != null) {
-      this._value.remove(toRemove);
-    }
-
-    this._value.add(newSlotData);
-
-    notifyListeners();
+  void printAll() {
+    print('start');
+    _value.forEach((slotData) {
+      print(slotData);
+    });
+    print('end');
   }
 
-  bool remove(TimetableSlotData newSlotData) {
+  bool push(TimetableSlotData newSlotData) {
+    if (newSlotData != null) {
+      TimetableSlotData toRemove;
+
+      for (TimetableSlotData slotData in this._value) {
+        if (slotData.hasSameCoordAs(newSlotData.coord)) {
+          toRemove = slotData;
+          break;
+        }
+      }
+
+      if (toRemove != null) {
+        this._value.remove(toRemove);
+      }
+
+      this._value.add(newSlotData);
+      notifyListeners();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool pop(TimetableSlotData newSlotData) {
     TimetableSlotData toRemove;
 
     for (TimetableSlotData slotData in this._value) {
-      if (slotData.hasSameCoordAs(newSlotData)) {
+      if (slotData.hasSameCoordAs(newSlotData.coord)) {
         toRemove = slotData;
         break;
       }

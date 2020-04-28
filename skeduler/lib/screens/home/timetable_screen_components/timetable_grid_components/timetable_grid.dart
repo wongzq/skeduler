@@ -16,17 +16,14 @@ class TimetableGrid extends StatefulWidget {
 
 class _TimetableGridState extends State<TimetableGrid> {
   /// properties
-
-  TimetableAxes _axes;
-
   TimetableSlotDataList _slotDataList = TimetableSlotDataList();
 
   /// methods
   @override
   Widget build(BuildContext context) {
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
-    _axes = Provider.of<TimetableAxes>(context);
     EditModeBool _editMode = Provider.of<EditModeBool>(context);
+    TimetableAxes _axes = Provider.of<TimetableAxes>(context);
 
     TimetableAxis _day = TimetableAxis(
       type: TimetableAxisType.day,
@@ -99,9 +96,15 @@ class _TimetableGridState extends State<TimetableGrid> {
                   axisZ: _axes.zListStr,
                 ),
                 TimetableSlots(
-                  axisXStr: _axes.xListStr,
-                  axisYStr: _axes.yListStr,
-                  axisZStr: _axes.zListStr,
+                  xType: _axes.xType,
+                  yType: _axes.yType,
+                  zType: _axes.zType,
+                  xList: _axes.xList,
+                  yList: _axes.yList,
+                  zList: _axes.zList,
+                  xListStr: _axes.xListStr,
+                  yListStr: _axes.yListStr,
+                  zListStr: _axes.zListStr,
                 ),
               ],
             ),
