@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_switch_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 enum GridBoxType { header, content, switchBox, axisBox, placeholderBox }
 
@@ -48,7 +48,6 @@ class TimetableGridBox extends StatefulWidget {
 class _TimetableGridBoxState extends State<TimetableGridBox> {
   /// properties
 
-  ValueNotifier<Group> _group;
   TimetableAxes _axes;
   TimetableSlotDataList _slotDataList;
   EditModeBool _editMode;
@@ -56,73 +55,99 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
   Member _member;
 
+  bool _isHovered = false;
+
   /// methods
-  Widget _buildGridBox(BoxConstraints constraints) {
+  Widget _buildGridBox(
+    BoxConstraints constraints, {
+    BoxConstraints shrinkConstraints,
+  }) {
     return Material(
       color: Colors.transparent,
       child: Container(
         height: constraints.maxHeight,
         width: constraints.maxWidth,
-        alignment: Alignment.center,
-        padding: EdgeInsets.all(2.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
-          color: () {
-            switch (widget.type) {
-              case GridBoxType.header:
-                return getOriginThemeData(_group.value.colorShade.themeId)
-                    .primaryColor;
-                break;
-              case GridBoxType.content:
-                return getOriginThemeData(_group.value.colorShade.themeId)
-                    .primaryColorLight;
-                break;
-              case GridBoxType.switchBox:
-                return getOriginThemeData(_group.value.colorShade.themeId)
-                    .primaryColor;
-                break;
-              case GridBoxType.axisBox:
-                return getOriginThemeData(_group.value.colorShade.themeId)
-                    .primaryColor;
-                break;
-              case GridBoxType.placeholderBox:
-                return Colors.grey;
-                break;
-              default:
-                return Colors.transparent;
-                break;
-            }
-          }(),
-          boxShadow: [BoxShadow(offset: Offset(0.0, 0.5), blurRadius: 0.1)],
-        ),
-        child: Text(
-          widget.type == GridBoxType.axisBox
-              ? () {
-                  switch (widget.gridAxisType) {
-                    case GridAxisType.x:
-                      return getAxisTypeStr(_axes.xType);
-                      break;
-                    case GridAxisType.y:
-                      return getAxisTypeStr(_axes.yType);
-                      break;
-                    case GridAxisType.z:
-                      return getAxisTypeStr(_axes.zType);
-                      break;
-                    default:
-                      return widget.initialDisplay ?? '';
-                  }
-                }()
-              : _member != null ? _member.display : widget.initialDisplay ?? '',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.black, fontSize: 10.0),
-          maxLines: widget.textOverFlowFade ? 1 : null,
-          overflow: widget.textOverFlowFade ? TextOverflow.fade : null,
+        child: Center(
+          child: Container(
+            height: shrinkConstraints != null
+                ? shrinkConstraints.maxHeight
+                : constraints.maxHeight,
+            width: shrinkConstraints != null
+                ? shrinkConstraints.maxWidth
+                : constraints.maxWidth,
+            alignment: Alignment.center,
+            padding: EdgeInsets.all(2.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5.0),
+              color: () {
+                String themeId = ThemeProvider.themeOf(context).id;
+                Color color;
+                switch (widget.type) {
+                  case GridBoxType.header:
+                    color = getOriginThemeData(themeId).primaryColor;
+                    break;
+                  case GridBoxType.content:
+                    color = _member == null
+                        ? Colors.grey
+                        : getOriginThemeData(themeId).primaryColorLight;
+                    break;
+                  case GridBoxType.switchBox:
+                    color = getOriginThemeData(themeId).primaryColor;
+                    break;
+                  case GridBoxType.axisBox:
+                    color = getOriginThemeData(themeId).primaryColor;
+                    break;
+                  case GridBoxType.placeholderBox:
+                    color = Colors.grey;
+                    break;
+                  default:
+                    color = Colors.transparent;
+                    break;
+                }
+                return _isHovered ? color.withOpacity(0.5) : color;
+              }(),
+              boxShadow: [BoxShadow(offset: Offset(0.0, 0.5), blurRadius: 0.1)],
+            ),
+            child: Text(
+              widget.type == GridBoxType.axisBox
+                  ? () {
+                      switch (widget.gridAxisType) {
+                        case GridAxisType.x:
+                          return getAxisTypeStr(_axes.xType);
+                          break;
+                        case GridAxisType.y:
+                          return getAxisTypeStr(_axes.yType);
+                          break;
+                        case GridAxisType.z:
+                          return getAxisTypeStr(_axes.zType);
+                          break;
+                        default:
+                          return widget.initialDisplay ?? '';
+                      }
+                    }()
+                  : _member != null
+                      ? _member.display
+                      : widget.initialDisplay ?? '',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: widget.type == GridBoxType.header ||
+                          widget.type == GridBoxType.switchBox
+                      ? getOriginThemeData(ThemeProvider.themeOf(context).id)
+                          .primaryTextTheme
+                          .title
+                          .color
+                      : Colors.black,
+                  fontSize: 10.0),
+              maxLines: widget.textOverFlowFade ? 1 : null,
+              overflow: widget.textOverFlowFade ? TextOverflow.fade : null,
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildGridBoxSwitch(Group group, BoxConstraints constraints) {
+  Widget _buildGridBoxSwitch(BoxConstraints constraints) {
     return GestureDetector(
       onTap: () => showDialog(
         context: context,
@@ -137,19 +162,27 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
     );
   }
 
-  Widget _buildGridBoxHeader(Group group, BoxConstraints constraints) {
+  Widget _buildGridBoxHeader(BoxConstraints constraints) {
     return Padding(
       padding: EdgeInsets.all(2.0),
       child: _buildGridBox(constraints),
     );
   }
 
-  Widget _buildGridBoxContent(Group group, BoxConstraints constraints) {
+  Widget _buildGridBoxContent(BoxConstraints constraints) {
     return Padding(
       padding: EdgeInsets.all(2.0),
       child: DragTarget<Member>(
+        onWillAccept: (_) {
+          _isHovered = true;
+          return true;
+        },
+        onLeave: (_) {
+          _isHovered = false;
+        },
         onAccept: (newMember) {
           _member = newMember;
+          _isHovered = false;
           _slotDataList.add(TimetableSlotData());
         },
         builder: (context, _, __) {
@@ -161,7 +194,6 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                   child: _buildGridBox(constraints),
                   onDragStarted: () {
                     _member = null;
-
                     if (_editMode.value == true) {
                       _binVisible.value = true;
                     }
@@ -182,11 +214,24 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
     );
   }
 
-  Widget _buildGridBoxAxisBox(Group group, BoxConstraints constraints) {
+  Widget _buildGridBoxAxisBox(BoxConstraints constraints) {
+    BoxConstraints feedbackConstraints = BoxConstraints(
+      maxWidth: 50.0,
+      maxHeight: 50.0,
+    );
+
     return Padding(
       padding: EdgeInsets.all(2.0),
       child: DragTarget<TimetableAxisType>(
+        onWillAccept: (_) {
+          _isHovered = true;
+          return true;
+        },
+        onLeave: (_) {
+          _isHovered = false;
+        },
         onAccept: (newAxisType) {
+          _isHovered = false;
           if (widget.gridAxisType == GridAxisType.x) {
             _axes.xType = newAxisType;
           } else if (widget.gridAxisType == GridAxisType.y) {
@@ -213,7 +258,10 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                   break;
               }
             }(),
-            feedback: _buildGridBox(constraints),
+            feedback: _buildGridBox(
+              constraints,
+              shrinkConstraints: feedbackConstraints,
+            ),
             child: _buildGridBox(constraints),
           );
         },
@@ -221,7 +269,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
     );
   }
 
-  Widget _buildGridBoxPlaceholderBox(Group group, BoxConstraints constraints) {
+  Widget _buildGridBoxPlaceholderBox(BoxConstraints constraints) {
     return Padding(
       padding: EdgeInsets.all(2.0),
       child: _buildGridBox(constraints),
@@ -230,8 +278,6 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
   @override
   Widget build(BuildContext context) {
-    _group = Provider.of<ValueNotifier<Group>>(context);
-
     _axes = widget.type == GridBoxType.axisBox
         ? Provider.of<TimetableAxes>(context)
         : null;
@@ -248,40 +294,37 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
       _binVisible = Provider.of<BinVisibleBool>(context);
     }
 
-    return _group == null
-        ? Container()
-        : Expanded(
-            flex: widget.flex,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                switch (widget.type) {
-                  case GridBoxType.header:
-                    return _buildGridBoxHeader(_group.value, constraints);
-                    break;
-                  case GridBoxType.content:
-                    return _editMode.value == true
-                        ? _buildGridBoxContent(_group.value, constraints)
-                        : Padding(
-                            padding: EdgeInsets.all(2.0),
-                            child: _buildGridBox(constraints),
-                          );
-                    break;
-                  case GridBoxType.switchBox:
-                    return _buildGridBoxSwitch(_group.value, constraints);
-                    break;
-                  case GridBoxType.axisBox:
-                    return _buildGridBoxAxisBox(_group.value, constraints);
-                    break;
-                  case GridBoxType.placeholderBox:
-                    return _buildGridBoxPlaceholderBox(
-                        _group.value, constraints);
-                    break;
-                  default:
-                    return Container();
-                    break;
-                }
-              },
-            ),
-          );
+    return Expanded(
+      flex: widget.flex,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          switch (widget.type) {
+            case GridBoxType.header:
+              return _buildGridBoxHeader(constraints);
+              break;
+            case GridBoxType.content:
+              return _editMode.value == true
+                  ? _buildGridBoxContent(constraints)
+                  : Padding(
+                      padding: EdgeInsets.all(2.0),
+                      child: _buildGridBox(constraints),
+                    );
+              break;
+            case GridBoxType.switchBox:
+              return _buildGridBoxSwitch(constraints);
+              break;
+            case GridBoxType.axisBox:
+              return _buildGridBoxAxisBox(constraints);
+              break;
+            case GridBoxType.placeholderBox:
+              return _buildGridBoxPlaceholderBox(constraints);
+              break;
+            default:
+              return Container();
+              break;
+          }
+        },
+      ),
+    );
   }
 }
