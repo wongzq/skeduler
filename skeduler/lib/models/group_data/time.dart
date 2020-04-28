@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:quiver/core.dart';
 import 'package:quiver/time.dart';
 
 class Time {
@@ -8,6 +9,13 @@ class Time {
   DateTime endTime;
 
   Time(this.startTime, this.endTime);
+
+  @override
+  bool operator ==(o) =>
+      o is Time && this.startTime == o.startTime && this.endTime == o.endTime;
+
+  @override
+  get hashCode => hash2(startTime.hashCode, endTime.hashCode);
 }
 
 String getTimeStr(Time time) {

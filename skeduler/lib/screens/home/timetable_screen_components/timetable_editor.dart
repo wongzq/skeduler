@@ -30,11 +30,11 @@ class _TimetableEditorState extends State<TimetableEditor> {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
-    TimetableAxes _axes = Provider.of<TimetableAxes>(context);
+    TimetableAxes axes = Provider.of<TimetableAxes>(context);
 
     return WillPopScope(
       onWillPop: () {
-        _axes.clearAxes();
+        axes.clearAxes();
         return Future.value(true);
       },
       child: Scaffold(

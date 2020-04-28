@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:quiver/core.dart';
 import 'package:skeduler/models/group_data/time.dart';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -602,7 +603,8 @@ class TimetableCoord {
         time = coord.time,
         custom = coord.custom;
 
-  bool isSameAs(TimetableCoord coord) {
+  @override
+  bool operator ==(coord) {
     return this.day == null ||
             this.time == null ||
             this.time.startTime == null ||
@@ -622,6 +624,9 @@ class TimetableCoord {
             ? true
             : false;
   }
+
+  @override
+  get hashCode => hash3(day, time, custom);
 }
 
 class TimetableSlotData {
@@ -651,7 +656,7 @@ class TimetableSlotData {
   set memberDisplay(String val) => this._memberDisplay = val;
 
   bool hasSameCoordAs(TimetableCoord coord) {
-    return coord == null ? false : this._coord.isSameAs(coord);
+    return coord == null ? false : this._coord == coord;
   }
 
   @override
@@ -779,10 +784,13 @@ Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTtb) {
     List<Map<String, dynamic>> slotDataList = [];
 
     editTtb.slotDataList.value.forEach((slotData) {
+      print(editTtb.axisDay.contains(slotData.coord.day));
+      print(editTtb.axisTime.contains(slotData.coord.time));
+      print(editTtb.axisCustom.contains(slotData.coord.custom));
+
       if (editTtb.axisDay.contains(slotData.coord.day) &&
           editTtb.axisTime.contains(slotData.coord.time) &&
           editTtb.axisCustom.contains(slotData.coord.custom)) {
-            
         /// convert coords
         Map<String, dynamic> coord = {
           'day': slotData.coord.day.index,
