@@ -70,7 +70,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                               List<PopupMenuEntry> timetableOptions = [];
 
                               /// Add timetables to options
-                              group.value.timetables.forEach((timetableDocId) {
+                              group.value.timetableMetadatas.forEach((timetableDocId) {
                                 timetableOptions.add(PopupMenuItem(
                                   value: timetableDocId.id,
                                   child: Text(timetableDocId.id),
@@ -85,7 +85,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                   children: <Widget>[
                                     Visibility(
                                       visible:
-                                          group.value.timetables.isNotEmpty,
+                                          group.value.timetableMetadatas.isNotEmpty,
                                       child: Divider(thickness: 1.0),
                                     ),
                                     Row(

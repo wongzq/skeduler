@@ -19,7 +19,7 @@ class HomeDrawer extends StatelessWidget {
     DrawerEnum.dashboard: {'title': 'Dashboard', 'icon': null},
     DrawerEnum.group: {'title': 'No group selected', 'icon': null},
     DrawerEnum.timetable: {'title': 'Timetable', 'icon': null},
-    DrawerEnum.classes: {'title': 'Subjects', 'icon': null},
+    DrawerEnum.subjects: {'title': 'Subjects', 'icon': null},
     DrawerEnum.members: {'title': 'Members', 'icon': null},
     DrawerEnum.mySchedule: {'title': 'My Schedule', 'icon': null},
     DrawerEnum.settings: {'title': 'Settings', 'icon': null},
@@ -111,7 +111,7 @@ class HomeDrawer extends StatelessWidget {
                 ),
               ),
 
-              /// members
+              /// Members
               Container(
                 color: _selected == DrawerEnum.members
                     ? _tileSelectedBackgroundColor(context)
@@ -131,19 +131,22 @@ class HomeDrawer extends StatelessWidget {
                 ),
               ),
 
-              /// Classes
+              /// Subjects
               Container(
-                color: _selected == DrawerEnum.classes
+                color: _selected == DrawerEnum.subjects
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
                   enabled: group.value != null ? true : false,
                   dense: true,
                   leading: Icon(Icons.class_),
-                  title: Text(_screens[DrawerEnum.classes]['title']),
-                  selected: _selected == DrawerEnum.classes ? true : false,
+                  title: Text(_screens[DrawerEnum.subjects]['title']),
+                  selected: _selected == DrawerEnum.subjects ? true : false,
                   onTap: () {
-                    Navigator.of(context).maybePop();
+                    Navigator.of(context).popAndPushNamed(
+                      '/subjects',
+                      arguments: RouteArgs(),
+                    );
                   },
                 ),
               ),

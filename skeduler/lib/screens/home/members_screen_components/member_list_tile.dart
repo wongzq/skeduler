@@ -19,8 +19,7 @@ class MemberListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group =
-        Provider.of<ValueNotifier<Group>>(context);
+    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     if (me.role == MemberRole.pending) {
@@ -190,7 +189,8 @@ class MemberListTile extends StatelessWidget {
                                                   memberDocId: me.email,
                                                   role: MemberRole.admin,
                                                 );
-                                                Navigator.of(context).maybePop();
+                                                Navigator.of(context)
+                                                    .maybePop();
                                               }
                                             },
                                           ),

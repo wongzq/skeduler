@@ -2,7 +2,7 @@ enum DrawerEnum {
   dashboard,
   group,
   members,
-  classes,
+  subjects,
   timetable,
   mySchedule,
   settings,

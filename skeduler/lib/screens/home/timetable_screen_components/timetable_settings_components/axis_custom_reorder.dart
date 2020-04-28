@@ -198,6 +198,7 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
             } else {
               widget.axisCustom.insert(newIndex, customVal);
             }
+            
             if (widget.valSetAxisCustom != null) {
               widget.valSetAxisCustom(widget.axisCustom);
             }

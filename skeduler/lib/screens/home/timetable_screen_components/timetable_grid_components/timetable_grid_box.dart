@@ -144,9 +144,11 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
     return GestureDetector(
       onTap: () => showDialog(
         context: context,
-        child: TimetableSwitchDialog(
-          initialAxes: widget.axes,
-        ),
+        builder: (context) {
+          return TimetableSwitchDialog(
+            initialAxes: widget.axes,
+          );
+        },
       ),
       child: Padding(
         padding: EdgeInsets.all(2.0),
