@@ -179,8 +179,9 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
           _isHovered = false;
           _slotData.member = newMember;
           _slotDataList.push(_slotData);
-          
-          _slotDataList.printAll();
+
+          print(_slotDataList);
+          print('\n');
         },
         builder: (context, _, __) {
           return _slotData.member == null
@@ -193,7 +194,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     _slotData.member = null;
                     _slotDataList.pop(_slotData);
 
-                    _slotDataList.printAll();
+                    print(_slotDataList);
+                    print('\n');
 
                     if (_editMode.value == true) {
                       _binVisible.value = true;

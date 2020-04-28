@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
@@ -669,12 +671,13 @@ class TimetableSlotDataList extends ChangeNotifier {
 
   List<TimetableSlotData> get value => List.unmodifiable(this._value);
 
-  void printAll() {
-    print('start');
+  @override
+  String toString() {
+    String print = '';
     _value.forEach((slotData) {
-      print(slotData);
+      print += slotData.toString() + '\n';
     });
-    print('end');
+    return print;
   }
 
   bool push(TimetableSlotData newSlotData) {
