@@ -23,6 +23,7 @@ class SubjectListTile extends StatelessWidget {
     ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         ListTile(
           leading: Icon(Icons.class_),

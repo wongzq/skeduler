@@ -777,30 +777,37 @@ Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTtb) {
   /// convert slotDataList
   if (editTtb.slotDataList != null) {
     List<Map<String, dynamic>> slotDataList = [];
+
     editTtb.slotDataList.value.forEach((slotData) {
-      /// convert coords
-      Map<String, dynamic> coord = {
-        'day': slotData.coord.day.index,
-        'time': {
-          'startTime': Timestamp.fromDate(slotData.coord.time.startTime),
-          'endTime': Timestamp.fromDate(slotData.coord.time.endTime),
-        },
-        'custom': slotData.coord.custom,
-      };
+      if (editTtb.axisDay.contains(slotData.coord.day) &&
+          editTtb.axisTime.contains(slotData.coord.time) &&
+          editTtb.axisCustom.contains(slotData.coord.custom)) {
+            
+        /// convert coords
+        Map<String, dynamic> coord = {
+          'day': slotData.coord.day.index,
+          'time': {
+            'startTime': Timestamp.fromDate(slotData.coord.time.startTime),
+            'endTime': Timestamp.fromDate(slotData.coord.time.endTime),
+          },
+          'custom': slotData.coord.custom,
+        };
 
-      /// convert subject
-      String subject = slotData.subject;
+        /// convert subject
+        String subject = slotData.subject;
 
-      /// convert member
-      String member = slotData.memberDisplay;
+        /// convert member
+        String member = slotData.memberDisplay;
 
-      /// add to list
-      slotDataList.add({
-        'coord': coord,
-        'subject': subject,
-        'member': member,
-      });
+        /// add to list
+        slotDataList.add({
+          'coord': coord,
+          'subject': subject,
+          'member': member,
+        });
+      }
     });
+
     firestoreMap['slotDataList'] = slotDataList;
   }
 

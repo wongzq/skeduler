@@ -28,91 +28,98 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
       String newCustom;
 
       customValWidgets.add(
-        ListTile(
+        Column(
           key: UniqueKey(),
-          dense: true,
-          leading: Icon(Icons.reorder),
-          title: Text(custom),
-          trailing: PopupMenuButton(
-            icon: Icon(Icons.more_vert),
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem(
-                  child: Text('Edit'),
-                  value: CustomOption.edit,
-                ),
-                PopupMenuItem(
-                  child: Text('Remove'),
-                  value: CustomOption.remove,
-                ),
-              ];
-            },
-            onSelected: (val) {
-              switch (val) {
-                case CustomOption.edit:
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(
-                          'Edit custom value',
-                          style: TextStyle(fontSize: 15.0),
-                        ),
-                        content: Form(
-                          key: formKey,
-                          child: TextFormField(
-                            initialValue: custom,
-                            decoration: InputDecoration(
-                              hintText: 'Type something here',
-                              hintStyle: TextStyle(fontSize: 15.0),
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              dense: true,
+              leading: Icon(Icons.reorder),
+              title: Text(custom),
+              trailing: PopupMenuButton(
+                icon: Icon(Icons.more_vert),
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
+                      child: Text('Edit'),
+                      value: CustomOption.edit,
+                    ),
+                    PopupMenuItem(
+                      child: Text('Remove'),
+                      value: CustomOption.remove,
+                    ),
+                  ];
+                },
+                onSelected: (val) {
+                  switch (val) {
+                    case CustomOption.edit:
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(
+                              'Edit custom value',
+                              style: TextStyle(fontSize: 15.0),
                             ),
-                            onChanged: (value) => newCustom = value,
-                            validator: (value) =>
-                                value == null || value.trim() == ''
-                                    ? 'Value cannot be empty'
-                                    : null,
-                          ),
-                        ),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('CANCEL'),
-                            onPressed: () => Navigator.of(context).maybePop(),
-                          ),
-                          FlatButton(
-                            child: Text('SAVE'),
-                            onPressed: () {
-                              if (formKey.currentState.validate()) {
-                                setState(() {
-                                  int index = _customVals.indexOf(custom);
-                                  _customVals.removeAt(index);
-                                  _customVals.insert(index, newCustom);
-                                });
+                            content: Form(
+                              key: formKey,
+                              child: TextFormField(
+                                initialValue: custom,
+                                decoration: InputDecoration(
+                                  hintText: 'Type something here',
+                                  hintStyle: TextStyle(fontSize: 15.0),
+                                ),
+                                onChanged: (value) => newCustom = value,
+                                validator: (value) =>
+                                    value == null || value.trim() == ''
+                                        ? 'Value cannot be empty'
+                                        : null,
+                              ),
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('CANCEL'),
+                                onPressed: () =>
+                                    Navigator.of(context).maybePop(),
+                              ),
+                              FlatButton(
+                                child: Text('SAVE'),
+                                onPressed: () {
+                                  if (formKey.currentState.validate()) {
+                                    setState(() {
+                                      int index = _customVals.indexOf(custom);
+                                      _customVals.removeAt(index);
+                                      _customVals.insert(index, newCustom);
+                                    });
 
-                                /// update through valueSetter
-                                if (widget.valSetAxisCustom != null) {
-                                  widget.valSetAxisCustom(_customVals);
-                                }
+                                    /// update through valueSetter
+                                    if (widget.valSetAxisCustom != null) {
+                                      widget.valSetAxisCustom(_customVals);
+                                    }
 
-                                Navigator.of(context).maybePop();
-                              }
-                            },
-                          ),
-                        ],
+                                    Navigator.of(context).maybePop();
+                                  }
+                                },
+                              ),
+                            ],
+                          );
+                        },
                       );
-                    },
-                  );
-                  break;
-                case CustomOption.remove:
-                  setState(() => _customVals.remove(custom));
+                      break;
+                    case CustomOption.remove:
+                      setState(() => _customVals.remove(custom));
 
-                  /// update through valueSetter
-                  if (widget.valSetAxisCustom != null) {
-                    widget.valSetAxisCustom(_customVals);
+                      /// update through valueSetter
+                      if (widget.valSetAxisCustom != null) {
+                        widget.valSetAxisCustom(_customVals);
+                      }
+                      break;
                   }
-                  break;
-              }
-            },
-          ),
+                },
+              ),
+            ),
+            Divider(height: 1.0),
+          ],
         ),
       );
     });
@@ -198,7 +205,7 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
             } else {
               widget.axisCustom.insert(newIndex, customVal);
             }
-            
+
             if (widget.valSetAxisCustom != null) {
               widget.valSetAxisCustom(widget.axisCustom);
             }
