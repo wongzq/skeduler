@@ -20,9 +20,9 @@ class _AddMemberState extends State<AddMember> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
-    return group.value == null
+    return groupStatus.group == null
         ? Loading()
         : Scaffold(
             appBar: AppBar(
@@ -30,7 +30,7 @@ class _AddMemberState extends State<AddMember> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    group.value.name,
+                    groupStatus.group.name,
                     style: textStyleAppBarTitle,
                   ),
                   Text(
@@ -45,7 +45,7 @@ class _AddMemberState extends State<AddMember> {
               children: <Widget>[
                 /// Cancel changes
                 FloatingActionButton(
-                  heroTag: 'Cancel',
+                  heroTag: 'Add Member Cancel',
                   backgroundColor: Colors.red,
                   onPressed: () {
                     Navigator.of(context).maybePop();
@@ -60,13 +60,13 @@ class _AddMemberState extends State<AddMember> {
 
                 /// Confirm amd make changes
                 FloatingActionButton(
-                  heroTag: 'Confirm',
+                  heroTag: 'Add Member Confirm',
                   backgroundColor: Colors.green,
                   onPressed: () async {
                     if (_formKeyEmail.currentState.validate()) {
                       await dbService
                           .inviteMemberToGroup(
-                        groupDocId: group.value.docId,
+                        groupDocId: groupStatus.group.docId,
                         newMemberEmail: _newMemberEmail,
                       )
                           .then((errorMsg) {

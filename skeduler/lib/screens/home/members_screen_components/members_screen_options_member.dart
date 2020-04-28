@@ -11,9 +11,9 @@ class MembersScreenOptionsMember extends StatelessWidget {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
-    return group.value == null
+    return groupStatus.group == null
         ? Container()
         : SpeedDial(
             foregroundColor: getFABIconForegroundColor(context),
@@ -62,7 +62,7 @@ class MembersScreenOptionsMember extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          content: Text('Exit \'${group.value.name}\' group?'),
+                          content: Text('Exit \'${groupStatus.group.name}\' group?'),
                           actions: <Widget>[
                             FlatButton(
                               child: Text('CANCEL'),
@@ -78,7 +78,7 @@ class MembersScreenOptionsMember extends StatelessWidget {
                                 ),
                               ),
                               onPressed: () {
-                                dbService.leaveGroup(group.value.docId);
+                                dbService.leaveGroup(groupStatus.group.docId);
                                 groupDocId.value = null;
                                 Navigator.of(context)
                                     .popUntil((route) => route.isFirst);

@@ -14,10 +14,10 @@ class ScheduleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     return StreamBuilder(
-      stream: dbService.getGroupMemberMyData(group.value.docId),
+      stream: dbService.getGroupMemberMyData(groupStatus.group.docId),
       builder: (context, snapshot) {
         Member member = snapshot.data;
 
@@ -187,7 +187,7 @@ class ScheduleView extends StatelessWidget {
                                               onSave: () async {
                                                 await dbService
                                                     .updateGroupMemberTimes(
-                                                  group.value.docId,
+                                                  groupStatus.group.docId,
                                                   null,
                                                   [
                                                     Time(
@@ -246,7 +246,7 @@ class ScheduleView extends StatelessWidget {
                                                     onPressed: () async {
                                                       await dbService
                                                           .removeGroupMemberTimes(
-                                                        group.value.docId,
+                                                        groupStatus.group.docId,
                                                         null,
                                                         [member.times[index]],
                                                       );

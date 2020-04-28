@@ -39,14 +39,14 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
 
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
-    return group.value == null
+    return groupStatus.group == null
         ? Loading()
         : Scaffold(
             appBar: AppBar(
               elevation: 0.0,
-              title: group.value.name == null
+              title: groupStatus.group.name == null
                   ? Text(
                       'My Schedule',
                       style: textStyleAppBarTitle,
@@ -55,7 +55,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          group.value.name,
+                          groupStatus.group.name,
                           style: textStyleAppBarTitle,
                         ),
                         Text(

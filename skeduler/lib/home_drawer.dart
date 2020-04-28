@@ -40,7 +40,7 @@ class HomeDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     User user = Provider.of<User>(context);
     return Container(
@@ -92,11 +92,11 @@ class HomeDrawer extends StatelessWidget {
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
-                  enabled: group.value != null ? true : false,
+                  enabled: groupStatus.group != null ? true : false,
                   dense: true,
                   leading: Icon(FontAwesomeIcons.users),
-                  title: group.value != null
-                      ? Text(group.value.name ??
+                  title: groupStatus.group != null
+                      ? Text(groupStatus.group.name ??
                           _screens[DrawerEnum.group]['title'])
                       : Text(
                           _screens[DrawerEnum.group]['title'],
@@ -117,7 +117,7 @@ class HomeDrawer extends StatelessWidget {
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
-                  enabled: group.value != null ? true : false,
+                  enabled: groupStatus.group != null ? true : false,
                   dense: true,
                   leading: Icon(Icons.people),
                   title: Text(_screens[DrawerEnum.members]['title']),
@@ -137,7 +137,7 @@ class HomeDrawer extends StatelessWidget {
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
-                  enabled: group.value != null ? true : false,
+                  enabled: groupStatus.group != null ? true : false,
                   dense: true,
                   leading: Icon(Icons.class_),
                   title: Text(_screens[DrawerEnum.subjects]['title']),
@@ -157,7 +157,7 @@ class HomeDrawer extends StatelessWidget {
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
-                  enabled: group.value != null ? true : false,
+                  enabled: groupStatus.group != null ? true : false,
                   dense: true,
                   leading: Icon(Icons.table_chart),
                   title: Text(_screens[DrawerEnum.timetable]['title']),
@@ -177,7 +177,7 @@ class HomeDrawer extends StatelessWidget {
                     ? _tileSelectedBackgroundColor(context)
                     : null,
                 child: ListTile(
-                  enabled: group.value != null ? true : false,
+                  enabled: groupStatus.group != null ? true : false,
                   dense: true,
                   leading: Icon(Icons.schedule),
                   title: Text(_screens[DrawerEnum.mySchedule]['title']),

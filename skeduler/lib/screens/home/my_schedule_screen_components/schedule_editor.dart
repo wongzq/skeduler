@@ -11,7 +11,7 @@ import 'package:skeduler/shared/ui_settings.dart';
 class ScheduleEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     List<Month> _monthsSelected = [];
     List<Weekday> _weekdaysSelected = [];
@@ -22,7 +22,7 @@ class ScheduleEditor extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        title: group.value.name == null
+        title: groupStatus.group.name == null
             ? Text(
                 'My Schedule Editor',
                 style: textStyleAppBarTitle,
@@ -31,7 +31,7 @@ class ScheduleEditor extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    group.value.name,
+                    groupStatus.group.name,
                     style: textStyleAppBarTitle,
                   ),
                   Text(

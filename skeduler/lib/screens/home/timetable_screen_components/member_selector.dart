@@ -40,7 +40,7 @@ class MemberSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     double _chipWidth =
         (MediaQuery.of(context).size.width - 2 * _bodyHoriPadding) / 5 -
@@ -51,7 +51,7 @@ class MemberSelector extends StatelessWidget {
     ScrollController controller = ScrollController();
 
     return StreamBuilder(
-        stream: dbService.getGroupMembers(group.value.docId),
+        stream: dbService.getGroupMembers(groupStatus.group.docId),
         builder: (context, snapshot) {
           List<Member> members =
               snapshot != null && snapshot.data != null ? snapshot.data : [];

@@ -8,9 +8,9 @@ import 'package:skeduler/shared/functions.dart';
 class MembersScreenOptionsOwner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
-    return group.value == null
+    return groupStatus.group == null
         ? Container()
         : SpeedDial(
             foregroundColor: getFABIconForegroundColor(context),

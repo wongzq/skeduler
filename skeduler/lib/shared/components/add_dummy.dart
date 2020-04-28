@@ -20,9 +20,9 @@ class _AddDummyState extends State<AddDummy> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
-    return group.value == null
+    return groupStatus.group == null
         ? Loading()
         : Scaffold(
             appBar: AppBar(
@@ -30,7 +30,7 @@ class _AddDummyState extends State<AddDummy> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    group.value.name,
+                    groupStatus.group.name,
                     style: textStyleAppBarTitle,
                   ),
                   Text(
@@ -45,7 +45,7 @@ class _AddDummyState extends State<AddDummy> {
               children: <Widget>[
                 /// Cancel changes
                 FloatingActionButton(
-                  heroTag: 'Cancel',
+                  heroTag: 'Add Dummy Cancel',
                   backgroundColor: Colors.red,
                   onPressed: () {
                     Navigator.of(context).maybePop();
@@ -60,13 +60,13 @@ class _AddDummyState extends State<AddDummy> {
 
                 /// Confirm amd make changes
                 FloatingActionButton(
-                  heroTag: 'Confirm',
+                  heroTag: 'Add Dummy Confirm',
                   backgroundColor: Colors.green,
                   onPressed: () async {
                     if (_formKeyName.currentState.validate()) {
                       await dbService
                           .inviteDummyToGroup(
-                        groupDocId: group.value.docId,
+                        groupDocId: groupStatus.group.docId,
                         newDummyName: _newDummyName,
                       )
                           .then((errorMsg) {

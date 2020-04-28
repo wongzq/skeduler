@@ -19,7 +19,7 @@ class MemberListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     if (me.role == MemberRole.pending) {
@@ -179,13 +179,13 @@ class MemberListTile extends StatelessWidget {
                                                   .validate()) {
                                                 await dbService
                                                     .updateMemberRoleInGroup(
-                                                  groupDocId: group.value.docId,
+                                                  groupDocId: groupStatus.group.docId,
                                                   memberDocId: member.email,
                                                   role: MemberRole.owner,
                                                 );
                                                 await dbService
                                                     .updateMemberRoleInGroup(
-                                                  groupDocId: group.value.docId,
+                                                  groupDocId: groupStatus.group.docId,
                                                   memberDocId: me.email,
                                                   role: MemberRole.admin,
                                                 );
@@ -199,19 +199,19 @@ class MemberListTile extends StatelessWidget {
                                     });
                               } else if (value == MemberOption.makeAdmin) {
                                 await dbService.updateMemberRoleInGroup(
-                                  groupDocId: group.value.docId,
+                                  groupDocId: groupStatus.group.docId,
                                   memberDocId: member.email,
                                   role: MemberRole.admin,
                                 );
                               } else if (value == MemberOption.makeMember) {
                                 await dbService.updateMemberRoleInGroup(
-                                  groupDocId: group.value.docId,
+                                  groupDocId: groupStatus.group.docId,
                                   memberDocId: member.email,
                                   role: MemberRole.member,
                                 );
                               } else if (value == MemberOption.remove) {
                                 await dbService.removeMemberFromGroup(
-                                  groupDocId: group.value.docId,
+                                  groupDocId: groupStatus.group.docId,
                                   memberDocId: member.email,
                                 );
                               }

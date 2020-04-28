@@ -18,16 +18,16 @@ class _TimetableScreenState extends State<TimetableScreen> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
     TimetableAxes _axes = Provider.of<TimetableAxes>(context);
 
     return FutureBuilder(
-      future: dbService.getGroupTimetableIdForToday(group.value.docId),
+      future: dbService.getGroupTimetableIdForToday(groupStatus.group.docId),
       builder: (context, snapshotTtbId) {
         return StreamBuilder(
           stream: dbService.getGroupTimetableForToday(
-            group.value.docId,
+            groupStatus.group.docId,
             snapshotTtbId.data,
           ),
           builder: (context, snapshotTtb) {
@@ -38,11 +38,11 @@ class _TimetableScreenState extends State<TimetableScreen> {
               ttbStatus.curr = timetable;
             }
 
-            return group.value == null
+            return groupStatus.group == null
                 ? Container()
                 : Scaffold(
                     appBar: AppBar(
-                      title: group.value.name == null ||
+                      title: groupStatus.group.name == null ||
                               timetable == null ||
                               !timetable.isValid()
                           ? Text(
@@ -53,7 +53,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  group.value.name,
+                                  groupStatus.group.name,
                                   style: textStyleAppBarTitle,
                                 ),
                                 Text(
@@ -70,7 +70,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                               List<PopupMenuEntry> timetableOptions = [];
 
                               /// Add timetables to options
-                              group.value.timetableMetadatas.forEach((timetableDocId) {
+                              groupStatus.group.timetableMetadatas.forEach((timetableDocId) {
                                 timetableOptions.add(PopupMenuItem(
                                   value: timetableDocId.id,
                                   child: Text(timetableDocId.id),
@@ -85,7 +85,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                   children: <Widget>[
                                     Visibility(
                                       visible:
-                                          group.value.timetableMetadatas.isNotEmpty,
+                                          groupStatus.group.timetableMetadatas.isNotEmpty,
                                       child: Divider(thickness: 1.0),
                                     ),
                                     Row(
@@ -112,7 +112,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                               } else {
                                 ttbStatus.perm = EditTimetable.fromTimetable(
                                   await dbService.getGroupTimetable(
-                                    group.value.docId,
+                                    groupStatus.group.docId,
                                     value,
                                   ),
                                 );

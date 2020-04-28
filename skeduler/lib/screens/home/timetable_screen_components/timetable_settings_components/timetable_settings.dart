@@ -18,7 +18,7 @@ class TimetableSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
 
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -87,7 +87,7 @@ class TimetableSettings extends StatelessWidget {
                     /// change ID by cloning old document with new ID
                     await dbService
                         .updateGroupTimetableDocId(
-                      group.value.docId,
+                      groupStatus.group.docId,
                       ttbStatus.perm.metadata,
                       ttbStatus.temp.metadata,
                     )
@@ -242,7 +242,7 @@ class TimetableSettings extends StatelessWidget {
                               ),
                               onPressed: () async {
                                 await dbService.deleteGroupTimetable(
-                                    group.value.docId, ttbStatus.perm.docId);
+                                    groupStatus.group.docId, ttbStatus.perm.docId);
                                 Navigator.of(context).maybePop();
                               },
                             ),

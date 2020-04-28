@@ -28,7 +28,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
     TimetableAxes axes = Provider.of<TimetableAxes>(context);
 
@@ -80,12 +80,13 @@ class _TimetableEditorState extends State<TimetableEditor> {
         ),
         drawer: HomeDrawer(DrawerEnum.timetable),
         floatingActionButton: FloatingActionButton(
+          heroTag: 'Timetable Editor Save',
           foregroundColor: getFABIconForegroundColor(context),
           backgroundColor: getFABIconBackgroundColor(context),
           child: Icon(Icons.save),
           onPressed: () async {
             await dbService
-                .updateGroupTimetable(group.value.docId, ttbStatus.perm)
+                .updateGroupTimetable(groupStatus.group.docId, ttbStatus.perm)
                 .then((_) {
               Fluttertoast.showToast(
                 msg: 'Successfully saved timetable',

@@ -10,7 +10,7 @@ class GroupScreenOptionsOwner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
 
@@ -73,9 +73,9 @@ class GroupScreenOptionsOwner extends StatelessWidget {
                               autofocus: true,
                               decoration: InputDecoration(
                                   hintText:
-                                      'type \'${group.value.name}\' to delete'),
+                                      'type \'${groupStatus.group.name}\' to delete'),
                               validator: (value) {
-                                if (value == group.value.name) {
+                                if (value == groupStatus.group.name) {
                                   return null;
                                 } else {
                                   return 'Group name doesn\'t match';
@@ -102,7 +102,7 @@ class GroupScreenOptionsOwner extends StatelessWidget {
                         ),
                         onPressed: () {
                           if (formKey.currentState.validate()) {
-                            dbService.deleteGroup(group.value.docId);
+                            dbService.deleteGroup(groupStatus.group.docId);
                             groupDocId.value = null;
                             Navigator.of(context)
                                 .popUntil((route) => route.isFirst);
@@ -156,7 +156,7 @@ class GroupScreenOptionsOwner extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pushNamed(
               '/group/edit',
-              arguments: RouteArgsGroup(group: group.value),
+              arguments: RouteArgsGroup(group: groupStatus.group),
             );
           },
         ),

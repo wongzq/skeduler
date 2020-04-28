@@ -21,19 +21,19 @@ class _MembersScreenState extends State<MembersScreen> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
-    return group.value == null
+    return groupStatus.group == null
         ? Loading()
         : StreamBuilder(
-            stream: dbService.getGroupMembers(group.value.docId),
+            stream: dbService.getGroupMembers(groupStatus.group.docId),
             builder: (context, snapshot) {
               List<Member> members = snapshot != null ? snapshot.data : null;
 
               return members == null || members.isEmpty
                   ? Scaffold(
                       appBar: AppBar(
-                        title: group.value.name == null
+                        title: groupStatus.group.name == null
                             ? Text(
                                 'Members',
                                 style: textStyleAppBarTitle,
@@ -42,7 +42,7 @@ class _MembersScreenState extends State<MembersScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    group.value.name,
+                                    groupStatus.group.name,
                                     style: textStyleAppBarTitle,
                                   ),
                                   Text(
@@ -55,7 +55,7 @@ class _MembersScreenState extends State<MembersScreen> {
                       drawer: HomeDrawer(DrawerEnum.members),
                     )
                   : StreamBuilder(
-                      stream: dbService.getGroupMemberMyData(group.value.docId),
+                      stream: dbService.getGroupMemberMyData(groupStatus.group.docId),
                       builder: (context, snapshot) {
                         Member me = snapshot != null ? snapshot.data : null;
 
@@ -63,7 +63,7 @@ class _MembersScreenState extends State<MembersScreen> {
                             ? Loading()
                             : Scaffold(
                                 appBar: AppBar(
-                                  title: group.value.name == null
+                                  title: groupStatus.group.name == null
                                       ? Text(
                                           'Members',
                                           style: textStyleAppBarTitle,
@@ -73,7 +73,7 @@ class _MembersScreenState extends State<MembersScreen> {
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
-                                              group.value.name,
+                                              groupStatus.group.name,
                                               style: textStyleAppBarTitle,
                                             ),
                                             Text(

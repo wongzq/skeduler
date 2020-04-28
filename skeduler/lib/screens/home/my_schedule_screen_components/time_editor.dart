@@ -360,7 +360,7 @@ class _TimeEditorState extends State<TimeEditor> {
   Widget build(BuildContext context) {
     OriginTheme originTheme = Provider.of<OriginTheme>(context);
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     _editorsStatus = Provider.of<EditorsStatus>(context);
 
     return AbsorbPointer(
@@ -495,7 +495,7 @@ class _TimeEditorState extends State<TimeEditor> {
                                           _endDate ?? getLastDayOfLastMonth(),
                                     );
                                     await dbService.updateGroupMemberTimes(
-                                        group.value.docId, null, newTimes);
+                                        groupStatus.group.docId, null, newTimes);
                                   }
                                 : null,
                             child: Text(
@@ -605,7 +605,7 @@ class _TimeEditorState extends State<TimeEditor> {
 
                                                     await dbService
                                                         .removeGroupMemberTimes(
-                                                      group.value.docId,
+                                                      groupStatus.group.docId,
                                                       null,
                                                       removeTimes,
                                                     );

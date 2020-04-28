@@ -20,7 +20,7 @@ class SubjectListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -108,20 +108,20 @@ class SubjectListTile extends StatelessWidget {
                                   valSetIsUpdating(true);
 
                                   int index =
-                                      group.value.subjects.indexOf(subject);
+                                      groupStatus.group.subjects.indexOf(subject);
 
-                                  group.value.subjects.insert(
+                                  groupStatus.group.subjects.insert(
                                       index,
                                       Subject(
                                         name: newSubjectName,
                                         nickname: newSubjectNickname,
                                       ));
 
-                                  group.value.subjects.removeAt(index + 1);
+                                  groupStatus.group.subjects.removeAt(index + 1);
 
                                   if (await dbService.updateGroupSubjects(
-                                      group.value.docId,
-                                      group.value.subjects)) {
+                                      groupStatus.group.docId,
+                                      groupStatus.group.subjects)) {
                                     Fluttertoast.showToast(
                                       msg: 'Successfully updated subjects',
                                       toastLength: Toast.LENGTH_LONG,
@@ -142,7 +142,7 @@ class SubjectListTile extends StatelessWidget {
                       });
                   break;
                 case SubjectOption.remove:
-                  dbService.removeGroupSubject(group.value.docId, subject);
+                  dbService.removeGroupSubject(groupStatus.group.docId, subject);
                   break;
               }
             },

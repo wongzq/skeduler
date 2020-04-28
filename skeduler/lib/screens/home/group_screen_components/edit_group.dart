@@ -60,7 +60,7 @@ class _EditGroupState extends State<EditGroup> {
         children: <Widget>[
           /// Cancel changes
           FloatingActionButton(
-            heroTag: 'Cancel',
+            heroTag: 'Edit Group Cancel',
             backgroundColor: Colors.red,
             onPressed: () {
               Navigator.of(context).maybePop();
@@ -75,7 +75,7 @@ class _EditGroupState extends State<EditGroup> {
 
           /// Confirm amd make changes
           FloatingActionButton(
-            heroTag: 'Confirm',
+            heroTag: 'Edit Group Confirm',
             backgroundColor: Colors.green,
             onPressed: () {
               if (_formKeyName.currentState.validate() &&

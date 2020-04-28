@@ -10,7 +10,7 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
 
@@ -61,7 +61,7 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    content: Text('Exit \'${group.value.name}\' group?'),
+                    content: Text('Exit \'${groupStatus.group.name}\' group?'),
                     actions: <Widget>[
                       FlatButton(
                         child: Text('CANCEL'),
@@ -77,8 +77,8 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          dbService.leaveGroup(group.value.docId);
-                          group.value = null;
+                          dbService.leaveGroup(groupStatus.group.docId);
+                          groupStatus.group = null;
                           groupDocId.value = null;
                           Navigator.of(context)
                               .popUntil((route) => route.isFirst);
@@ -131,7 +131,7 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pushNamed(
               '/group/edit',
-              arguments: RouteArgsGroup(group: group.value),
+              arguments: RouteArgsGroup(group: groupStatus.group),
             );
           },
         ),

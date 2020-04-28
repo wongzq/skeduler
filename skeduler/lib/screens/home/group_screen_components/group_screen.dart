@@ -24,9 +24,9 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
-    return group.value == null
+    return groupStatus.group == null
         ? Scaffold(
             appBar: AppBar(
               title: Text(
@@ -37,7 +37,7 @@ class _GroupScreenState extends State<GroupScreen> {
             drawer: HomeDrawer(DrawerEnum.group),
           )
         : StreamBuilder(
-            stream: dbService.getGroupMemberMyData(group.value.docId),
+            stream: dbService.getGroupMemberMyData(groupStatus.group.docId),
             builder: (context, snapshot) {
               Member me = snapshot != null ? snapshot.data : null;
 
@@ -45,7 +45,7 @@ class _GroupScreenState extends State<GroupScreen> {
                   ? Loading()
                   : Scaffold(
                       appBar: AppBar(
-                        title: group.value.name == null
+                        title: groupStatus.group.name == null
                             ? Text(
                                 'Group',
                                 style: textStyleAppBarTitle,
@@ -54,7 +54,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    group.value.name,
+                                    groupStatus.group.name,
                                     style: textStyleAppBarTitle,
                                   ),
                                   Text(
@@ -83,7 +83,7 @@ class _GroupScreenState extends State<GroupScreen> {
                               padding: EdgeInsets.all(20.0),
                               alignment: Alignment.topLeft,
                               child: Text(
-                                group.value.description,
+                                groupStatus.group.description,
                                 style: textStyleBody,
                               ),
                             ),

@@ -13,9 +13,9 @@ class ScheduleTab extends StatefulWidget {
 class _ScheduleTabState extends State<ScheduleTab> {
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<Group> group = Provider.of<ValueNotifier<Group>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
-    return group.value == null
+    return groupStatus.group == null
         ? Container()
         : Stack(
             children: <Widget>[
@@ -24,6 +24,7 @@ class _ScheduleTabState extends State<ScheduleTab> {
                 bottom: 20.0,
                 right: 20.0,
                 child: FloatingActionButton(
+                  heroTag: 'Schedule Editor',
                   foregroundColor: getFABIconForegroundColor(context),
                   backgroundColor: getFABIconBackgroundColor(context),
                   onPressed: () {

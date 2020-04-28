@@ -17,9 +17,8 @@ class SubjectsScreen extends StatefulWidget {
 }
 
 class _SubjectsScreenState extends State<SubjectsScreen> {
-  ValueNotifier<Group> _group;
+  GroupStatus _groupStatus;
 
-  bool _reordered = false;
   bool _isUpdating = false;
   List<Subject> _tempSubjects = [];
 
@@ -34,22 +33,22 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
           subject: subject,
           valSetIsUpdating: (value) {
             setState(() {
-              _tempSubjects = value ? List.from(_group.value.subjects) : [];
-              if (value == false) _reordered = false;
+              _tempSubjects = value ? List.from(_groupStatus.group.subjects) : [];
+              if (value == false) _groupStatus.hasChanges = false;
               _isUpdating = value;
             });
           },
         ));
       });
     } else {
-      _group.value.subjects.forEach((subject) {
+      _groupStatus.group.subjects.forEach((subject) {
         widgets.add(SubjectListTile(
           key: UniqueKey(),
           subject: subject,
           valSetIsUpdating: (value) {
             setState(() {
-              _tempSubjects = value ? List.from(_group.value.subjects) : [];
-              if (value == false) _reordered = false;
+              _tempSubjects = value ? List.from(_groupStatus.group.subjects) : [];
+              if (value == false) _groupStatus.hasChanges = false;
               _isUpdating = value;
             });
           },
@@ -63,13 +62,13 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
-    _group = Provider.of<ValueNotifier<Group>>(context);
+    _groupStatus = Provider.of<GroupStatus>(context);
 
-    return _group.value == null
+    return _groupStatus.group == null
         ? Loading()
         : Scaffold(
             appBar: AppBar(
-              title: _group.value.name == null
+              title: _groupStatus.group.name == null
                   ? Text(
                       'Subjects',
                       style: textStyleAppBarTitle,
@@ -78,7 +77,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          _group.value.name,
+                          _groupStatus.group.name,
                           style: textStyleAppBarTitle,
                         ),
                         Text(
@@ -93,19 +92,20 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Visibility(
-                  visible: _reordered,
+                  visible: _groupStatus.hasChanges,
                   child: FloatingActionButton(
+                    heroTag: 'Subjects Save',
                     foregroundColor: getFABIconForegroundColor(context),
                     backgroundColor: getFABIconBackgroundColor(context),
                     child: Icon(Icons.save),
                     onPressed: () async {
                       setState(() {
                         _isUpdating = true;
-                        _tempSubjects = List.from(_group.value.subjects);
+                        _tempSubjects = List.from(_groupStatus.group.subjects);
                       });
                       if (await dbService.updateGroupSubjects(
-                          _group.value.docId, _group.value.subjects)) {
-                        _reordered = false;
+                          _groupStatus.group.docId, _groupStatus.group.subjects)) {
+                        _groupStatus.hasChanges = false;
                         Fluttertoast.showToast(
                           msg: 'Successfully updated subjects',
                           toastLength: Toast.LENGTH_LONG,
@@ -125,6 +125,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                 ),
                 SizedBox(height: 20.0),
                 FloatingActionButton(
+                  heroTag: 'Subjects Add',
                   foregroundColor: getFABIconForegroundColor(context),
                   backgroundColor: getFABIconBackgroundColor(context),
                   child: Icon(Icons.add),
@@ -188,27 +189,27 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                                   Navigator.of(context).maybePop();
 
                                   _tempSubjects =
-                                      List.from(_group.value.subjects);
+                                      List.from(_groupStatus.group.subjects);
                                   setState(() => _isUpdating = true);
 
-                                  _group.value.subjects.add(Subject(
+                                  _groupStatus.group.subjects.add(Subject(
                                     name: newSubjectName,
                                     nickname: newSubjectNickname,
                                   ));
 
                                   await dbService.updateGroupSubjects(
-                                    _group.value.docId,
-                                    _group.value.subjects,
+                                    _groupStatus.group.docId,
+                                    _groupStatus.group.subjects,
                                   );
 
                                   setState(() {
                                     _isUpdating = false;
-                                    _reordered = false;
+                                    _groupStatus.hasChanges = false;
                                   });
 
                                   String returnMsg =
                                       await dbService.addGroupSubject(
-                                          _group.value.docId,
+                                          _groupStatus.group.docId,
                                           Subject(
                                             name: newSubjectName,
                                             nickname: newSubjectNickname,
@@ -232,16 +233,16 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
             body: ReorderableListView(
               onReorder: (int oldIndex, int newIndex) {
                 setState(() {
-                  Subject subject = _group.value.subjects[oldIndex];
-                  _group.value.subjects.removeAt(oldIndex);
+                  Subject subject = _groupStatus.group.subjects[oldIndex];
+                  _groupStatus.group.subjects.removeAt(oldIndex);
 
-                  if (newIndex >= _group.value.subjects.length) {
-                    _group.value.subjects.add(subject);
+                  if (newIndex >= _groupStatus.group.subjects.length) {
+                    _groupStatus.group.subjects.add(subject);
                   } else {
-                    _group.value.subjects.insert(newIndex, subject);
+                    _groupStatus.group.subjects.insert(newIndex, subject);
                   }
 
-                  _reordered = true;
+                  _groupStatus.hasChanges = true;
                 });
               },
               children: _generateSubjects(),

@@ -122,9 +122,11 @@ class MyApp extends StatelessWidget {
                                 stream: dbService.getGroup(groupDocId.value),
                                 builder: (_, snapshot) {
                                   return ChangeNotifierProvider<
-                                      ValueNotifier<Group>>.value(
-                                    value: ValueNotifier<Group>(
-                                      snapshot != null ? snapshot.data : null,
+                                      GroupStatus>.value(
+                                    value: GroupStatus(
+                                      group: snapshot != null
+                                          ? snapshot.data
+                                          : null,
                                     ),
                                     child: MaterialApp(
                                       title: 'Skeduler',
