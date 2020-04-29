@@ -92,7 +92,7 @@ class _AxisCustomState extends State<AxisCustom> {
                                   _customVals.insert(index, newCustom);
                                 });
 
-                                /// update through valueSetter
+                                // update through valueSetter
                                 if (widget.valSetCustoms != null) {
                                   widget.valSetCustoms(_customVals);
                                 }
@@ -116,7 +116,7 @@ class _AxisCustomState extends State<AxisCustom> {
                           _customVals = val;
                         });
 
-                        /// Update through valueSetter
+                        // Update through valueSetter
                         if (widget.valSetCustoms != null) {
                           widget.valSetCustoms(_customVals);
                         }
@@ -127,7 +127,7 @@ class _AxisCustomState extends State<AxisCustom> {
                 case CustomOption.remove:
                   setState(() => _customVals.remove(custom));
 
-                  /// Update through valueSetter
+                  // Update through valueSetter
                   if (widget.valSetCustoms != null) {
                     widget.valSetCustoms(_customVals);
                   }
@@ -186,7 +186,7 @@ class _AxisCustomState extends State<AxisCustom> {
                     if (formKey.currentState.validate()) {
                       setState(() => _customVals.add(newCustom));
 
-                      /// update through valueSetter
+                      // update through valueSetter
                       if (widget.valSetCustoms != null) {
                         widget.valSetCustoms(_customVals);
                       }

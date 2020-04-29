@@ -64,8 +64,8 @@ class TimetableSettings extends StatelessWidget {
               icon: Icon(Icons.check),
               onPressed: () async {
                 if (formKey.currentState.validate()) {
-                  /// check if new timetable (docId is null)
-                  /// check if update same timetable (docId is same)
+                  // check if new timetable (docId is null)
+                  // check if update same timetable (docId is same)
                   if (ttbStatus.perm.docId == null ||
                       ttbStatus.perm.docId == ttbStatus.temp.docId) {
                     ttbStatus.perm.updateTimetableSettings(
@@ -80,11 +80,11 @@ class TimetableSettings extends StatelessWidget {
                     Navigator.of(context).maybePop();
                   }
 
-                  /// check if timetable docId changed
+                  // check if timetable docId changed
                   else if (ttbStatus.perm.docId != null &&
                       ttbStatus.perm.docId.trim() != '' &&
                       ttbStatus.perm.docId != ttbStatus.temp.docId) {
-                    /// change ID by cloning old document with new ID
+                    // change ID by cloning old document with new ID
                     await dbService
                         .updateGroupTimetableDocId(
                       groupStatus.group.docId,
@@ -93,7 +93,7 @@ class TimetableSettings extends StatelessWidget {
                     )
                         .then((changed) async {
                       if (changed) {
-                        /// Update document with new data
+                        // Update document with new data
                         ttbStatus.perm.updateTimetableSettings(
                           docId: ttbStatus.temp.docId,
                           startDate: ttbStatus.temp.startDate,
@@ -121,7 +121,7 @@ class TimetableSettings extends StatelessWidget {
             parent: AlwaysScrollableScrollPhysics(),
           ),
           children: <Widget>[
-            /// Timetable name
+            // Timetable name
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 5.0),
               child: LabelTextInput(
@@ -143,7 +143,7 @@ class TimetableSettings extends StatelessWidget {
             ),
             SizedBox(height: 10.0),
 
-            /// Date range
+            // Date range
             DateRange(
               initialStartDate: ttbStatus.temp.startDate,
               initialEndDate: ttbStatus.temp.endDate,
@@ -157,7 +157,7 @@ class TimetableSettings extends StatelessWidget {
             SizedBox(height: 10.0),
             Divider(thickness: 1.0),
 
-            /// Axis Day
+            // Axis Day
             Theme(
               data: Theme.of(context).copyWith(
                 dividerColor: Colors.transparent,
@@ -171,7 +171,7 @@ class TimetableSettings extends StatelessWidget {
             ),
             Divider(thickness: 1.0),
 
-            /// Axis Time
+            // Axis Time
             Theme(
               data: Theme.of(context).copyWith(
                 dividerColor: Colors.transparent,
@@ -185,7 +185,7 @@ class TimetableSettings extends StatelessWidget {
             ),
             Divider(thickness: 1.0),
 
-            /// Axis Custom
+            // Axis Custom
             Theme(
               data: Theme.of(context).copyWith(
                 dividerColor: Colors.transparent,
@@ -226,7 +226,7 @@ class TimetableSettings extends StatelessWidget {
                           content: Text(
                               'Do you want to delete \'${ttbStatus.temp.docId}\' timetable?'),
                           actions: <Widget>[
-                            /// CANCEL button
+                            // CANCEL button
                             FlatButton(
                               child: Text('CANCEL'),
                               onPressed: () {
@@ -234,7 +234,7 @@ class TimetableSettings extends StatelessWidget {
                               },
                             ),
 
-                            /// OK button
+                            // OK button
                             FlatButton(
                               child: Text(
                                 'DELETE',

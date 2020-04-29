@@ -11,7 +11,7 @@ import 'package:skeduler/shared/functions.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class HomeDrawer extends StatelessWidget {
-  /// properties
+  // properties
   final AuthService _authService = AuthService();
   final DrawerEnum _selected;
 
@@ -26,10 +26,10 @@ class HomeDrawer extends StatelessWidget {
     DrawerEnum.logout: {'title': 'Logout', 'icon': null},
   };
 
-  /// constructors
+  // constructors
   HomeDrawer(this._selected);
 
-  /// methods
+  // methods
   Color _tileSelectedBackgroundColor(BuildContext context) =>
       Theme.of(context).brightness == Brightness.light ? null : null;
 
@@ -50,7 +50,7 @@ class HomeDrawer extends StatelessWidget {
           selectedColor: _tileSelectedForegroundColor(context),
           child: Column(
             children: <Widget>[
-              /// User data display
+              // User data display
               Container(
                 height: 150.0,
                 child: UserAccountsDrawerHeader(
@@ -65,7 +65,7 @@ class HomeDrawer extends StatelessWidget {
                 ),
               ),
 
-              /// Dashboard
+              // Dashboard
               Container(
                 color: _selected == DrawerEnum.dashboard
                     ? _tileSelectedBackgroundColor(context)
@@ -86,7 +86,7 @@ class HomeDrawer extends StatelessWidget {
 
               Divider(thickness: 1.0),
 
-              /// Group
+              // Group
               Container(
                 color: _selected == DrawerEnum.group
                     ? _tileSelectedBackgroundColor(context)
@@ -111,7 +111,7 @@ class HomeDrawer extends StatelessWidget {
                 ),
               ),
 
-              /// Members
+              // Members
               Container(
                 color: _selected == DrawerEnum.members
                     ? _tileSelectedBackgroundColor(context)
@@ -131,7 +131,7 @@ class HomeDrawer extends StatelessWidget {
                 ),
               ),
 
-              /// Subjects
+              // Subjects
               Container(
                 color: _selected == DrawerEnum.subjects
                     ? _tileSelectedBackgroundColor(context)
@@ -151,7 +151,7 @@ class HomeDrawer extends StatelessWidget {
                 ),
               ),
 
-              /// Timetable
+              // Timetable
               Container(
                 color: _selected == DrawerEnum.timetable
                     ? _tileSelectedBackgroundColor(context)
@@ -171,7 +171,7 @@ class HomeDrawer extends StatelessWidget {
                 ),
               ),
 
-              /// My Schedule
+              // My Schedule
               Container(
                 color: _selected == DrawerEnum.mySchedule
                     ? _tileSelectedBackgroundColor(context)
@@ -192,7 +192,7 @@ class HomeDrawer extends StatelessWidget {
               ),
               Divider(thickness: 1.0),
 
-              /// Settings
+              // Settings
               Container(
                 color: _selected == DrawerEnum.settings
                     ? _tileSelectedBackgroundColor(context)
@@ -211,7 +211,7 @@ class HomeDrawer extends StatelessWidget {
                 ),
               ),
 
-              /// Logout
+              // Logout
               Container(
                 color: _selected == DrawerEnum.logout
                     ? _tileSelectedBackgroundColor(context)
@@ -228,7 +228,7 @@ class HomeDrawer extends StatelessWidget {
                         return AlertDialog(
                           content: Text('Do you want to logout?'),
                           actions: <Widget>[
-                            /// CANCEL button
+                            // CANCEL button
                             FlatButton(
                               child: Text('CANCEL'),
                               onPressed: () {
@@ -236,7 +236,7 @@ class HomeDrawer extends StatelessWidget {
                               },
                             ),
 
-                            /// OK button
+                            // OK button
                             FlatButton(
                               child: Text('OK'),
                               onPressed: () {

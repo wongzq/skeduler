@@ -4,14 +4,14 @@ import 'package:skeduler/models/auxiliary/auth_info.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class FormPassword extends StatefulWidget {
-  /// properties
+  // properties
   final GlobalKey<FormState> formKeyPassword;
   final Function refresh;
 
-  /// constructors
+  // constructors
   FormPassword({this.formKeyPassword, this.refresh});
 
-  /// methods
+  // methods
   @override
   _FormPasswordState createState() => _FormPasswordState();
 }
@@ -19,7 +19,7 @@ class FormPassword extends StatefulWidget {
 class _FormPasswordState extends State<FormPassword> {
   @override
   Widget build(BuildContext context) {
-    /// Provider for Authentication Info
+    // Provider for Authentication Info
     final AuthInfo authInfo = Provider.of<AuthInfo>(context);
 
     return SizedBox(

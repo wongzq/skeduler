@@ -40,21 +40,21 @@ class _AxisDayState extends State<AxisDay> {
       weekdayOptionWidgets.add(ListTile(
         dense: true,
 
-        /// Checkbox
+        // Checkbox
         leading: Checkbox(
           activeColor: getFABIconBackgroundColor(context),
           value: _weekdaysSelected.contains(weekdayOption),
           onChanged: (selected) {
             setState(() {
               if (selected == true) {
-                /// Add to weekdaysSelected
+                // Add to weekdaysSelected
                 _weekdaysSelected.add(weekdayOption);
               } else {
-                /// Remove from weekdaysSelected
+                // Remove from weekdaysSelected
                 _weekdaysSelected.removeWhere((elem) => elem == weekdayOption);
               }
 
-              /// Update through valueSetter
+              // Update through valueSetter
               if (widget.valSetWeekdaysSelected != null) {
                 widget.valSetWeekdaysSelected(_weekdaysSelected);
               }
@@ -62,7 +62,7 @@ class _AxisDayState extends State<AxisDay> {
           },
         ),
 
-        /// Weekday display
+        // Weekday display
         title: Text(getWeekdayStr(weekdayOption)),
       ));
     });

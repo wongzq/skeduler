@@ -5,7 +5,7 @@ import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/group_data/time.dart';
 
 class Member {
-  /// properties
+  // properties
   String _email;
   String _name;
   String _nickname;
@@ -16,7 +16,7 @@ class Member {
 
   List<Time> _times;
 
-  /// constructors
+  // constructors
   Member({
     @required String email,
     String name,
@@ -35,7 +35,7 @@ class Member {
     _times = times;
   }
 
-  /// getter methods
+  // getter methods
   String get email => _email;
   String get name => _name;
   String get nickname => _nickname;

@@ -13,7 +13,7 @@ class LogIn extends StatefulWidget {
 }
 
 class _LogInState extends State<LogIn> {
-  /// properties
+  // properties
   final AuthService _authService = AuthService();
   final GlobalKey<FormState> _formKeyEmail = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKeyPassword = GlobalKey<FormState>();
@@ -21,14 +21,14 @@ class _LogInState extends State<LogIn> {
   FocusScopeNode currentFocus;
   String _error = '';
 
-  /// methods
-  /// callback for setState()
+  // methods
+  // callback for setState()
   void refresh() => setState(() {});
 
-  /// build
+  // build
   @override
   Widget build(BuildContext context) {
-    /// get Authentication Info using provider
+    // get Authentication Info using provider
     final AuthInfo authInfo = Provider.of<AuthInfo>(context);
 
     return GestureDetector(
@@ -43,15 +43,15 @@ class _LogInState extends State<LogIn> {
         ),
         child: Column(
           children: <Widget>[
-            /// Form: Email
+            // Form: Email
             FormEmail(refresh: refresh, formKeyEmail: _formKeyEmail),
             SizedBox(height: 20.0),
 
-            /// Form: Password
+            // Form: Password
             FormPassword(refresh: refresh, formKeyPassword: _formKeyPassword),
             SizedBox(height: 20.0),
 
-            /// RaisedButton: Log In
+            // RaisedButton: Log In
             ButtonTheme(
               height: 50.0,
               minWidth: MediaQuery.of(context).size.width,
@@ -64,9 +64,9 @@ class _LogInState extends State<LogIn> {
                   ),
                 ),
 
-                /// Function: onPressed:
-                /// enable when email and password are valid
-                /// disable when email and password are invalid
+                // Function: onPressed:
+                // enable when email and password are valid
+                // disable when email and password are invalid
                 onPressed: authInfo.emailValid && authInfo.passwordValid
                     ? () async {
                         if (_formKeyEmail.currentState.validate() &&
@@ -77,17 +77,17 @@ class _LogInState extends State<LogIn> {
                             });
                           });
 
-                          /// check internet connection
+                          // check internet connection
                           bool hasConn = await checkInternetConnection();
                           
                           if (hasConn) {
-                            /// log in with email and password
+                            // log in with email and password
                             dynamic authResult =
                                 await _authService.logInWithEmailAndPassword(
                                     authInfo.email, authInfo.password);
 
                             if (authResult == null) {
-                              /// display error message
+                              // display error message
                               setState(() {
                                 _error = 'Please check your email or password';
                               });
@@ -96,10 +96,10 @@ class _LogInState extends State<LogIn> {
                             _error = 'Please check your internet connection';
                           }
 
-                          /// unfocus text form field
+                          // unfocus text form field
                           unfocus();
 
-                          /// remove loading screen
+                          // remove loading screen
                           Authentication.of(context).setState(() {
                             Authentication.of(context).loading = false;
                           });
@@ -107,7 +107,7 @@ class _LogInState extends State<LogIn> {
                       }
                     : null,
 
-                /// Text: Log In
+                // Text: Log In
                 child: Text(
                   'Log In',
                   style: TextStyle(
@@ -123,7 +123,7 @@ class _LogInState extends State<LogIn> {
             ),
             SizedBox(height: 20.0),
 
-            /// Text: Error message
+            // Text: Error message
             Text(
               _error,
               style: TextStyle(

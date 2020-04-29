@@ -28,7 +28,7 @@ class GroupStatus extends ChangeNotifier {
 }
 
 class Group {
-  /// properties
+  // properties
   String _docId;
 
   String _name;
@@ -41,7 +41,7 @@ class Group {
   List<String> _members;
   List<Subject> _subjects;
 
-  /// constructors
+  // constructors
   Group({
     @required String docId,
     String name = '',
@@ -66,7 +66,7 @@ class Group {
     _subjects = List.from(subjects);
   }
 
-  /// getter methods
+  // getter methods
   String get docId => _docId;
 
   String get name => _name;

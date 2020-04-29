@@ -5,11 +5,11 @@ import 'package:quiver/core.dart';
 import 'package:skeduler/models/group_data/time.dart';
 
 ////////////////////////////////////////////////////////////////////////////////
-/// TimetableMetadata class
+// TimetableMetadata class
 ////////////////////////////////////////////////////////////////////////////////
 
 class TimetableMetadata {
-  /// properties
+  // properties
   String id;
   Timestamp startDate;
   Timestamp endDate;
@@ -30,11 +30,11 @@ class TimetableMetadata {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Timetable class
+// Timetable class
 ////////////////////////////////////////////////////////////////////////////////
 
 class Timetable {
-  /// properties
+  // properties
   String _docId;
   DateTime _startDate;
   DateTime _endDate;
@@ -45,7 +45,7 @@ class Timetable {
 
   TimetableSlotDataList _slotDataList = TimetableSlotDataList();
 
-  /// constructors
+  // constructors
   Timetable({
     @required String docId,
     Timestamp startDate,
@@ -55,26 +55,26 @@ class Timetable {
     List<String> axisCustom,
     TimetableSlotDataList slotDataList,
   }) {
-    /// documentID
+    // documentID
     _docId = docId;
 
-    /// timetable start date
+    // timetable start date
     if (startDate != null)
       _startDate =
           DateTime.fromMillisecondsSinceEpoch(startDate.millisecondsSinceEpoch);
 
-    /// timetable end date
+    // timetable end date
     if (endDate != null)
       _endDate =
           DateTime.fromMillisecondsSinceEpoch(endDate.millisecondsSinceEpoch);
 
-    /// timetable days axis
+    // timetable days axis
     if (axisDay != null) _axisDay = List<Weekday>.from(axisDay ?? []);
 
-    /// timetable times axis
+    // timetable times axis
     if (axisTime != null) _axisTime = List<Time>.from(axisTime ?? []);
 
-    /// timetable custom axis
+    // timetable custom axis
     if (axisCustom != null) _axisCustom = List<String>.from(axisCustom ?? []);
 
     if (slotDataList != null)
@@ -82,7 +82,7 @@ class Timetable {
           TimetableSlotDataList.from(slotDataList ?? TimetableSlotDataList());
   }
 
-  /// getter methods
+  // getter methods
   String get docId => _docId;
   DateTime get startDate => _startDate;
   DateTime get endDate => _endDate;
@@ -91,7 +91,7 @@ class Timetable {
   List<String> get axisCustom => _axisCustom;
   TimetableSlotDataList get slotDataList => _slotDataList;
 
-  /// getter as [List<String>]
+  // getter as [List<String>]
   List<String> get axisDayStr =>
       List.generate(_axisDay.length, (index) => getWeekdayStr(_axisDay[index]));
   List<String> get axisDayShortStr => List.generate(
@@ -110,11 +110,11 @@ class Timetable {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// EditTimetable class
+// EditTimetable class
 ////////////////////////////////////////////////////////////////////////////////
 
 class EditTimetable extends ChangeNotifier {
-  /// properties
+  // properties
   String _docId;
   DateTime _startDate;
   DateTime _endDate;
@@ -125,7 +125,7 @@ class EditTimetable extends ChangeNotifier {
 
   TimetableSlotDataList _slotDataList;
 
-  /// constructors
+  // constructors
   EditTimetable({
     String docId,
     DateTime startDate,
@@ -165,7 +165,7 @@ class EditTimetable extends ChangeNotifier {
           slotDataList: timetable.slotDataList,
         );
 
-  /// getter methods
+  // getter methods
   String get docId => this._docId;
   DateTime get startDate => this._startDate;
   DateTime get endDate => this._endDate;
@@ -180,7 +180,7 @@ class EditTimetable extends ChangeNotifier {
         endDate: Timestamp.fromDate(this._endDate),
       );
 
-  /// getter as [List<String>]
+  // getter as [List<String>]
   List<String> get axisDayStr =>
       List.generate(_axisDay.length, (index) => getWeekdayStr(_axisDay[index]));
   List<String> get axisDayShortStr => List.generate(
@@ -188,7 +188,7 @@ class EditTimetable extends ChangeNotifier {
   List<String> get axisTimeStr =>
       List.generate(_axisTime.length, (index) => getTimeStr(_axisTime[index]));
 
-  /// setter methods
+  // setter methods
   set docId(String id) {
     this._docId = id;
     notifyListeners();
@@ -254,34 +254,34 @@ class EditTimetable extends ChangeNotifier {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// EditTimetableStatus class for Provider
+// EditTimetableStatus class for Provider
 ////////////////////////////////////////////////////////////////////////////////
 
 class TimetableStatus extends ChangeNotifier {
-  /// current
+  // current
   Timetable curr;
 
-  /// permanent
+  // permanent
   EditTimetable perm;
 
-  /// temporary
+  // temporary
   EditTimetable temp;
 }
 
-/// auxiliary function to check if all [Timetable] in [List<Timetable>] is consecutive with no conflicts of date
+// auxiliary function to check if all [Timetable] in [List<Timetable>] is consecutive with no conflicts of date
 bool isConsecutiveTimetables(List<TimetableMetadata> timetables) {
   bool isConsecutive = true;
 
-  /// sort the area in terms of startDate
+  // sort the area in terms of startDate
   timetables.sort((a, b) {
     return a.startDate.millisecondsSinceEpoch
         .compareTo(b.startDate.millisecondsSinceEpoch);
   });
 
-  /// loop through the array to find any conflict
+  // loop through the array to find any conflict
   for (int i = 0; i < timetables.length; i++) {
     if (i != 0) {
-      /// if conflict is found, returns [hasNoConflict] as [false]
+      // if conflict is found, returns [hasNoConflict] as [false]
       if (!(timetables[i - 1]
               .startDate
               .toDate()
@@ -308,7 +308,7 @@ bool isConsecutiveTimetables(List<TimetableMetadata> timetables) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// TimetableDisplayInfo class for Provider
+// TimetableDisplayInfo class for Provider
 ////////////////////////////////////////////////////////////////////////////////
 
 class EditModeBool extends ChangeNotifier {
@@ -338,7 +338,7 @@ class BinVisibleBool extends ChangeNotifier {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// TimetableAxis related classes
+// TimetableAxis related classes
 ////////////////////////////////////////////////////////////////////////////////
 
 enum TimetableAxisType { day, time, custom }
@@ -421,13 +421,13 @@ class TimetableAxis {
 }
 
 class TimetableAxes extends ChangeNotifier {
-  /// properties
+  // properties
   TimetableAxis _x;
   TimetableAxis _y;
   TimetableAxis _z;
   bool _empty;
 
-  /// constructors
+  // constructors
   TimetableAxes.empty() : _empty = true;
 
   TimetableAxes({TimetableAxis x, TimetableAxis y, TimetableAxis z}) {
@@ -446,7 +446,7 @@ class TimetableAxes extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// getter methods
+  // getter methods
   bool get isEmpty => this._empty;
   TimetableAxisType get xType => this._x.type;
   TimetableAxisType get yType => this._y.type;
@@ -462,7 +462,7 @@ class TimetableAxes extends ChangeNotifier {
   TimetableAxis get axisTime => _getAxisOfType(TimetableAxisType.time);
   TimetableAxis get axisCustom => _getAxisOfType(TimetableAxisType.custom);
 
-  /// setter methods
+  // setter methods
   set xType(TimetableAxisType newX) {
     _changeAxisType(this._x.type, newX);
     notifyListeners();
@@ -478,7 +478,7 @@ class TimetableAxes extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// auxiliary methods
+  // auxiliary methods
   bool updateAxes({TimetableAxis x, TimetableAxis y, TimetableAxis z}) {
     x = x ?? this._x;
     y = y ?? this._y;
@@ -588,7 +588,7 @@ class TimetableAxes extends ChangeNotifier {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// TimetableSlot related classes
+// TimetableSlot related classes
 ////////////////////////////////////////////////////////////////////////////////
 
 class TimetableCoord {
@@ -741,18 +741,18 @@ class TimetableSlotDataList extends ChangeNotifier {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Auxiliary functions
+// Auxiliary functions
 ////////////////////////////////////////////////////////////////////////////////
 
-/// convert from [EditTimetable] to Firestore's [Map<String, dynamic>] format
+// convert from [EditTimetable] to Firestore's [Map<String, dynamic>] format
 Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTtb) {
   Map<String, dynamic> firestoreMap = {};
 
-  /// convert startDate and endDate
+  // convert startDate and endDate
   firestoreMap['startDate'] = Timestamp.fromDate(editTtb.startDate);
   firestoreMap['endDate'] = Timestamp.fromDate(editTtb.endDate);
 
-  /// convert axisDay
+  // convert axisDay
   if (editTtb.axisDay != null) {
     List<int> axisDaysInt = [];
     editTtb.axisDay.forEach((weekday) => axisDaysInt.add(weekday.index));
@@ -760,7 +760,7 @@ Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTtb) {
     firestoreMap['axisDay'] = axisDaysInt;
   }
 
-  /// convert axisTime
+  // convert axisTime
   if (editTtb.axisTime != null) {
     List<Map<String, Timestamp>> axisTimesTimestamps = [];
     editTtb.axisTime.forEach((time) {
@@ -774,12 +774,12 @@ Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTtb) {
     firestoreMap['axisTime'] = axisTimesTimestamps;
   }
 
-  /// convert axisCustom
+  // convert axisCustom
   if (editTtb.axisCustom != null) {
     firestoreMap['axisCustom'] = editTtb.axisCustom;
   }
 
-  /// convert slotDataList
+  // convert slotDataList
   if (editTtb.slotDataList != null) {
     List<Map<String, dynamic>> slotDataList = [];
 
@@ -787,7 +787,7 @@ Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTtb) {
       if (editTtb.axisDay.contains(slotData.coord.day) &&
           editTtb.axisTime.contains(slotData.coord.time) &&
           editTtb.axisCustom.contains(slotData.coord.custom)) {
-        /// convert coords
+        // convert coords
         Map<String, dynamic> coord = {
           'day': slotData.coord.day.index,
           'time': {
@@ -797,13 +797,13 @@ Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTtb) {
           'custom': slotData.coord.custom,
         };
 
-        /// convert subject
+        // convert subject
         String subject = slotData.subject;
 
-        /// convert member
+        // convert member
         String member = slotData.memberDisplay;
 
-        /// add to list
+        // add to list
         slotDataList.add({
           'coord': coord,
           'subject': subject,
@@ -815,6 +815,6 @@ Map<String, dynamic> firestoreMapFromTimetable(EditTimetable editTtb) {
     firestoreMap['slotDataList'] = slotDataList;
   }
 
-  /// return final map in firestore format
+  // return final map in firestore format
   return firestoreMap;
 }

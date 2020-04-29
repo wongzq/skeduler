@@ -6,7 +6,7 @@ const InputDecoration authTextInputDecoration = InputDecoration(
   fillColor: Colors.white,
   filled: true,
 
-  /// On Enabled
+  // On Enabled
   enabledBorder: OutlineInputBorder(
     borderSide: BorderSide(
       color: Colors.white,
@@ -14,7 +14,7 @@ const InputDecoration authTextInputDecoration = InputDecoration(
     ),
   ),
 
-  /// On Focused
+  // On Focused
   focusedBorder: OutlineInputBorder(
     borderRadius: const BorderRadius.all(const Radius.circular(30.0)),
     borderSide: BorderSide(
@@ -23,7 +23,7 @@ const InputDecoration authTextInputDecoration = InputDecoration(
     ),
   ),
 
-  /// On Error
+  // On Error
   errorBorder: OutlineInputBorder(
     borderSide: BorderSide(
       color: Colors.red,
@@ -31,7 +31,7 @@ const InputDecoration authTextInputDecoration = InputDecoration(
     ),
   ),
 
-  /// On Focused Error
+  // On Focused Error
   focusedErrorBorder: OutlineInputBorder(
     borderRadius: const BorderRadius.all(const Radius.circular(30.0)),
     borderSide: BorderSide(
@@ -46,7 +46,7 @@ const InputDecoration authTextInputDecorationValid = InputDecoration(
   fillColor: Colors.white,
   filled: true,
 
-  /// On Enabled
+  // On Enabled
   enabledBorder: OutlineInputBorder(
     borderRadius: const BorderRadius.all(const Radius.circular(30.0)),
     borderSide: BorderSide(
@@ -55,7 +55,7 @@ const InputDecoration authTextInputDecorationValid = InputDecoration(
     ),
   ),
 
-  /// On Focused
+  // On Focused
   focusedBorder: OutlineInputBorder(
     borderRadius: const BorderRadius.all(const Radius.circular(30.0)),
     borderSide: BorderSide(

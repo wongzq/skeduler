@@ -43,7 +43,7 @@ class _AddMemberState extends State<AddMember> {
             floatingActionButton: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                /// Cancel changes
+                // Cancel changes
                 FloatingActionButton(
                   heroTag: 'Add Member Cancel',
                   backgroundColor: Colors.red,
@@ -58,7 +58,7 @@ class _AddMemberState extends State<AddMember> {
 
                 SizedBox(width: 20.0),
 
-                /// Confirm amd make changes
+                // Confirm amd make changes
                 FloatingActionButton(
                   heroTag: 'Add Member Confirm',
                   backgroundColor: Colors.green,
@@ -97,8 +97,8 @@ class _AddMemberState extends State<AddMember> {
               onTap: () => unfocus(),
               child: Column(
                 children: <Widget>[
-                  /// Required fields
-                  /// Email
+                  // Required fields
+                  // Email
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: LabelTextInput(

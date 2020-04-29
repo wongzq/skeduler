@@ -18,7 +18,7 @@ class CreateGroup extends StatefulWidget {
 }
 
 class _CreateGroupState extends State<CreateGroup> {
-  /// properties
+  // properties
   bool _nameValid = false;
   bool _descValid = true;
 
@@ -30,7 +30,7 @@ class _CreateGroupState extends State<CreateGroup> {
   String _groupOwnerEmail;
   String _groupOwnerName;
 
-  /// methods
+  // methods
   @override
   Widget build(BuildContext context) {
     User owner = Provider.of<User>(context);
@@ -54,7 +54,7 @@ class _CreateGroupState extends State<CreateGroup> {
           style: textStyleAppBarTitle,
         ),
 
-        /// Icon: Tick to update
+        // Icon: Tick to update
         actions: <Widget>[
           FlatButton(
             child: Icon(
@@ -77,14 +77,14 @@ class _CreateGroupState extends State<CreateGroup> {
         ],
       ),
 
-      /// Body
+      // Body
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => unfocus(),
         child: Column(
           children: <Widget>[
-            /// Required fields
-            /// Name
+            // Required fields
+            // Name
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: LabelTextInput(
@@ -103,7 +103,7 @@ class _CreateGroupState extends State<CreateGroup> {
               ),
             ),
 
-            /// Description
+            // Description
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: LabelTextInput(
@@ -120,7 +120,7 @@ class _CreateGroupState extends State<CreateGroup> {
               ),
             ),
 
-            /// Color
+            // Color
             ColorSelector(
               valSetColorShade: (value) {
                 setState(() {
@@ -141,7 +141,7 @@ class _CreateGroupState extends State<CreateGroup> {
             ),
             SizedBox(height: 10.0),
 
-            /// Preview
+            // Preview
             GroupCard(
               groupName: _groupName,
               ownerName: _groupOwnerName,

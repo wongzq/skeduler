@@ -10,7 +10,7 @@ class CalendarEditor extends StatelessWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           scrollDirection: Axis.vertical,
           children: <Widget>[
-            /// Month Editor
+            // Month Editor
           ],
         );
       },

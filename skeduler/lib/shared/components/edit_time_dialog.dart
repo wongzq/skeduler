@@ -26,7 +26,7 @@ class EditTimeDialog extends StatefulWidget {
 }
 
 class _EditTimeDialogState extends State<EditTimeDialog> {
-  /// properties
+  // properties
   DateTime _startTime = DateTime(DateTime.now().year);
   DateTime _endTime = DateTime(DateTime.now().year);
   String _startTimeStr;
@@ -39,7 +39,7 @@ class _EditTimeDialogState extends State<EditTimeDialog> {
   double _centerWidth = 20.0;
   double _buttonHeight = 45.0;
 
-  /// validate time
+  // validate time
   void _validateTime() {
     if (_endTime.isAfter(_startTime)) {
       _validTime = true;
@@ -48,7 +48,7 @@ class _EditTimeDialogState extends State<EditTimeDialog> {
     }
   }
 
-  /// generate TimePicker widget for Start Time and End Time
+  // generate TimePicker widget for Start Time and End Time
   Widget generateTimePicker({bool start = false, bool end = false}) {
     if ((start && !end) || (!start && end)) {
       return Container(
@@ -188,12 +188,12 @@ class _EditTimeDialogState extends State<EditTimeDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          /// Button: Start Time
+          // Button: Start Time
           generateTimePicker(start: true),
 
           SizedBox(height: 10.0),
 
-          /// Button: End Time
+          // Button: End Time
           generateTimePicker(end: true),
         ],
       ),

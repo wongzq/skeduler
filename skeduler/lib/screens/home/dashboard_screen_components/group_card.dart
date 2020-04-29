@@ -28,7 +28,7 @@ class GroupCard extends StatelessWidget {
     return Container(
       child: Stack(
         children: <Widget>[
-          /// Header Section
+          // Header Section
           Padding(
             padding: const EdgeInsets.all(_padding),
             child: AnimatedContainer(
@@ -37,7 +37,7 @@ class GroupCard extends StatelessWidget {
               height: _dimension,
               width: _dimension,
               decoration: BoxDecoration(
-                /// color: Colors.white,
+                // color: Colors.white,
                 color: groupColor ??
                     getOriginThemeData(ThemeProvider.themeOf(context).id)
                         .primaryColor,
@@ -52,10 +52,10 @@ class GroupCard extends StatelessWidget {
               ),
               child: Stack(
                 children: <Widget>[
-                  /// Image: Group image
-                  /// Image.asset(''),
+                  // Image: Group image
+                  // Image.asset(''),
 
-                  /// Title: Group name
+                  // Title: Group name
                   Container(
                     height: _dimension * 0.65,
                     child: Align(
@@ -85,7 +85,7 @@ class GroupCard extends StatelessWidget {
                     ),
                   ),
 
-                  /// Container: Notifications
+                  // Container: Notifications
                   Visibility(
                     visible: hasNotification,
                     child: Align(
@@ -116,7 +116,7 @@ class GroupCard extends StatelessWidget {
             ),
           ),
 
-          /// Footer section
+          // Footer section
           Positioned(
             top: _dimension * 0.65 + _padding,
             right: _padding,
@@ -134,7 +134,7 @@ class GroupCard extends StatelessWidget {
                 padding: const EdgeInsets.all(_padding),
                 child: Stack(
                   children: <Widget>[
-                    /// Group admin
+                    // Group admin
                     Container(
                       padding: const EdgeInsets.only(bottom: 3.0),
                       width: (_dimension - 2 * _padding) * 0.7,
@@ -151,7 +151,7 @@ class GroupCard extends StatelessWidget {
                       ),
                     ),
 
-                    /// Group member count
+                    // Group member count
                     Align(
                       alignment: Alignment.bottomRight,
                       child: Container(

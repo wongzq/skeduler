@@ -1,5 +1,5 @@
 class AuthInfo {
-  /// properties
+  // properties
   bool nameValid = false;
   bool emailValid = false;
   bool passwordValid = false;

@@ -17,7 +17,7 @@ class User {
     _name = name;
   }
 
-  /// getter methods
+  // getter methods
   String get email => _email;
   String get name => _name;
 }

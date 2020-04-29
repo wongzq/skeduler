@@ -24,7 +24,7 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
       curve: Curves.easeOutCubic,
       animatedIcon: AnimatedIcons.menu_close,
 
-      /// Delete group
+      // Delete group
       children: <SpeedDialChild>[
         SpeedDialChild(
           backgroundColor: Colors.red,
@@ -97,7 +97,7 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
           elevation: 0,
         ),
 
-        /// Edit group information
+        // Edit group information
         SpeedDialChild(
           foregroundColor: getFABIconForegroundColor(context),
           backgroundColor: getFABIconBackgroundColor(context),
@@ -138,7 +138,7 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
           },
         ),
 
-        /// Add subject
+        // Add subject
         SpeedDialChild(
           foregroundColor: getFABIconForegroundColor(context),
           backgroundColor: getFABIconBackgroundColor(context),
@@ -264,7 +264,7 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
           },
         ),
 
-        /// Add member
+        // Add member
         SpeedDialChild(
           foregroundColor: getFABIconForegroundColor(context),
           backgroundColor: getFABIconBackgroundColor(context),

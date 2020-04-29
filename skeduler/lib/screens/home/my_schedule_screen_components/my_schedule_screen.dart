@@ -14,12 +14,12 @@ class MyScheduleScreen extends StatefulWidget {
 
 class _MyScheduleScreenState extends State<MyScheduleScreen>
     with TickerProviderStateMixin {
-  /// properties
+  // properties
 
   int _tabs = 2;
   TabController _tabController;
 
-  /// methods
+  // methods
   void _switchTab() {
     setState(() {});
   }

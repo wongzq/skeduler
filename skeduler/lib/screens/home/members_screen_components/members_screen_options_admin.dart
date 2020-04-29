@@ -24,7 +24,7 @@ class MembersScreenOptionsAdmin extends StatelessWidget {
             curve: Curves.easeOutCubic,
             animatedIcon: AnimatedIcons.menu_close,
 
-            /// Exit group
+            // Exit group
             children: <SpeedDialChild>[
               SpeedDialChild(
                 backgroundColor: Colors.red,
@@ -91,7 +91,7 @@ class MembersScreenOptionsAdmin extends StatelessWidget {
                 },
               ),
 
-              /// Add member
+              // Add member
               SpeedDialChild(
                 foregroundColor: getFABIconForegroundColor(context),
                 backgroundColor: getFABIconBackgroundColor(context),

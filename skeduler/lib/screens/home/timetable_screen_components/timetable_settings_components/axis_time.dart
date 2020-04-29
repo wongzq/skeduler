@@ -37,7 +37,7 @@ class _AxisTimeState extends State<AxisTime> {
           dense: true,
           title: Row(
             children: <Widget>[
-              /// Time slot start
+              // Time slot start
               Container(
                 padding: EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
@@ -54,13 +54,13 @@ class _AxisTimeState extends State<AxisTime> {
                 ),
               ),
 
-              /// to
+              // to
               Container(
                 padding: EdgeInsets.all(10.0),
                 child: Text('to'),
               ),
 
-              /// Time slot end
+              // Time slot end
               Container(
                 padding: EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
@@ -79,7 +79,7 @@ class _AxisTimeState extends State<AxisTime> {
             ],
           ),
 
-          /// Options
+          // Options
           trailing: PopupMenuButton(
             icon: Icon(Icons.more_vert),
             itemBuilder: (context) {
@@ -118,15 +118,15 @@ class _AxisTimeState extends State<AxisTime> {
                             });
                             tempTimes.add(Time(newStartTime, newEndTime));
 
-                            /// If no conflict in temporary, then edit in main
+                            // If no conflict in temporary, then edit in main
                             if (isConsecutiveTimes(tempTimes)) {
-                              /// Remove previous time slot
+                              // Remove previous time slot
                               _times.removeWhere((test) {
                                 return test.startTime == time.startTime &&
                                     test.endTime == time.endTime;
                               });
 
-                              /// Add new time slot
+                              // Add new time slot
                               _times.add(Time(newStartTime, newEndTime));
 
                               _times.sort((a, b) =>
@@ -139,7 +139,7 @@ class _AxisTimeState extends State<AxisTime> {
                               );
                             }
 
-                            /// Update through valueSetter
+                            // Update through valueSetter
                             if (widget.valSetTimes != null) {
                               widget.valSetTimes(_times);
                             }
@@ -188,13 +188,13 @@ class _AxisTimeState extends State<AxisTime> {
                               ),
                               onPressed: () {
                                 setState(() {
-                                  /// Remove time slot
+                                  // Remove time slot
                                   _times.removeWhere((test) {
                                     return test.startTime == time.startTime &&
                                         test.endTime == time.endTime;
                                   });
 
-                                  /// Update through valueSetter
+                                  // Update through valueSetter
                                   if (widget.valSetTimes != null) {
                                     widget.valSetTimes(_times);
                                   }
@@ -241,7 +241,7 @@ class _AxisTimeState extends State<AxisTime> {
                   List<Time> tempTimes = List<Time>.from(_times);
                   tempTimes.add(Time(newStartTime, newEndTime));
 
-                  /// If no conflict in temporary, then add to main
+                  // If no conflict in temporary, then add to main
                   if (isConsecutiveTimes(tempTimes)) {
                     _times.add(Time(newStartTime, newEndTime));
 

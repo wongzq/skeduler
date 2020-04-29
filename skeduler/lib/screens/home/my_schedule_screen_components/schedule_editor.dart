@@ -60,7 +60,7 @@ class ScheduleEditor extends StatelessWidget {
                 physics: const AlwaysScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 children: <Widget>[
-                  /// Month Editor
+                  // Month Editor
                   MonthEditor(
                     valSetMonths: (monthsSelected) {
                       _monthsSelected = monthsSelected;
@@ -70,7 +70,7 @@ class ScheduleEditor extends StatelessWidget {
                   ),
                   Divider(thickness: 1.0, height: editorsStatus.dividerHeight),
 
-                  /// Day Editor
+                  // Day Editor
                   DayEditor(
                     valSetWeekdays: (weekdaysSelected) {
                       _weekdaysSelected = weekdaysSelected;
@@ -81,7 +81,7 @@ class ScheduleEditor extends StatelessWidget {
                   ),
                   Divider(thickness: 1.0, height: editorsStatus.dividerHeight),
 
-                  /// Time Editor
+                  // Time Editor
                   TimeEditor(
                     valGetMonths: () => _monthsSelected,
                     valGetWeekdays: () => _weekdaysSelected,

@@ -12,40 +12,40 @@ enum Shade {
 }
 
 class ColorShade {
-  /// properties
+  // properties
   Color _color;
   String _themeId;
   Shade _shade;
 
-  /// constructors
+  // constructors
   ColorShade({
     Color color,
     String themeId,
     Shade shade,
   }) {
-    /// use [Color] to set the values for [String] and [Shade]
+    // use [Color] to set the values for [String] and [Shade]
     if (color != null && themeId == null && shade == null) {
       setWithColor(color);
     }
 
-    /// use [String] and [Shade] to set the value for [Color]
+    // use [String] and [Shade] to set the value for [Color]
     else if (color == null && themeId != null) {
       setWithThemeIdAndShade(themeId, shade);
     }
   }
 
-  /// getter methods
+  // getter methods
   Color get color => _color;
   String get themeId => _themeId;
   Shade get shade => _shade;
   int get shadeIndex => _shade.index;
 
-  /// setter methods
+  // setter methods
   set color(Color color) => setWithColor(color);
   set themeId(String themeId) => setWithThemeIdAndShade(themeId, _shade);
   set shade(Shade shade) => setWithThemeIdAndShade(_themeId, shade);
 
-  /// auxiliary methods
+  // auxiliary methods
   bool setWithColor(Color color) {
     if (themeIdFromColor(color) != null && themeIdFromColor(color) != '') {
       _color = color;

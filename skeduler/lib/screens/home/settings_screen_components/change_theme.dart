@@ -46,7 +46,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
       ),
       child: Column(
         children: <Widget>[
-          /// Switch: Dark mode
+          // Switch: Dark mode
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -76,7 +76,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
 
           SizedBox(height: 10.0),
 
-          /// Chip: Selected theme
+          // Chip: Selected theme
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -102,7 +102,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
             ],
           ),
 
-          /// ActionChips: Theme options
+          // ActionChips: Theme options
           Container(
             height: 70.0,
             child: FadingEdgeScrollView.fromScrollView(

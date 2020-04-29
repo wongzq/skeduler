@@ -16,10 +16,10 @@ class AxisCustomReoder extends StatefulWidget {
 }
 
 class _AxisCustomReoderState extends State<AxisCustomReoder> {
-  /// properties
+  // properties
   List<String> _customVals;
 
-  /// methods
+  // methods
   List<Widget> _generateCustoms(context) {
     List<Widget> customValWidgets = [];
 
@@ -92,7 +92,7 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                                       _customVals.insert(index, newCustom);
                                     });
 
-                                    /// update through valueSetter
+                                    // update through valueSetter
                                     if (widget.valSetAxisCustom != null) {
                                       widget.valSetAxisCustom(_customVals);
                                     }
@@ -109,7 +109,7 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                     case CustomOption.remove:
                       setState(() => _customVals.remove(custom));
 
-                      /// update through valueSetter
+                      // update through valueSetter
                       if (widget.valSetAxisCustom != null) {
                         widget.valSetAxisCustom(_customVals);
                       }
@@ -179,7 +179,7 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                               setState(() => widget.axisCustom.add(newCustom));
                             }
 
-                            /// update through valueSetter
+                            // update through valueSetter
                             if (widget.valSetAxisCustom != null) {
                               widget.valSetAxisCustom(widget.axisCustom);
                             }

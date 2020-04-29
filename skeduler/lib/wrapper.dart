@@ -39,7 +39,7 @@ class _WrapperState extends State<Wrapper> {
         false;
   }
 
-  /// Map of screens
+  // Map of screens
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthUser>(context);

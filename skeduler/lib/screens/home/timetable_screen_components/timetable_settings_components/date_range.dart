@@ -24,7 +24,7 @@ class DateRange extends StatefulWidget {
 }
 
 class _DateRangeState extends State<DateRange> {
-  /// properties
+  // properties
   DateTime _startDate;
   DateTime _endDate;
   String _startDateStr;
@@ -37,7 +37,7 @@ class _DateRangeState extends State<DateRange> {
   double _centerWidth = 20.0;
   double _buttonHeight = 45.0;
 
-  /// validate date
+  // validate date
   void _validateDate() {
     if (_startDate == null && _endDate == null) {
       _validDate = true;
@@ -52,7 +52,7 @@ class _DateRangeState extends State<DateRange> {
     }
   }
 
-  /// generate DatePicker widget for Start Date and End Date
+  // generate DatePicker widget for Start Date and End Date
   Widget generateDatePicker({bool start = false, bool end = false}) {
     if ((start && !end) || (!start && end)) {
       return Container(
@@ -226,7 +226,7 @@ class _DateRangeState extends State<DateRange> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        /// Button: Start Time
+        // Button: Start Time
         generateDatePicker(start: true),
 
         SizedBox(width: 5.0),
@@ -243,7 +243,7 @@ class _DateRangeState extends State<DateRange> {
         ),
         SizedBox(width: 5.0),
 
-        /// Button: End Time
+        // Button: End Time
         generateDatePicker(end: true),
       ],
     );

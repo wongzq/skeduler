@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:skeduler/models/group_data/group.dart';
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Route Arguments Template
+// Route Arguments Template
 ////////////////////////////////////////////////////////////////////////////////
 abstract class _RouteArgsTemplate {
-  /// properties
+  // properties
   Group _group;
   List<String> _axisCustom;
   void Function(List<String>) _valSetAxisCustom;
 
-  /// constructors
+  // constructors
   _RouteArgsTemplate();
 
   _RouteArgsTemplate.group(
@@ -24,7 +24,7 @@ abstract class _RouteArgsTemplate {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Route Arguments related classes
+// Route Arguments related classes
 ////////////////////////////////////////////////////////////////////////////////
 
 class RouteArgs extends _RouteArgsTemplate {

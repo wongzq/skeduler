@@ -5,7 +5,7 @@ import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_slots.dart';
 
 class TimetableGrid extends StatefulWidget {
-  /// constructors
+  // constructors
   TimetableGrid({
     Key key,
   }) : super(key: key);

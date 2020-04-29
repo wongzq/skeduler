@@ -58,7 +58,7 @@ class _EditGroupState extends State<EditGroup> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          /// Cancel changes
+          // Cancel changes
           FloatingActionButton(
             heroTag: 'Edit Group Cancel',
             backgroundColor: Colors.red,
@@ -73,7 +73,7 @@ class _EditGroupState extends State<EditGroup> {
 
           SizedBox(width: 20.0),
 
-          /// Confirm amd make changes
+          // Confirm amd make changes
           FloatingActionButton(
             heroTag: 'Edit Group Confirm',
             backgroundColor: Colors.green,
@@ -109,8 +109,8 @@ class _EditGroupState extends State<EditGroup> {
         onTap: () => unfocus(),
         child: Column(
           children: <Widget>[
-            /// Required fields
-            /// Name
+            // Required fields
+            // Name
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: LabelTextInput(
@@ -133,7 +133,7 @@ class _EditGroupState extends State<EditGroup> {
               ),
             ),
 
-            /// Description
+            // Description
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: LabelTextInput(
@@ -154,7 +154,7 @@ class _EditGroupState extends State<EditGroup> {
               ),
             ),
 
-            /// Color
+            // Color
             Provider<bool>.value(
               value: _expanded.value,
               child: ColorSelector(
@@ -190,7 +190,7 @@ class _EditGroupState extends State<EditGroup> {
                   ),
                   SizedBox(height: 10.0),
 
-                  /// Preview
+                  // Preview
                   GroupCard(
                     groupName: _groupName,
                     ownerName: _groupOwnerName,

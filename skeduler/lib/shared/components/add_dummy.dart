@@ -43,7 +43,7 @@ class _AddDummyState extends State<AddDummy> {
             floatingActionButton: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                /// Cancel changes
+                // Cancel changes
                 FloatingActionButton(
                   heroTag: 'Add Dummy Cancel',
                   backgroundColor: Colors.red,
@@ -58,7 +58,7 @@ class _AddDummyState extends State<AddDummy> {
 
                 SizedBox(width: 20.0),
 
-                /// Confirm amd make changes
+                // Confirm amd make changes
                 FloatingActionButton(
                   heroTag: 'Add Dummy Confirm',
                   backgroundColor: Colors.green,
@@ -98,8 +98,8 @@ class _AddDummyState extends State<AddDummy> {
               onTap: () => unfocus(),
               child: Column(
                 children: <Widget>[
-                  /// Required fields
-                  /// Email
+                  // Required fields
+                  // Email
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: LabelTextInput(

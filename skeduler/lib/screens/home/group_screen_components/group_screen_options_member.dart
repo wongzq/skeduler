@@ -21,7 +21,7 @@ class GroupScreenOptionsMember extends StatelessWidget {
       curve: Curves.easeOutCubic,
       animatedIcon: AnimatedIcons.menu_close,
 
-      /// Delete group
+      // Delete group
       children: <SpeedDialChild>[
         SpeedDialChild(
           backgroundColor: Colors.red,

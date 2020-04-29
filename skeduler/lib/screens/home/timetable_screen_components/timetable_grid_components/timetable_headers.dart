@@ -4,7 +4,7 @@ import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid_box.dart';
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Timetable Header X
+// Timetable Header X
 ////////////////////////////////////////////////////////////////////////////////
 
 class TimetableHeaderX extends StatelessWidget {
@@ -27,7 +27,7 @@ class TimetableHeaderX extends StatelessWidget {
         children: () {
           List<Widget> rows = [];
 
-          /// Add Switch button
+          // Add Switch button
           String display = 'Axis';
           rows.add(TimetableGridBox(
             gridBoxType: GridBoxType.switchBox,
@@ -53,7 +53,7 @@ class TimetableHeaderX extends StatelessWidget {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Timetable Header Y & Z
+// Timetable Header Y & Z
 ////////////////////////////////////////////////////////////////////////////////
 
 class TimetableHeaderYZ extends StatelessWidget {
@@ -95,7 +95,7 @@ class TimetableHeaderYZ extends StatelessWidget {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Timetable Header Y
+// Timetable Header Y
 ////////////////////////////////////////////////////////////////////////////////
 
 class TimetableHeaderY extends StatelessWidget {
@@ -123,7 +123,7 @@ class TimetableHeaderY extends StatelessWidget {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Timetable Header Z
+// Timetable Header Z
 ////////////////////////////////////////////////////////////////////////////////
 
 class TimetableHeaderZ extends StatelessWidget {

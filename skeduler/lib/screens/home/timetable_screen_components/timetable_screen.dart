@@ -69,7 +69,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                             itemBuilder: (BuildContext context) {
                               List<PopupMenuEntry> timetableOptions = [];
 
-                              /// Add timetables to options
+                              // Add timetables to options
                               groupStatus.group.timetableMetadatas.forEach((timetableDocId) {
                                 timetableOptions.add(PopupMenuItem(
                                   value: timetableDocId.id,
@@ -77,7 +77,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                 ));
                               });
 
-                              /// Add 'add timetable' button to options
+                              // Add 'add timetable' button to options
                               timetableOptions.add(PopupMenuItem(
                                 value: 0,
                                 child: Column(

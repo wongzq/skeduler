@@ -20,9 +20,9 @@ class MembersScreenOptionsOwner extends StatelessWidget {
             curve: Curves.easeOutCubic,
             animatedIcon: AnimatedIcons.menu_close,
 
-            /// Delete group
+            // Delete group
             children: <SpeedDialChild>[
-              /// Add member
+              // Add member
               SpeedDialChild(
                 foregroundColor: getFABIconForegroundColor(context),
                 backgroundColor: getFABIconBackgroundColor(context),
@@ -63,7 +63,7 @@ class MembersScreenOptionsOwner extends StatelessWidget {
                 },
               ),
 
-              /// Add member
+              // Add member
               SpeedDialChild(
                 foregroundColor: getFABIconForegroundColor(context),
                 backgroundColor: getFABIconBackgroundColor(context),

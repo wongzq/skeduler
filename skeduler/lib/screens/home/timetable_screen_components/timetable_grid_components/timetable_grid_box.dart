@@ -8,7 +8,7 @@ import 'package:theme_provider/theme_provider.dart';
 enum GridBoxType { header, content, switchBox, axisBox, placeholderBox }
 
 class TimetableGridBox extends StatefulWidget {
-  /// properties
+  // properties
   final GridBoxType gridBoxType;
   final String initialDisplay;
   final int flex;
@@ -19,7 +19,7 @@ class TimetableGridBox extends StatefulWidget {
   final TimetableAxes axes;
   final TimetableCoord coord;
 
-  /// constructors
+  // constructors
   const TimetableGridBox({
     Key key,
     @required this.gridBoxType,
@@ -37,7 +37,7 @@ class TimetableGridBox extends StatefulWidget {
 }
 
 class _TimetableGridBoxState extends State<TimetableGridBox> {
-  /// properties
+  // properties
   TimetableSlotData _slotData;
 
   TimetableStatus _ttbStatus;
@@ -48,7 +48,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   bool _isHovered = false;
   bool _showFootPrint = false;
 
-  /// methods
+  // methods
   Widget _buildGridBox(
     BoxConstraints constraints, {
     BoxConstraints shrinkConstraints,

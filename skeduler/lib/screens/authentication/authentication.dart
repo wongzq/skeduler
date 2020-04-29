@@ -17,7 +17,7 @@ class Authentication extends StatefulWidget {
 
 class _AuthenticationState extends State<Authentication>
     with TickerProviderStateMixin {
-  /// properties
+  // properties
   FocusScopeNode currentFocus;
 
   AuthInfo authInfoLogIn = AuthInfo();
@@ -30,7 +30,7 @@ class _AuthenticationState extends State<Authentication>
 
   bool loading = false;
 
-  /// methods
+  // methods
   void _switchTab() {
     WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
 
@@ -47,7 +47,7 @@ class _AuthenticationState extends State<Authentication>
     super.initState();
     _tabController = TabController(vsync: this, length: _tabs);
 
-    /// handle switch tab behaviour
+    // handle switch tab behaviour
     _tabController.addListener(_switchTab);
   }
 
@@ -72,12 +72,12 @@ class _AuthenticationState extends State<Authentication>
               ),
               backgroundColor: Colors.black,
 
-              /// Tab Bar
+              // Tab Bar
               bottom: TabBar(
                 controller: _tabController,
                 indicatorColor: Colors.white,
                 tabs: <Widget>[
-                  /// Tab 1: Log in
+                  // Tab 1: Log in
                   Tab(
                     text: null,
                     child: Text(
@@ -90,7 +90,7 @@ class _AuthenticationState extends State<Authentication>
                     ),
                   ),
 
-                  /// Tab 2: Sign up
+                  // Tab 2: Sign up
                   Tab(
                     text: null,
                     child: Text(
@@ -106,7 +106,7 @@ class _AuthenticationState extends State<Authentication>
               ),
             ),
 
-            /// Tab Bar View
+            // Tab Bar View
             body: TabBarView(
               controller: _tabController,
               children: <Widget>[
@@ -123,7 +123,7 @@ class _AuthenticationState extends State<Authentication>
           ),
         ),
 
-        /// Loading: display
+        // Loading: display
         Visibility(
           visible: loading,
           child: Loading(),

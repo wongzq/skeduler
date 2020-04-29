@@ -26,7 +26,7 @@ class MemberListTile extends StatelessWidget {
       return Container();
     }
 
-    /// If I am Member
+    // If I am Member
     else if (me.role == MemberRole.member) {
       return member.role == MemberRole.pending ||
               member.role == MemberRole.dummy
@@ -49,7 +49,7 @@ class MemberListTile extends StatelessWidget {
             );
     }
 
-    /// If I am Owner or Admin
+    // If I am Owner or Admin
     else if (me.role == MemberRole.owner || me.role == MemberRole.admin) {
       return Column(
         children: <Widget>[
@@ -66,7 +66,7 @@ class MemberListTile extends StatelessWidget {
                         icon: PopupMenuButton(
                           icon: Icon(Icons.more_vert),
                           itemBuilder: (BuildContext context) {
-                            /// If member is admin
+                            // If member is admin
                             if (member.role == MemberRole.admin) {
                               return [
                                 me.role == MemberRole.owner
@@ -106,7 +106,7 @@ class MemberListTile extends StatelessWidget {
                               ];
                             }
 
-                            /// If member is Pending
+                            // If member is Pending
                             else if (member.role == MemberRole.pending) {
                               return [
                                 PopupMenuItem(
@@ -116,7 +116,7 @@ class MemberListTile extends StatelessWidget {
                               ];
                             }
 
-                            /// If member is Dummy
+                            // If member is Dummy
                             else if (member.role == MemberRole.dummy) {
                               return [
                                 PopupMenuItem(
@@ -163,7 +163,7 @@ class MemberListTile extends StatelessWidget {
                                           ],
                                         ),
                                         actions: <Widget>[
-                                          /// CANCEL button
+                                          // CANCEL button
                                           FlatButton(
                                             child: Text('CANCEL'),
                                             onPressed: () {
@@ -171,7 +171,7 @@ class MemberListTile extends StatelessWidget {
                                             },
                                           ),
 
-                                          /// CONFIRM button
+                                          // CONFIRM button
                                           FlatButton(
                                             child: Text('CONFIRM'),
                                             onPressed: () async {

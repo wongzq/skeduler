@@ -4,7 +4,7 @@ import 'package:quiver/core.dart';
 import 'package:quiver/time.dart';
 
 class Time {
-  /// properties
+  // properties
   DateTime startTime;
   DateTime endTime;
 
@@ -136,20 +136,20 @@ List<Time> generateTimes({
 }) {
   List<Time> times = [];
 
-  /// iterate through each month
+  // iterate through each month
   for (int month = 0; month < months.length; month++) {
-    /// iterate through each day
+    // iterate through each day
     for (int day = 0;
         day < daysInMonth(DateTime.now().year, month + 1);
         day++) {
       DateTime newTime =
           DateTime(DateTime.now().year, months[month].index + 1, day);
 
-      /// iterate through each weekday
+      // iterate through each weekday
       for (int weekDay = 0; weekDay < weekDays.length; weekDay++) {
-        /// check if weekday matches
+        // check if weekday matches
         if (newTime.weekday == weekDays[weekDay].index + 1) {
-          /// create startDateTime
+          // create startDateTime
           DateTime newStartDateTime = DateTime(
             newTime.year,
             newTime.month,
@@ -158,7 +158,7 @@ List<Time> generateTimes({
             time.startTime.minute,
           );
 
-          /// create endDateTime
+          // create endDateTime
           DateTime newEndDateTime = DateTime(
             newTime.year,
             newTime.month,
@@ -213,20 +213,20 @@ List<Time> generateTimesRemoveSameDay(
   return timesRemoveSameDay;
 }
 
-/// auxiliary function to check if all [Time] in [List<Time>] is consecutive with no conflicts of time
+// auxiliary function to check if all [Time] in [List<Time>] is consecutive with no conflicts of time
 bool isConsecutiveTimes(List<Time> times) {
   bool isConsecutive = true;
 
-  /// sort the area in terms of startTime
+  // sort the area in terms of startTime
   times.sort((a, b) {
     return a.startTime.millisecondsSinceEpoch
         .compareTo(b.startTime.millisecondsSinceEpoch);
   });
 
-  /// loop through the array to find any conflict
+  // loop through the array to find any conflict
   for (int i = 0; i < times.length; i++) {
     if (i != 0) {
-      /// if conflict is found, returns [hasNoConflict] as [false]
+      // if conflict is found, returns [hasNoConflict] as [false]
       if (!(times[i - 1].startTime.isBefore(times[i].startTime) &&
           times[i - 1].endTime.isBefore(times[i].endTime) &&
           (times[i - 1].endTime.isBefore(times[i].startTime) ||

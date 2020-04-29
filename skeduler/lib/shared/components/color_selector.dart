@@ -6,13 +6,13 @@ import 'package:skeduler/shared/functions.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class ColorSelector extends StatefulWidget {
-  /// properties
+  // properties
   final bool initialExpanded;
   final ColorShade initialValue;
   final ValueSetter<bool> valSetExpanded;
   final ValueSetter<ColorShade> valSetColorShade;
 
-  /// constructors
+  // constructors
   const ColorSelector({
     this.initialExpanded = true,
     this.initialValue,
@@ -110,7 +110,7 @@ class _ColorSelectorState extends State<ColorSelector> {
           ),
         ),
         children: <Widget>[
-          /// ActionChips: Color options
+          // ActionChips: Color options
           Container(
             height: 70.0,
             child: FadingEdgeScrollView.fromScrollView(

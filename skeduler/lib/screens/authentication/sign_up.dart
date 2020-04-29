@@ -14,7 +14,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  /// properties
+  // properties
   final AuthService _authService = AuthService();
   final GlobalKey<FormState> _formKeyName = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKeyEmail = GlobalKey<FormState>();
@@ -23,14 +23,14 @@ class _SignUpState extends State<SignUp> {
   FocusScopeNode currentFocus;
   String _error = '';
 
-  /// methods
-  /// callback for setState()
+  // methods
+  // callback for setState()
   void refresh() => setState(() {});
 
-  /// build
+  // build
   @override
   Widget build(BuildContext context) {
-    /// get Authentication Info using provider
+    // get Authentication Info using provider
     final AuthInfo authInfo = Provider.of<AuthInfo>(context);
 
     return GestureDetector(
@@ -45,19 +45,19 @@ class _SignUpState extends State<SignUp> {
         ),
         child: Column(
           children: <Widget>[
-            /// Form: Name
+            // Form: Name
             FormName(formKeyName: _formKeyName, refresh: refresh),
             SizedBox(height: 20.0),
 
-            /// Form: Email
+            // Form: Email
             FormEmail(formKeyEmail: _formKeyEmail, refresh: refresh),
             SizedBox(height: 20.0),
 
-            /// Form: Password
+            // Form: Password
             FormPassword(formKeyPassword: _formKeyPassword, refresh: refresh),
             SizedBox(height: 20.0),
 
-            /// RaisedButton: Sign Up
+            // RaisedButton: Sign Up
             ButtonTheme(
               height: 50.0,
               minWidth: MediaQuery.of(context).size.width,
@@ -70,9 +70,9 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
 
-                /// Function: onPressed:
-                /// enable when email and password are valid
-                /// disable when email and password are invalid
+                // Function: onPressed:
+                // enable when email and password are valid
+                // disable when email and password are invalid
                 onPressed: authInfo.nameValid &&
                         authInfo.emailValid &&
                         authInfo.passwordValid
@@ -89,11 +89,11 @@ class _SignUpState extends State<SignUp> {
                             });
                           });
 
-                          /// check internet connection
+                          // check internet connection
                           bool hasConn = await checkInternetConnection();
                           
                           if (hasConn) {
-                            /// sign up with email and password
+                            // sign up with email and password
                             dynamic authResult =
                                 await _authService.signUpWithEmailAndPassword(
                               authInfo.email,
@@ -102,21 +102,21 @@ class _SignUpState extends State<SignUp> {
                             );
 
                             if (authResult == null) {
-                              /// display error message
+                              // display error message
                               setState(() {
                                 _error = 'Please provide a valid email';
                               });
                             } else {
-                              /// log in account and go to dashboard
+                              // log in account and go to dashboard
                             }
                           } else {
                             _error = 'Please check your internet connection';
                           }
 
-                          /// unfocus text form field
+                          // unfocus text form field
                           unfocus();
 
-                          /// remove loading screen
+                          // remove loading screen
                           Authentication.of(context).setState(() {
                             Authentication.of(context).loading = false;
                           });
@@ -124,7 +124,7 @@ class _SignUpState extends State<SignUp> {
                       }
                     : null,
 
-                /// Text: Log In
+                // Text: Log In
                 child: Text(
                   'Sign Up',
                   style: TextStyle(
@@ -140,7 +140,7 @@ class _SignUpState extends State<SignUp> {
             ),
             SizedBox(height: 20.0),
 
-            /// Text: Error message
+            // Text: Error message
             Text(
               _error,
               style: TextStyle(

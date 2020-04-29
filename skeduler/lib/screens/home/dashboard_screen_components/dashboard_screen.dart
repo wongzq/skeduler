@@ -13,10 +13,10 @@ import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class DashboardScreen extends StatelessWidget {
-  /// properties
+  // properties
   static const double _bodyPadding = 5.0;
 
-  /// methods
+  // methods
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
@@ -39,7 +39,7 @@ class DashboardScreen extends StatelessWidget {
         curve: Curves.easeOutCubic,
         child: Icon(Icons.add, size: 30.0),
 
-        /// Join button
+        // Join button
         children: <SpeedDialChild>[
           SpeedDialChild(
             foregroundColor: getFABIconForegroundColor(context),
@@ -76,7 +76,7 @@ class DashboardScreen extends StatelessWidget {
             onTap: () {},
           ),
 
-          /// Create button
+          // Create button
           SpeedDialChild(
             foregroundColor: getFABIconForegroundColor(context),
             backgroundColor: getFABIconBackgroundColor(context),
@@ -167,7 +167,7 @@ class DashboardScreen extends StatelessWidget {
                                                       'You have been invited to join ' +
                                                           group.name),
                                                   actions: <Widget>[
-                                                    /// DECLINE button
+                                                    // DECLINE button
                                                     FlatButton(
                                                       child: Text('DECLINE'),
                                                       onPressed: () async {
@@ -181,7 +181,7 @@ class DashboardScreen extends StatelessWidget {
                                                       },
                                                     ),
 
-                                                    /// ACCEPT button
+                                                    // ACCEPT button
                                                     FlatButton(
                                                       child: Text('ACCEPT'),
                                                       onPressed: () async {

@@ -11,14 +11,14 @@ import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/models/group_data/user.dart';
 
 class DatabaseService {
-  /// properties
+  // properties
   final String userId;
 
-  /// constructors method
+  // constructors method
   DatabaseService({this.userId});
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Collection References
+  // Collection References
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   final CollectionReference usersCollection =
@@ -27,20 +27,20 @@ class DatabaseService {
       Firestore.instance.collection('groups');
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Getter methods
+  // Getter methods
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// get [User] data as stream
+  // get [User] data as stream
   Stream<User> get user {
     return usersCollection.document(userId).snapshots().map(_userFromSnapshot);
   }
 
-  /// get ['users'] collection of [Group] as stream
+  // get ['users'] collection of [Group] as stream
   Stream<List<User>> get users {
     return usersCollection.snapshots().map(_usersFromSnapshots);
   }
 
-  /// get ['groups'] collection as stream
+  // get ['groups'] collection as stream
   Stream<List<Group>> get groups {
     return groupsCollection
         .where('members', arrayContains: userId)
@@ -48,7 +48,7 @@ class DatabaseService {
         .map(_groupsFromSnapshots);
   }
 
-  /// get [Group] data as stream
+  // get [Group] data as stream
   Stream<Group> getGroup(String groupDocId) {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
@@ -58,7 +58,7 @@ class DatabaseService {
             .map(_groupFromSnapshot);
   }
 
-  /// get [Group][Member] data of me as stream
+  // get [Group][Member] data of me as stream
   Stream<Member> getGroupMemberMyData(String groupDocId) {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
@@ -70,7 +70,7 @@ class DatabaseService {
             .map(_memberFromSnapshot);
   }
 
-  /// get [Group][Member]s' data as stream
+  // get [Group][Member]s' data as stream
   Stream<List<Member>> getGroupMembers(String groupDocId) {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
@@ -81,7 +81,7 @@ class DatabaseService {
             .map(_membersFromSnapshots);
   }
 
-  /// get [Group][Timetable] data
+  // get [Group][Timetable] data
   Future<Timetable> getGroupTimetable(
     String groupDocId,
     String timetableDocId,
@@ -101,7 +101,7 @@ class DatabaseService {
           });
   }
 
-  /// get [Group][Timetable] data of today as stream
+  // get [Group][Timetable] data of today as stream
   Stream<Timetable> getGroupTimetableForToday(
     String groupDocId,
     String timetableIdForToday,
@@ -120,18 +120,18 @@ class DatabaseService {
     String timetableIdForToday;
 
     return await groupsCollection.document(groupDocId).get().then((group) {
-      /// get timetable metadatas from group document's field value
+      // get timetable metadatas from group document's field value
       _timetableMetadatasFromDynamicList(group.data['timetables'] ?? [])
           .forEach((metadata) {
         if (
 
-            /// If startDate is before or equal to now
+            // If startDate is before or equal to now
             (metadata.startDate.toDate().isBefore(DateTime.now()) ||
                     metadata.startDate
                         .toDate()
                         .isAtSameMomentAs(DateTime.now())) &&
 
-                /// If endDate + 1 day is after or equal to now
+                // If endDate + 1 day is after or equal to now
                 (metadata.endDate
                         .toDate()
                         .add(Duration(days: 1))
@@ -147,17 +147,17 @@ class DatabaseService {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Setter methods
+  // Setter methods
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// set [User] data
+  // set [User] data
   Future setUserData(String email, String name) async {
     return await usersCollection.document(email).setData({
       'name': name,
     });
   }
 
-  /// set [Group] data
+  // set [Group] data
   Future setGroupData(
     String name,
     String description,
@@ -198,10 +198,10 @@ class DatabaseService {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Modifying methods for User
+  // Modifying methods for User
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// update [User] data
+  // update [User] data
   Future updateUserData({String name}) async {
     return await usersCollection.document(userId).updateData({
       'name': name,
@@ -209,10 +209,10 @@ class DatabaseService {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Modifying methods for Group
+  // Modifying methods for Group
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// update [Group] data
+  // update [Group] data
   Future updateGroupData(
     String groupDocId, {
     String name,
@@ -239,7 +239,7 @@ class DatabaseService {
     }
   }
 
-  /// Delete [Group]
+  // Delete [Group]
   Future deleteGroup(String groupDocId) async {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
@@ -257,10 +257,10 @@ class DatabaseService {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Modifying methods for Member
+  // Modifying methods for Member
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// add Dummy to [Group]
+  // add Dummy to [Group]
   Future<String> inviteDummyToGroup({
     @required String groupDocId,
     @required String newDummyName,
@@ -289,7 +289,7 @@ class DatabaseService {
     return errorMsg;
   }
 
-  /// add [Member] to [Group]
+  // add [Member] to [Group]
   Future<String> inviteMemberToGroup({
     @required String groupDocId,
     @required String newMemberEmail,
@@ -319,7 +319,7 @@ class DatabaseService {
     return errorMsg;
   }
 
-  /// remove [Member] from [Group]
+  // remove [Member] from [Group]
   Future removeMemberFromGroup({
     @required String groupDocId,
     @required String memberDocId,
@@ -335,7 +335,7 @@ class DatabaseService {
     });
   }
 
-  /// update [Member]'s role in group
+  // update [Member]'s role in group
   Future updateMemberRoleInGroup({
     @required String groupDocId,
     @required String memberDocId,
@@ -348,7 +348,7 @@ class DatabaseService {
         .updateData({'role': role.index});
   }
 
-  /// [Member] accepts [Group] invitation
+  // [Member] accepts [Group] invitation
   Future acceptGroupInvitation(String groupDocId) async {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
@@ -368,7 +368,7 @@ class DatabaseService {
           });
   }
 
-  /// [Member] declines [Group] invitation
+  // [Member] declines [Group] invitation
   Future declineGroupInvitation(String groupDocId) async {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
@@ -383,7 +383,7 @@ class DatabaseService {
           });
   }
 
-  /// [Member] leaves [Group]
+  // [Member] leaves [Group]
   Future leaveGroup(String groupDocId) async {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
@@ -406,7 +406,7 @@ class DatabaseService {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Modifying methods for Timetable
+  // Modifying methods for Timetable
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
   Future<String> addGroupSubject(String groupDocId, Subject newSubject) async {
@@ -565,10 +565,10 @@ class DatabaseService {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Modifying methods for Timetable
+  // Modifying methods for Timetable
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// update [Group][Timetable]'s data
+  // update [Group][Timetable]'s data
   Future updateGroupTimetable(
     String groupDocId,
     EditTimetable editTtb,
@@ -582,12 +582,12 @@ class DatabaseService {
             .document(editTtb.docId)
             .get()
             .then((timetable) async {
-            /// update timetable metadata to Group
+            // update timetable metadata to Group
             await groupsCollection
                 .document(groupDocId)
                 .get()
                 .then((group) async {
-              /// update field value
+              // update field value
               List<Map<String, dynamic>> timetableMetadatas =
                   _getUpdatedGroupTimetablesMetadatasAfterAdd(
                 timetablesSnapshot: group.data['timetables'] ?? [],
@@ -614,17 +614,17 @@ class DatabaseService {
           });
   }
 
-  /// get updated [Group]'s [timetablesSnapshot] after adding new [TimetableMetadata]
+  // get updated [Group]'s [timetablesSnapshot] after adding new [TimetableMetadata]
   List<Map<String, dynamic>> _getUpdatedGroupTimetablesMetadatasAfterAdd({
     List<dynamic> timetablesSnapshot = const [],
     TimetableMetadata newTimetableMetadata,
     TimetableMetadata oldTimetableMetadata,
   }) {
-    /// convert to [Lis<TimetableMetadata>]
+    // convert to [Lis<TimetableMetadata>]
     List<TimetableMetadata> timetableMetadatas =
         _timetableMetadatasFromDynamicList(timetablesSnapshot);
 
-    /// remove previous metadata
+    // remove previous metadata
     timetableMetadatas.removeWhere((meta) {
       if (oldTimetableMetadata != null) {
         return meta.id == oldTimetableMetadata.id;
@@ -633,7 +633,7 @@ class DatabaseService {
       }
     });
 
-    /// add new metadata
+    // add new metadata
     if (newTimetableMetadata != null) {
       timetableMetadatas.add(
         TimetableMetadata(
@@ -644,7 +644,7 @@ class DatabaseService {
       );
     }
 
-    /// update if timetable dates are consecutive
+    // update if timetable dates are consecutive
     if (isConsecutiveTimetables(timetableMetadatas)) {
       return List.generate(timetableMetadatas.length, (index) {
         return timetableMetadatas[index].asMap;
@@ -654,12 +654,12 @@ class DatabaseService {
     }
   }
 
-  /// get updated [Group]'s [timetablesSnapshot] after removing [TimetableMetadata]
+  // get updated [Group]'s [timetablesSnapshot] after removing [TimetableMetadata]
   List<Map<String, dynamic>> _getUpdatedGroupTimetablesMetadataAfterRemove({
     List<dynamic> timetablesSnapshot = const [],
     String timetableId = '',
   }) {
-    /// convert to [Lis<TimetableMetadata>]
+    // convert to [Lis<TimetableMetadata>]
     List<TimetableMetadata> timetableMetadatas =
         _timetableMetadatasFromDynamicList(timetablesSnapshot);
 
@@ -672,7 +672,7 @@ class DatabaseService {
     });
   }
 
-  /// update [Group][Timetable]'s documentID by cloning document with a new ID
+  // update [Group][Timetable]'s documentID by cloning document with a new ID
   Future<bool> updateGroupTimetableDocId(
     String groupDocId,
     TimetableMetadata oldTimetableMetadata,
@@ -686,8 +686,8 @@ class DatabaseService {
             .document(newTimetableMetadata.id)
             .get()
             .then((groupData) async {
-            /// If there is another timetable with the same ID
-            /// Then, it doesn't replace the pre-existing timetable
+            // If there is another timetable with the same ID
+            // Then, it doesn't replace the pre-existing timetable
             if (!groupData.exists) {
               await timetablesRef
                   .document(oldTimetableMetadata.id)
@@ -741,10 +741,10 @@ class DatabaseService {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Modifying methods for Times
+  // Modifying methods for Times
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// update [Group][Member]'s available schedule times
+  // update [Group][Member]'s available schedule times
   Future updateGroupMemberTimes(
     String groupDocId,
     String memberDocId,
@@ -767,21 +767,21 @@ class DatabaseService {
               List<Map<String, Timestamp>> timestamps = [];
 
               if (member.data['times'] != null) {
-                /// get previous times
+                // get previous times
                 prevTimes = _timesFromDynamicList(member.data['times']);
 
-                /// generate new times that overwrites previous times on the same day
+                // generate new times that overwrites previous times on the same day
                 timesRemoveSameDay =
                     generateTimesRemoveSameDay(prevTimes, newTimes);
 
-                /// remove previous times
+                // remove previous times
                 await groupsCollection
                     .document(groupDocId)
                     .collection('members')
                     .document(memberDocId)
                     .updateData({'times': FieldValue.delete()});
 
-                /// convert [List<Time>] into [List<Map<String, Timestamp>] to be stored in Firestore
+                // convert [List<Time>] into [List<Map<String, Timestamp>] to be stored in Firestore
                 timesRemoveSameDay.forEach((time) {
                   Timestamp startTimestamp = Timestamp.fromDate(time.startTime);
                   Timestamp endTimestamp = Timestamp.fromDate(time.endTime);
@@ -791,7 +791,7 @@ class DatabaseService {
                   });
                 });
               } else {
-                /// convert [List<Time>] into [List<Map<String, Timestamp>] to be stored in Firestore
+                // convert [List<Time>] into [List<Map<String, Timestamp>] to be stored in Firestore
                 newTimes.forEach((time) {
                   Timestamp startTimestamp = Timestamp.fromDate(time.startTime);
                   Timestamp endTimestamp = Timestamp.fromDate(time.endTime);
@@ -802,7 +802,7 @@ class DatabaseService {
                 });
               }
 
-              /// add new times to Firestore
+              // add new times to Firestore
               await groupsCollection
                   .document(groupDocId)
                   .collection('members')
@@ -812,7 +812,7 @@ class DatabaseService {
           });
   }
 
-  /// remove [Group][Member]'s available schedule times
+  // remove [Group][Member]'s available schedule times
   Future removeGroupMemberTimes(
     String groupDocId,
     String memberDocId,
@@ -838,7 +838,7 @@ class DatabaseService {
 
               for (int p = 0; p < prevTimes.length; p++) {
                 for (int r = 0; r < removeTimes.length; r++) {
-                  /// keep times with times on same day
+                  // keep times with times on same day
                   if ((prevTimes[p].startTime.year ==
                               removeTimes[r].startTime.year &&
                           prevTimes[p].startTime.month ==
@@ -851,13 +851,13 @@ class DatabaseService {
                               removeTimes[r].endTime.month &&
                           prevTimes[p].endTime.day ==
                               removeTimes[r].endTime.day)) {
-                    /// add to list
+                    // add to list
                     timesOnSameDay.add(prevTimes[p]);
                   }
                 }
               }
 
-              /// convert [List<Time>] to [List<Map<String, Timestamp>]
+              // convert [List<Time>] to [List<Map<String, Timestamp>]
               timesOnSameDay.forEach((time) {
                 Timestamp startTimestamp = Timestamp.fromDate(time.startTime);
                 Timestamp endTimestamp = Timestamp.fromDate(time.endTime);
@@ -878,10 +878,10 @@ class DatabaseService {
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
-  /// Auxiliary methods
+  // Auxiliary methods
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  /// convert snapshot to [User]
+  // convert snapshot to [User]
   User _userFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
         ? User(
@@ -891,7 +891,7 @@ class DatabaseService {
         : User();
   }
 
-  /// convert snapshot to [Group]
+  // convert snapshot to [Group]
   Group _groupFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
         ? Group(
@@ -913,7 +913,7 @@ class DatabaseService {
         : Group(docId: null);
   }
 
-  /// convert snapshot to [Member]
+  // convert snapshot to [Member]
   Member _memberFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
         ? Member(
@@ -931,7 +931,7 @@ class DatabaseService {
         : Member(email: null);
   }
 
-  /// convert snapshot to [Timetable]
+  // convert snapshot to [Timetable]
   Timetable _timetableFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
         ? Timetable(
@@ -948,22 +948,22 @@ class DatabaseService {
         : Timetable(docId: '');
   }
 
-  /// convert document snapshots into [User]s
+  // convert document snapshots into [User]s
   List<User> _usersFromSnapshots(QuerySnapshot query) {
     return query.documents.map(_userFromSnapshot).toList();
   }
 
-  /// convert document snapshots into [Group]s
+  // convert document snapshots into [Group]s
   List<Group> _groupsFromSnapshots(QuerySnapshot query) {
     return query.documents.map(_groupFromSnapshot).toList();
   }
 
-  /// convert document snapshots into [Member]s
+  // convert document snapshots into [Member]s
   List<Member> _membersFromSnapshots(QuerySnapshot query) {
     return query.documents.map(_memberFromSnapshot).toList();
   }
 
-  /// convert [List<dynamic>] into [List<TimetableMetadata]
+  // convert [List<dynamic>] into [List<TimetableMetadata]
   List<TimetableMetadata> _timetableMetadatasFromDynamicList(
       List<dynamic> timetables) {
     List<TimetableMetadata> timetableMetadatas = [];
@@ -982,7 +982,7 @@ class DatabaseService {
     return timetableMetadatas;
   }
 
-  /// convert [List<dynamic>] into [List<Weekday]
+  // convert [List<dynamic>] into [List<Weekday]
   List<Weekday> _weekdaysFromDynamicList(List<dynamic> weekdaysDynamic) {
     List<Weekday> weekdays = [];
 
@@ -991,7 +991,7 @@ class DatabaseService {
     return weekdays;
   }
 
-  /// convert [List<dynamic>] into [List<Time>]
+  // convert [List<dynamic>] into [List<Time>]
   List<Time> _timesFromDynamicList(List<dynamic> timesDynamic) {
     List<Time> times = [];
 
@@ -1008,7 +1008,7 @@ class DatabaseService {
     return times;
   }
 
-  /// convert [List<String>] into [List<String>]
+  // convert [List<String>] into [List<String>]
   List<String> _stringsFromDynamicList(List<dynamic> list) {
     List<String> listStr = [];
 
@@ -1031,7 +1031,7 @@ class DatabaseService {
     return subjects;
   }
 
-  /// convert [List<dynamic>] into [List<TimetableSlotData]
+  // convert [List<dynamic>] into [List<TimetableSlotData]
   TimetableSlotDataList _slotDataListFromDynamicList(List<dynamic> list) {
     List<TimetableSlotData> slotDataList = [];
 
