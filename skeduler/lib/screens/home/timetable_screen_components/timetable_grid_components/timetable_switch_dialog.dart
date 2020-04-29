@@ -5,15 +5,6 @@ import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid
 import 'package:skeduler/shared/ui_settings.dart';
 
 class TimetableSwitchDialog extends StatefulWidget {
-  final TimetableAxes initialAxes;
-  final ValueSetter<TimetableAxes> valSetAxes;
-
-  const TimetableSwitchDialog({
-    Key key,
-    @required this.initialAxes,
-    this.valSetAxes,
-  }) : super(key: key);
-
   @override
   _TimetableSwitchDialogState createState() => _TimetableSwitchDialogState();
 }

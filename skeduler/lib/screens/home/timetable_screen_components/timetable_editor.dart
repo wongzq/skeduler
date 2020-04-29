@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,10 +10,13 @@ import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/member_selector.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/subject_selector.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_display.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_switch_dialog.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+
+enum TimetableEditorOption { settings, switchAxis, save }
 
 class TimetableEditor extends StatefulWidget {
   @override
@@ -20,10 +24,13 @@ class TimetableEditor extends StatefulWidget {
 }
 
 class _TimetableEditorState extends State<TimetableEditor> {
-  BinVisibleBool binVisible = BinVisibleBool();
-  Color containerColor = Colors.black;
-  int animationDuration = 300;
-  Curve animationCurve = Curves.easeInCubic;
+  BinVisibleBool _binVisible = BinVisibleBool();
+  Color _containerColor = Colors.black;
+  int _animationDuration = 300;
+  Curve _animationCurve = Curves.easeInCubic;
+
+  bool _dragMember = true;
+  bool _dragSubject = true;
 
   @override
   Widget build(BuildContext context) {
@@ -66,51 +73,77 @@ class _TimetableEditorState extends State<TimetableEditor> {
                   ],
                 ),
           actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {
-                ttbStatus.temp = EditTimetable.copy(ttbStatus.perm);
-                Navigator.of(context).pushNamed(
-                  '/timetable/editor/settings',
-                  arguments: RouteArgs(),
-                );
+            PopupMenuButton<TimetableEditorOption>(
+              itemBuilder: (context) {
+                return [
+                  PopupMenuItem(
+                    value: TimetableEditorOption.settings,
+                    child: Text('Settings'),
+                  ),
+                  PopupMenuItem(
+                    value: TimetableEditorOption.switchAxis,
+                    child: Text('Switch axis'),
+                  ),
+                  PopupMenuItem(
+                    value: TimetableEditorOption.save,
+                    child: Text('Save'),
+                  ),
+                ];
+              },
+              onSelected: (value) async {
+                switch (value) {
+                  case TimetableEditorOption.settings:
+                    ttbStatus.temp = EditTimetable.copy(ttbStatus.perm);
+                    Navigator.of(context).pushNamed(
+                      '/timetable/editor/settings',
+                      arguments: RouteArgs(),
+                    );
+                    break;
+
+                  case TimetableEditorOption.switchAxis:
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return TimetableSwitchDialog();
+                        });
+                    break;
+
+                  case TimetableEditorOption.save:
+                    await dbService
+                        .updateGroupTimetable(
+                            groupStatus.group.docId, ttbStatus.perm)
+                        .then((_) {
+                      Fluttertoast.showToast(
+                        msg: 'Successfully saved timetable',
+                        toastLength: Toast.LENGTH_LONG,
+                      );
+                    }).catchError((_) {
+                      Fluttertoast.showToast(
+                        msg: 'Failed to save timetable',
+                        toastLength: Toast.LENGTH_LONG,
+                      );
+                    });
+                    break;
+
+                  default:
+                    break;
+                }
               },
             ),
           ],
         ),
         drawer: HomeDrawer(DrawerEnum.timetable),
-        floatingActionButton: FloatingActionButton(
-          heroTag: 'Timetable Editor Save',
-          foregroundColor: getFABIconForegroundColor(context),
-          backgroundColor: getFABIconBackgroundColor(context),
-          child: Icon(Icons.save),
-          onPressed: () async {
-            await dbService
-                .updateGroupTimetable(groupStatus.group.docId, ttbStatus.perm)
-                .then((_) {
-              Fluttertoast.showToast(
-                msg: 'Successfully saved timetable',
-                toastLength: Toast.LENGTH_LONG,
-              );
-            }).catchError((_) {
-              Fluttertoast.showToast(
-                msg: 'Failed to save timetable',
-                toastLength: Toast.LENGTH_LONG,
-              );
-            });
-          },
-        ),
         body: ttbStatus.perm == null || !ttbStatus.perm.isValid()
             ? Container()
             : SafeArea(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    double memberSelectorHeight = 150;
+                    double selectorHeight = 80;
                     double timetableDisplayHeight =
-                        constraints.maxHeight - memberSelectorHeight;
+                        constraints.maxHeight - selectorHeight * 2;
 
-                    return ChangeNotifierProvider<BinVisibleBool>(
-                      create: (_) => BinVisibleBool(),
+                    return ChangeNotifierProvider<BinVisibleBool>.value(
+                      value: _binVisible,
                       child: Stack(
                         children: <Widget>[
                           Container(
@@ -124,37 +157,138 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                   ),
                                 ),
                                 Container(
-                                  height: memberSelectorHeight,
-                                  child: MemberSelector(),
+                                  height: selectorHeight,
+                                  child: Stack(
+                                    children: <Widget>[
+                                      AbsorbPointer(
+                                        absorbing: !_dragMember,
+                                        child: Center(
+                                          child: MemberSelector(
+                                            activated: _dragMember,
+                                            additionalSpacing:
+                                                constraints.maxWidth / 5,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        height: selectorHeight,
+                                        width: constraints.maxWidth / 5,
+                                        right: 0.0,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.centerRight,
+                                              end: Alignment.centerLeft,
+                                              stops: [0.5, 0.8, 1],
+                                              colors: [
+                                                Theme.of(context)
+                                                    .scaffoldBackgroundColor,
+                                                Theme.of(context)
+                                                    .scaffoldBackgroundColor
+                                                    .withOpacity(0.8),
+                                                Theme.of(context)
+                                                    .scaffoldBackgroundColor
+                                                    .withOpacity(0),
+                                              ],
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Switch(
+                                              activeColor:
+                                                  Theme.of(context).accentColor,
+                                              value: _dragMember,
+                                              onChanged: (value) {
+                                                setState(
+                                                    () => _dragMember = value);
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  height: selectorHeight,
+                                  child: Stack(
+                                    children: <Widget>[
+                                      AbsorbPointer(
+                                        absorbing: !_dragSubject,
+                                        child: Center(
+                                          child: SubjectSelector(
+                                            activated: _dragSubject,
+                                            additionalSpacing:
+                                                constraints.maxWidth / 5,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        height: selectorHeight,
+                                        width: constraints.maxWidth / 5,
+                                        right: 0.0,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.centerRight,
+                                              end: Alignment.centerLeft,
+                                              stops: [0.5, 0.8, 1],
+                                              colors: [
+                                                Theme.of(context)
+                                                    .scaffoldBackgroundColor,
+                                                Theme.of(context)
+                                                    .scaffoldBackgroundColor
+                                                    .withOpacity(0.8),
+                                                Theme.of(context)
+                                                    .scaffoldBackgroundColor
+                                                    .withOpacity(0),
+                                              ],
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Switch(
+                                              activeColor:
+                                                  Theme.of(context).accentColor,
+                                              value: _dragSubject,
+                                              onChanged: (value) {
+                                                setState(
+                                                    () => _dragSubject = value);
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
                           Consumer<BinVisibleBool>(
-                            builder: (_, binVisible, __) {
+                            builder: (context, binVisible, _) {
                               return AnimatedPositioned(
                                 duration:
-                                    Duration(milliseconds: animationDuration),
-                                curve: animationCurve,
+                                    Duration(milliseconds: _animationDuration),
+                                curve: _animationCurve,
                                 top: binVisible.value
                                     ? timetableDisplayHeight
                                     : constraints.maxHeight,
                                 child: DragTarget<String>(
                                   onWillAccept: (val) {
-                                    containerColor = Colors.red;
+                                    _containerColor = Colors.red;
                                     return true;
                                   },
                                   onAccept: (_) =>
-                                      containerColor = Colors.black,
-                                  onLeave: (_) => containerColor = Colors.black,
+                                      _containerColor = Colors.black,
+                                  onLeave: (_) =>
+                                      _containerColor = Colors.black,
                                   builder: (_, __, ___) {
                                     return AnimatedContainer(
                                       duration: Duration(
-                                          milliseconds: animationDuration),
-                                      curve: animationCurve,
+                                          milliseconds: _animationDuration),
+                                      curve: _animationCurve,
                                       alignment: Alignment.bottomCenter,
                                       height: binVisible.value
-                                          ? memberSelectorHeight
+                                          ? selectorHeight * 2
                                           : 0,
                                       width: constraints.maxWidth,
                                       decoration: BoxDecoration(
@@ -162,7 +296,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                           begin: Alignment.bottomCenter,
                                           end: Alignment.topCenter,
                                           colors: [
-                                            containerColor,
+                                            _containerColor,
                                             Colors.transparent
                                           ],
                                         ),
@@ -171,9 +305,9 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                         padding: EdgeInsets.all(20.0),
                                         child: AnimatedCrossFade(
                                           duration: Duration(
-                                              milliseconds: animationDuration),
-                                          firstCurve: animationCurve,
-                                          secondCurve: animationCurve,
+                                              milliseconds: _animationDuration),
+                                          firstCurve: _animationCurve,
+                                          secondCurve: _animationCurve,
                                           crossFadeState: binVisible.value
                                               ? CrossFadeState.showFirst
                                               : CrossFadeState.showSecond,
@@ -193,7 +327,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                 ),
                               );
                             },
-                          ),
+                          )
                         ],
                       ),
                     );

@@ -145,9 +145,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
       onTap: () => showDialog(
         context: context,
         builder: (context) {
-          return TimetableSwitchDialog(
-            initialAxes: widget.axes,
-          );
+          return TimetableSwitchDialog();
         },
       ),
       child: Padding(

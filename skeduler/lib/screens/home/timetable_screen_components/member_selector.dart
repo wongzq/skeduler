@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
@@ -13,6 +14,15 @@ class MemberSelector extends StatelessWidget {
   final double _chipLabelHoriPadding = 5;
   final double _chipLabelVertPadding = 5;
 
+  final bool activated;
+  final double additionalSpacing;
+
+  const MemberSelector({
+    Key key,
+    this.activated = true,
+    this.additionalSpacing = 0,
+  }) : super(key: key);
+
   Widget _buildMaterialActionChip(Member member, double chipWidth) {
     return Material(
       color: Colors.transparent,
@@ -20,7 +30,7 @@ class MemberSelector extends StatelessWidget {
         backgroundColor: member.colorShade != null
             ? getColorFromColorShade(member.colorShade)
             : null,
-        elevation: 3.0,
+        elevation: activated ? 3.0 : 0.0,
         labelPadding: EdgeInsets.symmetric(
           horizontal: _chipLabelHoriPadding,
           vertical: _chipLabelVertPadding,
@@ -30,6 +40,7 @@ class MemberSelector extends StatelessWidget {
           child: Text(
             member.display,
             textAlign: TextAlign.center,
+            style: activated ? null : TextStyle(color: Colors.grey),
           ),
         ),
         onPressed: () {},
@@ -66,24 +77,30 @@ class MemberSelector extends StatelessWidget {
                 ),
                 scrollDirection: Axis.horizontal,
                 controller: controller,
-                itemCount: members.length,
+                itemCount: members.length + 1,
                 itemBuilder: (BuildContext context, int index) {
-                  return Visibility(
-                    child: Padding(
-                      padding: EdgeInsets.all(_chipPadding + _chipPaddingExtra),
-                      child: Wrap(
-                        children: [
-                          LongPressDraggable<String>(
-                            data: members[index].display,
-                            feedback: _buildMaterialActionChip(
-                                members[index], _chipWidth),
-                            child: _buildMaterialActionChip(
-                                members[index], _chipWidth),
+                  return index == members.length
+                      ? Container(
+                          height: 1,
+                          width: additionalSpacing,
+                        )
+                      : Padding(
+                          padding:
+                              EdgeInsets.all(_chipPadding + _chipPaddingExtra),
+                          child: Center(
+                            child: Wrap(
+                              children: [
+                                LongPressDraggable<String>(
+                                  data: members[index].display,
+                                  feedback: _buildMaterialActionChip(
+                                      members[index], _chipWidth),
+                                  child: _buildMaterialActionChip(
+                                      members[index], _chipWidth),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  );
+                        );
                 },
               ),
             ),
