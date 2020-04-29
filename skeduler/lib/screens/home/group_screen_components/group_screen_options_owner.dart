@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
+import 'package:skeduler/models/group_data/subject.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 
@@ -166,7 +168,7 @@ class GroupScreenOptionsOwner extends StatelessWidget {
           foregroundColor: getFABIconForegroundColor(context),
           backgroundColor: getFABIconBackgroundColor(context),
           child: Icon(
-            Icons.school,
+            Icons.class_,
             size: 30.0,
           ),
           labelWidget: Container(
@@ -194,7 +196,97 @@ class GroupScreenOptionsOwner extends StatelessWidget {
               ),
             ),
           ),
-          onTap: () {},
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (dialogContext) {
+                GlobalKey<FormState> formKey = GlobalKey<FormState>();
+                String newSubjectName;
+                String newSubjectNickname;
+
+                return AlertDialog(
+                  title: Text(
+                    'New subject',
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  content: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        TextFormField(
+                          decoration: InputDecoration(
+                            hintText: 'Subject short form (optional)',
+                            hintStyle: TextStyle(
+                              fontSize: 15.0,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          onChanged: (value) =>
+                              newSubjectNickname = value.trim(),
+                          validator: (value) => null,
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            hintText: 'Subject full name',
+                            hintStyle: TextStyle(
+                              fontSize: 15.0,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          onChanged: (value) => newSubjectName = value.trim(),
+                          validator: (value) =>
+                              value == null || value.trim() == ''
+                                  ? 'Subject name cannot be empty'
+                                  : null,
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('CANCEL'),
+                      onPressed: () => Navigator.of(dialogContext).maybePop(),
+                    ),
+                    FlatButton(
+                      child: Text('SAVE'),
+                      onPressed: () async {
+                        if (formKey.currentState.validate()) {
+                          Navigator.of(dialogContext).maybePop();
+
+                          groupStatus.group.subjects.add(Subject(
+                            name: newSubjectName,
+                            nickname: newSubjectNickname,
+                          ));
+
+                          await dbService
+                              .addGroupSubject(
+                                  groupStatus.group.docId,
+                                  Subject(
+                                    name: newSubjectName,
+                                    nickname: newSubjectNickname,
+                                  ))
+                              .then((returnMsg) {
+                            Navigator.of(context)
+                                .pushNamed('/subjects', arguments: RouteArgs());
+                            Fluttertoast.showToast(
+                              msg: returnMsg,
+                              toastLength: Toast.LENGTH_LONG,
+                            );
+                          });
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: 'Failed to update subjects',
+                            toastLength: Toast.LENGTH_LONG,
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         ),
 
         /// Add member

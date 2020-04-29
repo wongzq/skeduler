@@ -33,7 +33,8 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
           subject: subject,
           valSetIsUpdating: (value) {
             setState(() {
-              _tempSubjects = value ? List.from(_groupStatus.group.subjects) : [];
+              _tempSubjects =
+                  value ? List.from(_groupStatus.group.subjects) : [];
               if (value == false) _groupStatus.hasChanges = false;
               _isUpdating = value;
             });
@@ -47,7 +48,8 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
           subject: subject,
           valSetIsUpdating: (value) {
             setState(() {
-              _tempSubjects = value ? List.from(_groupStatus.group.subjects) : [];
+              _tempSubjects =
+                  value ? List.from(_groupStatus.group.subjects) : [];
               if (value == false) _groupStatus.hasChanges = false;
               _isUpdating = value;
             });
@@ -104,7 +106,8 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                         _tempSubjects = List.from(_groupStatus.group.subjects);
                       });
                       if (await dbService.updateGroupSubjects(
-                          _groupStatus.group.docId, _groupStatus.group.subjects)) {
+                          _groupStatus.group.docId,
+                          _groupStatus.group.subjects)) {
                         _groupStatus.hasChanges = false;
                         Fluttertoast.showToast(
                           msg: 'Successfully updated subjects',
@@ -190,35 +193,44 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
 
                                   _tempSubjects =
                                       List.from(_groupStatus.group.subjects);
+
                                   setState(() => _isUpdating = true);
 
-                                  _groupStatus.group.subjects.add(Subject(
-                                    name: newSubjectName,
-                                    nickname: newSubjectNickname,
-                                  ));
-
-                                  await dbService.updateGroupSubjects(
+                                  await dbService
+                                      .updateGroupSubjects(
                                     _groupStatus.group.docId,
                                     _groupStatus.group.subjects,
-                                  );
+                                  )
+                                      .then((value) async {
+                                    if (value) {
+                                      _groupStatus.group.subjects.add(Subject(
+                                        name: newSubjectName,
+                                        nickname: newSubjectNickname,
+                                      ));
 
-                                  setState(() {
-                                    _isUpdating = false;
-                                    _groupStatus.hasChanges = false;
+                                      String returnMsg =
+                                          await dbService.addGroupSubject(
+                                              _groupStatus.group.docId,
+                                              Subject(
+                                                name: newSubjectName,
+                                                nickname: newSubjectNickname,
+                                              ));
+
+                                      setState(() {
+                                        _isUpdating = false;
+                                        _groupStatus.hasChanges = false;
+                                      });
+                                      Fluttertoast.showToast(
+                                        msg: returnMsg,
+                                        toastLength: Toast.LENGTH_LONG,
+                                      );
+                                    } else {
+                                      Fluttertoast.showToast(
+                                        msg: 'Failed to update subjects',
+                                        toastLength: Toast.LENGTH_LONG,
+                                      );
+                                    }
                                   });
-
-                                  String returnMsg =
-                                      await dbService.addGroupSubject(
-                                          _groupStatus.group.docId,
-                                          Subject(
-                                            name: newSubjectName,
-                                            nickname: newSubjectNickname,
-                                          ));
-
-                                  Fluttertoast.showToast(
-                                    msg: returnMsg,
-                                    toastLength: Toast.LENGTH_LONG,
-                                  );
                                 }
                               },
                             ),
