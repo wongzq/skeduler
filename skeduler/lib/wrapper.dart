@@ -3,6 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/screens/authentication/authentication.dart';
 
+Widget wrapWidget(Widget widget) {
+  return Wrapper(widget);
+}
+
 class Wrapper extends StatefulWidget {
   final Widget widget;
 

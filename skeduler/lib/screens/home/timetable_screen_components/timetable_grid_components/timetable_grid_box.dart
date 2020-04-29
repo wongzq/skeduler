@@ -79,7 +79,9 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     break;
                   case GridBoxType.content:
                     color = _slotData.memberDisplay == null
-                        ? Colors.grey
+                        ? Theme.of(context).brightness == Brightness.light
+                            ? Colors.grey[400]
+                            : Colors.grey
                         : getOriginThemeData(themeId).primaryColorLight;
                     break;
                   case GridBoxType.switchBox:
@@ -99,7 +101,6 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     ? color.withOpacity(0.5)
                     : color;
               }(),
-              boxShadow: [BoxShadow(offset: Offset(0.0, 0.5), blurRadius: 0.1)],
             ),
             child: Text(
               widget.gridBoxType == GridBoxType.axisBox
@@ -123,13 +124,12 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                       : widget.initialDisplay ?? '',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: widget.gridBoxType == GridBoxType.header ||
-                          widget.gridBoxType == GridBoxType.switchBox
-                      ? getOriginThemeData(ThemeProvider.themeOf(context).id)
+                  color: widget.gridBoxType == GridBoxType.content
+                      ? Colors.black
+                      : getOriginThemeData(ThemeProvider.themeOf(context).id)
                           .primaryTextTheme
                           .title
-                          .color
-                      : Colors.black,
+                          .color,
                   fontSize: 10.0),
               maxLines: widget.textOverFlowFade ? 1 : null,
               overflow: widget.textOverFlowFade ? TextOverflow.fade : null,

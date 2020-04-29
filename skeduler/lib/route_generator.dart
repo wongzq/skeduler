@@ -30,75 +30,87 @@ class RouteGenerator {
     switch (settings.name) {
       case '/dashboard':
         if (args is RouteArgs) {
-          return CustomTransitionRoute(page: wrapWidget(DashboardScreen()));
+          return CustomTransitionRoute.fadeScale(
+              page: wrapWidget(DashboardScreen()));
         } else if (args == null) {
-          return CustomTransitionRoute(page: wrapWidget(DashboardScreen()));
+          return CustomTransitionRoute.fadeScale(
+              page: wrapWidget(DashboardScreen()));
         }
         break;
 
       case '/dashboard/createGroup':
         if (args is RouteArgs) {
-          return CustomTransitionRoute(page: wrapWidget(CreateGroup()));
+          return CustomTransitionRoute.fadeSlideRight(
+              page: wrapWidget(CreateGroup()));
         }
         break;
 
       case '/group':
         if (args is RouteArgs) {
-          return CustomTransitionRoute(page: wrapWidget(GroupScreen()));
+          return CustomTransitionRoute.fadeScale(
+              page: wrapWidget(GroupScreen()));
         }
         break;
 
       case '/group/edit':
         if (args is RouteArgsGroup) {
-          return CustomTransitionRoute(page: wrapWidget(EditGroup(args.group)));
+          return CustomTransitionRoute.fadeSlideRight(
+              page: wrapWidget(EditGroup(args.group)));
         }
         break;
 
       case '/group/addMember':
         if (args is RouteArgs) {
-          return CustomTransitionRoute(page: wrapWidget(AddMember()));
+          return CustomTransitionRoute.fadeSlideRight(
+              page: wrapWidget(AddMember()));
         }
         break;
 
       case '/group/addDummy':
         if (args is RouteArgs) {
-          return CustomTransitionRoute(page: wrapWidget(AddDummy()));
+          return CustomTransitionRoute.fadeSlideRight(
+              page: wrapWidget(AddDummy()));
         }
         break;
 
       case '/members':
         if (args is RouteArgs) {
-          return CustomTransitionRoute(page: wrapWidget(MembersScreen()));
+          return CustomTransitionRoute.fadeScale(
+              page: wrapWidget(MembersScreen()));
         }
         break;
 
       case '/subjects':
         if (args is RouteArgs) {
-          return CustomTransitionRoute(page: wrapWidget(SubjectsScreen()));
+          return CustomTransitionRoute.fadeScale(
+              page: wrapWidget(SubjectsScreen()));
         }
         break;
 
       case '/timetable':
         if (args is RouteArgs) {
-          return CustomTransitionRoute(page: wrapWidget(TimetableScreen()));
+          return CustomTransitionRoute.fadeScale(
+              page: wrapWidget(TimetableScreen()));
         }
         break;
 
       case '/timetable/editor':
         if (args is RouteArgs) {
-          return CustomTransitionRoute(page: wrapWidget(TimetableEditor()));
+          return CustomTransitionRoute.fadeSlideRight(
+              page: wrapWidget(TimetableEditor()));
         }
         break;
 
       case '/timetable/editor/settings':
         if (args is RouteArgs) {
-          return CustomTransitionRoute(page: wrapWidget(TimetableSettings()));
+          return CustomTransitionRoute.fadeSlideRight(
+              page: wrapWidget(TimetableSettings()));
         }
         break;
 
       case '/timetable/editor/settings/reorderAxisCustom':
         if (args is RouteArgsReorderAxisCustom) {
-          return CustomTransitionRoute(
+          return CustomTransitionRoute.fadeSlideRight(
             page: wrapWidget(
               AxisCustomReoder(
                 axisCustom: args.axisCustom,
@@ -111,19 +123,22 @@ class RouteGenerator {
 
       case '/mySchedule':
         if (args is RouteArgs) {
-          return CustomTransitionRoute(page: wrapWidget(MyScheduleScreen()));
+          return CustomTransitionRoute.fadeScale(
+              page: wrapWidget(MyScheduleScreen()));
         }
         break;
 
       case '/mySchedule/scheduleEditor':
         if (args is RouteArgs) {
-          return CustomTransitionRoute(page: wrapWidget(ScheduleEditor()));
+          return CustomTransitionRoute.fadeSlideRight(
+              page: wrapWidget(ScheduleEditor()));
         }
         break;
 
       case '/settings':
         if (args is RouteArgs) {
-          return CustomTransitionRoute(page: wrapWidget(SettingsScreen()));
+          return CustomTransitionRoute.fadeScale(
+              page: wrapWidget(SettingsScreen()));
         }
         break;
 
@@ -131,9 +146,5 @@ class RouteGenerator {
         return null;
     }
     return null;
-  }
-
-  static Widget wrapWidget(Widget widget) {
-    return Wrapper(widget);
   }
 }

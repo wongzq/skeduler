@@ -28,7 +28,7 @@ class TimetableHeaderX extends StatelessWidget {
           List<Widget> rows = [];
 
           /// Add Switch button
-          String display = 'SWITCH';
+          String display = 'EDIT AXIS';
           rows.add(TimetableGridBox(
             gridBoxType: GridBoxType.switchBox,
             initialDisplay: display,
