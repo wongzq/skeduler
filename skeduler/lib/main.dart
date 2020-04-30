@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';

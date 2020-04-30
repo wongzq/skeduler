@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_headers.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_slots.dart';
@@ -18,32 +19,35 @@ class _TimetableGridState extends State<TimetableGrid> {
   @override
   Widget build(BuildContext context) {
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
-    EditModeBool _editMode = Provider.of<EditModeBool>(context);
+    TimetableEditMode _editMode = Provider.of<TimetableEditMode>(context);
     TimetableAxes _axes = Provider.of<TimetableAxes>(context);
 
     TimetableAxis _day = TimetableAxis(
       type: TimetableAxisType.day,
-      list: _editMode.value ? ttbStatus.perm.axisDay : ttbStatus.curr.axisDay,
-      listStr: _editMode.value
-          ? ttbStatus.perm.axisDayShortStr
+      list:
+          _editMode.editMode ? ttbStatus.edit.axisDay : ttbStatus.curr.axisDay,
+      listStr: _editMode.editMode
+          ? ttbStatus.edit.axisDayShortStr
           : ttbStatus.curr.axisDayShortStr,
     );
 
     TimetableAxis _time = TimetableAxis(
       type: TimetableAxisType.time,
-      list: _editMode.value ? ttbStatus.perm.axisTime : ttbStatus.curr.axisTime,
-      listStr: _editMode.value
-          ? ttbStatus.perm.axisTimeStr
+      list: _editMode.editMode
+          ? ttbStatus.edit.axisTime
+          : ttbStatus.curr.axisTime,
+      listStr: _editMode.editMode
+          ? ttbStatus.edit.axisTimeStr
           : ttbStatus.curr.axisTimeStr,
     );
 
     TimetableAxis _custom = TimetableAxis(
       type: TimetableAxisType.custom,
-      list: _editMode.value
-          ? ttbStatus.perm.axisCustom
+      list: _editMode.editMode
+          ? ttbStatus.edit.axisCustom
           : ttbStatus.curr.axisCustom,
-      listStr: _editMode.value
-          ? ttbStatus.perm.axisCustom
+      listStr: _editMode.editMode
+          ? ttbStatus.edit.axisCustom
           : ttbStatus.curr.axisCustom,
     );
 

@@ -18,9 +18,9 @@ import 'package:skeduler/shared/components/add_dummy.dart';
 import 'package:skeduler/shared/components/add_member.dart';
 import 'package:skeduler/shared/components/custom_transition_route.dart';
 
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 // Route Generator class
-////////////////////////////////////////////////////////////////////////////////
+// --------------------------------------------------------------------------------
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {

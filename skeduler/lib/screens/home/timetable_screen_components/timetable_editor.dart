@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
@@ -24,13 +25,12 @@ class TimetableEditor extends StatefulWidget {
 }
 
 class _TimetableEditorState extends State<TimetableEditor> {
-  BinVisibleBool _binVisible = BinVisibleBool();
+  TimetableEditorBinVisible _binVisible = TimetableEditorBinVisible();
   Color _containerColor = Colors.black;
   int _animationDuration = 300;
   Curve _animationCurve = Curves.easeInCubic;
 
-  bool _dragMember = true;
-  bool _dragSubject = true;
+  TimetableEditMode _editMode = TimetableEditMode(editMode: true);
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +51,10 @@ class _TimetableEditorState extends State<TimetableEditor> {
                 Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
               ),
               onPressed: () {
-                ttbStatus.perm = null;
+                ttbStatus.edit = null;
                 Navigator.of(context).maybePop();
               }),
-          title: ttbStatus.perm == null
+          title: ttbStatus.edit == null
               ? Text(
                   'Timetable Editor',
                   style: textStyleAppBarTitle,
@@ -63,7 +63,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      ttbStatus.perm.docId ?? '',
+                      ttbStatus.edit.docId ?? '',
                       style: textStyleAppBarTitle,
                     ),
                     Text(
@@ -86,14 +86,21 @@ class _TimetableEditorState extends State<TimetableEditor> {
                   ),
                   PopupMenuItem(
                     value: TimetableEditorOption.save,
-                    child: Text('Save'),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Divider(height: 1.0),
+                        SizedBox(height: 15),
+                        Text('Save'),
+                      ],
+                    ),
                   ),
                 ];
               },
               onSelected: (value) async {
                 switch (value) {
                   case TimetableEditorOption.settings:
-                    ttbStatus.temp = EditTimetable.copy(ttbStatus.perm);
+                    ttbStatus.editTemp = EditTimetable.copy(ttbStatus.edit);
                     Navigator.of(context).pushNamed(
                       '/timetable/editor/settings',
                       arguments: RouteArgs(),
@@ -111,7 +118,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                   case TimetableEditorOption.save:
                     await dbService
                         .updateGroupTimetable(
-                            groupStatus.group.docId, ttbStatus.perm)
+                            groupStatus.group.docId, ttbStatus.edit)
                         .then((_) {
                       Fluttertoast.showToast(
                         msg: 'Successfully saved timetable',
@@ -133,7 +140,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
           ],
         ),
         drawer: HomeDrawer(DrawerEnum.timetable),
-        body: ttbStatus.perm == null || !ttbStatus.perm.isValid()
+        body: ttbStatus.edit == null || !ttbStatus.edit.isValid()
             ? Container()
             : SafeArea(
                 child: LayoutBuilder(
@@ -142,7 +149,8 @@ class _TimetableEditorState extends State<TimetableEditor> {
                     double timetableDisplayHeight =
                         constraints.maxHeight - selectorHeight * 2;
 
-                    return ChangeNotifierProvider<BinVisibleBool>.value(
+                    return ChangeNotifierProvider<
+                        TimetableEditorBinVisible>.value(
                       value: _binVisible,
                       child: Stack(
                         children: <Widget>[
@@ -153,7 +161,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                 Container(
                                   height: timetableDisplayHeight,
                                   child: TimetableDisplay(
-                                    editMode: true,
+                                    editMode: _editMode,
                                   ),
                                 ),
                                 Container(
@@ -161,10 +169,10 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                   child: Stack(
                                     children: <Widget>[
                                       AbsorbPointer(
-                                        absorbing: !_dragMember,
+                                        absorbing: !_editMode.dragSubject,
                                         child: Center(
-                                          child: MemberSelector(
-                                            activated: _dragMember,
+                                          child: SubjectSelector(
+                                            activated: _editMode.dragSubject,
                                             additionalSpacing:
                                                 constraints.maxWidth / 5,
                                           ),
@@ -196,10 +204,10 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                             child: Switch(
                                               activeColor:
                                                   Theme.of(context).accentColor,
-                                              value: _dragMember,
+                                              value: _editMode.dragSubject,
                                               onChanged: (value) {
-                                                setState(
-                                                    () => _dragMember = value);
+                                                setState(() => _editMode
+                                                    .dragSubject = value);
                                               },
                                             ),
                                           ),
@@ -213,10 +221,10 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                   child: Stack(
                                     children: <Widget>[
                                       AbsorbPointer(
-                                        absorbing: !_dragSubject,
+                                        absorbing: !_editMode.dragMember,
                                         child: Center(
-                                          child: SubjectSelector(
-                                            activated: _dragSubject,
+                                          child: MemberSelector(
+                                            activated: _editMode.dragMember,
                                             additionalSpacing:
                                                 constraints.maxWidth / 5,
                                           ),
@@ -248,10 +256,10 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                             child: Switch(
                                               activeColor:
                                                   Theme.of(context).accentColor,
-                                              value: _dragSubject,
+                                              value: _editMode.dragMember,
                                               onChanged: (value) {
-                                                setState(
-                                                    () => _dragSubject = value);
+                                                setState(() => _editMode
+                                                    .dragMember = value);
                                               },
                                             ),
                                           ),
@@ -263,16 +271,16 @@ class _TimetableEditorState extends State<TimetableEditor> {
                               ],
                             ),
                           ),
-                          Consumer<BinVisibleBool>(
+                          Consumer<TimetableEditorBinVisible>(
                             builder: (context, binVisible, _) {
                               return AnimatedPositioned(
                                 duration:
                                     Duration(milliseconds: _animationDuration),
                                 curve: _animationCurve,
-                                top: binVisible.value
+                                top: binVisible.visible
                                     ? timetableDisplayHeight
                                     : constraints.maxHeight,
-                                child: DragTarget<String>(
+                                child: DragTarget<TimetableDragData>(
                                   onWillAccept: (val) {
                                     _containerColor = Colors.red;
                                     return true;
@@ -287,7 +295,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                           milliseconds: _animationDuration),
                                       curve: _animationCurve,
                                       alignment: Alignment.bottomCenter,
-                                      height: binVisible.value
+                                      height: binVisible.visible
                                           ? selectorHeight * 2
                                           : 0,
                                       width: constraints.maxWidth,
@@ -308,7 +316,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                               milliseconds: _animationDuration),
                                           firstCurve: _animationCurve,
                                           secondCurve: _animationCurve,
-                                          crossFadeState: binVisible.value
+                                          crossFadeState: binVisible.visible
                                               ? CrossFadeState.showFirst
                                               : CrossFadeState.showSecond,
                                           firstChild: Icon(
@@ -327,7 +335,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                                 ),
                               );
                             },
-                          )
+                          ),
                         ],
                       ),
                     );

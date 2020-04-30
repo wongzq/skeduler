@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_switch_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -38,12 +40,12 @@ class TimetableGridBox extends StatefulWidget {
 
 class _TimetableGridBoxState extends State<TimetableGridBox> {
   // properties
-  TimetableSlotData _slotData;
+  TimetableGridData _gridData;
 
   TimetableStatus _ttbStatus;
   TimetableAxes _axes;
-  EditModeBool _editMode;
-  BinVisibleBool _binVisible;
+  TimetableEditMode _editMode;
+  TimetableEditorBinVisible _binVisible;
 
   bool _isHovered = false;
   bool _showFootPrint = false;
@@ -52,6 +54,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   Widget _buildGridBox(
     BoxConstraints constraints, {
     BoxConstraints shrinkConstraints,
+    bool isFeedback = false,
   }) {
     return Material(
       color: Colors.transparent,
@@ -78,11 +81,30 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     color = getOriginThemeData(themeId).primaryColor;
                     break;
                   case GridBoxType.content:
-                    color = _slotData.memberDisplay == null
-                        ? Theme.of(context).brightness == Brightness.light
-                            ? Colors.grey[400]
-                            : Colors.grey
-                        : getOriginThemeData(themeId).primaryColorLight;
+                    color = () {
+                      Color activatedColor =
+                          getOriginThemeData(themeId).primaryColorLight;
+
+                      Color deactivatedColor =
+                          Theme.of(context).brightness == Brightness.light
+                              ? Colors.grey[400]
+                              : Colors.grey;
+
+                      return _gridData.dragData == null ||
+                              _gridData.dragData.isEmpty
+                          ? deactivatedColor
+                          : _editMode.dragSubject &&
+                                  _editMode.dragMember &&
+                                  _gridData.dragData.isNotEmpty
+                              ? activatedColor
+                              : _editMode.dragSubject &&
+                                      _gridData.dragData.subject.isNotEmpty
+                                  ? activatedColor
+                                  : _editMode.dragMember &&
+                                          _gridData.dragData.member.isNotEmpty
+                                      ? activatedColor
+                                      : deactivatedColor;
+                    }();
                     break;
                   case GridBoxType.switchBox:
                     color = getOriginThemeData(themeId).primaryColor;
@@ -116,12 +138,25 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                           return getAxisTypeStr(_axes.zType);
                           break;
                         default:
-                          return widget.initialDisplay ?? '';
+                          return widget.initialDisplay;
                       }
                     }()
-                  : _slotData.memberDisplay != null
-                      ? _slotData.memberDisplay
-                      : widget.initialDisplay ?? '',
+                  : widget.gridBoxType == GridBoxType.content &&
+                          _gridData.dragData != null &&
+                          _gridData.dragData.isNotEmpty
+                      ? isFeedback
+                          ? _editMode.dragSubject && _editMode.dragMember
+                              ? _gridData.dragData.display ??
+                                  widget.initialDisplay
+                              : _editMode.dragSubject
+                                  ? _gridData.dragData.subject.display ??
+                                      widget.initialDisplay
+                                  : _editMode.dragMember
+                                      ? _gridData.dragData.member.display ??
+                                          widget.initialDisplay
+                                      : widget.initialDisplay
+                          : _gridData.dragData.display ?? widget.initialDisplay
+                      : widget.initialDisplay,
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: widget.gridBoxType == GridBoxType.content
@@ -165,9 +200,9 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   Widget _buildGridBoxContent(BoxConstraints constraints) {
     return Padding(
       padding: EdgeInsets.all(2.0),
-      child: DragTarget<String>(
+      child: DragTarget<TimetableDragData>(
         onWillAccept: (_) {
-          if (_editMode.value == true) {
+          if (_editMode.editMode == true) {
             _isHovered = true;
             return true;
           } else {
@@ -175,41 +210,118 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
           }
         },
         onLeave: (_) {
-          if (_editMode.value == true) {
+          if (_editMode.editMode == true) {
             _isHovered = false;
           }
         },
-        onAccept: (newMemberDisplay) {
-          if (_editMode.value == true) {
+        onAccept: (newDragData) {
+          if (_editMode.editMode == true) {
             _isHovered = false;
-            _slotData.memberDisplay = newMemberDisplay;
-            _ttbStatus.perm.slotDataList.push(_slotData);
+
+            if (newDragData is TimetableDragMember) {
+              _gridData.dragData.member.display = newDragData.display;
+            } else if (newDragData is TimetableDragSubject) {
+              _gridData.dragData.subject.display = newDragData.display;
+            } else if (newDragData is TimetableDragSubjectMember) {
+              if (newDragData.hasSubjectOnly) {
+                _gridData.dragData.subject.display =
+                    newDragData.subject.display;
+              } else if (newDragData.hasMemberOnly) {
+                _gridData.dragData.member.display = newDragData.member.display;
+              } else if (newDragData.hasSubjectAndMember) {
+                _gridData.dragData = newDragData;
+              }
+            }
+
+            _ttbStatus.edit.gridDataList.push(_gridData);
           }
         },
         builder: (context, _, __) {
-          return _slotData.memberDisplay == null
+          return _gridData.dragData == null || _gridData.dragData.isEmpty
               ? _buildGridBox(constraints)
-              : LongPressDraggable<String>(
-                  data: _slotData.memberDisplay,
-                  feedback: _buildGridBox(constraints),
+              : LongPressDraggable<TimetableDragData>(
+                  maxSimultaneousDrags: _editMode.dragSubject &&
+                          _editMode.dragMember &&
+                          _gridData.dragData.isNotEmpty
+                      ? 1
+                      : _editMode.dragSubject &&
+                              !_editMode.dragMember &&
+                              _gridData.dragData.subject.isNotEmpty
+                          ? 1
+                          : !_editMode.dragSubject &&
+                                  _editMode.dragMember &&
+                                  _gridData.dragData.member.isNotEmpty
+                              ? 1
+                              : 0,
+                  data: _editMode.dragSubject && _editMode.dragMember
+                      ? _gridData.dragData
+                      : _editMode.dragSubject
+                          ? TimetableDragSubject(
+                              display: _gridData.dragData.subject.display,
+                            )
+                          : _editMode.dragMember
+                              ? TimetableDragMember(
+                                  display: _gridData.dragData.member.display,
+                                )
+                              : null,
+                  feedback: _buildGridBox(constraints, isFeedback: true),
                   child: _buildGridBox(constraints),
                   onDragStarted: () {
-                    if (_editMode.value == true) {
+                    if (_editMode.editMode == true) {
                       _showFootPrint = true;
-                      _binVisible.value = true;
-                      _ttbStatus.perm.slotDataList.pop(_slotData);
+                      _binVisible.visible = true;
+
+                      if (_gridData.dragData.hasSubjectAndMember) {
+                        if (_editMode.dragSubject && _editMode.dragMember) {
+                          _ttbStatus.edit.gridDataList.pop(_gridData);
+                        } else if (_editMode.dragSubject &&
+                            !_editMode.dragMember) {
+                          _ttbStatus.edit.gridDataList.push(
+                            TimetableGridData(
+                              coord: _gridData.coord,
+                              dragData: TimetableDragSubjectMember(
+                                member: _gridData.dragData.member,
+                              ),
+                            ),
+                          );
+                        } else if (!_editMode.dragSubject &&
+                            _editMode.dragMember) {
+                          _ttbStatus.edit.gridDataList.push(
+                            TimetableGridData(
+                              coord: _gridData.coord,
+                              dragData: TimetableDragSubjectMember(
+                                subject: _gridData.dragData.subject,
+                              ),
+                            ),
+                          );
+                        }
+                      } else if (_gridData.dragData.hasSubjectOnly) {
+                        if (_editMode.dragSubject) {
+                          _ttbStatus.edit.gridDataList.pop(_gridData);
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: 'Dragging subject is disabled');
+                        }
+                      } else if (_gridData.dragData.hasMemberOnly) {
+                        if (_editMode.dragMember) {
+                          _ttbStatus.edit.gridDataList.pop(_gridData);
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: 'Dragging member is disabled');
+                        }
+                      }
                     }
                   },
                   onDragCompleted: () {
-                    if (_editMode.value == true) {
+                    if (_editMode.editMode == true) {
                       _showFootPrint = false;
-                      _binVisible.value = false;
+                      _binVisible.visible = false;
                     }
                   },
                   onDraggableCanceled: (_, __) {
-                    if (_editMode.value == true) {
+                    if (_editMode.editMode == true) {
                       _showFootPrint = false;
-                      _binVisible.value = false;
+                      _binVisible.visible = false;
                     }
                   },
                 );
@@ -287,39 +399,39 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
         : null;
 
     _editMode = widget.gridBoxType == GridBoxType.content
-        ? Provider.of<EditModeBool>(context)
+        ? Provider.of<TimetableEditMode>(context)
         : null;
 
     _ttbStatus = widget.gridBoxType == GridBoxType.content
         ? Provider.of<TimetableStatus>(context)
         : null;
 
-    _slotData = TimetableSlotData();
+    _gridData = TimetableGridData();
 
-    _slotData =
+    _gridData =
         widget.gridBoxType == GridBoxType.content && widget.coord != null
             ? () {
-                TimetableSlotData returnSlotData;
+                TimetableGridData returnGridData;
 
-                if (_editMode.value == true) {
-                  _ttbStatus.perm.slotDataList.value.forEach((slotData) {
-                    if (slotData.hasSameCoordAs(widget.coord)) {
-                      returnSlotData = TimetableSlotData.copy(slotData);
+                if (_editMode.editMode == true) {
+                  _ttbStatus.edit.gridDataList.value.forEach((gridData) {
+                    if (gridData.hasSameCoordAs(widget.coord)) {
+                      returnGridData = TimetableGridData.copy(gridData);
                     }
                   });
                 } else {
-                  _ttbStatus.curr.slotDataList.value.forEach((slotData) {
-                    if (slotData.hasSameCoordAs(widget.coord)) {
-                      returnSlotData = TimetableSlotData.copy(slotData);
+                  _ttbStatus.curr.gridDataList.value.forEach((gridData) {
+                    if (gridData.hasSameCoordAs(widget.coord)) {
+                      returnGridData = TimetableGridData.copy(gridData);
                     }
                   });
                 }
-                return returnSlotData ?? TimetableSlotData(coord: widget.coord);
+                return returnGridData ?? TimetableGridData(coord: widget.coord);
               }()
-            : TimetableSlotData();
+            : TimetableGridData();
 
-    if (_editMode != null && _editMode.value == true) {
-      _binVisible = Provider.of<BinVisibleBool>(context);
+    if (_editMode != null && _editMode.editMode == true) {
+      _binVisible = Provider.of<TimetableEditorBinVisible>(context);
     }
 
     return Expanded(
@@ -331,7 +443,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
               return _buildGridBoxHeader(constraints);
               break;
             case GridBoxType.content:
-              return _editMode.value == true
+              return _editMode.editMode == true
                   ? _buildGridBoxContent(constraints)
                   : Padding(
                       padding: EdgeInsets.all(2.0),

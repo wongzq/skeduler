@@ -23,10 +23,10 @@ class TimetableSettings extends StatelessWidget {
 
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-    ttbStatus.temp = ttbStatus.temp != null && ttbStatus.temp.isValid()
-        ? ttbStatus.temp
-        : ttbStatus.perm != null && ttbStatus.perm.isValid()
-            ? EditTimetable.copy(ttbStatus.perm)
+    ttbStatus.editTemp = ttbStatus.editTemp != null && ttbStatus.editTemp.isValid()
+        ? ttbStatus.editTemp
+        : ttbStatus.edit != null && ttbStatus.edit.isValid()
+            ? EditTimetable.copy(ttbStatus.edit)
             : EditTimetable();
 
     return GestureDetector(
@@ -37,11 +37,11 @@ class TimetableSettings extends StatelessWidget {
               icon: Icon(
                   Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
               onPressed: () {
-                ttbStatus.temp = EditTimetable();
+                ttbStatus.editTemp = EditTimetable();
 
                 Navigator.of(context).maybePop();
               }),
-          title: ttbStatus.temp.docId == null
+          title: ttbStatus.editTemp.docId == null
               ? Text(
                   'Timetable Settings',
                   style: textStyleAppBarTitle,
@@ -50,7 +50,7 @@ class TimetableSettings extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      ttbStatus.temp.docId,
+                      ttbStatus.editTemp.docId,
                       style: textStyleAppBarTitle,
                     ),
                     Text(
@@ -66,41 +66,41 @@ class TimetableSettings extends StatelessWidget {
                 if (formKey.currentState.validate()) {
                   // check if new timetable (docId is null)
                   // check if update same timetable (docId is same)
-                  if (ttbStatus.perm.docId == null ||
-                      ttbStatus.perm.docId == ttbStatus.temp.docId) {
-                    ttbStatus.perm.updateTimetableSettings(
-                      docId: ttbStatus.temp.docId,
-                      startDate: ttbStatus.temp.startDate,
-                      endDate: ttbStatus.temp.endDate,
-                      axisDay: ttbStatus.temp.axisDay,
-                      axisTime: ttbStatus.temp.axisTime,
-                      axisCustom: ttbStatus.temp.axisCustom,
+                  if (ttbStatus.edit.docId == null ||
+                      ttbStatus.edit.docId == ttbStatus.editTemp.docId) {
+                    ttbStatus.edit.updateTimetableSettings(
+                      docId: ttbStatus.editTemp.docId,
+                      startDate: ttbStatus.editTemp.startDate,
+                      endDate: ttbStatus.editTemp.endDate,
+                      axisDay: ttbStatus.editTemp.axisDay,
+                      axisTime: ttbStatus.editTemp.axisTime,
+                      axisCustom: ttbStatus.editTemp.axisCustom,
                     );
 
                     Navigator.of(context).maybePop();
                   }
 
                   // check if timetable docId changed
-                  else if (ttbStatus.perm.docId != null &&
-                      ttbStatus.perm.docId.trim() != '' &&
-                      ttbStatus.perm.docId != ttbStatus.temp.docId) {
+                  else if (ttbStatus.edit.docId != null &&
+                      ttbStatus.edit.docId.trim() != '' &&
+                      ttbStatus.edit.docId != ttbStatus.editTemp.docId) {
                     // change ID by cloning old document with new ID
                     await dbService
                         .updateGroupTimetableDocId(
                       groupStatus.group.docId,
-                      ttbStatus.perm.metadata,
-                      ttbStatus.temp.metadata,
+                      ttbStatus.edit.metadata,
+                      ttbStatus.editTemp.metadata,
                     )
                         .then((changed) async {
                       if (changed) {
                         // Update document with new data
-                        ttbStatus.perm.updateTimetableSettings(
-                          docId: ttbStatus.temp.docId,
-                          startDate: ttbStatus.temp.startDate,
-                          endDate: ttbStatus.temp.endDate,
-                          axisDay: ttbStatus.temp.axisDay,
-                          axisTime: ttbStatus.temp.axisTime,
-                          axisCustom: ttbStatus.temp.axisCustom,
+                        ttbStatus.edit.updateTimetableSettings(
+                          docId: ttbStatus.editTemp.docId,
+                          startDate: ttbStatus.editTemp.startDate,
+                          endDate: ttbStatus.editTemp.endDate,
+                          axisDay: ttbStatus.editTemp.axisDay,
+                          axisTime: ttbStatus.editTemp.axisTime,
+                          axisCustom: ttbStatus.editTemp.axisCustom,
                         );
                         Navigator.of(context).maybePop();
                       } else {
@@ -128,9 +128,9 @@ class TimetableSettings extends StatelessWidget {
                 label: 'Name',
                 formKey: formKey,
                 hintText: 'Timetable Name',
-                initialValue: ttbStatus.temp.docId,
+                initialValue: ttbStatus.editTemp.docId,
                 valSetText: (text) {
-                  ttbStatus.temp.docId = text;
+                  ttbStatus.editTemp.docId = text;
                 },
                 validator: (text) {
                   if (text == null || text.trim() == '') {
@@ -145,13 +145,13 @@ class TimetableSettings extends StatelessWidget {
 
             // Date range
             DateRange(
-              initialStartDate: ttbStatus.temp.startDate,
-              initialEndDate: ttbStatus.temp.endDate,
+              initialStartDate: ttbStatus.editTemp.startDate,
+              initialEndDate: ttbStatus.editTemp.endDate,
               valSetStartDate: (startDate) {
-                ttbStatus.temp.startDate = startDate;
+                ttbStatus.editTemp.startDate = startDate;
               },
               valSetEndDate: (endDate) {
-                ttbStatus.temp.endDate = endDate;
+                ttbStatus.editTemp.endDate = endDate;
               },
             ),
             SizedBox(height: 10.0),
@@ -163,9 +163,9 @@ class TimetableSettings extends StatelessWidget {
                 dividerColor: Colors.transparent,
               ),
               child: AxisDay(
-                initialWeekdaysSelected: ttbStatus.temp.axisDay,
+                initialWeekdaysSelected: ttbStatus.editTemp.axisDay,
                 valSetWeekdaysSelected: (timetableWeekdaysSelected) {
-                  ttbStatus.temp.axisDay = timetableWeekdaysSelected;
+                  ttbStatus.editTemp.axisDay = timetableWeekdaysSelected;
                 },
               ),
             ),
@@ -177,9 +177,9 @@ class TimetableSettings extends StatelessWidget {
                 dividerColor: Colors.transparent,
               ),
               child: AxisTime(
-                initialTimes: ttbStatus.temp.axisTime,
+                initialTimes: ttbStatus.editTemp.axisTime,
                 valSetTimes: (times) {
-                  ttbStatus.temp.axisTime = times;
+                  ttbStatus.editTemp.axisTime = times;
                 },
               ),
             ),
@@ -191,9 +191,9 @@ class TimetableSettings extends StatelessWidget {
                 dividerColor: Colors.transparent,
               ),
               child: AxisCustom(
-                initialCustoms: ttbStatus.temp.axisCustom,
+                initialCustoms: ttbStatus.editTemp.axisCustom,
                 valSetCustoms: (customVals) {
-                  ttbStatus.temp.axisCustom = customVals;
+                  ttbStatus.editTemp.axisCustom = customVals;
                 },
               ),
             ),
@@ -224,7 +224,7 @@ class TimetableSettings extends StatelessWidget {
                       builder: (context) {
                         return AlertDialog(
                           content: Text(
-                              'Do you want to delete \'${ttbStatus.temp.docId}\' timetable?'),
+                              'Do you want to delete \'${ttbStatus.editTemp.docId}\' timetable?'),
                           actions: <Widget>[
                             // CANCEL button
                             FlatButton(
@@ -242,7 +242,7 @@ class TimetableSettings extends StatelessWidget {
                               ),
                               onPressed: () async {
                                 await dbService.deleteGroupTimetable(
-                                    groupStatus.group.docId, ttbStatus.perm.docId);
+                                    groupStatus.group.docId, ttbStatus.edit.docId);
                                 Navigator.of(context).maybePop();
                               },
                             ),

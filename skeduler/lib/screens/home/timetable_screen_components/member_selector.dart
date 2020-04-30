@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/services/database_service.dart';
@@ -90,8 +91,10 @@ class MemberSelector extends StatelessWidget {
                           child: Center(
                             child: Wrap(
                               children: [
-                                LongPressDraggable<String>(
-                                  data: members[index].display,
+                                LongPressDraggable<TimetableDragData>(
+                                  data: TimetableDragMember(
+                                    display: members[index].display,
+                                  ),
                                   feedback: _buildMaterialActionChip(
                                       members[index], _chipWidth),
                                   child: _buildMaterialActionChip(

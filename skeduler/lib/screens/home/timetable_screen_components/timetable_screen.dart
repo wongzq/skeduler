@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
@@ -70,7 +71,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
                               List<PopupMenuEntry> timetableOptions = [];
 
                               // Add timetables to options
-                              groupStatus.group.timetableMetadatas.forEach((timetableDocId) {
+                              groupStatus.group.timetableMetadatas
+                                  .forEach((timetableDocId) {
                                 timetableOptions.add(PopupMenuItem(
                                   value: timetableDocId.id,
                                   child: Text(timetableDocId.id),
@@ -84,8 +86,8 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     Visibility(
-                                      visible:
-                                          groupStatus.group.timetableMetadatas.isNotEmpty,
+                                      visible: groupStatus
+                                          .group.timetableMetadatas.isNotEmpty,
                                       child: Divider(thickness: 1.0),
                                     ),
                                     Row(
@@ -103,14 +105,14 @@ class _TimetableScreenState extends State<TimetableScreen> {
                             },
                             onSelected: (value) async {
                               if (value == 0) {
-                                ttbStatus.perm = EditTimetable();
+                                ttbStatus.edit = EditTimetable();
                                 _axes.clearAxes();
                                 Navigator.of(context).pushNamed(
                                   '/timetable/editor',
                                   arguments: RouteArgs(),
                                 );
                               } else {
-                                ttbStatus.perm = EditTimetable.fromTimetable(
+                                ttbStatus.edit = EditTimetable.fromTimetable(
                                   await dbService.getGroupTimetable(
                                     groupStatus.group.docId,
                                     value,
@@ -132,7 +134,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     body: timetable == null || !timetable.isValid()
                         ? Container()
                         : TimetableDisplay(
-                            editMode: false,
+                            editMode: TimetableEditMode(editMode: false),
                           ),
                   );
           },
