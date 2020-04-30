@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
+import 'package:skeduler/models/group_data/group.dart';
+import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid.dart';
+import 'package:skeduler/services/database_service.dart';
 
-class TimetableDisplay extends StatelessWidget {
+class TimetableDisplay extends StatefulWidget {
   final TimetableEditMode editMode;
 
   TimetableDisplay({
@@ -12,15 +15,33 @@ class TimetableDisplay extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _TimetableDisplayState createState() => _TimetableDisplayState();
+}
+
+class _TimetableDisplayState extends State<TimetableDisplay> {
+  @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<TimetableEditMode>.value(
-      value: editMode,
-      child: LayoutBuilder(builder: (context, constraints) {
-        return Padding(
-          padding: EdgeInsets.all(10.0),
-          child: TimetableGrid(),
+    DatabaseService dbService = Provider.of<DatabaseService>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
+
+    return StreamBuilder<List<Member>>(
+      stream: dbService.getGroupMembers(groupStatus.group.docId),
+      builder: (context, snapshot) {
+        List<Member> members = snapshot != null ? snapshot.data ?? [] : [];
+        
+        MembersStatus membersStatus = MembersStatus(members: members);
+
+        return ChangeNotifierProvider<MembersStatus>.value(
+          value: membersStatus,
+          child: ChangeNotifierProvider<TimetableEditMode>.value(
+            value: widget.editMode,
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: TimetableGrid(),
+            ),
+          ),
         );
-      }),
+      },
     );
   }
 }

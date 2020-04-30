@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
+import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_switch_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -40,6 +41,7 @@ class TimetableGridBox extends StatefulWidget {
 
 class _TimetableGridBoxState extends State<TimetableGridBox> {
   // properties
+  MembersStatus _membersStatus;
   TimetableGridData _gridData;
 
   TimetableStatus _ttbStatus;
@@ -90,20 +92,26 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                               ? Colors.grey[400]
                               : Colors.grey;
 
-                      return _gridData.dragData == null ||
-                              _gridData.dragData.isEmpty
-                          ? deactivatedColor
-                          : _editMode.dragSubject &&
-                                  _editMode.dragMember &&
-                                  _gridData.dragData.isNotEmpty
-                              ? activatedColor
+                      return _editMode.editMode
+                          ? _gridData.dragData == null ||
+                                  _gridData.dragData.isEmpty
+                              ? deactivatedColor
                               : _editMode.dragSubject &&
-                                      _gridData.dragData.subject.isNotEmpty
+                                      _editMode.dragMember &&
+                                      _gridData.dragData.isNotEmpty
                                   ? activatedColor
-                                  : _editMode.dragMember &&
-                                          _gridData.dragData.member.isNotEmpty
+                                  : _editMode.dragSubject &&
+                                          _gridData.dragData.subject.isNotEmpty
                                       ? activatedColor
-                                      : deactivatedColor;
+                                      : _editMode.dragMember &&
+                                              _gridData
+                                                  .dragData.member.isNotEmpty
+                                          ? activatedColor
+                                          : deactivatedColor
+                          : _gridData.dragData == null ||
+                                  _gridData.dragData.isEmpty
+                              ? deactivatedColor
+                              : activatedColor;
                     }();
                     break;
                   case GridBoxType.switchBox:
@@ -217,6 +225,11 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
         onAccept: (newDragData) {
           if (_editMode.editMode == true) {
             _isHovered = false;
+            
+
+            bool memberAvailable = memberIsAvailable(_membersStatus.members,
+                newDragData, _gridData, _ttbStatus.edit);
+
 
             if (newDragData is TimetableDragMember) {
               _gridData.dragData.member.display = newDragData.display;
@@ -394,6 +407,10 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
   @override
   Widget build(BuildContext context) {
+    _membersStatus = widget.gridBoxType == GridBoxType.content
+        ? Provider.of<MembersStatus>(context)
+        : null;
+
     _axes = widget.gridBoxType == GridBoxType.axisBox
         ? Provider.of<TimetableAxes>(context)
         : null;

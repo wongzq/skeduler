@@ -1,23 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
+import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/models/group_data/subject.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 
+class MembersStatus extends ChangeNotifier {
+  List<Member> _members;
+
+  MembersStatus({List<Member> members}) : this._members = members ?? [];
+
+  List<Member> get members => List.unmodifiable(this._members);
+}
+
 class GroupStatus extends ChangeNotifier {
   Group _group;
+  List<Member> _members;
+
   bool _hasChanges;
 
   GroupStatus({
     Group group,
+    List<Member> members,
     bool hasChanges = false,
   })  : _group = group,
+        _members = members ?? [],
         _hasChanges = hasChanges;
 
   Group get group => this._group;
+  List<Member> get members => this._members;
   bool get hasChanges => this._hasChanges;
 
   set group(value) {
     this._group = group;
+    notifyListeners();
+  }
+
+  set members(value) {
+    this._members = members;
     notifyListeners();
   }
 

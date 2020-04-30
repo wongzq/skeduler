@@ -68,7 +68,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                       Text(
                                         'Timetable: ${ttbStatus.curr.docId}',
                                         style: textStyleBody,
-                                      )
+                                      ),
                                     ],
                                   ),
                             actions: <Widget>[
