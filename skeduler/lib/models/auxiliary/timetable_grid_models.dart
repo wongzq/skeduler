@@ -6,8 +6,14 @@ import 'package:skeduler/models/group_data/time.dart';
 
 abstract class TimetableDragData {
   String _display;
+
+  String get display => this._display;
   bool get isEmpty => this._display == null || this._display.isEmpty;
   bool get isNotEmpty => this._display != null && this._display.isNotEmpty;
+
+  bool get hasSubjectOnly => true;
+  bool get hasMemberOnly => true;
+  bool get hasSubjectAndMember;
 }
 
 // [TimetableDragDataSubject] class
@@ -16,9 +22,14 @@ class TimetableDragSubject extends TimetableDragData {
     super._display = display;
   }
 
+  @override
   String get display => super._display;
   bool get isEmpty => super.isEmpty;
   bool get isNotEmpty => super.isNotEmpty;
+
+  bool get hasSubjectOnly => this.isNotEmpty;
+  bool get hasMemberOnly => false;
+  bool get hasSubjectAndMember => false;
 
   set display(String value) => super._display = value;
 }
@@ -32,6 +43,10 @@ class TimetableDragMember extends TimetableDragData {
   String get display => super._display;
   bool get isEmpty => super.isEmpty;
   bool get isNotEmpty => super.isNotEmpty;
+
+  bool get hasSubjectOnly => false;
+  bool get hasMemberOnly => this.isNotEmpty;
+  bool get hasSubjectAndMember => false;
 
   set display(String value) => super._display = value;
 }
@@ -55,12 +70,13 @@ class TimetableDragSubjectMember extends TimetableDragData {
   TimetableDragSubject get subject => this._subject;
   TimetableDragMember get member => this._member;
   String get display => _getDisplay();
+  bool get isEmpty => this._subject.isEmpty && this._member.isEmpty;
+  bool get isNotEmpty => this._subject.isNotEmpty || this._member.isNotEmpty;
+
   bool get hasSubjectOnly => this._subject.isNotEmpty && this._member.isEmpty;
   bool get hasMemberOnly => this._subject.isEmpty && this._member.isNotEmpty;
   bool get hasSubjectAndMember =>
       this._subject.isNotEmpty && this._member.isNotEmpty;
-  bool get isEmpty => this._subject.isEmpty && this._member.isEmpty;
-  bool get isNotEmpty => this._subject.isNotEmpty || this._member.isNotEmpty;
 
   // setter methods
   set subject(TimetableDragSubject subject) {

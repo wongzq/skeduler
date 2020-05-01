@@ -97,16 +97,11 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
                       return _editMode.editMode
                           ? _editMode.isDragging
-                              ? _editMode.isDraggingData is TimetableDragSubject ||
-                                      (_editMode.isDraggingData
-                                              is TimetableDragSubjectMember &&
-                                          _editMode.dragSubjectOnly &&
-                                          (_editMode.isDraggingData
-                                                  as TimetableDragSubjectMember)
-                                              .subject
-                                              .isNotEmpty) ||
-                                      memberIsAvailable(
-                                          _editMode.isDraggingData)
+                              ? _editMode.isDraggingData.hasSubjectOnly ||
+                                      (memberIsAvailable(
+                                              _editMode.isDraggingData) &&
+                                          !memberIsAssigned(
+                                              _editMode.isDraggingData))
                                   ? activatedColor
                                   : deactivatedColor
                               : _gridData.dragData == null ||
@@ -250,7 +245,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
             if (newDragData is TimetableDragMember ||
                 newDragData is TimetableDragSubjectMember) {
-              if (memberIsAvailable(newDragData)) {
+              if (memberIsAvailable(newDragData) &&
+                  !memberIsAssigned(newDragData)) {
                 _memberIsAvailable = true;
               }
             }
@@ -498,6 +494,34 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
       }
     }
     return isAvailable;
+  }
+
+  bool memberIsAssigned(
+    TimetableDragData checkDragData,
+  ) {
+    bool isAssigned;
+    String memberDisplay;
+
+    if (checkDragData is TimetableDragMember) {
+      memberDisplay = checkDragData.display;
+    } else if (checkDragData is TimetableDragSubjectMember) {
+      memberDisplay = checkDragData.member.display;
+    }
+
+    if (memberDisplay != null) {
+      isAssigned = _ttbStatus.edit.gridDataList.value.firstWhere((gridData) {
+                return gridData.dragData.member.display == memberDisplay &&
+                    gridData.coord.day == _gridData.coord.day &&
+                    gridData.coord.time == _gridData.coord.time;
+              }, orElse: () => null) !=
+              null
+          ? true
+          : false;
+    } else {
+      isAssigned = false;
+    }
+
+    return isAssigned;
   }
 
   @override

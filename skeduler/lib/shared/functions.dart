@@ -10,20 +10,11 @@ void unfocus() {
 }
 
 Future<bool> checkInternetConnection() async {
-  bool hasConn;
-  hasConn = await InternetAddress.lookup('google.com')
-      .then((result) {
-        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-          return true;
-        } else {
-          return false;
-        }
-      })
+  return await InternetAddress.lookup('google.com')
+      .then((result) =>
+          result.isNotEmpty && result[0].rawAddress.isNotEmpty ? true : false)
       .timeout(Duration(seconds: 5))
-      .catchError((_) {
-        return false;
-      });
-  return hasConn;
+      .catchError((_) => false);
 }
 
 int getOriginThemeIndexFromColor(Color color) {
