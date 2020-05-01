@@ -128,6 +128,8 @@ bool memberIsAvailable(
         memberFound = member;
       }
     });
+  } else if (dragData is TimetableDragSubject) {
+    isAvailable = true;
   } else if (dragData is TimetableDragSubjectMember) {
     members.forEach((member) {
       if (member.display == dragData.member.display) {
@@ -137,46 +139,49 @@ bool memberIsAvailable(
   }
 
   if (memberFound != null) {
-    // for each day within timetable range
-    for (int i = 0;
-        i <
-            timetable.endDate
-                .add(Duration(days: 1))
-                .difference(timetable.startDate)
-                .inDays;
-        i++) {
-      DateTime ttbDate = timetable.startDate.add(Duration(days: i));
+    if (memberFound.role == MemberRole.dummy) {
+      isAvailable = true;
+    } else {
+      // for each day within timetable range
+      for (int i = 0;
+          i <
+              timetable.endDate
+                  .add(Duration(days: 1))
+                  .difference(timetable.startDate)
+                  .inDays;
+          i++) {
+        DateTime ttbDate = timetable.startDate.add(Duration(days: i));
 
-      DateTime gridStartTime = DateTime(
-        ttbDate.year,
-        ttbDate.month,
-        ttbDate.day,
-        gridData.coord.time.startTime.hour,
-        gridData.coord.time.startTime.minute,
-      );
+        DateTime gridStartTime = DateTime(
+          ttbDate.year,
+          ttbDate.month,
+          ttbDate.day,
+          gridData.coord.time.startTime.hour,
+          gridData.coord.time.startTime.minute,
+        );
 
-      DateTime gridEndTime = DateTime(
-        ttbDate.year,
-        ttbDate.month,
-        ttbDate.day,
-        gridData.coord.time.endTime.hour,
-        gridData.coord.time.endTime.minute,
-      );
+        DateTime gridEndTime = DateTime(
+          ttbDate.year,
+          ttbDate.month,
+          ttbDate.day,
+          gridData.coord.time.endTime.hour,
+          gridData.coord.time.endTime.minute,
+        );
 
-      // if day matches
-      if (Weekday.values[ttbDate.weekday - 1] == gridData.coord.day) {
-        // iterate through each time
-        memberFound.times.forEach((time) {
-          if ((time.startTime.isBefore(gridStartTime) ||
-                  time.startTime.isAtSameMomentAs(gridStartTime)) &&
-              (time.endTime.isAtSameMomentAs(gridEndTime) ||
-                  time.endTime.isAfter(gridEndTime))) {
-            isAvailable = true;
-          }
-        });
+        // if day matches
+        if (Weekday.values[ttbDate.weekday - 1] == gridData.coord.day) {
+          // iterate through each time
+          memberFound.times.forEach((time) {
+            if ((time.startTime.isBefore(gridStartTime) ||
+                    time.startTime.isAtSameMomentAs(gridStartTime)) &&
+                (time.endTime.isAtSameMomentAs(gridEndTime) ||
+                    time.endTime.isAfter(gridEndTime))) {
+              isAvailable = true;
+            }
+          });
+        }
       }
     }
   }
-  print(isAvailable);
   return isAvailable;
 }

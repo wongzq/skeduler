@@ -50,6 +50,7 @@ class SubjectSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
+    TimetableEditMode editMode = Provider.of<TimetableEditMode>(context);
 
     double _chipWidth =
         (MediaQuery.of(context).size.width - 2 * _bodyHoriPadding) / 5 -
@@ -85,9 +86,28 @@ class SubjectSelector extends StatelessWidget {
                             display: groupStatus.group.subjects[index].display,
                           ),
                           feedback: _buildMaterialActionChip(
-                              groupStatus.group.subjects[index], _chipWidth),
+                            groupStatus.group.subjects[index],
+                            _chipWidth,
+                          ),
                           child: _buildMaterialActionChip(
-                              groupStatus.group.subjects[index], _chipWidth),
+                            groupStatus.group.subjects[index],
+                            _chipWidth,
+                          ),
+                          onDragStarted: () {
+                            editMode.isDragging = true;
+                            editMode.isDraggingData = TimetableDragSubject(
+                              display:
+                                  groupStatus.group.subjects[index].display,
+                            );
+                          },
+                          onDragCompleted: () {
+                            editMode.isDragging = false;
+                            editMode.isDraggingData = null;
+                          },
+                          onDraggableCanceled: (_, __) {
+                            editMode.isDragging = false;
+                            editMode.isDraggingData = null;
+                          },
                         ),
                       ],
                     ),

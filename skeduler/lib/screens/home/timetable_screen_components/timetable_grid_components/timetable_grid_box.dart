@@ -78,10 +78,12 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
               color: () {
                 String themeId = ThemeProvider.themeOf(context).id;
                 Color color;
+
                 switch (widget.gridBoxType) {
                   case GridBoxType.header:
                     color = getOriginThemeData(themeId).primaryColor;
                     break;
+
                   case GridBoxType.content:
                     color = () {
                       Color activatedColor =
@@ -93,36 +95,58 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                               : Colors.grey;
 
                       return _editMode.editMode
-                          ? _gridData.dragData == null ||
-                                  _gridData.dragData.isEmpty
-                              ? deactivatedColor
-                              : _editMode.dragSubject &&
-                                      _editMode.dragMember &&
-                                      _gridData.dragData.isNotEmpty
+                          ? _editMode.isDragging
+                              ? _editMode.isDraggingData
+                                          is TimetableDragSubject ||
+                                      (_editMode.isDraggingData
+                                              is TimetableDragSubjectMember &&
+                                          _editMode.dragSubjectOnly &&
+                                          (_editMode.isDraggingData
+                                                  as TimetableDragSubjectMember)
+                                              .subject
+                                              .isNotEmpty) ||
+                                      memberIsAvailable(
+                                        _membersStatus.members,
+                                        _editMode.isDraggingData,
+                                        _gridData,
+                                        _ttbStatus.edit,
+                                      )
                                   ? activatedColor
-                                  : _editMode.dragSubject &&
-                                          _gridData.dragData.subject.isNotEmpty
+                                  : deactivatedColor
+                              : _gridData.dragData == null ||
+                                      _gridData.dragData.isEmpty
+                                  ? deactivatedColor
+                                  : _editMode.dragSubjectAndMember &&
+                                          _gridData.dragData.isNotEmpty
                                       ? activatedColor
-                                      : _editMode.dragMember &&
+                                      : _editMode.dragSubjectOnly &&
                                               _gridData
-                                                  .dragData.member.isNotEmpty
+                                                  .dragData.subject.isNotEmpty
                                           ? activatedColor
-                                          : deactivatedColor
+                                          : _editMode.dragMemberOnly &&
+                                                  _gridData.dragData.member
+                                                      .isNotEmpty
+                                              ? activatedColor
+                                              : deactivatedColor
                           : _gridData.dragData == null ||
                                   _gridData.dragData.isEmpty
                               ? deactivatedColor
                               : activatedColor;
                     }();
                     break;
+
                   case GridBoxType.switchBox:
                     color = getOriginThemeData(themeId).primaryColor;
                     break;
+
                   case GridBoxType.axisBox:
                     color = getOriginThemeData(themeId).primaryColor;
                     break;
+
                   case GridBoxType.placeholderBox:
                     color = Colors.grey;
                     break;
+
                   default:
                     color = Colors.transparent;
                     break;
@@ -153,13 +177,13 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                           _gridData.dragData != null &&
                           _gridData.dragData.isNotEmpty
                       ? isFeedback
-                          ? _editMode.dragSubject && _editMode.dragMember
+                          ? _editMode.dragSubjectAndMember
                               ? _gridData.dragData.display ??
                                   widget.initialDisplay
-                              : _editMode.dragSubject
+                              : _editMode.dragSubjectOnly
                                   ? _gridData.dragData.subject.display ??
                                       widget.initialDisplay
-                                  : _editMode.dragMember
+                                  : _editMode.dragMemberOnly
                                       ? _gridData.dragData.member.display ??
                                           widget.initialDisplay
                                       : widget.initialDisplay
@@ -225,17 +249,27 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
         onAccept: (newDragData) {
           if (_editMode.editMode == true) {
             _isHovered = false;
-            
 
-            bool memberAvailable = memberIsAvailable(_membersStatus.members,
-                newDragData, _gridData, _ttbStatus.edit);
+            bool _memberIsAvailable = false;
 
+            if (newDragData is TimetableDragMember ||
+                newDragData is TimetableDragSubjectMember) {
+              if (memberIsAvailable(
+                _membersStatus.members,
+                newDragData,
+                _gridData,
+                _ttbStatus.edit,
+              )) {
+                _memberIsAvailable = true;
+              }
+            }
 
-            if (newDragData is TimetableDragMember) {
+            if (newDragData is TimetableDragMember && _memberIsAvailable) {
               _gridData.dragData.member.display = newDragData.display;
             } else if (newDragData is TimetableDragSubject) {
               _gridData.dragData.subject.display = newDragData.display;
-            } else if (newDragData is TimetableDragSubjectMember) {
+            } else if (newDragData is TimetableDragSubjectMember &&
+                _memberIsAvailable) {
               if (newDragData.hasSubjectOnly) {
                 _gridData.dragData.subject.display =
                     newDragData.subject.display;
@@ -253,26 +287,23 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
           return _gridData.dragData == null || _gridData.dragData.isEmpty
               ? _buildGridBox(constraints)
               : LongPressDraggable<TimetableDragData>(
-                  maxSimultaneousDrags: _editMode.dragSubject &&
-                          _editMode.dragMember &&
+                  maxSimultaneousDrags: _editMode.dragSubjectAndMember &&
                           _gridData.dragData.isNotEmpty
                       ? 1
-                      : _editMode.dragSubject &&
-                              !_editMode.dragMember &&
+                      : _editMode.dragSubjectOnly &&
                               _gridData.dragData.subject.isNotEmpty
                           ? 1
-                          : !_editMode.dragSubject &&
-                                  _editMode.dragMember &&
+                          : _editMode.dragMemberOnly &&
                                   _gridData.dragData.member.isNotEmpty
                               ? 1
                               : 0,
-                  data: _editMode.dragSubject && _editMode.dragMember
+                  data: _editMode.dragSubjectAndMember
                       ? _gridData.dragData
-                      : _editMode.dragSubject
+                      : _editMode.dragSubjectOnly
                           ? TimetableDragSubject(
                               display: _gridData.dragData.subject.display,
                             )
-                          : _editMode.dragMember
+                          : _editMode.dragMemberOnly
                               ? TimetableDragMember(
                                   display: _gridData.dragData.member.display,
                                 )
@@ -283,12 +314,13 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     if (_editMode.editMode == true) {
                       _showFootPrint = true;
                       _binVisible.visible = true;
+                      _editMode.isDragging = true;
+                      _editMode.isDraggingData = _gridData.dragData;
 
                       if (_gridData.dragData.hasSubjectAndMember) {
-                        if (_editMode.dragSubject && _editMode.dragMember) {
+                        if (_editMode.dragSubjectAndMember) {
                           _ttbStatus.edit.gridDataList.pop(_gridData);
-                        } else if (_editMode.dragSubject &&
-                            !_editMode.dragMember) {
+                        } else if (_editMode.dragSubjectOnly) {
                           _ttbStatus.edit.gridDataList.push(
                             TimetableGridData(
                               coord: _gridData.coord,
@@ -297,8 +329,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                               ),
                             ),
                           );
-                        } else if (!_editMode.dragSubject &&
-                            _editMode.dragMember) {
+                        } else if (_editMode.dragMemberOnly) {
                           _ttbStatus.edit.gridDataList.push(
                             TimetableGridData(
                               coord: _gridData.coord,
@@ -329,12 +360,16 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     if (_editMode.editMode == true) {
                       _showFootPrint = false;
                       _binVisible.visible = false;
+                      _editMode.isDragging = false;
+                      _editMode.isDraggingData = null;
                     }
                   },
                   onDraggableCanceled: (_, __) {
                     if (_editMode.editMode == true) {
                       _showFootPrint = false;
                       _binVisible.visible = false;
+                      _editMode.isDragging = false;
+                      _editMode.isDraggingData = null;
                     }
                   },
                 );

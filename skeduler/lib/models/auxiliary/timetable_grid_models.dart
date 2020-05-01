@@ -92,14 +92,27 @@ class TimetableEditMode extends ChangeNotifier {
   bool _dragSubject;
   bool _dragMember;
 
+  TimetableDragData _isDraggingData;
+  bool _isDragging;
+
   TimetableEditMode({bool editMode})
       : this._editMode = editMode ?? false,
         this._dragSubject = editMode,
-        this._dragMember = editMode;
+        this._dragMember = editMode,
+        this._isDragging = false;
 
   bool get editMode => this._editMode;
   bool get dragSubject => this._editMode ? this._dragSubject : false;
   bool get dragMember => this._editMode ? this._dragMember : false;
+  bool get dragSubjectOnly =>
+      this._editMode ? this._dragSubject && !this._dragMember : false;
+  bool get dragMemberOnly =>
+      this._editMode ? !this._dragSubject && this._dragMember : false;
+  bool get dragSubjectAndMember =>
+      this._editMode ? this._dragSubject && this._dragMember : false;
+  bool get isDragging => this._editMode ? this._isDragging : false;
+  TimetableDragData get isDraggingData =>
+      this._editMode ? this._isDraggingData : null;
 
   set editMode(bool value) {
     this._editMode = value;
@@ -113,6 +126,16 @@ class TimetableEditMode extends ChangeNotifier {
 
   set dragMember(bool value) {
     this._dragMember = this._editMode ? value : this._dragMember;
+    notifyListeners();
+  }
+
+  set isDragging(bool value) {
+    this._isDragging = this._editMode ? value : this._isDragging;
+    notifyListeners();
+  }
+
+  set isDraggingData(TimetableDragData value) {
+    this._isDraggingData = this._editMode ? value : this._isDragging;
     notifyListeners();
   }
 }

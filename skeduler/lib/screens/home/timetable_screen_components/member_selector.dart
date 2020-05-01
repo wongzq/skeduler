@@ -53,6 +53,7 @@ class MemberSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
+    TimetableEditMode editMode = Provider.of<TimetableEditMode>(context);
 
     double _chipWidth =
         (MediaQuery.of(context).size.width - 2 * _bodyHoriPadding) / 5 -
@@ -96,9 +97,28 @@ class MemberSelector extends StatelessWidget {
                                     display: members[index].display,
                                   ),
                                   feedback: _buildMaterialActionChip(
-                                      members[index], _chipWidth),
+                                    members[index],
+                                    _chipWidth,
+                                  ),
                                   child: _buildMaterialActionChip(
-                                      members[index], _chipWidth),
+                                    members[index],
+                                    _chipWidth,
+                                  ),
+                                  onDragStarted: () {
+                                    editMode.isDragging = true;
+                                    editMode.isDraggingData =
+                                        TimetableDragMember(
+                                      display: members[index].display,
+                                    );
+                                  },
+                                  onDragCompleted: () {
+                                    editMode.isDragging = false;
+                                    editMode.isDraggingData = null;
+                                  },
+                                  onDraggableCanceled: (_, __) {
+                                    editMode.isDragging = false;
+                                    editMode.isDraggingData = null;
+                                  },
                                 ),
                               ],
                             ),
