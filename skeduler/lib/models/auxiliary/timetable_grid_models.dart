@@ -91,15 +91,16 @@ class TimetableEditMode extends ChangeNotifier {
   bool _editMode;
   bool _dragSubject;
   bool _dragMember;
-
-  TimetableDragData _isDraggingData;
   bool _isDragging;
+  TimetableDragData _isDraggingData;
+  bool _binVisible;
 
   TimetableEditMode({bool editMode})
       : this._editMode = editMode ?? false,
         this._dragSubject = editMode,
         this._dragMember = editMode,
-        this._isDragging = false;
+        this._isDragging = false,
+        this._binVisible = false;
 
   bool get editMode => this._editMode;
   bool get dragSubject => this._editMode ? this._dragSubject : false;
@@ -113,6 +114,7 @@ class TimetableEditMode extends ChangeNotifier {
   bool get isDragging => this._editMode ? this._isDragging : false;
   TimetableDragData get isDraggingData =>
       this._editMode ? this._isDraggingData : null;
+  bool get binVisible => this._binVisible;
 
   set editMode(bool value) {
     this._editMode = value;
@@ -138,17 +140,9 @@ class TimetableEditMode extends ChangeNotifier {
     this._isDraggingData = this._editMode ? value : this._isDragging;
     notifyListeners();
   }
-}
 
-class TimetableEditorBinVisible extends ChangeNotifier {
-  bool _visible;
-
-  TimetableEditorBinVisible({bool value = false}) : _visible = value;
-
-  bool get visible => this._visible;
-
-  set visible(bool newValue) {
-    _visible = newValue;
+  set binVisible(bool value) {
+    this._binVisible = value;
     notifyListeners();
   }
 }

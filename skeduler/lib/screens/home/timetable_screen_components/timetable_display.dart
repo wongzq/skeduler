@@ -25,8 +25,6 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
   int _animationDuration = 300;
   Curve _animationCurve = Curves.easeInCubic;
 
-  TimetableEditorBinVisible _binVisible = TimetableEditorBinVisible();
-
   TimetableEditMode _editMode;
 
   @override
@@ -51,212 +49,209 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
           value: membersStatus,
           child: ChangeNotifierProvider<TimetableEditMode>.value(
             value: _editMode,
-            child: ChangeNotifierProvider<TimetableEditorBinVisible>.value(
-              value: _binVisible,
-              child: LayoutBuilder(builder: (context, constraints) {
-                double selectorHeight = 80;
-                double timetableDisplayHeight =
-                    constraints.maxHeight - selectorHeight * 2;
+            child: LayoutBuilder(builder: (context, constraints) {
+              double selectorHeight = 80;
+              double timetableDisplayHeight =
+                  constraints.maxHeight - selectorHeight * 2;
 
-                return Consumer<TimetableEditMode>(
-                    builder: (context, editMode, _) {
-                  return Stack(
-                    children: <Widget>[
-                      Container(
-                        height: constraints.maxHeight,
-                        child: ListView(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.all(10.0),
-                              height: editMode.editMode
-                                  ? timetableDisplayHeight
-                                  : constraints.maxHeight,
-                              child: TimetableGrid(),
-                            ),
-                            !editMode.editMode
-                                ? Container()
-                                : Container(
-                                    height: selectorHeight,
-                                    child: Stack(
-                                      children: <Widget>[
-                                        AbsorbPointer(
-                                          absorbing: !editMode.dragSubject,
+              return Consumer<TimetableEditMode>(
+                  builder: (context, editMode, _) {
+                return Stack(
+                  children: <Widget>[
+                    Container(
+                      height: constraints.maxHeight,
+                      child: ListView(
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.all(10.0),
+                            height: editMode.editMode
+                                ? timetableDisplayHeight
+                                : constraints.maxHeight,
+                            child: TimetableGrid(),
+                          ),
+                          !editMode.editMode
+                              ? Container()
+                              : Container(
+                                  height: selectorHeight,
+                                  child: Stack(
+                                    children: <Widget>[
+                                      AbsorbPointer(
+                                        absorbing: !editMode.dragSubject,
+                                        child: Center(
+                                          child: SubjectSelector(
+                                            activated: editMode.dragSubject,
+                                            additionalSpacing:
+                                                constraints.maxWidth / 5,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        height: selectorHeight,
+                                        width: constraints.maxWidth / 5,
+                                        right: 0.0,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.centerRight,
+                                              end: Alignment.centerLeft,
+                                              stops: [0.5, 0.8, 1],
+                                              colors: [
+                                                Theme.of(context)
+                                                    .scaffoldBackgroundColor,
+                                                Theme.of(context)
+                                                    .scaffoldBackgroundColor
+                                                    .withOpacity(0.8),
+                                                Theme.of(context)
+                                                    .scaffoldBackgroundColor
+                                                    .withOpacity(0),
+                                              ],
+                                            ),
+                                          ),
                                           child: Center(
-                                            child: SubjectSelector(
-                                              activated: editMode.dragSubject,
-                                              additionalSpacing:
-                                                  constraints.maxWidth / 5,
+                                            child: Switch(
+                                              activeColor:
+                                                  Theme.of(context).accentColor,
+                                              value: editMode.dragSubject,
+                                              onChanged: (value) {
+                                                setState(() => editMode
+                                                    .dragSubject = value);
+                                              },
                                             ),
                                           ),
                                         ),
-                                        Positioned(
-                                          height: selectorHeight,
-                                          width: constraints.maxWidth / 5,
-                                          right: 0.0,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                begin: Alignment.centerRight,
-                                                end: Alignment.centerLeft,
-                                                stops: [0.5, 0.8, 1],
-                                                colors: [
-                                                  Theme.of(context)
-                                                      .scaffoldBackgroundColor,
-                                                  Theme.of(context)
-                                                      .scaffoldBackgroundColor
-                                                      .withOpacity(0.8),
-                                                  Theme.of(context)
-                                                      .scaffoldBackgroundColor
-                                                      .withOpacity(0),
-                                                ],
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Switch(
-                                                activeColor: Theme.of(context)
-                                                    .accentColor,
-                                                value: editMode.dragSubject,
-                                                onChanged: (value) {
-                                                  setState(() => editMode
-                                                      .dragSubject = value);
-                                                },
-                                              ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                          !editMode.editMode
+                              ? Container()
+                              : Container(
+                                  height: selectorHeight,
+                                  child: Stack(
+                                    children: <Widget>[
+                                      AbsorbPointer(
+                                        absorbing: !editMode.dragMember,
+                                        child: Center(
+                                          child: MemberSelector(
+                                            activated: editMode.dragMember,
+                                            additionalSpacing:
+                                                constraints.maxWidth / 5,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        height: selectorHeight,
+                                        width: constraints.maxWidth / 5,
+                                        right: 0.0,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.centerRight,
+                                              end: Alignment.centerLeft,
+                                              stops: [0.5, 0.8, 1],
+                                              colors: [
+                                                Theme.of(context)
+                                                    .scaffoldBackgroundColor,
+                                                Theme.of(context)
+                                                    .scaffoldBackgroundColor
+                                                    .withOpacity(0.8),
+                                                Theme.of(context)
+                                                    .scaffoldBackgroundColor
+                                                    .withOpacity(0),
+                                              ],
                                             ),
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                            !editMode.editMode
-                                ? Container()
-                                : Container(
-                                    height: selectorHeight,
-                                    child: Stack(
-                                      children: <Widget>[
-                                        AbsorbPointer(
-                                          absorbing: !editMode.dragMember,
                                           child: Center(
-                                            child: MemberSelector(
-                                              activated: editMode.dragMember,
-                                              additionalSpacing:
-                                                  constraints.maxWidth / 5,
+                                            child: Switch(
+                                              activeColor:
+                                                  Theme.of(context).accentColor,
+                                              value: editMode.dragMember,
+                                              onChanged: (value) {
+                                                setState(() => editMode
+                                                    .dragMember = value);
+                                              },
                                             ),
                                           ),
                                         ),
-                                        Positioned(
-                                          height: selectorHeight,
-                                          width: constraints.maxWidth / 5,
-                                          right: 0.0,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                begin: Alignment.centerRight,
-                                                end: Alignment.centerLeft,
-                                                stops: [0.5, 0.8, 1],
-                                                colors: [
-                                                  Theme.of(context)
-                                                      .scaffoldBackgroundColor,
-                                                  Theme.of(context)
-                                                      .scaffoldBackgroundColor
-                                                      .withOpacity(0.8),
-                                                  Theme.of(context)
-                                                      .scaffoldBackgroundColor
-                                                      .withOpacity(0),
-                                                ],
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Switch(
-                                                activeColor: Theme.of(context)
-                                                    .accentColor,
-                                                value: editMode.dragMember,
-                                                onChanged: (value) {
-                                                  setState(() => editMode
-                                                      .dragMember = value);
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
+                                      )
+                                    ],
                                   ),
-                          ],
-                        ),
+                                ),
+                        ],
                       ),
-                      !editMode.editMode
-                          ? Container()
-                          : Consumer<TimetableEditorBinVisible>(
-                              builder: (context, binVisible, _) {
-                                return AnimatedPositioned(
-                                  duration: Duration(
-                                      milliseconds: _animationDuration),
-                                  curve: _animationCurve,
-                                  top: binVisible.visible
-                                      ? timetableDisplayHeight
-                                      : constraints.maxHeight,
-                                  child: DragTarget<TimetableDragData>(
-                                    onWillAccept: (val) {
-                                      _containerColor = Colors.red;
-                                      return true;
-                                    },
-                                    onAccept: (_) =>
-                                        _containerColor = Colors.black,
-                                    onLeave: (_) =>
-                                        _containerColor = Colors.black,
-                                    builder: (_, __, ___) {
-                                      return AnimatedContainer(
-                                        duration: Duration(
-                                            milliseconds: _animationDuration),
-                                        curve: _animationCurve,
-                                        alignment: Alignment.bottomCenter,
-                                        height: binVisible.visible
-                                            ? selectorHeight * 2
-                                            : 0,
-                                        width: constraints.maxWidth,
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.bottomCenter,
-                                            end: Alignment.topCenter,
-                                            colors: [
-                                              _containerColor,
-                                              Colors.transparent
-                                            ],
+                    ),
+                    !editMode.editMode
+                        ? Container()
+                        : Consumer<TimetableEditMode>(
+                            builder: (context, editModeConsumer, _) {
+                              return AnimatedPositioned(
+                                duration:
+                                    Duration(milliseconds: _animationDuration),
+                                curve: _animationCurve,
+                                top: editModeConsumer.binVisible
+                                    ? timetableDisplayHeight
+                                    : constraints.maxHeight,
+                                child: DragTarget<TimetableDragData>(
+                                  onWillAccept: (val) {
+                                    _containerColor = Colors.red;
+                                    return true;
+                                  },
+                                  onAccept: (_) =>
+                                      _containerColor = Colors.black,
+                                  onLeave: (_) =>
+                                      _containerColor = Colors.black,
+                                  builder: (_, __, ___) {
+                                    return AnimatedContainer(
+                                      duration: Duration(
+                                          milliseconds: _animationDuration),
+                                      curve: _animationCurve,
+                                      alignment: Alignment.bottomCenter,
+                                      height: editModeConsumer.binVisible
+                                          ? selectorHeight * 2
+                                          : 0,
+                                      width: constraints.maxWidth,
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.bottomCenter,
+                                          end: Alignment.topCenter,
+                                          colors: [
+                                            _containerColor,
+                                            Colors.transparent
+                                          ],
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(20.0),
+                                        child: AnimatedCrossFade(
+                                          duration: Duration(
+                                              milliseconds: _animationDuration),
+                                          firstCurve: _animationCurve,
+                                          secondCurve: _animationCurve,
+                                          crossFadeState:
+                                              editModeConsumer.binVisible
+                                                  ? CrossFadeState.showFirst
+                                                  : CrossFadeState.showSecond,
+                                          firstChild: Icon(
+                                            Icons.delete,
+                                            size: 30,
+                                            color: Colors.white,
+                                          ),
+                                          secondChild: Icon(
+                                            null,
+                                            size: 30,
                                           ),
                                         ),
-                                        child: Padding(
-                                          padding: EdgeInsets.all(20.0),
-                                          child: AnimatedCrossFade(
-                                            duration: Duration(
-                                                milliseconds:
-                                                    _animationDuration),
-                                            firstCurve: _animationCurve,
-                                            secondCurve: _animationCurve,
-                                            crossFadeState: binVisible.visible
-                                                ? CrossFadeState.showFirst
-                                                : CrossFadeState.showSecond,
-                                            firstChild: Icon(
-                                              Icons.delete,
-                                              size: 30,
-                                              color: Colors.white,
-                                            ),
-                                            secondChild: Icon(
-                                              null,
-                                              size: 30,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-                    ],
-                  );
-                });
-              }),
-            ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                  ],
+                );
+              });
+            }),
           ),
         );
       },

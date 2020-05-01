@@ -3,6 +3,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
+import 'package:skeduler/models/group_data/member.dart';
+import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_switch_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -47,7 +49,6 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   TimetableStatus _ttbStatus;
   TimetableAxes _axes;
   TimetableEditMode _editMode;
-  TimetableEditorBinVisible _binVisible;
 
   bool _isHovered = false;
   bool _showFootPrint = false;
@@ -96,8 +97,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
                       return _editMode.editMode
                           ? _editMode.isDragging
-                              ? _editMode.isDraggingData
-                                          is TimetableDragSubject ||
+                              ? _editMode.isDraggingData is TimetableDragSubject ||
                                       (_editMode.isDraggingData
                                               is TimetableDragSubjectMember &&
                                           _editMode.dragSubjectOnly &&
@@ -106,11 +106,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                                               .subject
                                               .isNotEmpty) ||
                                       memberIsAvailable(
-                                        _membersStatus.members,
-                                        _editMode.isDraggingData,
-                                        _gridData,
-                                        _ttbStatus.edit,
-                                      )
+                                          _editMode.isDraggingData)
                                   ? activatedColor
                                   : deactivatedColor
                               : _gridData.dragData == null ||
@@ -254,12 +250,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
             if (newDragData is TimetableDragMember ||
                 newDragData is TimetableDragSubjectMember) {
-              if (memberIsAvailable(
-                _membersStatus.members,
-                newDragData,
-                _gridData,
-                _ttbStatus.edit,
-              )) {
+              if (memberIsAvailable(newDragData)) {
                 _memberIsAvailable = true;
               }
             }
@@ -313,7 +304,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                   onDragStarted: () {
                     if (_editMode.editMode == true) {
                       _showFootPrint = true;
-                      _binVisible.visible = true;
+                      _editMode.binVisible = true;
                       _editMode.isDragging = true;
                       _editMode.isDraggingData = _gridData.dragData;
 
@@ -359,7 +350,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                   onDragCompleted: () {
                     if (_editMode.editMode == true) {
                       _showFootPrint = false;
-                      _binVisible.visible = false;
+                      _editMode.binVisible = false;
                       _editMode.isDragging = false;
                       _editMode.isDraggingData = null;
                     }
@@ -367,7 +358,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                   onDraggableCanceled: (_, __) {
                     if (_editMode.editMode == true) {
                       _showFootPrint = false;
-                      _binVisible.visible = false;
+                      _editMode.binVisible = false;
                       _editMode.isDragging = false;
                       _editMode.isDraggingData = null;
                     }
@@ -440,6 +431,75 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
     );
   }
 
+  bool memberIsAvailable(TimetableDragData dragData) {
+    Member memberFound;
+
+    bool isAvailable = false;
+
+    if (dragData is TimetableDragMember) {
+      _membersStatus.members.forEach((member) {
+        if (member.display == dragData.display) {
+          memberFound = member;
+        }
+      });
+    } else if (dragData is TimetableDragSubject) {
+      isAvailable = true;
+    } else if (dragData is TimetableDragSubjectMember) {
+      _membersStatus.members.forEach((member) {
+        if (member.display == dragData.member.display) {
+          memberFound = member;
+        }
+      });
+    }
+
+    if (memberFound != null) {
+      if (memberFound.role == MemberRole.dummy) {
+        isAvailable = true;
+      } else {
+        // for each day within timetable range
+        for (int i = 0;
+            i <
+                _ttbStatus.edit.endDate
+                    .add(Duration(days: 1))
+                    .difference(_ttbStatus.edit.startDate)
+                    .inDays;
+            i++) {
+          DateTime ttbDate = _ttbStatus.edit.startDate.add(Duration(days: i));
+
+          DateTime gridStartTime = DateTime(
+            ttbDate.year,
+            ttbDate.month,
+            ttbDate.day,
+            _gridData.coord.time.startTime.hour,
+            _gridData.coord.time.startTime.minute,
+          );
+
+          DateTime gridEndTime = DateTime(
+            ttbDate.year,
+            ttbDate.month,
+            ttbDate.day,
+            _gridData.coord.time.endTime.hour,
+            _gridData.coord.time.endTime.minute,
+          );
+
+          // if day matches
+          if (Weekday.values[ttbDate.weekday - 1] == _gridData.coord.day) {
+            // iterate through each time
+            memberFound.times.forEach((time) {
+              if ((time.startTime.isBefore(gridStartTime) ||
+                      time.startTime.isAtSameMomentAs(gridStartTime)) &&
+                  (time.endTime.isAtSameMomentAs(gridEndTime) ||
+                      time.endTime.isAfter(gridEndTime))) {
+                isAvailable = true;
+              }
+            });
+          }
+        }
+      }
+    }
+    return isAvailable;
+  }
+
   @override
   Widget build(BuildContext context) {
     _membersStatus = widget.gridBoxType == GridBoxType.content
@@ -481,10 +541,6 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                 return returnGridData ?? TimetableGridData(coord: widget.coord);
               }()
             : TimetableGridData();
-
-    if (_editMode != null && _editMode.editMode == true) {
-      _binVisible = Provider.of<TimetableEditorBinVisible>(context);
-    }
 
     return Expanded(
       flex: widget.flex,
