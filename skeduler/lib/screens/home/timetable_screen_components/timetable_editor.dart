@@ -83,7 +83,14 @@ class _TimetableEditorState extends State<TimetableEditor> {
                       children: <Widget>[
                         Divider(height: 1.0),
                         SizedBox(height: 15),
-                        Text('Save'),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(Icons.save),
+                            SizedBox(width: 10.0),
+                            Text('Save'),
+                          ],
+                        ),
                       ],
                     ),
                   ),

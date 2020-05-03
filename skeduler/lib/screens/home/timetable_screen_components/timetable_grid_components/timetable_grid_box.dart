@@ -98,6 +98,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                       return _editMode.editMode
                           ? _editMode.isDragging
                               ? _editMode.isDraggingData.hasSubjectOnly ||
+                                      (_editMode.isDraggingData.hasSubject &&
+                                          _editMode.dragSubjectOnly) ||
                                       (memberIsAvailable(
                                               _editMode.isDraggingData) &&
                                           !memberIsAssigned(

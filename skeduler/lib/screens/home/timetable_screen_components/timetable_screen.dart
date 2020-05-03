@@ -148,6 +148,10 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                           '/timetable/editor',
                                           arguments: RouteArgs(),
                                         );
+                                        Navigator.of(context).pushNamed(
+                                          '/timetable/editor/settings',
+                                          arguments: RouteArgs(),
+                                        );
                                       } else if (me.role == MemberRole.member) {
                                         setState(() {
                                           ttbStatus.curr = timetable;

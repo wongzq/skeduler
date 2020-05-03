@@ -11,8 +11,10 @@ abstract class TimetableDragData {
   bool get isEmpty => this._display == null || this._display.isEmpty;
   bool get isNotEmpty => this._display != null && this._display.isNotEmpty;
 
-  bool get hasSubjectOnly => true;
-  bool get hasMemberOnly => true;
+  bool get hasSubject;
+  bool get hasMember;
+  bool get hasSubjectOnly;
+  bool get hasMemberOnly;
   bool get hasSubjectAndMember;
 }
 
@@ -27,6 +29,8 @@ class TimetableDragSubject extends TimetableDragData {
   bool get isEmpty => super.isEmpty;
   bool get isNotEmpty => super.isNotEmpty;
 
+  bool get hasSubject => this.isNotEmpty;
+  bool get hasMember => false;
   bool get hasSubjectOnly => this.isNotEmpty;
   bool get hasMemberOnly => false;
   bool get hasSubjectAndMember => false;
@@ -44,6 +48,8 @@ class TimetableDragMember extends TimetableDragData {
   bool get isEmpty => super.isEmpty;
   bool get isNotEmpty => super.isNotEmpty;
 
+  bool get hasSubject => false;
+  bool get hasMember => this.isNotEmpty;
   bool get hasSubjectOnly => false;
   bool get hasMemberOnly => this.isNotEmpty;
   bool get hasSubjectAndMember => false;
@@ -73,6 +79,8 @@ class TimetableDragSubjectMember extends TimetableDragData {
   bool get isEmpty => this._subject.isEmpty && this._member.isEmpty;
   bool get isNotEmpty => this._subject.isNotEmpty || this._member.isNotEmpty;
 
+  bool get hasSubject => this.subject.isNotEmpty;
+  bool get hasMember => this.member.isNotEmpty;
   bool get hasSubjectOnly => this._subject.isNotEmpty && this._member.isEmpty;
   bool get hasMemberOnly => this._subject.isEmpty && this._member.isNotEmpty;
   bool get hasSubjectAndMember =>
@@ -105,11 +113,11 @@ class TimetableDragSubjectMember extends TimetableDragData {
 
 class TimetableEditMode extends ChangeNotifier {
   bool _editMode;
+  bool _binVisible;
   bool _dragSubject;
   bool _dragMember;
   bool _isDragging;
   TimetableDragData _isDraggingData;
-  bool _binVisible;
 
   TimetableEditMode({bool editMode})
       : this._editMode = editMode ?? false,
@@ -119,6 +127,7 @@ class TimetableEditMode extends ChangeNotifier {
         this._binVisible = false;
 
   bool get editMode => this._editMode;
+  bool get binVisible => this._binVisible;
   bool get dragSubject => this._editMode ? this._dragSubject : false;
   bool get dragMember => this._editMode ? this._dragMember : false;
   bool get dragSubjectOnly =>
@@ -130,7 +139,6 @@ class TimetableEditMode extends ChangeNotifier {
   bool get isDragging => this._editMode ? this._isDragging : false;
   TimetableDragData get isDraggingData =>
       this._editMode ? this._isDraggingData : null;
-  bool get binVisible => this._binVisible;
 
   set editMode(bool value) {
     this._editMode = value;
