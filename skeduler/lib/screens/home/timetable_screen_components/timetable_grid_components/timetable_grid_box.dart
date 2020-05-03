@@ -64,6 +64,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
       child: Container(
         height: constraints.maxHeight,
         width: constraints.maxWidth,
+        padding: EdgeInsets.all(2.0),
         child: Center(
           child: Container(
             height: shrinkConstraints != null
@@ -208,162 +209,151 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
           return TimetableSwitchDialog();
         },
       ),
-      child: Padding(
-        padding: EdgeInsets.all(2.0),
-        child: _buildGridBox(constraints),
-      ),
-    );
-  }
-
-  Widget _buildGridBoxHeader(BoxConstraints constraints) {
-    return Padding(
-      padding: EdgeInsets.all(2.0),
       child: _buildGridBox(constraints),
     );
   }
 
+  Widget _buildGridBoxHeader(BoxConstraints constraints) {
+    return _buildGridBox(constraints);
+  }
+
   Widget _buildGridBoxContent(BoxConstraints constraints) {
-    return Padding(
-      padding: EdgeInsets.all(2.0),
-      child: DragTarget<TimetableDragData>(
-        onWillAccept: (_) {
-          if (_editMode.editMode == true) {
-            _isHovered = true;
-            return true;
-          } else {
-            return false;
-          }
-        },
-        onLeave: (_) {
-          if (_editMode.editMode == true) {
-            _isHovered = false;
-          }
-        },
-        onAccept: (newDragData) {
-          if (_editMode.editMode == true) {
-            _isHovered = false;
+    return DragTarget<TimetableDragData>(
+      onWillAccept: (_) {
+        if (_editMode.editMode == true) {
+          _isHovered = true;
+          return true;
+        } else {
+          return false;
+        }
+      },
+      onLeave: (_) {
+        if (_editMode.editMode == true) {
+          _isHovered = false;
+        }
+      },
+      onAccept: (newDragData) {
+        if (_editMode.editMode == true) {
+          _isHovered = false;
 
-            bool _memberIsAvailable = false;
+          bool _memberIsAvailable = false;
 
-            if (newDragData is TimetableDragMember ||
-                newDragData is TimetableDragSubjectMember) {
-              if (memberIsAvailable(newDragData) &&
-                  !memberIsAssigned(newDragData)) {
-                _memberIsAvailable = true;
-              }
+          if (newDragData is TimetableDragMember ||
+              newDragData is TimetableDragSubjectMember) {
+            if (memberIsAvailable(newDragData) &&
+                !memberIsAssigned(newDragData)) {
+              _memberIsAvailable = true;
             }
-
-            if (newDragData is TimetableDragMember && _memberIsAvailable) {
-              _gridData.dragData.member.display = newDragData.display;
-            } else if (newDragData is TimetableDragSubject) {
-              _gridData.dragData.subject.display = newDragData.display;
-            } else if (newDragData is TimetableDragSubjectMember &&
-                _memberIsAvailable) {
-              if (newDragData.hasSubjectOnly) {
-                _gridData.dragData.subject.display =
-                    newDragData.subject.display;
-              } else if (newDragData.hasMemberOnly) {
-                _gridData.dragData.member.display = newDragData.member.display;
-              } else if (newDragData.hasSubjectAndMember) {
-                _gridData.dragData = newDragData;
-              }
-            }
-
-            _ttbStatus.edit.gridDataList.push(_gridData);
           }
-        },
-        builder: (context, _, __) {
-          return _gridData.dragData == null || _gridData.dragData.isEmpty
-              ? _buildGridBox(constraints)
-              : LongPressDraggable<TimetableDragData>(
-                  maxSimultaneousDrags: _editMode.dragSubjectAndMember &&
-                          _gridData.dragData.isNotEmpty
-                      ? 1
-                      : _editMode.dragSubjectOnly &&
-                              _gridData.dragData.subject.isNotEmpty
-                          ? 1
-                          : _editMode.dragMemberOnly &&
-                                  _gridData.dragData.member.isNotEmpty
-                              ? 1
-                              : 0,
-                  data: _editMode.dragSubjectAndMember
-                      ? _gridData.dragData
-                      : _editMode.dragSubjectOnly
-                          ? TimetableDragSubject(
-                              display: _gridData.dragData.subject.display,
-                            )
-                          : _editMode.dragMemberOnly
-                              ? TimetableDragMember(
-                                  display: _gridData.dragData.member.display,
-                                )
-                              : null,
-                  feedback: _buildGridBox(constraints, isFeedback: true),
-                  child: _buildGridBox(constraints),
-                  onDragStarted: () {
-                    if (_editMode.editMode == true) {
-                      _showFootPrint = true;
-                      _editMode.binVisible = true;
-                      _editMode.isDragging = true;
-                      _editMode.isDraggingData = _gridData.dragData;
 
-                      if (_gridData.dragData.hasSubjectAndMember) {
-                        if (_editMode.dragSubjectAndMember) {
-                          _ttbStatus.edit.gridDataList.pop(_gridData);
-                        } else if (_editMode.dragSubjectOnly) {
-                          _ttbStatus.edit.gridDataList.push(
-                            TimetableGridData(
-                              coord: _gridData.coord,
-                              dragData: TimetableDragSubjectMember(
-                                member: _gridData.dragData.member,
-                              ),
+          if (newDragData is TimetableDragMember && _memberIsAvailable) {
+            _gridData.dragData.member.display = newDragData.display;
+          } else if (newDragData is TimetableDragSubject) {
+            _gridData.dragData.subject.display = newDragData.display;
+          } else if (newDragData is TimetableDragSubjectMember) {
+            if (newDragData.hasSubjectOnly) {
+              _gridData.dragData.subject.display = newDragData.subject.display;
+            } else if (newDragData.hasMemberOnly && _memberIsAvailable) {
+              _gridData.dragData.member.display = newDragData.member.display;
+            } else if (newDragData.hasSubjectAndMember && _memberIsAvailable) {
+              _gridData.dragData = newDragData;
+            }
+          }
+
+          _ttbStatus.edit.gridDataList.push(_gridData);
+        }
+      },
+      builder: (context, _, __) {
+        return _gridData.dragData == null || _gridData.dragData.isEmpty
+            ? _buildGridBox(constraints)
+            : LongPressDraggable<TimetableDragData>(
+                maxSimultaneousDrags: _editMode.dragSubjectAndMember &&
+                        _gridData.dragData.isNotEmpty
+                    ? 1
+                    : _editMode.dragSubjectOnly &&
+                            _gridData.dragData.subject.isNotEmpty
+                        ? 1
+                        : _editMode.dragMemberOnly &&
+                                _gridData.dragData.member.isNotEmpty
+                            ? 1
+                            : 0,
+                data: _editMode.dragSubjectAndMember
+                    ? _gridData.dragData
+                    : _editMode.dragSubjectOnly
+                        ? TimetableDragSubject(
+                            display: _gridData.dragData.subject.display,
+                          )
+                        : _editMode.dragMemberOnly
+                            ? TimetableDragMember(
+                                display: _gridData.dragData.member.display,
+                              )
+                            : null,
+                feedback: _buildGridBox(constraints, isFeedback: true),
+                child: _buildGridBox(constraints),
+                onDragStarted: () {
+                  if (_editMode.editMode == true) {
+                    _showFootPrint = true;
+                    _editMode.binVisible = true;
+                    _editMode.isDragging = true;
+                    _editMode.isDraggingData = _gridData.dragData;
+
+                    if (_gridData.dragData.hasSubjectAndMember) {
+                      if (_editMode.dragSubjectAndMember) {
+                        _ttbStatus.edit.gridDataList.pop(_gridData);
+                      } else if (_editMode.dragSubjectOnly) {
+                        _ttbStatus.edit.gridDataList.push(
+                          TimetableGridData(
+                            coord: _gridData.coord,
+                            dragData: TimetableDragSubjectMember(
+                              member: _gridData.dragData.member,
                             ),
-                          );
-                        } else if (_editMode.dragMemberOnly) {
-                          _ttbStatus.edit.gridDataList.push(
-                            TimetableGridData(
-                              coord: _gridData.coord,
-                              dragData: TimetableDragSubjectMember(
-                                subject: _gridData.dragData.subject,
-                              ),
+                          ),
+                        );
+                      } else if (_editMode.dragMemberOnly) {
+                        _ttbStatus.edit.gridDataList.push(
+                          TimetableGridData(
+                            coord: _gridData.coord,
+                            dragData: TimetableDragSubjectMember(
+                              subject: _gridData.dragData.subject,
                             ),
-                          );
-                        }
-                      } else if (_gridData.dragData.hasSubjectOnly) {
-                        if (_editMode.dragSubject) {
-                          _ttbStatus.edit.gridDataList.pop(_gridData);
-                        } else {
-                          Fluttertoast.showToast(
-                              msg: 'Dragging subject is disabled');
-                        }
-                      } else if (_gridData.dragData.hasMemberOnly) {
-                        if (_editMode.dragMember) {
-                          _ttbStatus.edit.gridDataList.pop(_gridData);
-                        } else {
-                          Fluttertoast.showToast(
-                              msg: 'Dragging member is disabled');
-                        }
+                          ),
+                        );
+                      }
+                    } else if (_gridData.dragData.hasSubjectOnly) {
+                      if (_editMode.dragSubject) {
+                        _ttbStatus.edit.gridDataList.pop(_gridData);
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: 'Dragging subject is disabled');
+                      }
+                    } else if (_gridData.dragData.hasMemberOnly) {
+                      if (_editMode.dragMember) {
+                        _ttbStatus.edit.gridDataList.pop(_gridData);
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: 'Dragging member is disabled');
                       }
                     }
-                  },
-                  onDragCompleted: () {
-                    if (_editMode.editMode == true) {
-                      _showFootPrint = false;
-                      _editMode.binVisible = false;
-                      _editMode.isDragging = false;
-                      _editMode.isDraggingData = null;
-                    }
-                  },
-                  onDraggableCanceled: (_, __) {
-                    if (_editMode.editMode == true) {
-                      _showFootPrint = false;
-                      _editMode.binVisible = false;
-                      _editMode.isDragging = false;
-                      _editMode.isDraggingData = null;
-                    }
-                  },
-                );
-        },
-      ),
+                  }
+                },
+                onDragCompleted: () {
+                  if (_editMode.editMode == true) {
+                    _showFootPrint = false;
+                    _editMode.binVisible = false;
+                    _editMode.isDragging = false;
+                    _editMode.isDraggingData = null;
+                  }
+                },
+                onDraggableCanceled: (_, __) {
+                  if (_editMode.editMode == true) {
+                    _showFootPrint = false;
+                    _editMode.binVisible = false;
+                    _editMode.isDragging = false;
+                    _editMode.isDraggingData = null;
+                  }
+                },
+              );
+      },
     );
   }
 
@@ -373,60 +363,54 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
       maxHeight: 50.0,
     );
 
-    return Padding(
-      padding: EdgeInsets.all(2.0),
-      child: DragTarget<TimetableAxisType>(
-        onWillAccept: (_) {
-          _isHovered = true;
-          return true;
-        },
-        onLeave: (_) {
-          _isHovered = false;
-        },
-        onAccept: (newAxisType) {
-          _isHovered = false;
-          if (widget.gridAxisType == GridAxisType.x) {
-            _axes.xType = newAxisType;
-          } else if (widget.gridAxisType == GridAxisType.y) {
-            _axes.yType = newAxisType;
-          } else if (widget.gridAxisType == GridAxisType.z) {
-            _axes.zType = newAxisType;
-          }
-        },
-        builder: (context, _, __) {
-          return LongPressDraggable<TimetableAxisType>(
-            data: () {
-              switch (widget.gridAxisType) {
-                case GridAxisType.x:
-                  return _axes.xType;
-                  break;
-                case GridAxisType.y:
-                  return _axes.yType;
-                  break;
-                case GridAxisType.z:
-                  return _axes.zType;
-                  break;
-                default:
-                  return null;
-                  break;
-              }
-            }(),
-            feedback: _buildGridBox(
-              constraints,
-              shrinkConstraints: feedbackConstraints,
-            ),
-            child: _buildGridBox(constraints),
-          );
-        },
-      ),
+    return DragTarget<TimetableAxisType>(
+      onWillAccept: (_) {
+        _isHovered = true;
+        return true;
+      },
+      onLeave: (_) {
+        _isHovered = false;
+      },
+      onAccept: (newAxisType) {
+        _isHovered = false;
+        if (widget.gridAxisType == GridAxisType.x) {
+          _axes.xType = newAxisType;
+        } else if (widget.gridAxisType == GridAxisType.y) {
+          _axes.yType = newAxisType;
+        } else if (widget.gridAxisType == GridAxisType.z) {
+          _axes.zType = newAxisType;
+        }
+      },
+      builder: (context, _, __) {
+        return LongPressDraggable<TimetableAxisType>(
+          data: () {
+            switch (widget.gridAxisType) {
+              case GridAxisType.x:
+                return _axes.xType;
+                break;
+              case GridAxisType.y:
+                return _axes.yType;
+                break;
+              case GridAxisType.z:
+                return _axes.zType;
+                break;
+              default:
+                return null;
+                break;
+            }
+          }(),
+          feedback: _buildGridBox(
+            constraints,
+            shrinkConstraints: feedbackConstraints,
+          ),
+          child: _buildGridBox(constraints),
+        );
+      },
     );
   }
 
   Widget _buildGridBoxPlaceholderBox(BoxConstraints constraints) {
-    return Padding(
-      padding: EdgeInsets.all(2.0),
-      child: _buildGridBox(constraints),
-    );
+    return _buildGridBox(constraints);
   }
 
   bool memberIsAvailable(TimetableDragData dragData) {
