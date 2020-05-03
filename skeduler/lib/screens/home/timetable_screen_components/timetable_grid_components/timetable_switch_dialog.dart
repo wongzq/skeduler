@@ -13,78 +13,68 @@ class _TimetableSwitchDialogState extends State<TimetableSwitchDialog> {
   TimetableAxes _axes;
 
   Widget _generateSwitchContainer(BuildContext context) {
+    double totalWidthRatio = 3.5;
+    double xHeightRatio = 0.75;
+    double yHeightRatio = 2.3;
+    double yWidthRatio = 0.75;
+
     return Container(
-      width: MediaQuery.of(context).size.width * 0.5,
-      height: MediaQuery.of(context).size.width * 0.5,
-      child: Flex(
-        direction: Axis.vertical,
-        mainAxisSize: MainAxisSize.max,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Flex(
-              direction: Axis.horizontal,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                TimetableGridBox(
-                  gridBoxType: GridBoxType.placeholderBox,
-                  flex: 2,
-                ),
-                TimetableGridBox(
-                  gridBoxType: GridBoxType.axisBox,
-                  initialDisplay: getAxisTypeStr(_axes.xType),
-                  gridAxisType: GridAxisType.x,
-                  flex: 3,
-                ),
-              ],
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              TimetableGridBox(
+                gridBoxType: GridBoxType.placeholderBox,
+                heightRatio: xHeightRatio,
+                widthRatio: yWidthRatio * 2,
+              ),
+              TimetableGridBox(
+                gridBoxType: GridBoxType.axisBox,
+                initialDisplay: getAxisTypeStr(_axes.xType),
+                gridAxisType: GridAxisType.x,
+                heightRatio: xHeightRatio,
+                widthRatio: totalWidthRatio - yWidthRatio * 2,
+              ),
+            ],
           ),
-          Expanded(
-            flex: 3,
-            child: Flex(
-              direction: Axis.horizontal,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Expanded(
-                  flex: 2,
-                  child: Flex(
-                    direction: Axis.horizontal,
-                    children: <Widget>[
-                      TimetableGridBox(
-                        gridBoxType: GridBoxType.axisBox,
-                        initialDisplay: getAxisTypeStr(_axes.yType),
-                        gridAxisType: GridAxisType.y,
-                        flex: 1,
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Flex(
-                          direction: Axis.vertical,
-                          children: <Widget>[
-                            TimetableGridBox(
-                              gridBoxType: GridBoxType.axisBox,
-                              initialDisplay: getAxisTypeStr(_axes.zType),
-                              gridAxisType: GridAxisType.z,
-                              flex: 1,
-                            ),
-                            TimetableGridBox(
-                              gridBoxType: GridBoxType.axisBox,
-                              initialDisplay: getAxisTypeStr(_axes.zType),
-                              gridAxisType: GridAxisType.z,
-                              flex: 1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              TimetableGridBox(
+                gridBoxType: GridBoxType.axisBox,
+                initialDisplay: getAxisTypeStr(_axes.yType),
+                gridAxisType: GridAxisType.y,
+                heightRatio: yHeightRatio,
+                widthRatio: yWidthRatio,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  TimetableGridBox(
+                    gridBoxType: GridBoxType.axisBox,
+                    initialDisplay: getAxisTypeStr(_axes.zType),
+                    gridAxisType: GridAxisType.z,
+                    heightRatio: yHeightRatio / 2,
+                    widthRatio: yWidthRatio,
                   ),
-                ),
-                TimetableGridBox(
-                  gridBoxType: GridBoxType.placeholderBox,
-                  flex: 3,
-                ),
-              ],
-            ),
+                  TimetableGridBox(
+                    gridBoxType: GridBoxType.axisBox,
+                    initialDisplay: getAxisTypeStr(_axes.zType),
+                    gridAxisType: GridAxisType.z,
+                    heightRatio: yHeightRatio / 2,
+                    widthRatio: yWidthRatio,
+                  ),
+                ],
+              ),
+              TimetableGridBox(
+                gridBoxType: GridBoxType.placeholderBox,
+                heightRatio: yHeightRatio,
+                widthRatio: totalWidthRatio - yWidthRatio * 2,
+              ),
+            ],
           ),
         ],
       ),

@@ -114,39 +114,49 @@ class MyApp extends StatelessWidget {
                         ChangeNotifierProvider<TimetableAxes>(
                           create: (_) => TimetableAxes.empty(),
                         ),
+
+                        // TimetableScroll
+                        ChangeNotifierProvider<TimetableScroll>(
+                          create: (_) => TimetableScroll(
+                            horiLength: 100,
+                            vertLength: 100,
+                          ),
+                        ),
                       ],
                       child: Consumer<DatabaseService>(
                         builder: (_, dbService, __) {
                           return Consumer<ValueNotifier<String>>(
                             builder: (_, groupDocId, __) {
                               return StreamBuilder(
-                                stream: dbService.getGroup(groupDocId.value),
-                                builder: (_, snapshot) {
-                                  return ChangeNotifierProvider<
-                                      GroupStatus>.value(
-                                    value: GroupStatus(
-                                      group: snapshot != null
-                                          ? snapshot.data
-                                          : null,
-                                    ),
-                                    child: MaterialApp(
-                                      title: 'Skeduler',
-                                      debugShowCheckedModeBanner: false,
-                                      theme: ThemeProvider.themeOf(themeContext)
-                                          .data
-                                          .copyWith(
-                                            splashColor: Colors.transparent,
-                                            highlightColor: Colors.transparent,
-                                            splashFactory:
-                                                InkRipple.splashFactory,
-                                          ),
-                                      initialRoute: '/dashboard',
-                                      onGenerateRoute:
-                                          RouteGenerator.generateRoute,
-                                    ),
-                                  );
-                                },
-                              );
+                                  stream: dbService.getGroup(groupDocId.value),
+                                  builder: (_, snapshot) {
+                                    return ChangeNotifierProvider<
+                                        GroupStatus>.value(
+                                      value: GroupStatus(
+                                        group: snapshot != null
+                                            ? snapshot.data
+                                            : null,
+                                      ),
+                                      child: MaterialApp(
+                                        title: 'Skeduler',
+                                        debugShowCheckedModeBanner: false,
+                                        theme:
+                                            ThemeProvider.themeOf(themeContext)
+                                                .data
+                                                .copyWith(
+                                                  splashColor:
+                                                      Colors.transparent,
+                                                  highlightColor:
+                                                      Colors.transparent,
+                                                  splashFactory:
+                                                      InkRipple.splashFactory,
+                                                ),
+                                        initialRoute: '/dashboard',
+                                        onGenerateRoute:
+                                            RouteGenerator.generateRoute,
+                                      ),
+                                    );
+                                  });
                             },
                           );
                         },

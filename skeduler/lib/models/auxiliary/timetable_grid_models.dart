@@ -1,9 +1,60 @@
 // abstract class [TimetableDragData]
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:quiver/core.dart';
 import 'package:skeduler/models/group_data/time.dart';
 
+// --------------------------------------------------------------------------------
+// ScrollController classes for Provider
+// --------------------------------------------------------------------------------
+class TimetableScroll extends ChangeNotifier {
+  LinkedScrollControllerGroup hori;
+  LinkedScrollControllerGroup vert;
+  List<ScrollController> _horiScroll;
+  List<ScrollController> _vertScroll;
+
+  bool changed;
+
+  TimetableScroll({
+    @required int horiLength,
+    @required int vertLength,
+  }) : changed = false {
+    hori = LinkedScrollControllerGroup();
+    vert = LinkedScrollControllerGroup();
+    newTimetableScroll(
+      horiLength: horiLength,
+      vertLength: vertLength,
+    );
+  }
+
+  void newTimetableScroll({
+    @required int horiLength,
+    @required int vertLength,
+  }) {
+    horiLength = horiLength == null || horiLength < 0 ? 0 : horiLength;
+    horiLength = vertLength == null || vertLength < 0 ? 0 : vertLength;
+
+    _horiScroll = [];
+    for (int i = 0; i < horiLength + 1; i++) {
+      this._horiScroll.add(this.hori.addAndGet());
+    }
+
+    _vertScroll = [];
+    for (int i = 0; i < vertLength + 1; i++) {
+      this._vertScroll.add(this.vert.addAndGet());
+    }
+
+    notifyListeners();
+  }
+
+  List<ScrollController> get horiScroll => List.unmodifiable(this._horiScroll);
+  List<ScrollController> get vertScroll => List.unmodifiable(this._vertScroll);
+}
+
+// --------------------------------------------------------------------------------
+// Timetable Drag Data related classes
+// --------------------------------------------------------------------------------
 abstract class TimetableDragData {
   String _display;
 
@@ -99,7 +150,7 @@ class TimetableDragSubjectMember extends TimetableDragData {
 
   // auxiliary methods
   String _getDisplay() => this._subject.isNotEmpty && this._member.isNotEmpty
-      ? this._subject.display + ' : ' + this._member.display
+      ? this._subject.display + '\n' + this._member.display
       : this._subject.isNotEmpty && this._member.isEmpty
           ? this._subject.display
           : this._subject.isEmpty && this._member.isNotEmpty

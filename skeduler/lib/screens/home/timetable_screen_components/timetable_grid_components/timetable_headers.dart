@@ -7,7 +7,7 @@ import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid
 // Timetable Header X
 // --------------------------------------------------------------------------------
 
-class TimetableHeaderX extends StatelessWidget {
+class TimetableHeaderX extends StatefulWidget {
   final List<String> axisX;
 
   const TimetableHeaderX({
@@ -16,38 +16,59 @@ class TimetableHeaderX extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _TimetableHeaderXState createState() => _TimetableHeaderXState();
+}
+
+class _TimetableHeaderXState extends State<TimetableHeaderX> {
+  ScrollController horiScroll;
+
+  @override
   Widget build(BuildContext context) {
     TimetableAxes axes = Provider.of<TimetableAxes>(context);
+    TimetableScroll ttbScroll = Provider.of<TimetableScroll>(context);
 
-    return Expanded(
-      flex: 1,
-      child: Flex(
-        direction: Axis.horizontal,
-        mainAxisSize: MainAxisSize.max,
-        children: () {
-          List<Widget> rows = [];
+    horiScroll = horiScroll ?? ttbScroll.hori.addAndGet();
 
-          // Add Switch button
-          String display = 'Axis';
-          rows.add(TimetableGridBox(
-            gridBoxType: GridBoxType.switchBox,
+    return Row(
+      children: () {
+        List<Widget> rows = [];
+
+        // Add Switch button
+        String display = 'Axis';
+        rows.add(TimetableGridBox(
+          gridBoxType: GridBoxType.switchBox,
+          initialDisplay: display,
+          heightRatio: 1,
+          widthRatio: 2,
+          axes: axes,
+        ));
+
+        List<Widget> headerX = [];
+
+        for (int i = 0; i < widget.axisX.length; i++) {
+          String display = widget.axisX[i];
+          headerX.add(TimetableGridBox(
+            gridBoxType: GridBoxType.header,
             initialDisplay: display,
-            flex: 2,
-            axes: axes,
+            heightRatio: 1,
+            widthRatio: 1,
           ));
+        }
 
-          for (int i = 0; i < axisX.length; i++) {
-            String display = axisX[i];
-            rows.add(TimetableGridBox(
-              gridBoxType: GridBoxType.header,
-              initialDisplay: display,
-              flex: 1,
-            ));
-          }
+        rows.add(
+          Expanded(
+            child: SingleChildScrollView(
+              controller: horiScroll,
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: headerX,
+              ),
+            ),
+          ),
+        );
 
-          return rows;
-        }(),
-      ),
+        return rows;
+      }(),
     );
   }
 }
@@ -56,33 +77,42 @@ class TimetableHeaderX extends StatelessWidget {
 // Timetable Header Y & Z
 // --------------------------------------------------------------------------------
 
-class TimetableHeaderYZ extends StatelessWidget {
+class TimetableHeaderYZ extends StatefulWidget {
   final List<String> axisY;
   final List<String> axisZ;
 
-  const TimetableHeaderYZ({Key key, this.axisY, this.axisZ}) : super(key: key);
+  TimetableHeaderYZ({Key key, this.axisY, this.axisZ}) : super(key: key);
+
+  @override
+  _TimetableHeaderYZState createState() => _TimetableHeaderYZState();
+}
+
+class _TimetableHeaderYZState extends State<TimetableHeaderYZ> {
+  ScrollController vertScroll;
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: (axisY == null ? 0 : 1) + (axisZ == null ? 0 : 1),
-      child: Flex(
-        direction: Axis.vertical,
+    TimetableScroll ttbScroll = Provider.of<TimetableScroll>(context);
+    vertScroll = vertScroll ?? ttbScroll.vert.addAndGet();
+
+    return SingleChildScrollView(
+      controller: vertScroll,
+      scrollDirection: Axis.vertical,
+      child: Column(
         children: () {
           List<Widget> headers = [];
 
-          axisY.forEach((y) {
+          widget.axisY.forEach((y) {
             headers.add(
-              Expanded(
-                flex: 1,
-                child: Flex(
-                  direction: Axis.horizontal,
-                  children: <Widget>[
-                    TimetableHeaderY(
-                        axisY: axisY, index: axisY.indexOf(y), flex: 1),
-                    TimetableHeaderZ(axisZ: axisZ),
-                  ],
-                ),
+              Row(
+                children: <Widget>[
+                  TimetableHeaderY(
+                    axisY: widget.axisY,
+                    index: widget.axisY.indexOf(y),
+                    zLength: widget.axisZ.length,
+                  ),
+                  TimetableHeaderZ(axisZ: widget.axisZ),
+                ],
               ),
             );
           });
@@ -98,25 +128,31 @@ class TimetableHeaderYZ extends StatelessWidget {
 // Timetable Header Y
 // --------------------------------------------------------------------------------
 
-class TimetableHeaderY extends StatelessWidget {
+class TimetableHeaderY extends StatefulWidget {
   final List<String> axisY;
   final int index;
-  final int flex;
+  final int zLength;
 
   const TimetableHeaderY({
     Key key,
     this.axisY,
     this.index = -1,
-    this.flex = 1,
+    this.zLength,
   }) : super(key: key);
 
   @override
+  _TimetableHeaderYState createState() => _TimetableHeaderYState();
+}
+
+class _TimetableHeaderYState extends State<TimetableHeaderY> {
+  @override
   Widget build(BuildContext context) {
-    String display = axisY[index];
+    String display = widget.axisY[widget.index];
     return TimetableGridBox(
       gridBoxType: GridBoxType.header,
       initialDisplay: display,
-      flex: flex,
+      heightRatio: widget.zLength.toDouble(),
+      widthRatio: 1,
       textOverFlowFade: false,
     );
   }
@@ -146,16 +182,15 @@ class TimetableHeaderZ extends StatelessWidget {
           gridBoxType: GridBoxType.header,
           initialDisplay: display,
           textOverFlowFade: false,
+          heightRatio: 1,
+          widthRatio: 1,
         ),
       );
     });
 
-    return Expanded(
-      child: Flex(
-        direction: Axis.vertical,
-        mainAxisSize: MainAxisSize.max,
-        children: colContents,
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: colContents,
     );
   }
 }

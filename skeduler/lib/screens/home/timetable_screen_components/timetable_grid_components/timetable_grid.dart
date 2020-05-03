@@ -78,31 +78,34 @@ class _TimetableGridState extends State<TimetableGrid> {
       );
     }
 
-    return Flex(
-      direction: Axis.vertical,
-      mainAxisSize: MainAxisSize.max,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TimetableHeaderX(axisX: _axes.xListStr),
         Expanded(
-          flex: (_axes.yListStr.length ?? 0) * (_axes.zListStr.length ?? 0),
-          child: Flex(
-            direction: Axis.horizontal,
-            mainAxisSize: MainAxisSize.max,
+          child: Column(
             children: <Widget>[
-              TimetableHeaderYZ(
-                axisY: _axes.yListStr,
-                axisZ: _axes.zListStr,
-              ),
-              TimetableSlots(
-                xType: _axes.xType,
-                yType: _axes.yType,
-                zType: _axes.zType,
-                xList: _axes.xList,
-                yList: _axes.yList,
-                zList: _axes.zList,
-                xListStr: _axes.xListStr,
-                yListStr: _axes.yListStr,
-                zListStr: _axes.zListStr,
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TimetableHeaderYZ(
+                      axisY: _axes.yListStr,
+                      axisZ: _axes.zListStr,
+                    ),
+                    TimetableSlots(
+                      xType: _axes.xType,
+                      yType: _axes.yType,
+                      zType: _axes.zType,
+                      xList: _axes.xList,
+                      yList: _axes.yList,
+                      zList: _axes.zList,
+                      xListStr: _axes.xListStr,
+                      yListStr: _axes.yListStr,
+                      zListStr: _axes.zListStr,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

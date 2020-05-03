@@ -60,7 +60,7 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
                   children: <Widget>[
                     Container(
                       height: constraints.maxHeight,
-                      child: ListView(
+                      child: Column(
                         children: <Widget>[
                           Container(
                             padding: EdgeInsets.all(10.0),

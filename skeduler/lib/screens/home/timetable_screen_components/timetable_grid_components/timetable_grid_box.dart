@@ -16,7 +16,8 @@ class TimetableGridBox extends StatefulWidget {
   // properties
   final GridBoxType gridBoxType;
   final String initialDisplay;
-  final int flex;
+  final double heightRatio;
+  final double widthRatio;
   final ValueSetter<bool> valSetBinVisible;
   final bool textOverFlowFade;
 
@@ -28,9 +29,10 @@ class TimetableGridBox extends StatefulWidget {
   const TimetableGridBox({
     Key key,
     @required this.gridBoxType,
+    @required this.heightRatio,
+    @required this.widthRatio,
     this.initialDisplay = '',
     this.gridAxisType,
-    this.flex = 1,
     this.valSetBinVisible,
     this.textOverFlowFade = true,
     this.coord,
@@ -192,7 +194,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                           .title
                           .color,
                   fontSize: 10.0),
-              maxLines: widget.textOverFlowFade ? 1 : null,
+              maxLines: widget.textOverFlowFade ? 2 : null,
               overflow: widget.textOverFlowFade ? TextOverflow.fade : null,
             ),
           ),
@@ -552,8 +554,11 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
               }()
             : TimetableGridData();
 
-    return Expanded(
-      flex: widget.flex,
+    double gridBoxSize = (MediaQuery.of(context).size.width - 20) / 6;
+
+    return Container(
+      height: widget.heightRatio * gridBoxSize,
+      width: widget.widthRatio * gridBoxSize,
       child: LayoutBuilder(
         builder: (context, constraints) {
           switch (widget.gridBoxType) {
@@ -563,10 +568,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
             case GridBoxType.content:
               return _editMode.editMode == true
                   ? _buildGridBoxContent(constraints)
-                  : Padding(
-                      padding: EdgeInsets.all(2.0),
-                      child: _buildGridBox(constraints),
-                    );
+                  : _buildGridBox(constraints);
+
               break;
             case GridBoxType.switchBox:
               return _buildGridBoxSwitch(constraints);
