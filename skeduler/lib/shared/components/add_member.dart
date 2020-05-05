@@ -14,8 +14,8 @@ class AddMember extends StatefulWidget {
 }
 
 class _AddMemberState extends State<AddMember> {
-  String _newMemberEmail;
   GlobalKey<FormState> _formKeyEmail = GlobalKey<FormState>();
+  String _newMemberEmail;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class _AddMemberState extends State<AddMember> {
                   Text(
                     'Add member',
                     style: textStyleBody,
-                  )
+                  ),
                 ],
               ),
             ),
@@ -47,13 +47,13 @@ class _AddMemberState extends State<AddMember> {
                 FloatingActionButton(
                   heroTag: 'Add Member Cancel',
                   backgroundColor: Colors.red,
-                  onPressed: () {
-                    Navigator.of(context).maybePop();
-                  },
                   child: Icon(
                     Icons.close,
                     color: Colors.white,
                   ),
+                  onPressed: () {
+                    Navigator.of(context).maybePop();
+                  },
                 ),
 
                 SizedBox(width: 20.0),
@@ -62,6 +62,10 @@ class _AddMemberState extends State<AddMember> {
                 FloatingActionButton(
                   heroTag: 'Add Member Confirm',
                   backgroundColor: Colors.green,
+                  child: Icon(
+                    Icons.check,
+                    color: Colors.white,
+                  ),
                   onPressed: () async {
                     if (_formKeyEmail.currentState.validate()) {
                       await dbService
@@ -85,10 +89,6 @@ class _AddMemberState extends State<AddMember> {
                       });
                     }
                   },
-                  child: Icon(
-                    Icons.check,
-                    color: Colors.white,
-                  ),
                 ),
               ],
             ),
@@ -98,7 +98,7 @@ class _AddMemberState extends State<AddMember> {
               child: Column(
                 children: <Widget>[
                   // Required fields
-                  // Email
+                  // ID
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: LabelTextInput(

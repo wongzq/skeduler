@@ -65,7 +65,7 @@ class _AddDummyState extends State<AddDummy> {
                   onPressed: () async {
                     if (_formKeyName.currentState.validate()) {
                       await dbService
-                          .inviteDummyToGroup(
+                          .addDummyToGroup(
                         groupDocId: groupStatus.group.docId,
                         newDummyName: _newDummyName,
                       )

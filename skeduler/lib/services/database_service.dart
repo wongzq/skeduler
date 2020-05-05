@@ -262,9 +262,10 @@ class DatabaseService {
   // --------------------------------------------------------------------------------//////
 
   // add Dummy to [Group]
-  Future<String> inviteDummyToGroup({
+  Future<String> addDummyToGroup({
     @required String groupDocId,
     @required String newDummyName,
+    String newDummyNickname,
   }) async {
     String errorMsg;
 
@@ -281,7 +282,7 @@ class DatabaseService {
               await groupDummyRef.setData({
                 'role': MemberRole.dummy.index,
                 'name': newDummyName,
-                'nickname': newDummyName,
+                'nickname': newDummyNickname ?? newDummyName,
               });
             })
           : errorMsg = 'Dummy is already in the group';
@@ -336,8 +337,26 @@ class DatabaseService {
     });
   }
 
+  // update [Member] in group
+  Future<bool> updateGroupMember({
+    @required String groupDocId,
+    @required Member member,
+  }) async {
+    return await groupsCollection
+        .document(groupDocId)
+        .collection('members')
+        .document(member.id)
+        .updateData({
+          'name': member.name,
+          'nickname': member.nickname,
+          'role': member.role.index,
+        })
+        .then((_) => true)
+        .catchError((_) => false);
+  }
+
   // update [Member]'s role in group
-  Future updateMemberRoleInGroup({
+  Future updateGroupMemberRole({
     @required String groupDocId,
     @required String memberDocId,
     @required MemberRole role,
@@ -918,7 +937,7 @@ class DatabaseService {
   Member _memberFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
         ? Member(
-            email: snapshot.documentID,
+            id: snapshot.documentID,
             name: snapshot.data['name'],
             nickname: snapshot.data['nickname'] ?? snapshot.data['name'],
             description: snapshot.data['description'],
@@ -929,7 +948,7 @@ class DatabaseService {
             // ),
             times: _timesFromDynamicList(snapshot.data['times'] ?? []),
           )
-        : Member(email: null);
+        : Member(id: null);
   }
 
   // convert snapshot to [Timetable]

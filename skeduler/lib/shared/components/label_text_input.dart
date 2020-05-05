@@ -30,7 +30,10 @@ class _LabelTextInputState extends State<LabelTextInput> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: 10.0,
+        vertical: 10.0,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -55,8 +58,7 @@ class _LabelTextInputState extends State<LabelTextInput> {
                 ),
                 style: TextStyle(fontSize: 15.0),
                 onChanged: (value) {
-                  if (widget.valSetText != null)
-                    widget.valSetText(value);
+                  if (widget.valSetText != null) widget.valSetText(value);
                 },
                 validator: (value) {
                   if (widget.validator != null) {

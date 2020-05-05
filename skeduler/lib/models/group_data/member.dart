@@ -18,7 +18,7 @@ class Member {
 
   // constructors
   Member({
-    @required String email,
+    @required String id,
     String name,
     String nickname,
     String description,
@@ -26,7 +26,7 @@ class Member {
     ColorShade colorShade,
     List<Time> times,
   }) {
-    _email = email;
+    _email = id;
     _name = name;
     _nickname = nickname;
     _description = description;
@@ -36,7 +36,7 @@ class Member {
   }
 
   // getter methods
-  String get email => _email;
+  String get id => _email;
   String get name => _name;
   String get nickname => _nickname;
   String get display => _nickname ?? _name ?? _email;
