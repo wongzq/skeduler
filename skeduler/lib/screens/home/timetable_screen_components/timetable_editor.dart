@@ -7,6 +7,7 @@ import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
+import 'package:skeduler/models/group_data/subject.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_display.dart';
@@ -14,7 +15,7 @@ import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
-enum TimetableEditorOption { settings, switchAxis, save }
+enum TimetableEditorOption { settings, switchAxis, addSubject, addDummy, save }
 
 class TimetableEditor extends StatefulWidget {
   @override
@@ -77,6 +78,14 @@ class _TimetableEditorState extends State<TimetableEditor> {
                     child: Text('Switch axis'),
                   ),
                   PopupMenuItem(
+                    value: TimetableEditorOption.addSubject,
+                    child: Text('Add subject'),
+                  ),
+                  PopupMenuItem(
+                    value: TimetableEditorOption.addDummy,
+                    child: Text('Add dummy'),
+                  ),
+                  PopupMenuItem(
                     value: TimetableEditorOption.save,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +95,13 @@ class _TimetableEditorState extends State<TimetableEditor> {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Icon(Icons.save),
+                            Icon(
+                              Icons.save,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.black
+                                  : Colors.white,
+                            ),
                             SizedBox(width: 10.0),
                             Text('Save'),
                           ],
@@ -112,6 +127,115 @@ class _TimetableEditorState extends State<TimetableEditor> {
                         builder: (context) {
                           return TimetableSwitchDialog();
                         });
+                    break;
+
+                  case TimetableEditorOption.addSubject:
+                    GlobalKey<FormState> formKey = GlobalKey<FormState>();
+                    String newSubjectName;
+                    String newSubjectNickname;
+
+                    await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(
+                              'New subject',
+                              style: TextStyle(fontSize: 16.0),
+                            ),
+                            content: Form(
+                              key: formKey,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      hintText: 'Subject short form (optional)',
+                                      hintStyle: TextStyle(
+                                        fontSize: 15.0,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                    onChanged: (value) =>
+                                        newSubjectNickname = value.trim(),
+                                    validator: (value) => null,
+                                  ),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      hintText: 'Subject full name',
+                                      hintStyle: TextStyle(
+                                        fontSize: 15.0,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                    onChanged: (value) =>
+                                        newSubjectName = value.trim(),
+                                    validator: (value) =>
+                                        value == null || value.trim() == ''
+                                            ? 'Subject name cannot be empty'
+                                            : null,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('CANCEL'),
+                                onPressed: () =>
+                                    Navigator.of(context).maybePop(),
+                              ),
+                              FlatButton(
+                                child: Text('SAVE'),
+                                onPressed: () async {
+                                  if (formKey.currentState.validate()) {
+                                    Navigator.of(context).maybePop();
+
+                                    await dbService
+                                        .updateGroupSubjects(
+                                      groupStatus.group.docId,
+                                      groupStatus.group.subjects,
+                                    )
+                                        .then((value) async {
+                                      if (value) {
+                                        groupStatus.group.subjects.add(Subject(
+                                          name: newSubjectName,
+                                          nickname: newSubjectNickname,
+                                        ));
+
+                                        String returnMsg =
+                                            await dbService.addGroupSubject(
+                                                groupStatus.group.docId,
+                                                Subject(
+                                                  name: newSubjectName,
+                                                  nickname: newSubjectNickname,
+                                                ));
+
+                                        setState(() {
+                                          groupStatus.hasChanges = false;
+                                        });
+                                        Fluttertoast.showToast(
+                                          msg: returnMsg,
+                                          toastLength: Toast.LENGTH_LONG,
+                                        );
+                                      } else {
+                                        Fluttertoast.showToast(
+                                          msg: 'Failed to update subjects',
+                                          toastLength: Toast.LENGTH_LONG,
+                                        );
+                                      }
+                                    });
+                                  }
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                    break;
+
+                  case TimetableEditorOption.addDummy:
+                    Navigator.of(context).pushNamed(
+                      '/group/addDummy',
+                      arguments: RouteArgs(),
+                    );
                     break;
 
                   case TimetableEditorOption.save:

@@ -17,12 +17,14 @@ class TimetableScreen extends StatefulWidget {
 }
 
 class _TimetableScreenState extends State<TimetableScreen> {
+  bool _viewTodayTtb = true;
+
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
-    TimetableAxes _axes = Provider.of<TimetableAxes>(context);
+    TimetableAxes axes = Provider.of<TimetableAxes>(context);
 
     return StreamBuilder(
         stream: dbService.getGroupMemberMyData(groupStatus.group.docId),
@@ -42,7 +44,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                   Timetable timetable =
                       snapshotTtb != null ? snapshotTtb.data : null;
 
-                  if (timetable != null && ttbStatus.curr == null) {
+                  if (_viewTodayTtb) {
                     ttbStatus.curr = timetable;
                   }
 
@@ -104,7 +106,14 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                             ),
                                             Row(
                                               children: <Widget>[
-                                                Icon(Icons.add),
+                                                Icon(
+                                                  Icons.add,
+                                                  color: Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.light
+                                                      ? Colors.black
+                                                      : Colors.white,
+                                                ),
                                                 SizedBox(width: 10.0),
                                                 Text('Add timetable'),
                                               ],
@@ -127,7 +136,14 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                             ),
                                             Row(
                                               children: <Widget>[
-                                                Icon(Icons.today),
+                                                Icon(
+                                                  Icons.today,
+                                                  color: Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.light
+                                                      ? Colors.black
+                                                      : Colors.white,
+                                                ),
                                                 SizedBox(width: 10.0),
                                                 Text('Today\'s timetable'),
                                               ],
@@ -143,7 +159,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                       if (me.role == MemberRole.owner ||
                                           me.role == MemberRole.admin) {
                                         ttbStatus.edit = EditTimetable();
-                                        _axes.clearAxes();
+                                        axes.clearAxes();
                                         Navigator.of(context).pushNamed(
                                           '/timetable/editor',
                                           arguments: RouteArgs(),
@@ -154,7 +170,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                         );
                                       } else if (me.role == MemberRole.member) {
                                         setState(() {
-                                          ttbStatus.curr = timetable;
+                                          _viewTodayTtb = true;
                                         });
                                       }
                                     } else if (value is String) {
@@ -167,7 +183,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                             value,
                                           ),
                                         );
-                                        _axes.clearAxes();
+                                        axes.clearAxes();
                                         Navigator.of(context).pushNamed(
                                           '/timetable/editor',
                                           arguments: RouteArgs(),
@@ -177,8 +193,10 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                             .getGroupTimetable(
                                                 groupStatus.group.docId, value)
                                             .then((value) {
-                                          ttbStatus.curr = value;
-                                          setState(() {});
+                                          setState(() {
+                                            _viewTodayTtb = false;
+                                            ttbStatus.curr = value;
+                                          });
                                         });
                                       }
                                     }
