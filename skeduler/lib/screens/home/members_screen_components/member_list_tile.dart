@@ -36,8 +36,8 @@ class MemberListTile extends StatelessWidget {
                 Container(
                   child: ListTile(
                     leading: Icon(member.roleIcon),
-                    title: Text(member.name + ' - ' + member.nickname),
-                    subtitle: Text(member.roleStr),
+                    title: Text(member.nickname),
+                    subtitle: Text(member.name),
                   ),
                 ),
                 Divider(height: 1.0),
@@ -52,8 +52,8 @@ class MemberListTile extends StatelessWidget {
           Container(
             child: ListTile(
               leading: Icon(member.roleIcon),
-              title: Text(member.name + ' - ' + member.nickname),
-              subtitle: Text(member.roleStr),
+              title: Text(member.nickname),
+              subtitle: Text(member.name),
               trailing: member.role == MemberRole.owner
                   ? me.role == MemberRole.owner
                       ? PopupMenuButton(
