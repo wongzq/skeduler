@@ -7,6 +7,7 @@ import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class MemberListTile extends StatelessWidget {
   final Member me;
@@ -101,6 +102,7 @@ class MemberListTile extends StatelessWidget {
           : Column(
               children: <Widget>[
                 Container(
+                  color: Colors.red,
                   child: ListTile(
                     leading: Icon(member.roleIcon),
                     title: Text(member.nickname),
@@ -117,14 +119,36 @@ class MemberListTile extends StatelessWidget {
       return Column(
         children: <Widget>[
           Container(
+            color: member.id == me.id
+                ? getOriginThemeData(ThemeProvider.themeOf(context).id)
+                    .primaryColorLight
+                : null,
             child: ListTile(
-              leading: Icon(member.roleIcon),
-              title: Text(member.nickname),
-              subtitle: Text(member.name),
+              leading: Icon(
+                member.roleIcon,
+                color: member.id == me.id
+                    ? Theme.of(context).brightness == Brightness.light
+                        ? Colors.black
+                        : Colors.black
+                    : null,
+              ),
+              title: Text(
+                member.nickname,
+                style:
+                    TextStyle(color: member.id == me.id ? Colors.black : null),
+              ),
+              subtitle: Text(
+                member.name,
+                style: TextStyle(
+                    color: member.id == me.id ? Colors.grey[700] : null),
+              ),
               trailing: member.role == MemberRole.owner
                   ? me.role == MemberRole.owner
                       ? PopupMenuButton(
-                          icon: Icon(Icons.more_vert),
+                          icon: Icon(
+                            Icons.more_vert,
+                            color: member.id == me.id ? Colors.black : null,
+                          ),
                           itemBuilder: (context) {
                             return [
                               _optionEdit(),
@@ -144,7 +168,10 @@ class MemberListTile extends StatelessWidget {
                         )
                       : null
                   : PopupMenuButton(
-                      icon: Icon(Icons.more_vert),
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: member.id == me.id ? Colors.black : null,
+                      ),
                       itemBuilder: (context) {
                         // If member is admin
                         if (member.role == MemberRole.admin) {
@@ -234,6 +261,8 @@ class MemberListTile extends StatelessWidget {
                                         child: Text('CONFIRM'),
                                         onPressed: () async {
                                           if (formKey.currentState.validate()) {
+                                            Navigator.of(context).maybePop();
+
                                             await dbService
                                                 .updateGroupMemberRole(
                                               groupDocId:
@@ -259,7 +288,6 @@ class MemberListTile extends StatelessWidget {
                                               ownerName: member.name,
                                               ownerEmail: member.id,
                                             );
-                                            Navigator.of(context).maybePop();
                                           }
                                         },
                                       ),

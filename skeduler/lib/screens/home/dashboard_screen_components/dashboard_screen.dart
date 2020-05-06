@@ -31,95 +31,19 @@ class DashboardScreen extends StatelessWidget {
         ),
       ),
       drawer: HomeDrawer(DrawerEnum.dashboard),
-      floatingActionButton: SpeedDial(
+      floatingActionButton: FloatingActionButton(
         foregroundColor: getFABIconForegroundColor(context),
         backgroundColor: getFABIconBackgroundColor(context),
-        overlayColor: Colors.grey,
-        overlayOpacity: 0.8,
-        curve: Curves.easeOutCubic,
         child: Icon(Icons.add, size: 30.0),
-
-        // Join button
-        children: <SpeedDialChild>[
-          SpeedDialChild(
-            foregroundColor: getFABIconForegroundColor(context),
-            backgroundColor: getFABIconBackgroundColor(context),
-            child: Icon(
-              Icons.group_add,
-              size: 30.0,
-            ),
-            labelWidget: Container(
-              height: 40.0,
-              width: 100.0,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: getFABIconBackgroundColor(context),
-                borderRadius: BorderRadius.circular(20.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    offset: Offset(0.0, 5.0),
-                    blurRadius: 10.0,
-                  ),
-                ],
-              ),
-              child: Text(
-                'JOIN',
-                style: TextStyle(
-                  color: getFABTextColor(context),
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 1.5,
-                ),
-              ),
-            ),
-            onTap: () {},
-          ),
-
-          // Create button
-          SpeedDialChild(
-            foregroundColor: getFABIconForegroundColor(context),
-            backgroundColor: getFABIconBackgroundColor(context),
-            child: Icon(
-              FontAwesomeIcons.users,
-              size: 25.0,
-            ),
-            labelWidget: Container(
-              height: 40.0,
-              width: 100.0,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: getFABIconBackgroundColor(context),
-                borderRadius: BorderRadius.circular(20.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    offset: Offset(0.0, 5.0),
-                    blurRadius: 10.0,
-                  ),
-                ],
-              ),
-              child: Text(
-                'CREATE',
-                style: TextStyle(
-                  color: getFABTextColor(context),
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 1.5,
-                ),
-              ),
-            ),
-            onTap: () {
-              Navigator.of(context).pushNamed(
-                '/dashboard/createGroup',
-                arguments: RouteArgs(),
-              );
-            },
-          ),
-        ],
+        onPressed: () {
+          Navigator.of(context).pushNamed(
+            '/dashboard/createGroup',
+            arguments: RouteArgs(),
+          );
+        },
       ),
       body: Padding(
-        padding: const EdgeInsets.all(_bodyPadding),
+        padding: EdgeInsets.all(_bodyPadding),
         child: StreamBuilder<List<Group>>(
           stream: dbService.groups,
           builder: (BuildContext context, AsyncSnapshot snapshot) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
@@ -74,18 +75,38 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                     ],
                                   ),
                             actions: <Widget>[
-                              IconButton(
-                                icon: PopupMenuButton(
+                              Padding(
+                                padding: EdgeInsets.only(right: 10.0),
+                                child: PopupMenuButton(
                                   child: Icon(Icons.more_vert),
                                   itemBuilder: (BuildContext context) {
                                     List<PopupMenuEntry> timetableOptions = [];
 
                                     // Add timetables to options
                                     groupStatus.group.timetableMetadatas
-                                        .forEach((timetableDocId) {
+                                        .forEach((timetableMeta) {
                                       timetableOptions.add(PopupMenuItem(
-                                        value: timetableDocId.id,
-                                        child: Text(timetableDocId.id),
+                                        value: timetableMeta.id,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(timetableMeta.id),
+                                            Text(
+                                              DateFormat('dd MMM').format(
+                                                      timetableMeta.startDate
+                                                          .toDate()) +
+                                                  ' - ' +
+                                                  DateFormat('dd MMM').format(
+                                                      timetableMeta.endDate
+                                                          .toDate()),
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 14.0,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ));
                                     });
 
@@ -202,7 +223,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                     }
                                   },
                                 ),
-                                onPressed: () {},
                               ),
                             ],
                           ),

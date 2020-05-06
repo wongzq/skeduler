@@ -34,11 +34,23 @@ class SubjectListTile extends StatelessWidget {
               return [
                 PopupMenuItem<SubjectOption>(
                   value: SubjectOption.edit,
-                  child: Text('Edit'),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.edit),
+                      SizedBox(width: 10.0),
+                      Text('Edit'),
+                    ],
+                  ),
                 ),
                 PopupMenuItem<SubjectOption>(
                   value: SubjectOption.remove,
-                  child: Text('Remove'),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.delete),
+                      SizedBox(width: 10.0),
+                      Text('Remove'),
+                    ],
+                  ),
                 ),
               ];
             },
@@ -107,8 +119,8 @@ class SubjectListTile extends StatelessWidget {
 
                                   valSetIsUpdating(true);
 
-                                  int index =
-                                      groupStatus.group.subjects.indexOf(subject);
+                                  int index = groupStatus.group.subjects
+                                      .indexOf(subject);
 
                                   groupStatus.group.subjects.insert(
                                       index,
@@ -117,7 +129,8 @@ class SubjectListTile extends StatelessWidget {
                                         nickname: newSubjectNickname,
                                       ));
 
-                                  groupStatus.group.subjects.removeAt(index + 1);
+                                  groupStatus.group.subjects
+                                      .removeAt(index + 1);
 
                                   if (await dbService.updateGroupSubjects(
                                       groupStatus.group.docId,
@@ -142,7 +155,8 @@ class SubjectListTile extends StatelessWidget {
                       });
                   break;
                 case SubjectOption.remove:
-                  dbService.removeGroupSubject(groupStatus.group.docId, subject);
+                  dbService.removeGroupSubject(
+                      groupStatus.group.docId, subject);
                   break;
               }
             },
