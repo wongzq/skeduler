@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
@@ -16,6 +17,72 @@ class MemberListTile extends StatelessWidget {
     @required this.me,
     @required this.member,
   }) : super(key: key);
+
+  // methods
+  PopupMenuItem _optionMakeOwner() {
+    return PopupMenuItem(
+      child: Row(
+        children: <Widget>[
+          Icon(FontAwesomeIcons.userTie),
+          SizedBox(width: 10.0),
+          Text('Make Owner'),
+        ],
+      ),
+      value: MemberOption.makeOwner,
+    );
+  }
+
+  PopupMenuItem _optionMakeAdmin() {
+    return PopupMenuItem(
+      child: Row(
+        children: <Widget>[
+          Icon(FontAwesomeIcons.userCog),
+          SizedBox(width: 10.0),
+          Text('Make Admin'),
+        ],
+      ),
+      value: MemberOption.makeAdmin,
+    );
+  }
+
+  PopupMenuItem _optionMakeMember() {
+    return PopupMenuItem(
+      child: Row(
+        children: <Widget>[
+          Icon(FontAwesomeIcons.userAlt),
+          SizedBox(width: 10.0),
+          Text('Make member'),
+        ],
+      ),
+      value: MemberOption.makeMember,
+    );
+  }
+
+  PopupMenuItem _optionEdit() {
+    return PopupMenuItem(
+      child: Row(
+        children: <Widget>[
+          Icon(Icons.edit),
+          SizedBox(width: 10.0),
+          Text('Edit'),
+        ],
+      ),
+      value: MemberOption.edit,
+    );
+  }
+
+  PopupMenuItem _optionRemove() {
+    return PopupMenuItem(
+      child: Row(
+        children: <Widget>[
+          Icon(Icons.delete),
+          SizedBox(width: 10.0),
+          Text('Remove'),
+        ],
+      ),
+      value: MemberOption.remove,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +127,7 @@ class MemberListTile extends StatelessWidget {
                           icon: Icon(Icons.more_vert),
                           itemBuilder: (context) {
                             return [
-                              PopupMenuItem(
-                                child: Text('Edit'),
-                                value: MemberOption.edit,
-                              ),
+                              _optionEdit(),
                             ];
                           },
                           onSelected: (value) {
@@ -86,23 +150,11 @@ class MemberListTile extends StatelessWidget {
                         if (member.role == MemberRole.admin) {
                           return [
                             me.role == MemberRole.owner
-                                ? PopupMenuItem(
-                                    child: Text('Make owner'),
-                                    value: MemberOption.makeOwner,
-                                  )
+                                ? _optionMakeOwner()
                                 : null,
-                            PopupMenuItem(
-                              child: Text('Make member'),
-                              value: MemberOption.makeMember,
-                            ),
-                            PopupMenuItem(
-                              child: Text('Edit'),
-                              value: MemberOption.edit,
-                            ),
-                            PopupMenuItem(
-                              child: Text('Remove'),
-                              value: MemberOption.remove,
-                            ),
+                            _optionMakeMember(),
+                            _optionEdit(),
+                            _optionRemove(),
                           ];
                         }
 
@@ -110,47 +162,26 @@ class MemberListTile extends StatelessWidget {
                         else if (member.role == MemberRole.member) {
                           return [
                             me.role == MemberRole.owner
-                                ? PopupMenuItem(
-                                    child: Text('Make owner'),
-                                    value: MemberOption.makeOwner,
-                                  )
+                                ? _optionMakeOwner()
                                 : null,
-                            PopupMenuItem(
-                              child: Text('Make admin'),
-                              value: MemberOption.makeAdmin,
-                            ),
-                            PopupMenuItem(
-                              child: Text('Edit'),
-                              value: MemberOption.edit,
-                            ),
-                            PopupMenuItem(
-                              child: Text('Remove'),
-                              value: MemberOption.remove,
-                            ),
+                            _optionMakeAdmin(),
+                            _optionEdit(),
+                            _optionRemove(),
                           ];
                         }
 
                         // If member is Pending
                         else if (member.role == MemberRole.pending) {
                           return [
-                            PopupMenuItem(
-                              child: Text('Remove'),
-                              value: MemberOption.remove,
-                            ),
+                            _optionRemove(),
                           ];
                         }
 
                         // If member is Dummy
                         else if (member.role == MemberRole.dummy) {
                           return [
-                            PopupMenuItem(
-                              child: Text('Edit'),
-                              value: MemberOption.edit,
-                            ),
-                            PopupMenuItem(
-                              child: Text('Remove'),
-                              value: MemberOption.remove,
-                            ),
+                            _optionEdit(),
+                            _optionRemove(),
                           ];
                         } else {
                           return [];
