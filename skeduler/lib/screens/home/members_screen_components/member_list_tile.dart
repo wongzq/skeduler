@@ -69,9 +69,12 @@ class MemberListTile extends StatelessWidget {
                           onSelected: (value) {
                             if (value == MemberOption.edit) {
                               Navigator.of(context).pushNamed(
-                                  '/members/editMember',
-                                  arguments:
-                                      RouteArgsEditMember(member: member));
+                                '/members/editMember',
+                                arguments: RouteArgsEditMember(
+                                  me: me,
+                                  member: member,
+                                ),
+                              );
                             }
                           },
                         )
@@ -162,7 +165,7 @@ class MemberListTile extends StatelessWidget {
                                   return AlertDialog(
                                     title: Text(
                                       'Transfer ownership to ' +
-                                          (member.nickname ?? ''),
+                                          (member.name ?? ''),
                                       style: TextStyle(fontSize: 16.0),
                                     ),
                                     content: Row(
@@ -173,7 +176,7 @@ class MemberListTile extends StatelessWidget {
                                             child: TextFormField(
                                               autofocus: true,
                                               decoration: InputDecoration(
-                                                  hintText: 'type \'Confirm\''),
+                                                  hintText: 'Type \'Confirm\''),
                                               validator: (value) {
                                                 if (value == 'Confirm') {
                                                   return null;
@@ -214,6 +217,17 @@ class MemberListTile extends StatelessWidget {
                                               memberDocId: me.id,
                                               role: MemberRole.admin,
                                             );
+
+                                            await dbService.updateGroupData(
+                                              groupStatus.group.docId,
+                                              name: groupStatus.group.name,
+                                              description:
+                                                  groupStatus.group.description,
+                                              colorShade:
+                                                  groupStatus.group.colorShade,
+                                              ownerName: member.name,
+                                              ownerEmail: member.id,
+                                            );
                                             Navigator.of(context).maybePop();
                                           }
                                         },
@@ -235,8 +249,12 @@ class MemberListTile extends StatelessWidget {
                             );
                           } else if (value == MemberOption.edit) {
                             Navigator.of(context).pushNamed(
-                                '/members/editMember',
-                                arguments: RouteArgsEditMember(member: member));
+                              '/members/editMember',
+                              arguments: RouteArgsEditMember(
+                                me: me,
+                                member: member,
+                              ),
+                            );
                           } else if (value == MemberOption.remove) {
                             await dbService.removeMemberFromGroup(
                               groupDocId: groupStatus.group.docId,

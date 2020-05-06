@@ -42,7 +42,7 @@ class Member {
   String get display => _nickname ?? _name ?? _email;
   String get description => _description;
   MemberRole get role => _role;
-  String get roleStr => _memberRole(_role);
+  String get roleStr => memberRoleStr(_role);
   IconData get roleIcon => _memberRoleIcon(_role);
   ColorShade get colorShade => _colorShade;
   List<Time> get times => _times;
@@ -56,7 +56,7 @@ enum MemberRole {
   owner,
 }
 
-String _memberRole(MemberRole role) {
+String memberRoleStr(MemberRole role) {
   switch (role) {
     case MemberRole.pending:
       return 'Pending';

@@ -8,6 +8,7 @@ import 'package:skeduler/models/group_data/member.dart';
 abstract class _RouteArgsTemplate {
   // properties
   Group _group;
+  Member _me;
   Member _member;
   List<String> _axisCustom;
   void Function(List<String>) _valSetAxisCustom;
@@ -20,6 +21,7 @@ abstract class _RouteArgsTemplate {
   );
 
   _RouteArgsTemplate.member(
+    this._me,
     this._member,
   );
 
@@ -44,8 +46,12 @@ class RouteArgsGroup extends _RouteArgsTemplate {
 }
 
 class RouteArgsEditMember extends _RouteArgsTemplate {
-  RouteArgsEditMember({@required Member member}) : super.member(member);
+  RouteArgsEditMember({
+    @required Member me,
+    @required Member member,
+  }) : super.member(me, member);
 
+  get me => this._me;
   get member => this._member;
 }
 

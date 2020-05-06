@@ -10,10 +10,12 @@ import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class EditMember extends StatefulWidget {
+  final Member me;
   final Member member;
 
   const EditMember({
     Key key,
+    @required this.me,
     @required this.member,
   }) : super(key: key);
 
@@ -88,6 +90,26 @@ class _EditMemberState extends State<EditMember> {
                     color: Colors.white,
                   ),
                   onPressed: () async {
+                    // if transfer ownership
+                    if (widget.me.role == MemberRole.owner &&
+                        _editRole == MemberRole.owner) {
+                      await dbService.updateGroupMemberRole(
+                        groupDocId: groupStatus.group.docId,
+                        memberDocId: widget.me.id,
+                        role: MemberRole.admin,
+                      );
+
+                      await dbService.updateGroupData(
+                        groupStatus.group.docId,
+                        name: groupStatus.group.name,
+                        description: groupStatus.group.description,
+                        colorShade: groupStatus.group.colorShade,
+                        ownerName: _editName,
+                        ownerEmail: widget.member.id,
+                      );
+                    }
+
+                    // general update group member details
                     if ((widget.member.role == MemberRole.owner ||
                             widget.member.role == MemberRole.admin ||
                             widget.member.role == MemberRole.member) &&
@@ -116,9 +138,13 @@ class _EditMemberState extends State<EditMember> {
                           );
                         }
                       });
-                    } else if (widget.member.role == MemberRole.dummy &&
+                    }
+
+                    // general update group dummy details
+                    else if (widget.member.role == MemberRole.dummy &&
                         _formKeyName.currentState.validate() &&
                         _formKeyNickname.currentState.validate()) {
+                      // if dummy id remains the same
                       if (_editName == widget.member.name) {
                         await dbService
                             .updateGroupMember(
@@ -144,7 +170,10 @@ class _EditMemberState extends State<EditMember> {
                             );
                           }
                         });
-                      } else {
+                      }
+
+                      // if dummy id is different, replaces old document
+                      else {
                         await dbService
                             .addDummyToGroup(
                           groupDocId: groupStatus.group.docId,
@@ -180,7 +209,7 @@ class _EditMemberState extends State<EditMember> {
               onTap: () => unfocus(),
               child: Column(
                 children: <Widget>[
-                  // ID (only shows for owners, admins and members)
+                  // id
                   widget.member.role == MemberRole.owner ||
                           widget.member.role == MemberRole.admin ||
                           widget.member.role == MemberRole.member
@@ -213,6 +242,7 @@ class _EditMemberState extends State<EditMember> {
                           ),
                         )
                       : Container(),
+
                   // name
                   widget.member.role == MemberRole.owner ||
                           widget.member.role == MemberRole.admin ||
@@ -261,8 +291,10 @@ class _EditMemberState extends State<EditMember> {
                               ),
                             )
                           : Container(),
+
+                  // nickname
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
                     child: LabelTextInput(
                       initialValue: widget.member.nickname,
                       hintText: 'Required',
@@ -274,6 +306,160 @@ class _EditMemberState extends State<EditMember> {
                       validator: (value) => value == null || value.trim() == ''
                           ? 'Nickname cannot be empty'
                           : null,
+                    ),
+                  ),
+
+                  // member role
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                      vertical: 20.0,
+                    ),
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Container(
+                          width: 100,
+                          child: Text(
+                            'Role',
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        DropdownButton<MemberRole>(
+                          value: _editRole,
+                          disabledHint:
+                              widget.member.role == MemberRole.owner ||
+                                      widget.member.role == MemberRole.dummy
+                                  ? Text(memberRoleStr(_editRole))
+                                  : null,
+                          isDense: true,
+                          underline: Container(),
+                          items:
+                              // if I am owner, and I am editing owner, admin or member
+                              widget.me.role == MemberRole.owner &&
+                                      (widget.member.role == MemberRole.admin ||
+                                          widget.member.role ==
+                                              MemberRole.member)
+                                  ? [
+                                      DropdownMenuItem<MemberRole>(
+                                        value: MemberRole.owner,
+                                        child: Text(
+                                            memberRoleStr(MemberRole.owner)),
+                                      ),
+                                      DropdownMenuItem<MemberRole>(
+                                        value: MemberRole.admin,
+                                        child: Text(
+                                            memberRoleStr(MemberRole.admin)),
+                                      ),
+                                      DropdownMenuItem<MemberRole>(
+                                        value: MemberRole.member,
+                                        child: Text(
+                                            memberRoleStr(MemberRole.member)),
+                                      ),
+                                    ]
+                                  :
+                                  // if I am owner, and I am editing dummy
+                                  widget.member.role == MemberRole.dummy
+                                      ? <DropdownMenuItem<MemberRole>>[
+                                          DropdownMenuItem<MemberRole>(
+                                            value: MemberRole.dummy,
+                                            child: Text(memberRoleStr(
+                                                MemberRole.dummy)),
+                                          ),
+                                        ]
+                                      : widget.me.role == MemberRole.admin
+                                          ? [
+                                              DropdownMenuItem<MemberRole>(
+                                                value: MemberRole.admin,
+                                                child: Text(memberRoleStr(
+                                                    MemberRole.admin)),
+                                              ),
+                                              DropdownMenuItem<MemberRole>(
+                                                value: MemberRole.member,
+                                                child: Text(memberRoleStr(
+                                                    MemberRole.member)),
+                                              ),
+                                            ]
+                                          : [],
+                          onChanged: widget.member.role == MemberRole.owner ||
+                                  widget.member.role == MemberRole.dummy
+                              ? null
+                              : (value) {
+                                  if (widget.me.role == MemberRole.owner &&
+                                      value == MemberRole.owner) {
+                                    GlobalKey<FormState> formKey =
+                                        GlobalKey<FormState>();
+
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: Text(
+                                              'Transfer ownership to ' +
+                                                  (widget.member.name ?? ''),
+                                              style: TextStyle(fontSize: 16.0),
+                                            ),
+                                            content: Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Form(
+                                                    key: formKey,
+                                                    child: TextFormField(
+                                                      autofocus: true,
+                                                      decoration: InputDecoration(
+                                                          hintText:
+                                                              'Type \'Confirm\''),
+                                                      validator: (value) {
+                                                        if (value ==
+                                                            'Confirm') {
+                                                          return null;
+                                                        } else {
+                                                          return 'Word doesn\'t match';
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            actions: <Widget>[
+                                              // CANCEL button
+                                              FlatButton(
+                                                child: Text('CANCEL'),
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .maybePop();
+                                                },
+                                              ),
+
+                                              // CONFIRM button
+                                              FlatButton(
+                                                child: Text('CONFIRM'),
+                                                onPressed: () async {
+                                                  if (formKey.currentState
+                                                      .validate()) {
+                                                    setState(() {
+                                                      _editRole = value;
+                                                    });
+                                                    Navigator.of(context)
+                                                        .maybePop();
+                                                  }
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        });
+                                  } else {
+                                    setState(() {
+                                      _editRole = value;
+                                    });
+                                  }
+                                },
+                        )
+                      ],
                     ),
                   ),
                 ],
