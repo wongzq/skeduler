@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/time.dart';
+import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid_box.dart';
 
 class TimetableSlots extends StatefulWidget {
-  final TimetableAxisType xType;
-  final TimetableAxisType yType;
-  final TimetableAxisType zType;
+  final DataAxis xType;
+  final DataAxis yType;
+  final DataAxis zType;
 
   final List xList;
   final List yList;
@@ -40,10 +41,20 @@ class _TimetableSlotsState extends State<TimetableSlots> {
 
   @override
   Widget build(BuildContext context) {
-    TimetableScroll ttbScroll = Provider.of<TimetableScroll>(context);
-    horiScroll = horiScroll ?? ttbScroll.hori.addAndGet();
+    TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
+    TimetableEditMode editMode = Provider.of<TimetableEditMode>(context);
+
+    horiScroll = horiScroll ??
+        (editMode.editing
+            ? ttbStatus.editScroll.hori.addAndGet()
+            : ttbStatus.currScroll.hori.addAndGet());
+
     vertScrolls = vertScrolls ??
-        List.generate(widget.xList.length, (_) => ttbScroll.vert.addAndGet());
+        List.generate(
+            widget.xList.length,
+            (_) => editMode.editing
+                ? ttbStatus.editScroll.vert.addAndGet()
+                : ttbStatus.currScroll.vert.addAndGet());
 
     return Expanded(
       child: SingleChildScrollView(
@@ -58,18 +69,16 @@ class _TimetableSlotsState extends State<TimetableSlots> {
 
               for (int y = 0; y < widget.yListStr.length; y++) {
                 for (int z = 0; z < widget.zListStr.length; z++) {
-                  dynamic getAxisVal(TimetableAxisType axisType) =>
-                      widget.xType == axisType
-                          ? widget.xList[x]
-                          : widget.yType == axisType
-                              ? widget.yList[y]
-                              : widget.zType == axisType
-                                  ? widget.zList[z]
-                                  : null;
+                  dynamic getAxisVal(DataAxis axisType) => widget.xType ==
+                          axisType
+                      ? widget.xList[x]
+                      : widget.yType == axisType
+                          ? widget.yList[y]
+                          : widget.zType == axisType ? widget.zList[z] : null;
 
-                  Weekday dayVal = getAxisVal(TimetableAxisType.day);
-                  Time timeVal = getAxisVal(TimetableAxisType.time);
-                  String customVal = getAxisVal(TimetableAxisType.custom);
+                  Weekday dayVal = getAxisVal(DataAxis.day);
+                  Time timeVal = getAxisVal(DataAxis.time);
+                  String customVal = getAxisVal(DataAxis.custom);
 
                   rows.add(TimetableGridBox(
                     gridBoxType: GridBoxType.content,
@@ -87,7 +96,9 @@ class _TimetableSlotsState extends State<TimetableSlots> {
               ScrollController vertScroll;
 
               if (x >= vertScrolls.length || vertScrolls[x] == null) {
-                vertScroll = ttbScroll.vert.addAndGet();
+                vertScroll = editMode.editing
+                    ? ttbStatus.editScroll.vert.addAndGet()
+                    : ttbStatus.currScroll.vert.addAndGet();
                 vertScrolls.add(vertScroll);
               } else {
                 vertScroll = vertScrolls[x];

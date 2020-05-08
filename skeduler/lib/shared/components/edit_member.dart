@@ -36,9 +36,6 @@ class _EditMemberState extends State<EditMember> {
     _editName = widget.member.name;
     _editNickname = widget.member.nickname;
     _editRole = widget.member.role;
-    print(_editName);
-    print(_editNickname);
-    print(_editRole);
     super.initState();
   }
 

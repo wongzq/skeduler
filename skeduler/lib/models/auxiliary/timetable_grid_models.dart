@@ -163,7 +163,7 @@ class TimetableDragSubjectMember extends TimetableDragData {
 // --------------------------------------------------------------------------------
 
 class TimetableEditMode extends ChangeNotifier {
-  bool _editMode;
+  bool _editing;
   bool _binVisible;
   bool _dragSubject;
   bool _dragMember;
@@ -171,48 +171,48 @@ class TimetableEditMode extends ChangeNotifier {
   TimetableDragData _isDraggingData;
 
   TimetableEditMode({bool editMode})
-      : this._editMode = editMode ?? false,
+      : this._editing = editMode ?? false,
         this._dragSubject = editMode,
         this._dragMember = editMode,
         this._isDragging = false,
         this._binVisible = false;
 
-  bool get editMode => this._editMode;
+  bool get editing => this._editing;
   bool get binVisible => this._binVisible;
-  bool get dragSubject => this._editMode ? this._dragSubject : false;
-  bool get dragMember => this._editMode ? this._dragMember : false;
+  bool get dragSubject => this._editing ? this._dragSubject : false;
+  bool get dragMember => this._editing ? this._dragMember : false;
   bool get dragSubjectOnly =>
-      this._editMode ? this._dragSubject && !this._dragMember : false;
+      this._editing ? this._dragSubject && !this._dragMember : false;
   bool get dragMemberOnly =>
-      this._editMode ? !this._dragSubject && this._dragMember : false;
+      this._editing ? !this._dragSubject && this._dragMember : false;
   bool get dragSubjectAndMember =>
-      this._editMode ? this._dragSubject && this._dragMember : false;
-  bool get isDragging => this._editMode ? this._isDragging : false;
+      this._editing ? this._dragSubject && this._dragMember : false;
+  bool get isDragging => this._editing ? this._isDragging : false;
   TimetableDragData get isDraggingData =>
-      this._editMode ? this._isDraggingData : null;
+      this._editing ? this._isDraggingData : null;
 
-  set editMode(bool value) {
-    this._editMode = value;
+  set editing(bool value) {
+    this._editing = value;
     notifyListeners();
   }
 
   set dragSubject(bool value) {
-    this._dragSubject = this._editMode ? value : this._dragSubject;
+    this._dragSubject = this._editing ? value : this._dragSubject;
     notifyListeners();
   }
 
   set dragMember(bool value) {
-    this._dragMember = this._editMode ? value : this._dragMember;
+    this._dragMember = this._editing ? value : this._dragMember;
     notifyListeners();
   }
 
   set isDragging(bool value) {
-    this._isDragging = this._editMode ? value : this._isDragging;
+    this._isDragging = this._editing ? value : this._isDragging;
     notifyListeners();
   }
 
   set isDraggingData(TimetableDragData value) {
-    this._isDraggingData = this._editMode ? value : this._isDragging;
+    this._isDraggingData = this._editing ? value : this._isDragging;
     notifyListeners();
   }
 
@@ -226,17 +226,19 @@ class TimetableEditMode extends ChangeNotifier {
 // TimetableAxis related classes
 // --------------------------------------------------------------------------------
 
-enum TimetableAxisType { day, time, custom }
+enum GridAxis { x, y, z }
 
-String getAxisTypeStr(TimetableAxisType axisType) {
+enum DataAxis { day, time, custom }
+
+String getAxisTypeStr(DataAxis axisType) {
   switch (axisType) {
-    case TimetableAxisType.day:
+    case DataAxis.day:
       return 'Day';
       break;
-    case TimetableAxisType.time:
+    case DataAxis.time:
       return 'Time';
       break;
-    case TimetableAxisType.custom:
+    case DataAxis.custom:
       return 'Custom';
       break;
     default:
@@ -245,31 +247,40 @@ String getAxisTypeStr(TimetableAxisType axisType) {
   }
 }
 
-enum GridAxisType { x, y, z }
-
 class TimetableAxis {
-  TimetableAxisType _ttbAxisType;
+  GridAxis _gridAxis;
+  DataAxis _dataAxis;
   List<dynamic> _list;
   List<String> _listStr;
 
   TimetableAxis({
-    @required TimetableAxisType type,
+    @required GridAxis gridAxis,
+    @required DataAxis dataAxis,
     List<dynamic> list,
     List<String> listStr,
-  })  : _ttbAxisType = type,
-        _list = list ?? [],
-        _listStr = listStr ?? [];
+  })  : this._gridAxis = gridAxis,
+        this._dataAxis = dataAxis,
+        this._list = list ?? [],
+        this._listStr = listStr ?? [];
 
-  TimetableAxisType get type => this._ttbAxisType;
+  TimetableAxis.copy(TimetableAxis ttbAxis)
+      : this._gridAxis = ttbAxis.gridAxis,
+        this._dataAxis = ttbAxis.dataAxis,
+        this._list = ttbAxis.list == null ? [] : List.from(ttbAxis.list),
+        this._listStr =
+            ttbAxis.listStr == null ? [] : List.from(ttbAxis.listStr);
+
+  GridAxis get gridAxis => this._gridAxis;
+  DataAxis get dataAxis => this._dataAxis;
   List get list => () {
-        switch (this._ttbAxisType) {
-          case TimetableAxisType.day:
+        switch (this._dataAxis) {
+          case DataAxis.day:
             return this._list;
             break;
-          case TimetableAxisType.time:
+          case DataAxis.time:
             return this._list;
             break;
-          case TimetableAxisType.custom:
+          case DataAxis.custom:
             return this._list;
             break;
           default:
@@ -279,83 +290,203 @@ class TimetableAxis {
       }();
   List<String> get listStr => this._listStr;
 
-  set type(TimetableAxisType type) => this._ttbAxisType = type;
+  set gridAxis(GridAxis gridAxis) => this._gridAxis = gridAxis;
+  set dataAxis(DataAxis dataAxis) => this._dataAxis = dataAxis;
 }
 
 class TimetableAxes extends ChangeNotifier {
-  // properties
-  TimetableAxis _x;
-  TimetableAxis _y;
-  TimetableAxis _z;
-  bool _empty;
+  TimetableAxis _day;
+  TimetableAxis _time;
+  TimetableAxis _custom;
+
+  bool _isEmpty;
 
   // constructors
-  TimetableAxes.empty() : _empty = true;
+  TimetableAxes.empty() : this._isEmpty = true;
 
-  TimetableAxes({TimetableAxis x, TimetableAxis y, TimetableAxis z}) {
-    if (x == null) x = TimetableAxis(type: TimetableAxisType.day);
-    if (y == null) y = TimetableAxis(type: TimetableAxisType.time);
-    if (z == null) z = TimetableAxis(type: TimetableAxisType.custom);
-
-    if (!updateAxes(x: x, y: y, z: z)) {
-      this._x = TimetableAxis(type: TimetableAxisType.day);
-      this._y = TimetableAxis(type: TimetableAxisType.time);
-      this._z = TimetableAxis(type: TimetableAxisType.custom);
+  TimetableAxes({
+    TimetableAxis day,
+    TimetableAxis time,
+    TimetableAxis custom,
+  }) {
+    if (day == null || time == null || custom == null) {
+      this._day = TimetableAxis(
+        gridAxis: GridAxis.x,
+        dataAxis: DataAxis.day,
+      );
+      this._time = TimetableAxis(
+        gridAxis: GridAxis.y,
+        dataAxis: DataAxis.time,
+      );
+      this._custom = TimetableAxis(
+        gridAxis: GridAxis.z,
+        dataAxis: DataAxis.custom,
+      );
+    } else if (!updateAxes(x: day, y: time, z: custom)) {
+      this._day = TimetableAxis(
+        gridAxis: GridAxis.x,
+        dataAxis: DataAxis.day,
+      );
+      this._time = TimetableAxis(
+        gridAxis: GridAxis.y,
+        dataAxis: DataAxis.time,
+      );
+      this._custom = TimetableAxis(
+        gridAxis: GridAxis.z,
+        dataAxis: DataAxis.custom,
+      );
     }
 
-    _empty = false;
+    this._isEmpty = false;
 
     notifyListeners();
   }
 
   // getter methods
-  bool get isEmpty => this._empty;
-  TimetableAxisType get xType => this._x.type;
-  TimetableAxisType get yType => this._y.type;
-  TimetableAxisType get zType => this._z.type;
-  List get xList => this._x.list;
-  List get yList => this._y.list;
-  List get zList => this._z.list;
-  List<String> get xListStr => this._x.listStr;
-  List<String> get yListStr => this._y.listStr;
-  List<String> get zListStr => this._z.listStr;
+  bool get isEmpty => this._isEmpty;
 
-  TimetableAxis get axisDay => _getAxisOfType(TimetableAxisType.day);
-  TimetableAxis get axisTime => _getAxisOfType(TimetableAxisType.time);
-  TimetableAxis get axisCustom => _getAxisOfType(TimetableAxisType.custom);
+  DataAxis get xDataAxis => _axisFromGridAxis(GridAxis.x).dataAxis;
+  DataAxis get yDataAxis => _axisFromGridAxis(GridAxis.y).dataAxis;
+  DataAxis get zDataAxis => _axisFromGridAxis(GridAxis.z).dataAxis;
+  List<dynamic> get xList => _axisFromGridAxis(GridAxis.x).list;
+  List<dynamic> get yList => _axisFromGridAxis(GridAxis.y).list;
+  List<dynamic> get zList => _axisFromGridAxis(GridAxis.z).list;
+  List<String> get xListStr => _axisFromGridAxis(GridAxis.x).listStr;
+  List<String> get yListStr => _axisFromGridAxis(GridAxis.y).listStr;
+  List<String> get zListStr => _axisFromGridAxis(GridAxis.z).listStr;
+
+  GridAxis get dayGridAxis => _axisFromDataAxis(DataAxis.day).gridAxis;
+  GridAxis get timeGridAxis => _axisFromDataAxis(DataAxis.time).gridAxis;
+  GridAxis get customGridAxis => _axisFromDataAxis(DataAxis.custom).gridAxis;
+  List<dynamic> get dayList => _axisFromDataAxis(DataAxis.day).list;
+  List<dynamic> get timeList => _axisFromDataAxis(DataAxis.time).list;
+  List<dynamic> get customList => _axisFromDataAxis(DataAxis.custom).list;
+  List<String> get dayListStr => _axisFromDataAxis(DataAxis.day).listStr;
+  List<String> get timeListStr => _axisFromDataAxis(DataAxis.time).listStr;
+  List<String> get customListStr => _axisFromDataAxis(DataAxis.custom).listStr;
 
   // setter methods
-  set xType(TimetableAxisType newX) {
-    _changeAxisType(this._x.type, newX);
+  set dayGridAxis(GridAxis gridAxis) {
+    _swapGridAxis(DataAxis.day, gridAxis);
     notifyListeners();
   }
 
-  set yType(TimetableAxisType newY) {
-    _changeAxisType(this._y.type, newY);
+  set timeGridAxis(GridAxis gridAxis) {
+    _swapGridAxis(DataAxis.time, gridAxis);
     notifyListeners();
   }
 
-  set zType(TimetableAxisType newZ) {
-    _changeAxisType(this._z.type, newZ);
+  set customGridAxis(GridAxis gridAxis) {
+    _swapGridAxis(DataAxis.custom, gridAxis);
     notifyListeners();
+  }
+
+  set dayKeepGridAxis(TimetableAxis ttbAxis) {
+    this._day = TimetableAxis(
+      gridAxis: this._day.gridAxis,
+      dataAxis: ttbAxis.dataAxis,
+      list: ttbAxis.list,
+      listStr: ttbAxis.listStr,
+    );
+    notifyListeners();
+  }
+
+  set timeKeepGridAxis(TimetableAxis ttbAxis) {
+    this._time = TimetableAxis(
+      gridAxis: this._time.gridAxis,
+      dataAxis: ttbAxis.dataAxis,
+      list: ttbAxis.list,
+      listStr: ttbAxis.listStr,
+    );
+    notifyListeners();
+  }
+
+  set customKeepGridAxis(TimetableAxis ttbAxis) {
+    this._custom = TimetableAxis(
+      gridAxis: this._custom.gridAxis,
+      dataAxis: ttbAxis.dataAxis,
+      list: ttbAxis.list,
+      listStr: ttbAxis.listStr,
+    );
+    notifyListeners();
+  }
+
+  void _swapGridAxis(DataAxis thisDataAxis, GridAxis newGridAxis) {
+    GridAxis thisGridAxis;
+
+    // if this is day
+    if (_day.dataAxis == thisDataAxis) {
+      thisGridAxis = _day.gridAxis;
+      _day.gridAxis = newGridAxis;
+      if (_time.gridAxis == newGridAxis) {
+        _time.gridAxis = thisGridAxis;
+      } else if (_custom.gridAxis == newGridAxis) {
+        _custom.gridAxis = thisGridAxis;
+      }
+    }
+    // if this is time
+    else if (_time.dataAxis == thisDataAxis) {
+      thisGridAxis = _time.gridAxis;
+      _time.gridAxis = newGridAxis;
+      if (_day.gridAxis == newGridAxis) {
+        _day.gridAxis = thisGridAxis;
+      } else if (_custom.gridAxis == newGridAxis) {
+        _custom.gridAxis = thisGridAxis;
+      }
+    }
+    // if this is custom
+    else if (_custom.dataAxis == thisDataAxis) {
+      thisGridAxis = _custom.gridAxis;
+      _custom.gridAxis = newGridAxis;
+      if (_day.gridAxis == newGridAxis) {
+        _day.gridAxis = thisGridAxis;
+      } else if (_time.gridAxis == newGridAxis) {
+        _time.gridAxis = thisGridAxis;
+      }
+    }
   }
 
   // auxiliary methods
-  bool updateAxes({TimetableAxis x, TimetableAxis y, TimetableAxis z}) {
-    x = x ?? this._x;
-    y = y ?? this._y;
-    z = z ?? this._z;
+  @override
+  String toString() {
+    return _day.gridAxis.toString() +
+        ' ' +
+        _day.dataAxis.toString() +
+        '\n' +
+        _time.gridAxis.toString() +
+        ' ' +
+        _time.dataAxis.toString() +
+        '\n' +
+        _custom.gridAxis.toString() +
+        ' ' +
+        _custom.dataAxis.toString();
+  }
 
-    List<TimetableAxisType> axesTypes = [x.type, y.type, z.type];
+  bool updateAxes({
+    TimetableAxis x,
+    TimetableAxis y,
+    TimetableAxis z,
+  }) {
+    x = x ?? this._day;
+    y = y ?? this._time;
+    z = z ?? this._custom;
 
-    if (axesTypes.contains(TimetableAxisType.day) &&
-        axesTypes.contains(TimetableAxisType.time) &&
-        axesTypes.contains(TimetableAxisType.custom)) {
-      this._x = x;
-      this._y = y;
-      this._z = z;
+    List<DataAxis> axesTypes = [
+      x.dataAxis,
+      y.dataAxis,
+      z.dataAxis,
+    ];
 
-      _empty = false;
+    if (axesTypes.contains(DataAxis.day) &&
+        axesTypes.contains(DataAxis.time) &&
+        axesTypes.contains(DataAxis.custom)) {
+      this._day = x;
+      this._time = y;
+      this._custom = z;
+
+      _isEmpty = false;
+
+      notifyListeners();
       return true;
     } else {
       return false;
@@ -363,89 +494,28 @@ class TimetableAxes extends ChangeNotifier {
   }
 
   void clearAxes() {
-    this._x = null;
-    this._y = null;
-    this._z = null;
+    this._day = null;
+    this._time = null;
+    this._custom = null;
 
-    _empty = true;
+    _isEmpty = true;
+    notifyListeners();
   }
 
-  TimetableAxis _getAxisOfType(TimetableAxisType axisType) {
-    return this._x.type == axisType
-        ? this._x
-        : this._y.type == axisType
-            ? this._y
-            : this._z.type == axisType ? this._z : null;
+  TimetableAxis _axisFromDataAxis(DataAxis dataAxis) {
+    return this._day.dataAxis == dataAxis
+        ? this._day
+        : this._time.dataAxis == dataAxis
+            ? this._time
+            : this._custom.dataAxis == dataAxis ? this._custom : null;
   }
 
-  void _changeAxisType(
-      TimetableAxisType thisAxisType, TimetableAxisType newAxisType) {
-    if (newAxisType != thisAxisType) {
-      bool success = false;
-      if (!success && thisAxisType != this._x.type) {
-        success = _checkAgainstAxisOfType(
-            thisAxisType: thisAxisType,
-            newAxisType: newAxisType,
-            checkAxis: this._x);
-      }
-      if (!success && thisAxisType != this._y.type) {
-        success = _checkAgainstAxisOfType(
-          thisAxisType: thisAxisType,
-          newAxisType: newAxisType,
-          checkAxis: this._y,
-        );
-      }
-      if (!success && thisAxisType != this._z.type) {
-        success = _checkAgainstAxisOfType(
-          thisAxisType: thisAxisType,
-          newAxisType: newAxisType,
-          checkAxis: this._z,
-        );
-      }
-    }
-  }
-
-  bool _checkAgainstAxisOfType({
-    @required TimetableAxisType thisAxisType,
-    @required TimetableAxisType newAxisType,
-    @required TimetableAxis checkAxis,
-  }) {
-    if (newAxisType == checkAxis.type && thisAxisType != newAxisType) {
-      TimetableAxis thisAxis = _getAxisOfType(thisAxisType);
-
-      TimetableAxisType tmpXType = this._x.type;
-      TimetableAxisType tmpYType = this._y.type;
-      TimetableAxisType tmpZType = this._z.type;
-
-      bool switchedThis = false;
-      bool switchedNew = false;
-
-      if (thisAxis.type == tmpXType) {
-        this._x = checkAxis;
-        switchedNew = true;
-      } else if (thisAxis.type == tmpYType) {
-        this._y = checkAxis;
-        switchedNew = true;
-      } else if (thisAxis.type == tmpZType) {
-        this._z = checkAxis;
-        switchedNew = true;
-      }
-
-      if (checkAxis.type == tmpXType) {
-        this._x = thisAxis;
-        switchedThis = true;
-      } else if (checkAxis.type == tmpYType) {
-        this._y = thisAxis;
-        switchedThis = true;
-      } else if (checkAxis.type == tmpZType) {
-        this._z = thisAxis;
-        switchedThis = true;
-      }
-
-      return switchedNew && switchedThis;
-    } else {
-      return false;
-    }
+  TimetableAxis _axisFromGridAxis(GridAxis gridAxis) {
+    return this._day.gridAxis == gridAxis
+        ? this._day
+        : this._time.gridAxis == gridAxis
+            ? this._time
+            : this._custom.gridAxis == gridAxis ? this._custom : null;
   }
 }
 

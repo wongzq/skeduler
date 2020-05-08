@@ -30,11 +30,9 @@ class _TimetableEditorState extends State<TimetableEditor> {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
-    TimetableAxes axes = Provider.of<TimetableAxes>(context);
 
     return WillPopScope(
       onWillPop: () {
-        axes.clearAxes();
         return Future.value(true);
       },
       child: Scaffold(
@@ -114,7 +112,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
               onSelected: (value) async {
                 switch (value) {
                   case TimetableEditorOption.settings:
-                    ttbStatus.editTemp = EditTimetable.copy(ttbStatus.edit);
+                    ttbStatus.temp = EditTimetable.copy(ttbStatus.edit);
                     Navigator.of(context).pushNamed(
                       '/timetable/editor/settings',
                       arguments: RouteArgs(),
@@ -125,7 +123,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                     showDialog(
                         context: context,
                         builder: (context) {
-                          return TimetableSwitchDialog();
+                          return TimetableSwitchDialog(_editMode.editing);
                         });
                     break;
 

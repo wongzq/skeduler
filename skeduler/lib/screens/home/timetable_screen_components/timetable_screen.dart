@@ -25,7 +25,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
-    TimetableAxes axes = Provider.of<TimetableAxes>(context);
 
     return StreamBuilder(
         stream: dbService.getGroupMemberMyData(groupStatus.group.docId),
@@ -180,7 +179,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                       if (me.role == MemberRole.owner ||
                                           me.role == MemberRole.admin) {
                                         ttbStatus.edit = EditTimetable();
-                                        axes.clearAxes();
                                         Navigator.of(context).pushNamed(
                                           '/timetable/editor',
                                           arguments: RouteArgs(),
@@ -204,7 +202,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                             value,
                                           ),
                                         );
-                                        axes.clearAxes();
                                         Navigator.of(context).pushNamed(
                                           '/timetable/editor',
                                           arguments: RouteArgs(),

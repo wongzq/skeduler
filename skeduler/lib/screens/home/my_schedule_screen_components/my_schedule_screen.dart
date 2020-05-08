@@ -77,10 +77,10 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                       'Schedule',
                       style: TextStyle(
                         color: _tabController.index == 0
-                            ? Theme.of(context).primaryTextTheme.title.color
+                            ? Theme.of(context).primaryTextTheme.bodyText1
                             : Theme.of(context)
                                 .primaryTextTheme
-                                .title
+                                .bodyText1
                                 .color
                                 .withOpacity(0.3),
                         fontSize: 16.0,
@@ -94,10 +94,10 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                       'Calendar',
                       style: TextStyle(
                         color: _tabController.index == 1
-                            ? Theme.of(context).primaryTextTheme.title.color
+                            ? Theme.of(context).primaryTextTheme.bodyText1.color
                             : Theme.of(context)
                                 .primaryTextTheme
-                                .title
+                                .bodyText1
                                 .color
                                 .withOpacity(0.3),
                         fontSize: 16.0,

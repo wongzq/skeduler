@@ -19,98 +19,46 @@ class _TimetableGridState extends State<TimetableGrid> {
   @override
   Widget build(BuildContext context) {
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
-    TimetableEditMode _editMode = Provider.of<TimetableEditMode>(context);
-    TimetableAxes _axes = Provider.of<TimetableAxes>(context);
+    TimetableEditMode editMode = Provider.of<TimetableEditMode>(context);
 
-    TimetableAxis _day = TimetableAxis(
-      type: TimetableAxisType.day,
-      list:
-          _editMode.editMode ? ttbStatus.edit.axisDay : ttbStatus.curr.axisDay,
-      listStr: _editMode.editMode
-          ? ttbStatus.edit.axisDayShortStr
-          : ttbStatus.curr.axisDayShortStr,
-    );
+    TimetableAxes axes =
+        editMode.editing ? ttbStatus.editAxes : ttbStatus.currAxes;
 
-    TimetableAxis _time = TimetableAxis(
-      type: TimetableAxisType.time,
-      list: _editMode.editMode
-          ? ttbStatus.edit.axisTime
-          : ttbStatus.curr.axisTime,
-      listStr: _editMode.editMode
-          ? ttbStatus.edit.axisTimeStr
-          : ttbStatus.curr.axisTimeStr,
-    );
-
-    TimetableAxis _custom = TimetableAxis(
-      type: TimetableAxisType.custom,
-      list: _editMode.editMode
-          ? ttbStatus.edit.axisCustom
-          : ttbStatus.curr.axisCustom,
-      listStr: _editMode.editMode
-          ? ttbStatus.edit.axisCustom
-          : ttbStatus.curr.axisCustom,
-    );
-
-    TimetableAxis _getAxisOfType(TimetableAxisType axisType) {
-      switch (axisType) {
-        case TimetableAxisType.day:
-          return _day;
-          break;
-        case TimetableAxisType.time:
-          return _time;
-          break;
-        case TimetableAxisType.custom:
-          return _custom;
-          break;
-        default:
-          return null;
-          break;
-      }
-    }
-
-    if (_axes.isEmpty) {
-      _axes.updateAxes(x: _day, y: _time, z: _custom);
-    } else {
-      _axes.updateAxes(
-        x: _getAxisOfType(_axes.xType),
-        y: _getAxisOfType(_axes.yType),
-        z: _getAxisOfType(_axes.zType),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TimetableHeaderX(axisX: _axes.xListStr),
-        Expanded(
-          child: Column(
-            children: <Widget>[
+    return axes == null || axes.isEmpty
+        ? Container()
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TimetableHeaderX(axisX: axes.xListStr),
               Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Column(
                   children: <Widget>[
-                    TimetableHeaderYZ(
-                      axisY: _axes.yListStr,
-                      axisZ: _axes.zListStr,
-                    ),
-                    TimetableSlots(
-                      xType: _axes.xType,
-                      yType: _axes.yType,
-                      zType: _axes.zType,
-                      xList: _axes.xList,
-                      yList: _axes.yList,
-                      zList: _axes.zList,
-                      xListStr: _axes.xListStr,
-                      yListStr: _axes.yListStr,
-                      zListStr: _axes.zListStr,
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          TimetableHeaderYZ(
+                            axisY: axes.yListStr,
+                            axisZ: axes.zListStr,
+                          ),
+                          TimetableSlots(
+                            xType: axes.xDataAxis,
+                            yType: axes.yDataAxis,
+                            zType: axes.zDataAxis,
+                            xList: axes.xList,
+                            yList: axes.yList,
+                            zList: axes.zList,
+                            xListStr: axes.xListStr,
+                            yListStr: axes.yListStr,
+                            zListStr: axes.zListStr,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
             ],
-          ),
-        ),
-      ],
-    );
+          );
   }
 }

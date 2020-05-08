@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
@@ -108,19 +107,6 @@ class MyApp extends StatelessWidget {
                         // TimetableStatus
                         ChangeNotifierProvider<TimetableStatus>(
                           create: (_) => TimetableStatus(),
-                        ),
-
-                        // TimetableAxes
-                        ChangeNotifierProvider<TimetableAxes>(
-                          create: (_) => TimetableAxes.empty(),
-                        ),
-
-                        // TimetableScroll
-                        ChangeNotifierProvider<TimetableScroll>(
-                          create: (_) => TimetableScroll(
-                            horiLength: 100,
-                            vertLength: 100,
-                          ),
                         ),
                       ],
                       child: Consumer<DatabaseService>(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
+import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid_box.dart';
 
 // --------------------------------------------------------------------------------
@@ -24,10 +25,15 @@ class _TimetableHeaderXState extends State<TimetableHeaderX> {
 
   @override
   Widget build(BuildContext context) {
-    TimetableAxes axes = Provider.of<TimetableAxes>(context);
-    TimetableScroll ttbScroll = Provider.of<TimetableScroll>(context);
+    TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
+    TimetableEditMode editMode = Provider.of<TimetableEditMode>(context);
+    TimetableAxes axes =
+        editMode.editing ? ttbStatus.editAxes : ttbStatus.currAxes;
 
-    horiScroll = horiScroll ?? ttbScroll.hori.addAndGet();
+    horiScroll = horiScroll ??
+        (editMode.editing
+            ? ttbStatus.editScroll.hori.addAndGet()
+            : ttbStatus.currScroll.hori.addAndGet());
 
     return Row(
       children: () {
@@ -92,8 +98,13 @@ class _TimetableHeaderYZState extends State<TimetableHeaderYZ> {
 
   @override
   Widget build(BuildContext context) {
-    TimetableScroll ttbScroll = Provider.of<TimetableScroll>(context);
-    vertScroll = vertScroll ?? ttbScroll.vert.addAndGet();
+    TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
+    TimetableEditMode editMode = Provider.of<TimetableEditMode>(context);
+
+    vertScroll = vertScroll ??
+        (editMode.editing
+            ? ttbStatus.editScroll.vert.addAndGet()
+            : ttbStatus.currScroll.vert.addAndGet());
 
     return SingleChildScrollView(
       controller: vertScroll,

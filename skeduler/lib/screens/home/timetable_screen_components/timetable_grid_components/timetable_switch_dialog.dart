@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
+import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid_box.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class TimetableSwitchDialog extends StatefulWidget {
+  final bool editing;
+
+  const TimetableSwitchDialog(this.editing, {Key key}) : super(key: key);
+
   @override
   _TimetableSwitchDialogState createState() => _TimetableSwitchDialogState();
 }
@@ -33,10 +38,11 @@ class _TimetableSwitchDialogState extends State<TimetableSwitchDialog> {
               ),
               TimetableGridBox(
                 gridBoxType: GridBoxType.axisBox,
-                initialDisplay: getAxisTypeStr(_axes.xType),
-                gridAxisType: GridAxisType.x,
+                initialDisplay: getAxisTypeStr(_axes.xDataAxis),
+                gridAxis: GridAxis.x,
                 heightRatio: xHeightRatio,
                 widthRatio: totalWidthRatio - yWidthRatio * 2,
+                editingForAxisBox: widget.editing,
               ),
             ],
           ),
@@ -45,27 +51,30 @@ class _TimetableSwitchDialogState extends State<TimetableSwitchDialog> {
             children: <Widget>[
               TimetableGridBox(
                 gridBoxType: GridBoxType.axisBox,
-                initialDisplay: getAxisTypeStr(_axes.yType),
-                gridAxisType: GridAxisType.y,
+                initialDisplay: getAxisTypeStr(_axes.yDataAxis),
+                gridAxis: GridAxis.y,
                 heightRatio: yHeightRatio,
                 widthRatio: yWidthRatio,
+                editingForAxisBox: widget.editing,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   TimetableGridBox(
                     gridBoxType: GridBoxType.axisBox,
-                    initialDisplay: getAxisTypeStr(_axes.zType),
-                    gridAxisType: GridAxisType.z,
+                    initialDisplay: getAxisTypeStr(_axes.zDataAxis),
+                    gridAxis: GridAxis.z,
                     heightRatio: yHeightRatio / 2,
                     widthRatio: yWidthRatio,
+                    editingForAxisBox: widget.editing,
                   ),
                   TimetableGridBox(
                     gridBoxType: GridBoxType.axisBox,
-                    initialDisplay: getAxisTypeStr(_axes.zType),
-                    gridAxisType: GridAxisType.z,
+                    initialDisplay: getAxisTypeStr(_axes.zDataAxis),
+                    gridAxis: GridAxis.z,
                     heightRatio: yHeightRatio / 2,
                     widthRatio: yWidthRatio,
+                    editingForAxisBox: widget.editing,
                   ),
                 ],
               ),
@@ -83,7 +92,8 @@ class _TimetableSwitchDialogState extends State<TimetableSwitchDialog> {
 
   @override
   Widget build(BuildContext context) {
-    _axes = Provider.of<TimetableAxes>(context);
+    TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
+    _axes = widget.editing ? ttbStatus.editAxes : ttbStatus.currAxes;
 
     return AlertDialog(
       title: Column(

@@ -83,8 +83,8 @@ Color getColorFromColorShade(ColorShade colorShade) {
 
 Color getFABTextColor(BuildContext context) {
   return Theme.of(context).brightness == Brightness.light
-      ? Theme.of(context).primaryTextTheme.title.color
-      : Theme.of(context).primaryTextTheme.title.color;
+      ? Theme.of(context).primaryTextTheme.bodyText1.color
+      : Theme.of(context).primaryTextTheme.bodyText1.color;
 }
 
 Color getFABIconForegroundColor(BuildContext context) {

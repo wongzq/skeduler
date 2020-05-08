@@ -620,11 +620,11 @@ class DatabaseService {
                   if (timetable.exists) {
                     await timetablesRef
                         .document(editTtb.docId)
-                        .updateData(firestoreMapFromTimetable(editTtb));
+                        .updateData(firestoreMapFromEditTimetable(editTtb));
                   } else {
                     await timetablesRef
                         .document(editTtb.docId)
-                        .setData(firestoreMapFromTimetable(editTtb));
+                        .setData(firestoreMapFromEditTimetable(editTtb));
                   }
                 });
               } else {
@@ -958,6 +958,15 @@ class DatabaseService {
             docId: snapshot.documentID,
             startDate: snapshot.data['startDate'] ?? null,
             endDate: snapshot.data['endDate'] ?? null,
+            gridAxisOfDay: snapshot.data['gridAxisOfDay'] == null
+                ? GridAxis.x
+                : GridAxis.values[snapshot.data['gridAxisOfDay']],
+            gridAxisOfTime: snapshot.data['gridAxisOfTime'] == null
+                ? GridAxis.y
+                : GridAxis.values[snapshot.data['gridAxisOfTime']],
+            gridAxisOfCustom: snapshot.data['gridAxisOfCustom'] == null
+                ? GridAxis.z
+                : GridAxis.values[snapshot.data['gridAxisOfCustom']],
             axisDay: _weekdaysFromDynamicList(snapshot.data['axisDay'] ?? []),
             axisTime: _timesFromDynamicList(snapshot.data['axisTime'] ?? []),
             axisCustom:

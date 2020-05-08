@@ -64,12 +64,12 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
                         children: <Widget>[
                           Container(
                             padding: EdgeInsets.all(10.0),
-                            height: editMode.editMode
+                            height: editMode.editing
                                 ? timetableDisplayHeight
                                 : constraints.maxHeight,
                             child: TimetableGrid(),
                           ),
-                          !editMode.editMode
+                          !editMode.editing
                               ? Container()
                               : Container(
                                   height: selectorHeight,
@@ -123,7 +123,7 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
                                     ],
                                   ),
                                 ),
-                          !editMode.editMode
+                          !editMode.editing
                               ? Container()
                               : Container(
                                   height: selectorHeight,
@@ -180,7 +180,7 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
                         ],
                       ),
                     ),
-                    !editMode.editMode
+                    !editMode.editing
                         ? Container()
                         : Consumer<TimetableEditMode>(
                             builder: (context, editModeConsumer, _) {

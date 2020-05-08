@@ -21,9 +21,10 @@ class TimetableGridBox extends StatefulWidget {
   final ValueSetter<bool> valSetBinVisible;
   final bool textOverFlowFade;
 
-  final GridAxisType gridAxisType;
+  final GridAxis gridAxis;
   final TimetableAxes axes;
   final TimetableCoord coord;
+  final bool editingForAxisBox;
 
   // constructors
   const TimetableGridBox({
@@ -32,11 +33,12 @@ class TimetableGridBox extends StatefulWidget {
     @required this.heightRatio,
     @required this.widthRatio,
     this.initialDisplay = '',
-    this.gridAxisType,
+    this.gridAxis,
     this.valSetBinVisible,
     this.textOverFlowFade = true,
     this.coord,
     this.axes,
+    this.editingForAxisBox,
   }) : super(key: key);
 
   @override
@@ -98,7 +100,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                               ? Colors.grey[400]
                               : Colors.grey;
 
-                      return _editMode.editMode
+                      return _editMode.editing
                           ? _editMode.isDragging
                               ? _editMode.isDraggingData.hasSubjectOnly ||
                                       (_editMode.isDraggingData.hasSubject &&
@@ -155,15 +157,15 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
             child: Text(
               widget.gridBoxType == GridBoxType.axisBox
                   ? () {
-                      switch (widget.gridAxisType) {
-                        case GridAxisType.x:
-                          return getAxisTypeStr(_axes.xType);
+                      switch (widget.gridAxis) {
+                        case GridAxis.x:
+                          return getAxisTypeStr(_axes.xDataAxis);
                           break;
-                        case GridAxisType.y:
-                          return getAxisTypeStr(_axes.yType);
+                        case GridAxis.y:
+                          return getAxisTypeStr(_axes.yDataAxis);
                           break;
-                        case GridAxisType.z:
-                          return getAxisTypeStr(_axes.zType);
+                        case GridAxis.z:
+                          return getAxisTypeStr(_axes.zDataAxis);
                           break;
                         default:
                           return widget.initialDisplay;
@@ -191,7 +193,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                       ? Colors.black
                       : getOriginThemeData(ThemeProvider.themeOf(context).id)
                           .primaryTextTheme
-                          .title
+                          .bodyText1
                           .color,
                   fontSize: 10.0),
               maxLines: widget.textOverFlowFade ? 2 : null,
@@ -208,7 +210,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
       onTap: () => showDialog(
         context: context,
         builder: (context) {
-          return TimetableSwitchDialog();
+          return TimetableSwitchDialog(_editMode.editing);
         },
       ),
       child: _buildGridBox(constraints),
@@ -222,7 +224,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   Widget _buildGridBoxContent(BoxConstraints constraints) {
     return DragTarget<TimetableDragData>(
       onWillAccept: (_) {
-        if (_editMode.editMode == true) {
+        if (_editMode.editing == true) {
           _isHovered = true;
           return true;
         } else {
@@ -230,12 +232,12 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
         }
       },
       onLeave: (_) {
-        if (_editMode.editMode == true) {
+        if (_editMode.editing == true) {
           _isHovered = false;
         }
       },
       onAccept: (newDragData) {
-        if (_editMode.editMode == true) {
+        if (_editMode.editing == true) {
           _isHovered = false;
 
           bool _memberIsAvailable = false;
@@ -293,7 +295,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                 feedback: _buildGridBox(constraints, isFeedback: true),
                 child: _buildGridBox(constraints),
                 onDragStarted: () {
-                  if (_editMode.editMode == true) {
+                  if (_editMode.editing == true) {
                     _showFootPrint = true;
                     _editMode.binVisible = true;
                     _editMode.isDragging = true;
@@ -339,7 +341,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                   }
                 },
                 onDragCompleted: () {
-                  if (_editMode.editMode == true) {
+                  if (_editMode.editing == true) {
                     _showFootPrint = false;
                     _editMode.binVisible = false;
                     _editMode.isDragging = false;
@@ -347,7 +349,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                   }
                 },
                 onDraggableCanceled: (_, __) {
-                  if (_editMode.editMode == true) {
+                  if (_editMode.editing == true) {
                     _showFootPrint = false;
                     _editMode.binVisible = false;
                     _editMode.isDragging = false;
@@ -365,7 +367,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
       maxHeight: 50.0,
     );
 
-    return DragTarget<TimetableAxisType>(
+    return DragTarget<GridAxis>(
       onWillAccept: (_) {
         _isHovered = true;
         return true;
@@ -373,34 +375,29 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
       onLeave: (_) {
         _isHovered = false;
       },
-      onAccept: (newAxisType) {
+      onAccept: (newGridAxis) {
         _isHovered = false;
-        if (widget.gridAxisType == GridAxisType.x) {
-          _axes.xType = newAxisType;
-        } else if (widget.gridAxisType == GridAxisType.y) {
-          _axes.yType = newAxisType;
-        } else if (widget.gridAxisType == GridAxisType.z) {
-          _axes.zType = newAxisType;
+        if (widget.editingForAxisBox) {
+          if (_ttbStatus.editAxes.dayGridAxis == widget.gridAxis) {
+            _ttbStatus.editDayGridAxis = newGridAxis;
+          } else if (_ttbStatus.editAxes.timeGridAxis == widget.gridAxis) {
+            _ttbStatus.editTimeGridAxis = newGridAxis;
+          } else if (_ttbStatus.editAxes.customGridAxis == widget.gridAxis) {
+            _ttbStatus.editCustomGridAxis = newGridAxis;
+          }
+        } else {
+          if (_ttbStatus.currAxes.dayGridAxis == widget.gridAxis) {
+            _ttbStatus.currDayGridAxis = newGridAxis;
+          } else if (_ttbStatus.currAxes.timeGridAxis == widget.gridAxis) {
+            _ttbStatus.currTimeGridAxis = newGridAxis;
+          } else if (_ttbStatus.currAxes.customGridAxis == widget.gridAxis) {
+            _ttbStatus.currCustomGridAxis = newGridAxis;
+          }
         }
       },
       builder: (context, _, __) {
-        return LongPressDraggable<TimetableAxisType>(
-          data: () {
-            switch (widget.gridAxisType) {
-              case GridAxisType.x:
-                return _axes.xType;
-                break;
-              case GridAxisType.y:
-                return _axes.yType;
-                break;
-              case GridAxisType.z:
-                return _axes.zType;
-                break;
-              default:
-                return null;
-                break;
-            }
-          }(),
+        return LongPressDraggable<GridAxis>(
+          data: widget.gridAxis,
           feedback: _buildGridBox(
             constraints,
             shrinkConstraints: feedbackConstraints,
@@ -518,16 +515,18 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
         ? Provider.of<MembersStatus>(context)
         : null;
 
-    _axes = widget.gridBoxType == GridBoxType.axisBox
-        ? Provider.of<TimetableAxes>(context)
-        : null;
-
-    _editMode = widget.gridBoxType == GridBoxType.content
+    _editMode = widget.gridBoxType == GridBoxType.content ||
+            widget.gridBoxType == GridBoxType.switchBox
         ? Provider.of<TimetableEditMode>(context)
         : null;
 
-    _ttbStatus = widget.gridBoxType == GridBoxType.content
+    _ttbStatus = widget.gridBoxType == GridBoxType.content ||
+            widget.gridBoxType == GridBoxType.axisBox
         ? Provider.of<TimetableStatus>(context)
+        : null;
+
+    _axes = widget.gridBoxType == GridBoxType.axisBox
+        ? widget.editingForAxisBox ? _ttbStatus.editAxes : _ttbStatus.currAxes
         : null;
 
     _gridData = TimetableGridData();
@@ -537,7 +536,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
             ? () {
                 TimetableGridData returnGridData;
 
-                if (_editMode.editMode == true) {
+                if (_editMode.editing == true) {
                   _ttbStatus.edit.gridDataList.value.forEach((gridData) {
                     if (gridData.hasSameCoordAs(widget.coord)) {
                       returnGridData = TimetableGridData.copy(gridData);
@@ -566,7 +565,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
               return _buildGridBoxHeader(constraints);
               break;
             case GridBoxType.content:
-              return _editMode.editMode == true
+              return _editMode.editing == true
                   ? _buildGridBoxContent(constraints)
                   : _buildGridBox(constraints);
 
