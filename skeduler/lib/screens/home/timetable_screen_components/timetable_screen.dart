@@ -18,7 +18,13 @@ class TimetableScreen extends StatefulWidget {
 }
 
 class _TimetableScreenState extends State<TimetableScreen> {
-  bool _viewTodayTtb = true;
+  bool _viewTodayTtb;
+
+  @override
+  void initState() {
+    _viewTodayTtb = true;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +51,14 @@ class _TimetableScreenState extends State<TimetableScreen> {
                       snapshotTtb != null ? snapshotTtb.data : null;
 
                   if (_viewTodayTtb) {
-                    ttbStatus.curr = null;
-                    ttbStatus.curr = timetable;
+                    if (ttbStatus.curr == null) {
+                      ttbStatus.curr = timetable;
+                    } else if (ttbStatus.curr.docId == timetable.docId) {
+                      ttbStatus.curr = timetable;
+                    } else {
+                      ttbStatus.curr = null;
+                      ttbStatus.curr = timetable;
+                    }
                   }
 
                   return groupStatus.group == null
@@ -188,18 +200,10 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                           '/timetable/newTimetable',
                                           arguments: RouteArgs(),
                                         );
-                                        // ttbStatus.edit = EditTimetable();
-                                        // Navigator.of(context).pushNamed(
-                                        //   '/timetable/editor',
-                                        //   arguments: RouteArgs(),
-                                        // );
-                                        // Navigator.of(context).pushNamed(
-                                        //   '/timetable/editor/settings',
-                                        //   arguments: RouteArgs(),
-                                        // );
                                       } else if (me.role == MemberRole.member) {
                                         setState(() {
                                           _viewTodayTtb = true;
+                                          ttbStatus.curr = null;
                                         });
                                       }
                                     } else if (value is String) {

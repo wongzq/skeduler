@@ -15,7 +15,14 @@ import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
-enum TimetableEditorOption { settings, switchAxis, addSubject, addDummy, save }
+enum TimetableEditorOption {
+  switchAxis,
+  addSubject,
+  addDummy,
+  clearData,
+  settings,
+  save,
+}
 
 class TimetableEditor extends StatefulWidget {
   @override
@@ -64,10 +71,6 @@ class _TimetableEditorState extends State<TimetableEditor> {
             itemBuilder: (context) {
               return [
                 PopupMenuItem(
-                  value: TimetableEditorOption.settings,
-                  child: Text('Settings'),
-                ),
-                PopupMenuItem(
                   value: TimetableEditorOption.switchAxis,
                   child: Text('Switch axis'),
                 ),
@@ -80,26 +83,39 @@ class _TimetableEditorState extends State<TimetableEditor> {
                   child: Text('Add dummy'),
                 ),
                 PopupMenuItem(
-                  value: TimetableEditorOption.save,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  value: TimetableEditorOption.clearData,
+                  child: Text('Clear data'),
+                ),
+                PopupMenuDivider(),
+                PopupMenuItem(
+                  value: TimetableEditorOption.settings,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Divider(height: 1.0),
-                      SizedBox(height: 15),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            Icons.save,
-                            color: Theme.of(context).brightness ==
-                                    Brightness.light
-                                ? Colors.black
-                                : Colors.white,
-                          ),
-                          SizedBox(width: 10.0),
-                          Text('Save'),
-                        ],
+                      Icon(
+                        Icons.settings,
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Colors.black
+                            : Colors.white,
                       ),
+                      SizedBox(width: 10.0),
+                      Text('Settings'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: TimetableEditorOption.save,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Icon(
+                        Icons.save,
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Colors.black
+                            : Colors.white,
+                      ),
+                      SizedBox(width: 10.0),
+                      Text('Save'),
                     ],
                   ),
                 ),
@@ -107,14 +123,6 @@ class _TimetableEditorState extends State<TimetableEditor> {
             },
             onSelected: (value) async {
               switch (value) {
-                case TimetableEditorOption.settings:
-                  ttbStatus.temp = EditTimetable.copy(ttbStatus.edit);
-                  Navigator.of(context).pushNamed(
-                    '/timetable/editor/settings',
-                    arguments: RouteArgs(),
-                  );
-                  break;
-
                 case TimetableEditorOption.switchAxis:
                   showDialog(
                       context: context,
@@ -174,8 +182,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                           actions: <Widget>[
                             FlatButton(
                               child: Text('CANCEL'),
-                              onPressed: () =>
-                                  Navigator.of(context).maybePop(),
+                              onPressed: () => Navigator.of(context).maybePop(),
                             ),
                             FlatButton(
                               child: Text('SAVE'),
@@ -228,6 +235,41 @@ class _TimetableEditorState extends State<TimetableEditor> {
                 case TimetableEditorOption.addDummy:
                   Navigator.of(context).pushNamed(
                     '/group/addDummy',
+                    arguments: RouteArgs(),
+                  );
+                  break;
+
+                case TimetableEditorOption.clearData:
+                  await showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          content: Text('Clear all data from the timetable?'),
+                          actions: <Widget>[
+                            FlatButton(
+                              onPressed: () {
+                                Navigator.of(context).maybePop();
+                              },
+                              child: Text('CANCEL'),
+                            ),
+                            FlatButton(
+                              onPressed: () {
+                                setState(() {
+                                  ttbStatus.edit.gridDataList.popAll();
+                                });
+                                Navigator.of(context).maybePop();
+                              },
+                              child: Text('CLEAR DATA'),
+                            ),
+                          ],
+                        );
+                      });
+                  break;
+
+                case TimetableEditorOption.settings:
+                  ttbStatus.temp = EditTimetable.copy(ttbStatus.edit);
+                  Navigator.of(context).pushNamed(
+                    '/timetable/editor/settings',
                     arguments: RouteArgs(),
                   );
                   break;

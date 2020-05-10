@@ -880,6 +880,10 @@ class TimetableGridDataList extends ChangeNotifier {
     }
   }
 
+  void popAll() {
+    this._value = [];
+  }
+
   @override
   String toString() {
     String string = '';

@@ -9,8 +9,8 @@ class GroupCard extends StatelessWidget {
   final int numOfMembers;
   final bool hasNotification;
 
-  static const _radius = 10.0;
-  static const _padding = 10.0;
+  final _radius = 10.0;
+  final _padding = 10.0;
 
   const GroupCard({
     this.groupName,
@@ -30,7 +30,7 @@ class GroupCard extends StatelessWidget {
         children: <Widget>[
           // Header Section
           Padding(
-            padding: const EdgeInsets.all(_padding),
+            padding: EdgeInsets.all(_padding),
             child: AnimatedContainer(
               duration: Duration(seconds: 1),
               curve: Curves.easeOutCubic,
@@ -61,7 +61,7 @@ class GroupCard extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.bottomLeft,
                       child: Padding(
-                        padding: const EdgeInsets.all(_padding),
+                        padding: EdgeInsets.all(_padding),
                         child: Text(
                           groupName != null && groupName != ''
                               ? groupName
@@ -91,7 +91,7 @@ class GroupCard extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.topRight,
                       child: Padding(
-                        padding: const EdgeInsets.all(_padding),
+                        padding: EdgeInsets.all(_padding),
                         child: Container(
                           alignment: Alignment.topRight,
                           height: 30.0,
@@ -131,7 +131,7 @@ class GroupCard extends StatelessWidget {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(_padding),
+                padding: EdgeInsets.all(_padding),
                 child: Stack(
                   children: <Widget>[
                     // Group admin

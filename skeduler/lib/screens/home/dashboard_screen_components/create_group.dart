@@ -123,9 +123,7 @@ class _CreateGroupState extends State<CreateGroup> {
             // Color
             ColorSelector(
               valSetColorShade: (value) {
-                setState(() {
-                  _groupColorShade = value;
-                });
+                setState(() => _groupColorShade = value);
               },
             ),
 
