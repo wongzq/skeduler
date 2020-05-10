@@ -102,10 +102,6 @@ class _NewTimetableState extends State<NewTimetable> {
                 return popupOptions;
               },
               onSelected: (CopyTimetableData value) async {
-                String tmpDocId = ttbStatus.temp.docId;
-                DateTime tmpStartDate = ttbStatus.temp.startDate;
-                DateTime tmpEndDate = ttbStatus.temp.endDate;
-
                 await dbService
                     .getGroupTimetable(
                   groupStatus.group.docId,
@@ -119,10 +115,7 @@ class _NewTimetableState extends State<NewTimetable> {
 
                   if (value.copyType == CopyTimetableType.copyTimetable) {
                     setState(() {
-                      ttbStatus.temp = EditTimetable.createFromCopy(copyTtb);
-                      ttbStatus.temp.docId = tmpDocId;
-                      ttbStatus.temp.startDate = tmpStartDate;
-                      ttbStatus.temp.endDate = tmpEndDate;
+                      ttbStatus.temp.updateTimetableFromCopy(copyTtb);
                     });
 
                     print(ttbStatus.temp.docId);
@@ -134,10 +127,7 @@ class _NewTimetableState extends State<NewTimetable> {
                   } else if (value.copyType ==
                       CopyTimetableType.copyTimetableAxes) {
                     setState(() {
-                      ttbStatus.temp = EditTimetable.createFromCopyAxes(copyTtb);
-                      ttbStatus.temp.docId = tmpDocId;
-                      ttbStatus.temp.startDate = tmpStartDate;
-                      ttbStatus.temp.endDate = tmpEndDate;
+                      ttbStatus.temp.updateTimetableFromCopyAxes(copyTtb);
                     });
 
                     Fluttertoast.showToast(

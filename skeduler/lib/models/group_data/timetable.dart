@@ -194,27 +194,6 @@ class EditTimetable extends ChangeNotifier {
           gridDataList: timetable.gridDataList,
         );
 
-  EditTimetable.createFromCopy(EditTimetable timetable)
-      : this(
-          gridAxisOfDay: timetable.gridAxisOfDay,
-          gridAxisOfTime: timetable.gridAxisOfTime,
-          gridAxisOfCustom: timetable.gridAxisOfCustom,
-          axisDay: timetable.axisDay,
-          axisTime: timetable.axisTime,
-          axisCustom: timetable.axisCustom,
-          gridDataList: timetable.gridDataList,
-        );
-
-  EditTimetable.createFromCopyAxes(EditTimetable timetable)
-      : this(
-          gridAxisOfDay: timetable.gridAxisOfDay,
-          gridAxisOfTime: timetable.gridAxisOfTime,
-          gridAxisOfCustom: timetable.gridAxisOfCustom,
-          axisDay: timetable.axisDay,
-          axisTime: timetable.axisTime,
-          axisCustom: timetable.axisCustom,
-        );
-
   // getter methods
   String get docId => this._docId;
   DateTime get startDate => this._startDate;
@@ -310,6 +289,7 @@ class EditTimetable extends ChangeNotifier {
     List<Weekday> axisDay,
     List<Time> axisTime,
     List<String> axisCustom,
+    TimetableGridDataList gridDataList,
   }) {
     this.docId = docId ?? this.docId;
     this.startDate = startDate ?? this.startDate;
@@ -317,6 +297,28 @@ class EditTimetable extends ChangeNotifier {
     this.axisDay = axisDay ?? this.axisDay;
     this.axisTime = axisTime ?? this.axisTime;
     this.axisCustom = axisCustom ?? this.axisCustom;
+    notifyListeners();
+  }
+
+  void updateTimetableFromCopy(EditTimetable timetable) {
+    this._gridAxisOfDay = timetable.gridAxisOfDay;
+    this._gridAxisOfTime = timetable.gridAxisOfTime;
+    this._gridAxisOfCustom = timetable.gridAxisOfCustom;
+    this._axisDay = timetable.axisDay;
+    this._axisTime = timetable.axisTime;
+    this._axisCustom = timetable.axisCustom;
+    this._gridDataList = timetable.gridDataList;
+    notifyListeners();
+  }
+
+  void updateTimetableFromCopyAxes(EditTimetable timetable) {
+    this._gridAxisOfDay = timetable.gridAxisOfDay;
+    this._gridAxisOfTime = timetable.gridAxisOfTime;
+    this._gridAxisOfCustom = timetable.gridAxisOfCustom;
+    this._axisDay = timetable.axisDay;
+    this._axisTime = timetable.axisTime;
+    this._axisCustom = timetable.axisCustom;
+    this._gridDataList = null;
     notifyListeners();
   }
 }
