@@ -4,12 +4,14 @@ import 'package:skeduler/models/auxiliary/route_arguments.dart';
 class AxisCustom extends StatefulWidget {
   final List<String> initialCustoms;
   final ValueSetter<List<String>> valSetCustoms;
+  final ValueGetter<List<String>> valGetCustoms;
   final bool initiallyExpanded;
 
   const AxisCustom({
     Key key,
     this.initialCustoms,
     this.valSetCustoms,
+    this.valGetCustoms,
     this.initiallyExpanded = false,
   }) : super(key: key);
 
@@ -210,6 +212,10 @@ class _AxisCustomState extends State<AxisCustom> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.valGetCustoms != null) {
+      _customVals = widget.valGetCustoms();
+    }
+    
     return ExpansionTile(
       onExpansionChanged: (expanded) => setState(() => _expanded = !_expanded),
       initiallyExpanded: widget.initiallyExpanded,

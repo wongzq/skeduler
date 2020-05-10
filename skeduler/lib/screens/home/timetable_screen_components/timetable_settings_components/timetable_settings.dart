@@ -66,8 +66,7 @@ class TimetableSettings extends StatelessWidget {
                 if (formKey.currentState.validate()) {
                   // check if new timetable (docId is null)
                   // check if update same timetable (docId is same)
-                  if (ttbStatus.edit.docId == null ||
-                      ttbStatus.edit.docId == ttbStatus.temp.docId) {
+                  if (ttbStatus.edit.docId == ttbStatus.temp.docId) {
                     ttbStatus.edit.updateTimetableSettings(
                       docId: ttbStatus.temp.docId,
                       startDate: ttbStatus.temp.startDate,
@@ -242,7 +241,8 @@ class TimetableSettings extends StatelessWidget {
                               ),
                               onPressed: () async {
                                 await dbService.deleteGroupTimetable(
-                                    groupStatus.group.docId, ttbStatus.edit.docId);
+                                    groupStatus.group.docId,
+                                    ttbStatus.edit.docId);
                                 Navigator.of(context).maybePop();
                               },
                             ),

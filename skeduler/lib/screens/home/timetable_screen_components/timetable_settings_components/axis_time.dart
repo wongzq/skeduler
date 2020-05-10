@@ -9,12 +9,14 @@ import 'package:theme_provider/theme_provider.dart';
 
 class AxisTime extends StatefulWidget {
   final ValueSetter<List<Time>> valSetTimes;
+  final ValueGetter<List<Time>> valGetTimes;
   final List<Time> initialTimes;
   final bool initiallyExpanded;
 
   const AxisTime({
     Key key,
     this.valSetTimes,
+    this.valGetTimes,
     this.initialTimes,
     this.initiallyExpanded = false,
   }) : super(key: key);
@@ -199,7 +201,7 @@ class _AxisTimeState extends State<AxisTime> {
                                     widget.valSetTimes(_times);
                                   }
                                 });
-                                
+
                                 Navigator.of(context).maybePop();
                               }),
                         ],
@@ -275,6 +277,10 @@ class _AxisTimeState extends State<AxisTime> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.valGetTimes != null) {
+      _times = widget.valGetTimes();
+    }
+    
     return ExpansionTile(
       onExpansionChanged: (expanded) => setState(() => _expanded = !_expanded),
       initiallyExpanded: widget.initiallyExpanded,

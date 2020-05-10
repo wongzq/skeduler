@@ -6,6 +6,7 @@ import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
+import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_switch_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:theme_provider/theme_provider.dart';
@@ -47,6 +48,7 @@ class TimetableGridBox extends StatefulWidget {
 
 class _TimetableGridBoxState extends State<TimetableGridBox> {
   // properties
+  User _user;
   MembersStatus _membersStatus;
   TimetableGridData _gridData;
 
@@ -129,7 +131,20 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                           : _gridData.dragData == null ||
                                   _gridData.dragData.isEmpty
                               ? deactivatedColor
-                              : activatedColor;
+                              : _editMode.viewMe
+                                  ? () {
+                                      Member member =
+                                          _membersStatus.members.firstWhere(
+                                        (member) => member.id == _user.email,
+                                        orElse: () => null,
+                                      );
+
+                                      return _gridData.dragData.member.display ==
+                                          member.display;
+                                    }()
+                                      ? activatedColor
+                                      : deactivatedColor
+                                  : activatedColor;
                     }();
                     break;
 
@@ -511,6 +526,10 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
   @override
   Widget build(BuildContext context) {
+    _user = widget.gridBoxType == GridBoxType.content
+        ? Provider.of<User>(context)
+        : null;
+
     _membersStatus = widget.gridBoxType == GridBoxType.content
         ? Provider.of<MembersStatus>(context)
         : null;

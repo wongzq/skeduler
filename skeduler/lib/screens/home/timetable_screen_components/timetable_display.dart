@@ -7,6 +7,8 @@ import 'package:skeduler/screens/home/timetable_screen_components/member_selecto
 import 'package:skeduler/screens/home/timetable_screen_components/subject_selector.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/functions.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class TimetableDisplay extends StatefulWidget {
   final TimetableEditMode editMode;
@@ -66,11 +68,46 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
                             padding: EdgeInsets.all(10.0),
                             height: editMode.editing
                                 ? timetableDisplayHeight
-                                : constraints.maxHeight,
+                                : timetableDisplayHeight + selectorHeight,
                             child: TimetableGrid(),
                           ),
                           !editMode.editing
-                              ? Container()
+                              ? Container(
+                                  height: selectorHeight,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                        width: 40.0,
+                                        height: 40.0,
+                                        decoration: BoxDecoration(
+                                          color: editMode.viewMe
+                                              ? getOriginThemeData(
+                                                      ThemeProvider.themeOf(
+                                                              context)
+                                                          .id)
+                                                  .primaryColor
+                                              : Colors.grey,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: IconButton(
+                                            icon: Icon(
+                                              Icons.remove_red_eye,
+                                              color: Theme.of(context)
+                                                  .scaffoldBackgroundColor,
+                                            ),
+                                            onPressed: () {
+                                              editMode.viewMe =
+                                                  !editMode.viewMe;
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 10.0),
+                                      Text('View me'),
+                                    ],
+                                  ),
+                                )
                               : Container(
                                   height: selectorHeight,
                                   child: Stack(

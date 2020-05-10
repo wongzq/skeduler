@@ -194,6 +194,27 @@ class EditTimetable extends ChangeNotifier {
           gridDataList: timetable.gridDataList,
         );
 
+  EditTimetable.createFromCopy(EditTimetable timetable)
+      : this(
+          gridAxisOfDay: timetable.gridAxisOfDay,
+          gridAxisOfTime: timetable.gridAxisOfTime,
+          gridAxisOfCustom: timetable.gridAxisOfCustom,
+          axisDay: timetable.axisDay,
+          axisTime: timetable.axisTime,
+          axisCustom: timetable.axisCustom,
+          gridDataList: timetable.gridDataList,
+        );
+
+  EditTimetable.createFromCopyAxes(EditTimetable timetable)
+      : this(
+          gridAxisOfDay: timetable.gridAxisOfDay,
+          gridAxisOfTime: timetable.gridAxisOfTime,
+          gridAxisOfCustom: timetable.gridAxisOfCustom,
+          axisDay: timetable.axisDay,
+          axisTime: timetable.axisTime,
+          axisCustom: timetable.axisCustom,
+        );
+
   // getter methods
   String get docId => this._docId;
   DateTime get startDate => this._startDate;

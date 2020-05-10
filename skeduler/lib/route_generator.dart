@@ -9,6 +9,7 @@ import 'package:skeduler/screens/home/my_schedule_screen_components/my_schedule_
 import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_editor.dart';
 import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
 import 'package:skeduler/screens/home/subjects_screen_components/subjects_screen.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/new_timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_editor.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_screen.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_custom_reorder.dart';
@@ -102,6 +103,13 @@ class RouteGenerator {
         if (args is RouteArgs) {
           return CustomTransitionRoute.fadeScale(
               page: wrapWidget(TimetableScreen()));
+        }
+        break;
+
+      case '/timetable/newTimetable':
+        if (args is RouteArgs) {
+          return CustomTransitionRoute.fadeSlideRight(
+              page: wrapWidget(NewTimetable()));
         }
         break;
 

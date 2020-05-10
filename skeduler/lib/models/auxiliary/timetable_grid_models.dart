@@ -164,6 +164,7 @@ class TimetableDragSubjectMember extends TimetableDragData {
 
 class TimetableEditMode extends ChangeNotifier {
   bool _editing;
+  bool _viewMe;
   bool _binVisible;
   bool _dragSubject;
   bool _dragMember;
@@ -172,12 +173,14 @@ class TimetableEditMode extends ChangeNotifier {
 
   TimetableEditMode({bool editMode})
       : this._editing = editMode ?? false,
+        this._viewMe = false,
         this._dragSubject = editMode,
         this._dragMember = editMode,
         this._isDragging = false,
         this._binVisible = false;
 
   bool get editing => this._editing;
+  bool get viewMe => this._viewMe;
   bool get binVisible => this._binVisible;
   bool get dragSubject => this._editing ? this._dragSubject : false;
   bool get dragMember => this._editing ? this._dragMember : false;
@@ -193,6 +196,11 @@ class TimetableEditMode extends ChangeNotifier {
 
   set editing(bool value) {
     this._editing = value;
+    notifyListeners();
+  }
+
+  set viewMe(bool value) {
+    this._viewMe = value;
     notifyListeners();
   }
 

@@ -4,12 +4,14 @@ import 'package:skeduler/shared/functions.dart';
 
 class AxisDay extends StatefulWidget {
   final ValueSetter<List<Weekday>> valSetWeekdaysSelected;
+  final ValueGetter<List<Weekday>> valGetWeekdaysSelected;
   final List<Weekday> initialWeekdaysSelected;
   final bool initiallyExpanded;
 
   const AxisDay({
     Key key,
     this.valSetWeekdaysSelected,
+    this.valGetWeekdaysSelected,
     this.initialWeekdaysSelected,
     this.initiallyExpanded = false,
   }) : super(key: key);
@@ -79,6 +81,10 @@ class _AxisDayState extends State<AxisDay> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.valGetWeekdaysSelected != null) {
+      _weekdaysSelected = widget.valGetWeekdaysSelected();
+    }
+
     return ExpansionTile(
       onExpansionChanged: (expanded) => setState(() => _expanded = !_expanded),
       initiallyExpanded: widget.initiallyExpanded,

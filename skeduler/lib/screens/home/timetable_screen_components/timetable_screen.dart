@@ -45,6 +45,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                       snapshotTtb != null ? snapshotTtb.data : null;
 
                   if (_viewTodayTtb) {
+                    ttbStatus.curr = null;
                     ttbStatus.curr = timetable;
                   }
 
@@ -79,40 +80,44 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                 child: PopupMenuButton(
                                   child: Icon(Icons.more_vert),
                                   itemBuilder: (BuildContext context) {
-                                    List<PopupMenuEntry> timetableOptions = [];
+                                    List<PopupMenuEntry> popupOptions = [];
 
                                     // Add timetables to options
                                     groupStatus.group.timetableMetadatas
-                                        .forEach((timetableMeta) {
-                                      timetableOptions.add(PopupMenuItem(
-                                        value: timetableMeta.id,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(timetableMeta.id),
-                                            Text(
-                                              DateFormat('dd MMM').format(
-                                                      timetableMeta.startDate
-                                                          .toDate()) +
-                                                  ' - ' +
-                                                  DateFormat('dd MMM').format(
-                                                      timetableMeta.endDate
-                                                          .toDate()),
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 14.0,
+                                        .forEach((timetableMetadata) {
+                                      popupOptions.add(
+                                        PopupMenuItem(
+                                          value: timetableMetadata.id,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(timetableMetadata.id),
+                                              Text(
+                                                DateFormat('dd MMM').format(
+                                                        timetableMetadata
+                                                            .startDate
+                                                            .toDate()) +
+                                                    ' - ' +
+                                                    DateFormat('dd MMM').format(
+                                                        timetableMetadata
+                                                            .endDate
+                                                            .toDate()),
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 14.0,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ));
+                                      );
                                     });
 
                                     // Add 'add timetable' button to options
                                     if (me.role == MemberRole.owner ||
                                         me.role == MemberRole.admin) {
-                                      timetableOptions.add(PopupMenuItem(
+                                      popupOptions.add(PopupMenuItem(
                                         value: 0,
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
@@ -142,7 +147,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                         ),
                                       ));
                                     } else if (me.role == MemberRole.member) {
-                                      timetableOptions.add(PopupMenuItem(
+                                      popupOptions.add(PopupMenuItem(
                                         value: 0,
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
@@ -172,21 +177,26 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                         ),
                                       ));
                                     }
-                                    return timetableOptions;
+                                    return popupOptions;
                                   },
                                   onSelected: (value) async {
                                     if (value == 0) {
                                       if (me.role == MemberRole.owner ||
                                           me.role == MemberRole.admin) {
-                                        ttbStatus.edit = EditTimetable();
+                                        ttbStatus.temp = EditTimetable();
                                         Navigator.of(context).pushNamed(
-                                          '/timetable/editor',
+                                          '/timetable/newTimetable',
                                           arguments: RouteArgs(),
                                         );
-                                        Navigator.of(context).pushNamed(
-                                          '/timetable/editor/settings',
-                                          arguments: RouteArgs(),
-                                        );
+                                        // ttbStatus.edit = EditTimetable();
+                                        // Navigator.of(context).pushNamed(
+                                        //   '/timetable/editor',
+                                        //   arguments: RouteArgs(),
+                                        // );
+                                        // Navigator.of(context).pushNamed(
+                                        //   '/timetable/editor/settings',
+                                        //   arguments: RouteArgs(),
+                                        // );
                                       } else if (me.role == MemberRole.member) {
                                         setState(() {
                                           _viewTodayTtb = true;
@@ -213,6 +223,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                             .then((value) {
                                           setState(() {
                                             _viewTodayTtb = false;
+                                            ttbStatus.curr = null;
                                             ttbStatus.curr = value;
                                           });
                                         });
