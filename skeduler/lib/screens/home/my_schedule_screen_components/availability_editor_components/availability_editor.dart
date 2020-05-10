@@ -8,7 +8,7 @@ import 'package:skeduler/screens/home/my_schedule_screen_components/availability
 import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/time_editor.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
-class ScheduleEditor extends StatelessWidget {
+class AvailabilityEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
