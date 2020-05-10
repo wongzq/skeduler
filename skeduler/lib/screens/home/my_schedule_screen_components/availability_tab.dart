@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_view.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/availability_view.dart';
 import 'package:skeduler/shared/functions.dart';
 
-class ScheduleTab extends StatefulWidget {
+class AvailabilityTab extends StatefulWidget {
   @override
-  _ScheduleTabState createState() => _ScheduleTabState();
+  _AvailabilityTabState createState() => _AvailabilityTabState();
 }
 
-class _ScheduleTabState extends State<ScheduleTab> {
+class _AvailabilityTabState extends State<AvailabilityTab> {
   @override
   Widget build(BuildContext context) {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);

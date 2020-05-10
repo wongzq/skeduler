@@ -3,7 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/native_theme.dart';
 import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/screens/home/my_schedule_screen_components/editors_status.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/editors_status.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class MonthEditor extends StatefulWidget {

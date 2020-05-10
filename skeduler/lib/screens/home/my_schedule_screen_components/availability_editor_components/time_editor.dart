@@ -7,7 +7,7 @@ import 'package:quiver/time.dart';
 import 'package:skeduler/models/auxiliary/native_theme.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/screens/home/my_schedule_screen_components/editors_status.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/editors_status.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/custom_time_picker.dart';
 import 'package:skeduler/shared/ui_settings.dart';
@@ -495,7 +495,9 @@ class _TimeEditorState extends State<TimeEditor> {
                                           _endDate ?? getLastDayOfLastMonth(),
                                     );
                                     await dbService.updateGroupMemberTimes(
-                                        groupStatus.group.docId, null, newTimes);
+                                        groupStatus.group.docId,
+                                        null,
+                                        newTimes);
                                   }
                                 : null,
                             child: Text(
@@ -579,7 +581,8 @@ class _TimeEditorState extends State<TimeEditor> {
                                               FlatButton(
                                                 child: Text('CANCEL'),
                                                 onPressed: () =>
-                                                    Navigator.of(context).maybePop(),
+                                                    Navigator.of(context)
+                                                        .maybePop(),
                                               ),
                                               FlatButton(
                                                   child: Text(
@@ -609,7 +612,8 @@ class _TimeEditorState extends State<TimeEditor> {
                                                       null,
                                                       removeTimes,
                                                     );
-                                                    Navigator.of(context).maybePop();
+                                                    Navigator.of(context)
+                                                        .maybePop();
                                                   }),
                                             ],
                                           );

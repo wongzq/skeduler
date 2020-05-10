@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/screens/home/my_schedule_screen_components/day_editor.dart';
-import 'package:skeduler/screens/home/my_schedule_screen_components/editors_status.dart';
-import 'package:skeduler/screens/home/my_schedule_screen_components/month_editor.dart';
-import 'package:skeduler/screens/home/my_schedule_screen_components/time_editor.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/day_editor.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/editors_status.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/month_editor.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/time_editor.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class ScheduleEditor extends StatelessWidget {

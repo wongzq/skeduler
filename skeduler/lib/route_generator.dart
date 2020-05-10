@@ -6,7 +6,7 @@ import 'package:skeduler/screens/home/group_screen_components/edit_group.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen.dart';
 import 'package:skeduler/screens/home/members_screen_components/members_screen.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/my_schedule_screen.dart';
-import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_editor.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_editor_components/schedule_editor.dart';
 import 'package:skeduler/screens/home/settings_screen_components/settings_screen.dart';
 import 'package:skeduler/screens/home/subjects_screen_components/subjects_screen.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/new_timetable.dart';

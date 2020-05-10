@@ -3,7 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/native_theme.dart';
 import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/screens/home/my_schedule_screen_components/editors_status.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/editors_status.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class DayEditor extends StatefulWidget {
@@ -35,13 +35,26 @@ class _DayEditorState extends State<DayEditor> {
 
   List<Weekday> _weekdaysSelected = [];
 
-  static const double _bodyPadding = 10.0;
-  static const double _chipPadding = 5.0;
-  static const double _chipLabelHoriPadding = 10.0;
-  static const double _chipLabelVertPadding = 5.0;
+  double _bodyPadding = 10.0;
+  double _chipPadding = 5.0;
+  double _chipLabelHoriPadding = 10.0;
+  double _chipLabelVertPadding = 5.0;
   double _chipWidth;
 
   // methods
+  // check if all days are selected
+  bool _allDaysSelected() {
+    bool allDaysSelected = true;
+
+    Weekday.values.forEach((day) {
+      if (!_weekdaysSelected.contains(day)) {
+        allDaysSelected = false;
+      }
+    });
+
+    return allDaysSelected;
+  }
+
   // set the selected height of day editor
   setDayEditorSelectedHeight() {
     RenderBox text = _textKey.currentContext.findRenderObject();
@@ -58,7 +71,7 @@ class _DayEditorState extends State<DayEditor> {
   List<Widget> _generateDays(GlobalKey _key) {
     OriginTheme originTheme = Provider.of<OriginTheme>(context);
 
-    return _days.asMap().entries.map((MapEntry item) {
+    List<Widget> _daysWidgets = _days.asMap().entries.map((MapEntry item) {
       return Visibility(
         visible: () {
           if (_key == _wrapKey) {
@@ -83,7 +96,7 @@ class _DayEditorState extends State<DayEditor> {
           }
         }(),
         child: Padding(
-          padding: const EdgeInsets.all(_chipPadding),
+          padding: EdgeInsets.all(_chipPadding),
           child: ActionChip(
             backgroundColor:
                 _weekdaysSelected.contains(Weekday.values[item.key])
@@ -128,6 +141,81 @@ class _DayEditorState extends State<DayEditor> {
         ),
       );
     }).toList();
+
+    // add All button
+    _daysWidgets.add(Visibility(
+      visible: () {
+        if (_key == _wrapKey) {
+          // Chips are visible when:
+          // CurrentEditor is day (visible when in DayEditor) OR
+          // CurrentEditor is daySelected (visible when in DayEditor) OR
+          // Chip is selected (visible when not in DayEditor)
+          return _editorsStatus.currentEditor == CurrentEditor.day ||
+                  _editorsStatus.currentEditor == CurrentEditor.daySelected ||
+                  _allDaysSelected()
+              ? true
+              : false;
+        } else if (_key == _wrapSelectedKey) {
+          // Chips are visible when:
+          // CurrentEditor is daySelected AND Chip is selected
+          return _editorsStatus.currentEditor == CurrentEditor.daySelected &&
+                  _allDaysSelected()
+              ? true
+              : false;
+        } else {
+          return false;
+        }
+      }(),
+      child: Padding(
+        padding: EdgeInsets.all(_chipPadding),
+        child: ActionChip(
+          backgroundColor: _allDaysSelected()
+              ? originTheme.primaryColorLight
+              : Colors.grey[200],
+          elevation: 3.0,
+          labelPadding: EdgeInsets.symmetric(
+            horizontal: _chipLabelHoriPadding,
+            vertical: _chipLabelVertPadding,
+          ),
+          label: Container(
+            width: _chipWidth,
+            child: Text(
+              'All',
+              style: _allDaysSelected()
+                  ? textStyleBody.copyWith(color: Colors.black)
+                  : textStyleBodyLight,
+            ),
+          ),
+          onPressed: () {
+            // modify Wrap Selected
+            setState(() {
+              _editorsStatus.currentEditor = CurrentEditor.daySelected;
+
+              _allDaysSelected()
+                  ? _weekdaysSelected.clear()
+                  : Weekday.values.forEach((weekday) {
+                      if (!_weekdaysSelected.contains(weekday))
+                        _weekdaysSelected.add(weekday);
+                    });
+            });
+
+            if (widget.valSetWeekdays != null) {
+              widget.valSetWeekdays(_weekdaysSelected);
+            }
+
+            // get Size of Wrap Selected
+            SchedulerBinding.instance.addPostFrameCallback((_) {
+              setDayEditorSelectedHeight();
+              setState(() {
+                _editorsStatus.currentEditor = CurrentEditor.day;
+              });
+            });
+          },
+        ),
+      ),
+    ));
+
+    return _daysWidgets;
   }
 
   @override
@@ -162,7 +250,7 @@ class _DayEditorState extends State<DayEditor> {
           child: Stack(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(_bodyPadding),
+                padding: EdgeInsets.all(_bodyPadding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
