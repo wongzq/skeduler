@@ -102,11 +102,8 @@ class TimetableSettings extends StatelessWidget {
                           axisTime: ttbStatus.temp.axisTime,
                           axisCustom: ttbStatus.temp.axisCustom,
                         );
+                        ttbStatus.update();
                         Navigator.of(context).maybePop();
-                        Navigator.of(context).popAndPushNamed(
-                          '/timetable/editor',
-                          arguments: RouteArgs(),
-                        );
                       } else {
                         Fluttertoast.showToast(
                           msg: 'Timetable ID already exists',

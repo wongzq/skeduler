@@ -492,6 +492,10 @@ class TimetableStatus extends ChangeNotifier {
       ),
     );
   }
+
+  void update() {
+    notifyListeners();
+  }
 }
 
 // --------------------------------------------------------------------------------
