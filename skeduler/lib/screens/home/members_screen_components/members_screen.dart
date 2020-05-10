@@ -26,7 +26,7 @@ class _MembersScreenState extends State<MembersScreen> {
     return groupStatus.group == null
         ? Loading()
         : StreamBuilder(
-            stream: dbService.getGroupMembers(groupStatus.group.docId),
+            stream: dbService.streamGroupMembers(groupStatus.group.docId),
             builder: (context, snapshot) {
               List<Member> members = snapshot != null ? snapshot.data : null;
 
@@ -55,7 +55,7 @@ class _MembersScreenState extends State<MembersScreen> {
                       drawer: HomeDrawer(DrawerEnum.members),
                     )
                   : StreamBuilder(
-                      stream: dbService.getGroupMemberMyData(groupStatus.group.docId),
+                      stream: dbService.streamGroupMemberMe(groupStatus.group.docId),
                       builder: (context, snapshot) {
                         Member me = snapshot != null ? snapshot.data : null;
 

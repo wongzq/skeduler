@@ -12,34 +12,34 @@ class OriginTheme extends ChangeNotifier {
     Color primaryColorDark,
     Color accentColor,
   }) {
-    _primaryColor = primaryColor;
-    _primaryColorLight = primaryColorLight;
-    _primaryColorDark = primaryColorDark;
-    _accentColor = accentColor;
+    this._primaryColor = primaryColor;
+    this._primaryColorLight = primaryColorLight;
+    this._primaryColorDark = primaryColorDark;
+    this._accentColor = accentColor;
   }
 
-  get primaryColor => _primaryColor;
-  get primaryColorLight => _primaryColorLight;
-  get primaryColorDark => _primaryColorDark;
-  get accentColor => _accentColor;
+  get primaryColor => this._primaryColor;
+  get primaryColorLight => this._primaryColorLight;
+  get primaryColorDark => this._primaryColorDark;
+  get accentColor => this._accentColor;
 
   set primaryColor(Color color) {
-    _primaryColor = color;
+    this._primaryColor = color;
     notifyListeners();
   }
 
   set primaryColorLight(Color color) {
-    _primaryColorLight = color;
+    this._primaryColorLight = color;
     notifyListeners();
   }
 
   set primaryColorDark(Color color) {
-    _primaryColorDark = color;
+    this._primaryColorDark = color;
     notifyListeners();
   }
 
   set accentColor(Color color) {
-    _accentColor = color;
+    this._accentColor = color;
     notifyListeners();
   }
 }

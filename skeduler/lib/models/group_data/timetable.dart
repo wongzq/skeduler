@@ -13,17 +13,19 @@ class TimetableMetadata {
   Timestamp startDate;
   Timestamp endDate;
 
+  // constructors
   TimetableMetadata({
     this.id,
     this.startDate,
     this.endDate,
   });
 
+  // getter methods
   Map<String, dynamic> get asMap {
     return {
-      'id': id,
-      'startDate': startDate,
-      'endDate': endDate,
+      'id': this.id,
+      'startDate': this.startDate,
+      'endDate': this.endDate,
     };
   }
 }
@@ -104,7 +106,7 @@ class Timetable {
   List<String> get axisCustom => this._axisCustom;
   TimetableGridDataList get gridDataList => this._gridDataList;
 
-  // getter as [List<String>]
+  // get list as [List<String>]
   List<String> get axisDayStr => List.generate(
       this._axisDay.length, (index) => getWeekdayStr(this._axisDay[index]));
   List<String> get axisDayShortStr => List.generate(this._axisDay.length,
@@ -112,14 +114,12 @@ class Timetable {
   List<String> get axisTimeStr => List.generate(
       this._axisTime.length, (index) => getTimeStr(this._axisTime[index]));
 
-  bool isValid() {
-    return this._docId != null &&
-            this._docId.trim() != '' &&
-            this._startDate != null &&
-            this._endDate != null
-        ? true
-        : false;
-  }
+  bool get isValid => this._docId != null &&
+          this._docId.trim() != '' &&
+          this._startDate != null &&
+          this._endDate != null
+      ? true
+      : false;
 }
 
 // --------------------------------------------------------------------------------
@@ -166,32 +166,32 @@ class EditTimetable extends ChangeNotifier {
         this._gridDataList =
             TimetableGridDataList.from(gridDataList ?? TimetableGridDataList());
 
-  EditTimetable.fromTimetable(Timetable timetable)
+  EditTimetable.fromTimetable(Timetable ttb)
       : this(
-          docId: timetable.docId,
-          startDate: timetable.startDate,
-          endDate: timetable.endDate,
-          gridAxisOfDay: timetable.gridAxisOfDay,
-          gridAxisOfTime: timetable.gridAxisOfTime,
-          gridAxisOfCustom: timetable.gridAxisOfCustom,
-          axisDay: timetable.axisDay,
-          axisTime: timetable.axisTime,
-          axisCustom: timetable.axisCustom,
-          gridDataList: timetable.gridDataList,
+          docId: ttb.docId,
+          startDate: ttb.startDate,
+          endDate: ttb.endDate,
+          gridAxisOfDay: ttb.gridAxisOfDay,
+          gridAxisOfTime: ttb.gridAxisOfTime,
+          gridAxisOfCustom: ttb.gridAxisOfCustom,
+          axisDay: ttb.axisDay,
+          axisTime: ttb.axisTime,
+          axisCustom: ttb.axisCustom,
+          gridDataList: ttb.gridDataList,
         );
 
-  EditTimetable.copy(EditTimetable timetable)
+  EditTimetable.copy(EditTimetable editTtb)
       : this(
-          docId: timetable.docId,
-          startDate: timetable.startDate,
-          endDate: timetable.endDate,
-          gridAxisOfDay: timetable.gridAxisOfDay,
-          gridAxisOfTime: timetable.gridAxisOfTime,
-          gridAxisOfCustom: timetable.gridAxisOfCustom,
-          axisDay: timetable.axisDay,
-          axisTime: timetable.axisTime,
-          axisCustom: timetable.axisCustom,
-          gridDataList: timetable.gridDataList,
+          docId: editTtb.docId,
+          startDate: editTtb.startDate,
+          endDate: editTtb.endDate,
+          gridAxisOfDay: editTtb.gridAxisOfDay,
+          gridAxisOfTime: editTtb.gridAxisOfTime,
+          gridAxisOfCustom: editTtb.gridAxisOfCustom,
+          axisDay: editTtb.axisDay,
+          axisTime: editTtb.axisTime,
+          axisCustom: editTtb.axisCustom,
+          gridDataList: editTtb.gridDataList,
         );
 
   // getter methods
@@ -205,14 +205,20 @@ class EditTimetable extends ChangeNotifier {
   List<Time> get axisTime => this._axisTime;
   List<String> get axisCustom => this._axisCustom;
   TimetableGridDataList get gridDataList => this._gridDataList;
-
   TimetableMetadata get metadata => TimetableMetadata(
         id: this._docId,
         startDate: Timestamp.fromDate(this._startDate),
         endDate: Timestamp.fromDate(this._endDate),
       );
 
-  // getter as [List<String>]
+  bool get isValid => this._docId != null &&
+          this._docId.trim() != '' &&
+          this._startDate != null &&
+          this._endDate != null
+      ? true
+      : false;
+
+  // get list as [List<String>]
   List<String> get axisDayStr =>
       List.generate(_axisDay.length, (index) => getWeekdayStr(_axisDay[index]));
   List<String> get axisDayShortStr => List.generate(
@@ -273,15 +279,6 @@ class EditTimetable extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool isValid() {
-    return this._docId != null &&
-            this._docId.trim() != '' &&
-            this._startDate != null &&
-            this._endDate != null
-        ? true
-        : false;
-  }
-
   void updateTimetableSettings({
     String docId,
     DateTime startDate,
@@ -300,200 +297,25 @@ class EditTimetable extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateTimetableFromCopy(EditTimetable timetable) {
-    this._gridAxisOfDay = timetable.gridAxisOfDay;
-    this._gridAxisOfTime = timetable.gridAxisOfTime;
-    this._gridAxisOfCustom = timetable.gridAxisOfCustom;
-    this._axisDay = timetable.axisDay;
-    this._axisTime = timetable.axisTime;
-    this._axisCustom = timetable.axisCustom;
-    this._gridDataList = timetable.gridDataList;
+  void updateTimetableFromCopy(Timetable ttb) {
+    this._gridAxisOfDay = ttb.gridAxisOfDay;
+    this._gridAxisOfTime = ttb.gridAxisOfTime;
+    this._gridAxisOfCustom = ttb.gridAxisOfCustom;
+    this._axisDay = ttb.axisDay;
+    this._axisTime = ttb.axisTime;
+    this._axisCustom = ttb.axisCustom;
+    this._gridDataList = ttb.gridDataList;
     notifyListeners();
   }
 
-  void updateTimetableFromCopyAxes(EditTimetable timetable) {
-    this._gridAxisOfDay = timetable.gridAxisOfDay;
-    this._gridAxisOfTime = timetable.gridAxisOfTime;
-    this._gridAxisOfCustom = timetable.gridAxisOfCustom;
-    this._axisDay = timetable.axisDay;
-    this._axisTime = timetable.axisTime;
-    this._axisCustom = timetable.axisCustom;
+  void updateTimetableFromCopyAxes(Timetable ttb) {
+    this._gridAxisOfDay = ttb.gridAxisOfDay;
+    this._gridAxisOfTime = ttb.gridAxisOfTime;
+    this._gridAxisOfCustom = ttb.gridAxisOfCustom;
+    this._axisDay = ttb.axisDay;
+    this._axisTime = ttb.axisTime;
+    this._axisCustom = ttb.axisCustom;
     this._gridDataList = null;
-    notifyListeners();
-  }
-}
-
-// --------------------------------------------------------------------------------
-// TimetableStatus class for Provider
-// --------------------------------------------------------------------------------
-
-class TimetableStatus extends ChangeNotifier {
-  // properties
-  // current
-  Timetable _curr;
-  TimetableAxes _currAxes;
-  TimetableScroll _currScroll;
-
-  // editing
-  EditTimetable _edit;
-  TimetableAxes _editAxes;
-  TimetableScroll _editScroll;
-
-  // temporary editing
-  EditTimetable _temp;
-
-  // getter methods
-  Timetable get curr => this._curr;
-  TimetableAxes get currAxes => this._currAxes;
-  TimetableScroll get currScroll => this._currScroll;
-
-  EditTimetable get edit => this._edit;
-  TimetableAxes get editAxes => this._editAxes;
-  TimetableScroll get editScroll => this._editScroll;
-
-  EditTimetable get temp => this._temp;
-
-  // setter methods
-  set curr(Timetable ttb) {
-    this._curr = ttb;
-
-    // reset currAxes
-    if (ttb == null) {
-      this._currAxes = null;
-      this._currScroll = null;
-    }
-    // new currAxes
-    else if (this._currAxes == null) {
-      this._currAxes = _newAxes(this._curr == null
-          ? EditTimetable()
-          : EditTimetable.fromTimetable(this._curr));
-      this._currScroll = TimetableScroll(horiLength: 100, vertLength: 100);
-    }
-    // update currAxes keep grid axis
-    else {
-      this._currAxes = _updateAxesKeepGridAxis(
-        this._curr == null
-            ? EditTimetable()
-            : EditTimetable.fromTimetable(this._curr),
-        this._currAxes,
-      );
-    }
-  }
-
-  set edit(EditTimetable editTtb) {
-    this._edit = editTtb;
-
-    // reset editAxes
-    if (editTtb == null) {
-      this._editAxes = null;
-      this._editScroll = null;
-    }
-    // new editAxes
-    else if (this._editAxes == null) {
-      this._editAxes = _newAxes(editTtb);
-      this._editScroll = TimetableScroll(horiLength: 100, vertLength: 100);
-    }
-    // update editAxes keep grid axes
-    else {
-      this._editAxes = _updateAxesKeepGridAxis(
-        editTtb,
-        this._editAxes,
-      );
-    }
-  }
-
-  set temp(EditTimetable editTtb) {
-    this._temp = editTtb;
-  }
-
-  set currDayGridAxis(GridAxis gridAxis) {
-    this._currAxes.dayGridAxis = gridAxis;
-    notifyListeners();
-  }
-
-  set currTimeGridAxis(GridAxis gridAxis) {
-    this._currAxes.timeGridAxis = gridAxis;
-    notifyListeners();
-  }
-
-  set currCustomGridAxis(GridAxis gridAxis) {
-    this._currAxes.customGridAxis = gridAxis;
-    notifyListeners();
-  }
-
-  set editDayGridAxis(GridAxis gridAxis) {
-    this._editAxes.dayGridAxis = gridAxis;
-    this._edit.gridAxisOfDay = this._editAxes.dayGridAxis;
-    this._edit.gridAxisOfTime = this._editAxes.timeGridAxis;
-    this._edit.gridAxisOfCustom = this._editAxes.customGridAxis;
-    notifyListeners();
-  }
-
-  set editTimeGridAxis(GridAxis gridAxis) {
-    this._editAxes.timeGridAxis = gridAxis;
-    this._edit.gridAxisOfDay = this._editAxes.dayGridAxis;
-    this._edit.gridAxisOfTime = this._editAxes.timeGridAxis;
-    this._edit.gridAxisOfCustom = this._editAxes.customGridAxis;
-    notifyListeners();
-  }
-
-  set editCustomGridAxis(GridAxis gridAxis) {
-    this._editAxes.customGridAxis = gridAxis;
-    this._edit.gridAxisOfDay = this._editAxes.dayGridAxis;
-    this._edit.gridAxisOfTime = this._editAxes.timeGridAxis;
-    this._edit.gridAxisOfCustom = this._editAxes.customGridAxis;
-    notifyListeners();
-  }
-
-  // auxiliary methods
-  TimetableAxes _newAxes(EditTimetable editTtb) {
-    return TimetableAxes(
-      day: TimetableAxis(
-        gridAxis: editTtb.gridAxisOfDay,
-        dataAxis: DataAxis.day,
-        list: editTtb.axisDay,
-        listStr: editTtb.axisDayShortStr,
-      ),
-      time: TimetableAxis(
-        gridAxis: editTtb.gridAxisOfTime,
-        dataAxis: DataAxis.time,
-        list: editTtb.axisTime,
-        listStr: editTtb.axisTimeStr,
-      ),
-      custom: TimetableAxis(
-        gridAxis: editTtb.gridAxisOfCustom,
-        dataAxis: DataAxis.custom,
-        list: editTtb.axisCustom,
-        listStr: editTtb.axisCustom,
-      ),
-    );
-  }
-
-  TimetableAxes _updateAxesKeepGridAxis(
-      EditTimetable editTtb, TimetableAxes keepGridAxis) {
-    return TimetableAxes(
-      day: TimetableAxis(
-        gridAxis: keepGridAxis.dayGridAxis,
-        dataAxis: DataAxis.day,
-        list: editTtb.axisDay,
-        listStr: editTtb.axisDayShortStr,
-      ),
-      time: TimetableAxis(
-        gridAxis: keepGridAxis.timeGridAxis,
-        dataAxis: DataAxis.time,
-        list: editTtb.axisTime,
-        listStr: editTtb.axisTimeStr,
-      ),
-      custom: TimetableAxis(
-        gridAxis: keepGridAxis.customGridAxis,
-        dataAxis: DataAxis.custom,
-        list: editTtb.axisCustom,
-        listStr: editTtb.axisCustom,
-      ),
-    );
-  }
-
-  void update() {
     notifyListeners();
   }
 }
@@ -503,35 +325,34 @@ class TimetableStatus extends ChangeNotifier {
 // --------------------------------------------------------------------------------
 
 // check if all [Timetable] in [List<Timetable>] is consecutive with no conflicts of date
-bool isConsecutiveTimetables(List<TimetableMetadata> timetables) {
+bool isConsecutiveTimetables(List<TimetableMetadata> ttbMetadatas) {
   bool isConsecutive = true;
 
   // sort the area in terms of startDate
-  timetables.sort((a, b) {
-    return a.startDate.millisecondsSinceEpoch
-        .compareTo(b.startDate.millisecondsSinceEpoch);
+  ttbMetadatas.sort((a, b) {
+    return a.startDate.compareTo(b.startDate);
   });
 
-  // loop through the array to find any conflict
-  for (int i = 0; i < timetables.length; i++) {
+  // loop through the array to find any date conflict
+  for (int i = 0; i < ttbMetadatas.length; i++) {
     if (i != 0) {
-      // if conflict is found, returns [hasNoConflict] as [false]
-      if (!(timetables[i - 1]
+      // if conflict is found, sets [isConsecutive] as [false]
+      if (!(ttbMetadatas[i - 1]
               .startDate
               .toDate()
-              .isBefore(timetables[i].startDate.toDate()) &&
-          timetables[i - 1]
+              .isBefore(ttbMetadatas[i].startDate.toDate()) &&
+          ttbMetadatas[i - 1]
               .endDate
               .toDate()
-              .isBefore(timetables[i].endDate.toDate()) &&
-          (timetables[i - 1]
+              .isBefore(ttbMetadatas[i].endDate.toDate()) &&
+          (ttbMetadatas[i - 1]
                   .endDate
                   .toDate()
-                  .isBefore(timetables[i].startDate.toDate()) ||
-              timetables[i - 1]
+                  .isBefore(ttbMetadatas[i].startDate.toDate()) ||
+              ttbMetadatas[i - 1]
                   .endDate
                   .toDate()
-                  .isAtSameMomentAs(timetables[i].startDate.toDate())))) {
+                  .isAtSameMomentAs(ttbMetadatas[i].startDate.toDate())))) {
         isConsecutive = false;
         break;
       }

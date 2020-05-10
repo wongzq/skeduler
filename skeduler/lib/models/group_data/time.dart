@@ -3,6 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:quiver/core.dart';
 import 'package:quiver/time.dart';
 
+// --------------------------------------------------------------------------------
+// Time class
+// --------------------------------------------------------------------------------
+
 class Time {
   // properties
   DateTime startTime;
@@ -15,8 +19,12 @@ class Time {
       o is Time && this.startTime == o.startTime && this.endTime == o.endTime;
 
   @override
-  get hashCode => hash2(startTime.hashCode, endTime.hashCode);
+  get hashCode => hash2(this.startTime, this.endTime);
 }
+
+// --------------------------------------------------------------------------------
+// Auxiliary functions
+// --------------------------------------------------------------------------------
 
 String getTimeStr(Time time) {
   return DateFormat('HHmm').format(time.startTime) +

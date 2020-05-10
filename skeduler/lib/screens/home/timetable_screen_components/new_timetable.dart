@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_custom.dart';
@@ -108,14 +109,9 @@ class _NewTimetableState extends State<NewTimetable> {
                   value.ttbId,
                 )
                     .then((timetable) {
-                  EditTimetable copyTtb =
-                      EditTimetable.fromTimetable(timetable);
-
-                  print(copyTtb.docId);
-
                   if (value.copyType == CopyTimetableType.copyTimetable) {
                     setState(() {
-                      ttbStatus.temp.updateTimetableFromCopy(copyTtb);
+                      ttbStatus.temp.updateTimetableFromCopy(timetable);
                     });
 
                     print(ttbStatus.temp.docId);
@@ -127,7 +123,7 @@ class _NewTimetableState extends State<NewTimetable> {
                   } else if (value.copyType ==
                       CopyTimetableType.copyTimetableAxes) {
                     setState(() {
-                      ttbStatus.temp.updateTimetableFromCopyAxes(copyTtb);
+                      ttbStatus.temp.updateTimetableFromCopyAxes(timetable);
                     });
 
                     Fluttertoast.showToast(

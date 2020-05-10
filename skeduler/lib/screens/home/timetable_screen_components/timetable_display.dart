@@ -41,7 +41,7 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     return StreamBuilder<List<Member>>(
-      stream: dbService.getGroupMembers(groupStatus.group.docId),
+      stream: dbService.streamGroupMembers(groupStatus.group.docId),
       builder: (context, snapshot) {
         List<Member> members = snapshot != null ? snapshot.data ?? [] : [];
 

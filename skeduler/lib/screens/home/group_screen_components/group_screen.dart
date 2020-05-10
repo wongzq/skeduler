@@ -37,7 +37,7 @@ class _GroupScreenState extends State<GroupScreen> {
             drawer: HomeDrawer(DrawerEnum.group),
           )
         : StreamBuilder(
-            stream: dbService.getGroupMemberMyData(groupStatus.group.docId),
+            stream: dbService.streamGroupMemberMe(groupStatus.group.docId),
             builder: (context, snapshot) {
               Member me = snapshot != null ? snapshot.data : null;
 

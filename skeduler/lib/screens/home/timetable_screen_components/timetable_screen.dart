@@ -27,7 +27,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
 
     return StreamBuilder(
-        stream: dbService.getGroupMemberMyData(groupStatus.group.docId),
+        stream: dbService.streamGroupMemberMe(groupStatus.group.docId),
         builder: (context, snapshot) {
           Member me = snapshot != null ? snapshot.data : null;
 
@@ -36,7 +36,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                 dbService.getGroupTimetableIdForToday(groupStatus.group.docId),
             builder: (context, snapshotTtbId) {
               return StreamBuilder(
-                stream: dbService.getGroupTimetableForToday(
+                stream: dbService.streamGroupTimetableForToday(
                   groupStatus.group.docId,
                   snapshotTtbId.data,
                 ),
@@ -55,7 +55,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                           appBar: AppBar(
                             title: groupStatus.group.name == null ||
                                     timetable == null ||
-                                    !timetable.isValid()
+                                    !timetable.isValid
                                 ? Text(
                                     'Timetable',
                                     style: textStyleAppBarTitle,
@@ -237,7 +237,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                           drawer: HomeDrawer(DrawerEnum.timetable),
                           body: me == null ||
                                   timetable == null ||
-                                  !timetable.isValid()
+                                  !timetable.isValid
                               ? Container()
                               : TimetableDisplay(
                                   editMode: TimetableEditMode(editMode: false),

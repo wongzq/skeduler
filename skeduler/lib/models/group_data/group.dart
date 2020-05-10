@@ -4,47 +4,9 @@ import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/models/group_data/subject.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 
-class MembersStatus extends ChangeNotifier {
-  List<Member> _members;
-
-  MembersStatus({List<Member> members}) : this._members = members ?? [];
-
-  List<Member> get members => List.unmodifiable(this._members);
-}
-
-class GroupStatus extends ChangeNotifier {
-  Group _group;
-  List<Member> _members;
-
-  bool _hasChanges;
-
-  GroupStatus({
-    Group group,
-    List<Member> members,
-    bool hasChanges = false,
-  })  : _group = group,
-        _members = members ?? [],
-        _hasChanges = hasChanges;
-
-  Group get group => this._group;
-  List<Member> get members => this._members;
-  bool get hasChanges => this._hasChanges;
-
-  set group(value) {
-    this._group = group;
-    notifyListeners();
-  }
-
-  set members(value) {
-    this._members = members;
-    notifyListeners();
-  }
-
-  set hasChanges(value) {
-    this._hasChanges = value;
-    notifyListeners();
-  }
-}
+// --------------------------------------------------------------------------------
+// Group class
+// --------------------------------------------------------------------------------
 
 class Group {
   // properties
@@ -72,53 +34,115 @@ class Group {
     List<String> members = const [],
     List<Subject> subjects = const [],
   }) {
-    _docId = docId;
+    this._docId = docId;
 
-    _name = name;
-    _description = description;
-    _colorShade = colorShade;
-    _ownerEmail = ownerEmail;
-    _ownerName = ownerName;
+    this._name = name;
+    this._description = description;
+    this._colorShade = colorShade;
+    this._ownerEmail = ownerEmail;
+    this._ownerName = ownerName;
 
-    _timetableMetadatas = List.from(timetableMetadatas);
-    _members = List.from(members);
-    _subjects = List.from(subjects);
+    this._timetableMetadatas = List.from(timetableMetadatas);
+    this._members = List.from(members);
+    this._subjects = List.from(subjects);
   }
 
   // getter methods
-  String get docId => _docId;
+  String get docId => this._docId;
 
-  String get name => _name;
-  String get description => _description;
-  ColorShade get colorShade => _colorShade ?? ColorShade();
-  String get ownerEmail => _ownerEmail;
-  String get ownerName => _ownerName;
-  int get numOfMembers => _members.length;
-  List<TimetableMetadata> get timetableMetadatas => _timetableMetadatas;
-  List<String> get members => _members;
-  List<Subject> get subjects => _subjects;
+  String get name => this._name;
+  String get description => this._description;
+  ColorShade get colorShade => this._colorShade ?? ColorShade();
+  String get ownerEmail => this._ownerEmail;
+  String get ownerName => this._ownerName;
+  int get numOfMembers => this._members.length;
+
+  List<TimetableMetadata> get timetableMetadatas => this._timetableMetadatas;
+  List<String> get members => this._members;
+  List<Subject> get subjects => this._subjects;
 }
+
+// --------------------------------------------------------------------------------
+// Group Metadata class for Provider
+// --------------------------------------------------------------------------------
 
 class GroupMetadata extends ChangeNotifier {
   String _docId;
   String _name;
 
   GroupMetadata({docId, groupName}) {
-    _docId = docId;
-    _name = groupName;
+    this._docId = docId;
+    this._name = groupName;
     notifyListeners();
   }
 
-  String get docId => _docId;
-  String get name => _name;
+  String get docId => this._docId;
+  String get name => this._name;
 
   set docId(String value) {
-    _docId = value;
+    this._docId = value;
     notifyListeners();
   }
 
   set name(String value) {
-    _name = value;
+    this._name = value;
+    notifyListeners();
+  }
+}
+
+// --------------------------------------------------------------------------------
+// Members Metadata class for Provider
+// --------------------------------------------------------------------------------
+
+class MembersStatus extends ChangeNotifier {
+  // properties
+  List<Member> _members;
+
+  // constructors
+  MembersStatus({List<Member> members}) : this._members = members ?? [];
+
+  // getter methods
+  List<Member> get members => List.unmodifiable(this._members);
+}
+
+// --------------------------------------------------------------------------------
+// Group Status class for Provider
+// --------------------------------------------------------------------------------
+
+class GroupStatus extends ChangeNotifier {
+  // properties
+  Group _group;
+  List<Member> _members;
+
+  bool _hasChanges;
+
+  /// constructors
+  GroupStatus({
+    Group group,
+    List<Member> members,
+    bool hasChanges = false,
+  })  : _group = group,
+        _members = members ?? [],
+        _hasChanges = hasChanges;
+
+  // getter methods
+  Group get group => this._group;
+  List<Member> get members => this._members;
+  bool get hasChanges => this._hasChanges;
+
+  // setter methods
+  set group(value) {
+    this._group = group;
+    notifyListeners();
+  }
+
+  set members(value) {
+    this._members = members;
+    notifyListeners();
+  }
+
+  set hasChanges(value) {
+    this._hasChanges = value;
     notifyListeners();
   }
 }

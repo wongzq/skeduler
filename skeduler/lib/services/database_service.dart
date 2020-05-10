@@ -18,18 +18,18 @@ class DatabaseService {
   // constructors method
   DatabaseService({this.userId});
 
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
   // Collection References
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
 
   final CollectionReference usersCollection =
       Firestore.instance.collection('users');
   final CollectionReference groupsCollection =
       Firestore.instance.collection('groups');
 
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
   // Getter methods
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
 
   // get [User] data as stream
   Stream<User> get user {
@@ -50,7 +50,7 @@ class DatabaseService {
   }
 
   // get [Group] data as stream
-  Stream<Group> getGroup(String groupDocId) {
+  Stream<Group> streamGroup(String groupDocId) {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
         : groupsCollection
@@ -60,7 +60,7 @@ class DatabaseService {
   }
 
   // get [Group][Member] data of me as stream
-  Stream<Member> getGroupMemberMyData(String groupDocId) {
+  Stream<Member> streamGroupMemberMe(String groupDocId) {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
         : groupsCollection
@@ -71,8 +71,23 @@ class DatabaseService {
             .map(_memberFromSnapshot);
   }
 
+  // get [Group][Timetable] data of today as stream
+  Stream<Timetable> streamGroupTimetableForToday(
+    String groupDocId,
+    String timetableIdForToday,
+  ) {
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : groupsCollection
+            .document(groupDocId)
+            .collection('timetables')
+            .document(timetableIdForToday)
+            .snapshots()
+            .map(_timetableFromSnapshot);
+  }
+
   // get [Group][Member]s' data as stream
-  Stream<List<Member>> getGroupMembers(String groupDocId) {
+  Stream<List<Member>> streamGroupMembers(String groupDocId) {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
         : groupsCollection
@@ -100,21 +115,6 @@ class DatabaseService {
             .then((timetable) {
             return timetable.exists ? _timetableFromSnapshot(timetable) : null;
           });
-  }
-
-  // get [Group][Timetable] data of today as stream
-  Stream<Timetable> getGroupTimetableForToday(
-    String groupDocId,
-    String timetableIdForToday,
-  ) {
-    return groupDocId == null || groupDocId.trim() == ''
-        ? null
-        : groupsCollection
-            .document(groupDocId)
-            .collection('timetables')
-            .document(timetableIdForToday)
-            .snapshots()
-            .map(_timetableFromSnapshot);
   }
 
   Future<String> getGroupTimetableIdForToday(String groupDocId) async {
@@ -147,9 +147,9 @@ class DatabaseService {
     }).then((_) => timetableIdForToday);
   }
 
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
   // Setter methods
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
 
   // set [User] data
   Future setUserData(String email, String name) async {
@@ -198,9 +198,9 @@ class DatabaseService {
     });
   }
 
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
   // Modifying methods for User
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
 
   // update [User] data
   Future updateUserData({String name}) async {
@@ -209,9 +209,9 @@ class DatabaseService {
     });
   }
 
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
   // Modifying methods for Group
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
 
   // update [Group] data
   Future updateGroupData(
@@ -257,9 +257,9 @@ class DatabaseService {
           });
   }
 
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
   // Modifying methods for Member
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
 
   // add Dummy to [Group]
   Future<String> addDummyToGroup({
@@ -425,9 +425,9 @@ class DatabaseService {
           });
   }
 
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
   // Modifying methods for Timetable
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
 
   Future<String> addGroupSubject(String groupDocId, Subject newSubject) async {
     return groupDocId == null || groupDocId.trim() == ''
@@ -584,9 +584,9 @@ class DatabaseService {
           }).catchError((_) => false);
   }
 
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
   // Modifying methods for Timetable
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
 
   // update [Group][Timetable]'s data
   Future updateGroupTimetable(
@@ -760,9 +760,9 @@ class DatabaseService {
     });
   }
 
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
   // Modifying methods for Times
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
 
   // update [Group][Member]'s available schedule times
   Future updateGroupMemberTimes(
@@ -897,9 +897,9 @@ class DatabaseService {
           });
   }
 
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
   // Auxiliary methods
-  // --------------------------------------------------------------------------------//////
+  // --------------------------------------------------------------------------------
 
   // convert snapshot to [User]
   User _userFromSnapshot(DocumentSnapshot snapshot) {

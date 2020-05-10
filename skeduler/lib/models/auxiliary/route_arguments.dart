@@ -5,6 +5,7 @@ import 'package:skeduler/models/group_data/member.dart';
 // --------------------------------------------------------------------------------
 // Route Arguments Template
 // --------------------------------------------------------------------------------
+
 abstract class _RouteArgsTemplate {
   // properties
   Group _group;

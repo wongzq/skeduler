@@ -4,7 +4,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:quiver/time.dart';
-import 'package:skeduler/models/auxiliary/native_theme.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/editors_status.dart';

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/models/group_data/user.dart';
-import 'package:skeduler/models/auxiliary/native_theme.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/route_generator.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/services/database_service.dart';
@@ -114,7 +114,7 @@ class MyApp extends StatelessWidget {
                           return Consumer<ValueNotifier<String>>(
                             builder: (_, groupDocId, __) {
                               return StreamBuilder(
-                                  stream: dbService.getGroup(groupDocId.value),
+                                  stream: dbService.streamGroup(groupDocId.value),
                                   builder: (_, snapshot) {
                                     return ChangeNotifierProvider<
                                         GroupStatus>.value(

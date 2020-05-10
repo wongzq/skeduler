@@ -5,7 +5,6 @@ import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_switch_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -139,7 +138,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                                         orElse: () => null,
                                       );
 
-                                      return _gridData.dragData.member.display ==
+                                      return _gridData
+                                              .dragData.member.display ==
                                           member.display;
                                     }()
                                       ? activatedColor
@@ -557,13 +557,13 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
                 if (_editMode.editing == true) {
                   _ttbStatus.edit.gridDataList.value.forEach((gridData) {
-                    if (gridData.hasSameCoordAs(widget.coord)) {
+                    if (gridData.coord == widget.coord) {
                       returnGridData = TimetableGridData.copy(gridData);
                     }
                   });
                 } else {
                   _ttbStatus.curr.gridDataList.value.forEach((gridData) {
-                    if (gridData.hasSameCoordAs(widget.coord)) {
+                    if (gridData.coord == widget.coord) {
                       returnGridData = TimetableGridData.copy(gridData);
                     }
                   });

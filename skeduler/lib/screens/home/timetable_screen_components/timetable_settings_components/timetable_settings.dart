@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_custom.dart';
@@ -23,9 +24,9 @@ class TimetableSettings extends StatelessWidget {
 
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-    ttbStatus.temp = ttbStatus.temp != null && ttbStatus.temp.isValid()
+    ttbStatus.temp = ttbStatus.temp != null && ttbStatus.temp.isValid
         ? ttbStatus.temp
-        : ttbStatus.edit != null && ttbStatus.edit.isValid()
+        : ttbStatus.edit != null && ttbStatus.edit.isValid
             ? EditTimetable.copy(ttbStatus.edit)
             : EditTimetable();
 

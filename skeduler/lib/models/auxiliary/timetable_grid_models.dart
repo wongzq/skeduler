@@ -4,11 +4,189 @@ import 'package:intl/intl.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:quiver/core.dart';
 import 'package:skeduler/models/group_data/time.dart';
+import 'package:skeduler/models/group_data/timetable.dart';
 
 // --------------------------------------------------------------------------------
-// ScrollController classes for Provider
+// TimetableStatus class for Provider
 // --------------------------------------------------------------------------------
+
+class TimetableStatus extends ChangeNotifier {
+  // properties
+  // current
+  Timetable _curr;
+  TimetableAxes _currAxes;
+  TimetableScroll _currScroll;
+
+  // editing
+  EditTimetable _edit;
+  TimetableAxes _editAxes;
+  TimetableScroll _editScroll;
+
+  // temporary
+  EditTimetable _temp;
+
+  // getter methods
+  Timetable get curr => this._curr;
+  TimetableAxes get currAxes => this._currAxes;
+  TimetableScroll get currScroll => this._currScroll;
+
+  EditTimetable get edit => this._edit;
+  TimetableAxes get editAxes => this._editAxes;
+  TimetableScroll get editScroll => this._editScroll;
+
+  EditTimetable get temp => this._temp;
+
+  // setter methods
+  set curr(Timetable ttb) {
+    this._curr = ttb;
+
+    // reset currAxes
+    if (ttb == null) {
+      this._currAxes = null;
+      this._currScroll = null;
+    }
+    // new currAxes
+    else if (this._currAxes == null) {
+      this._currAxes = _newAxes(this._curr == null
+          ? EditTimetable()
+          : EditTimetable.fromTimetable(this._curr));
+      this._currScroll = TimetableScroll(horiLength: 100, vertLength: 100);
+    }
+    // update currAxes keep grid axis
+    else {
+      this._currAxes = _updateAxesKeepGridAxis(
+        this._curr == null
+            ? EditTimetable()
+            : EditTimetable.fromTimetable(this._curr),
+        this._currAxes,
+      );
+    }
+  }
+
+  set edit(EditTimetable editTtb) {
+    this._edit = editTtb;
+
+    // reset editAxes
+    if (editTtb == null) {
+      this._editAxes = null;
+      this._editScroll = null;
+    }
+    // new editAxes
+    else if (this._editAxes == null) {
+      this._editAxes = _newAxes(editTtb);
+      this._editScroll = TimetableScroll(horiLength: 100, vertLength: 100);
+    }
+    // update editAxes keep grid axes
+    else {
+      this._editAxes = _updateAxesKeepGridAxis(
+        editTtb,
+        this._editAxes,
+      );
+    }
+  }
+
+  set temp(EditTimetable editTtb) {
+    this._temp = editTtb;
+  }
+
+  set currDayGridAxis(GridAxis gridAxis) {
+    this._currAxes.dayGridAxis = gridAxis;
+    notifyListeners();
+  }
+
+  set currTimeGridAxis(GridAxis gridAxis) {
+    this._currAxes.timeGridAxis = gridAxis;
+    notifyListeners();
+  }
+
+  set currCustomGridAxis(GridAxis gridAxis) {
+    this._currAxes.customGridAxis = gridAxis;
+    notifyListeners();
+  }
+
+  set editDayGridAxis(GridAxis gridAxis) {
+    this._editAxes.dayGridAxis = gridAxis;
+    this._edit.gridAxisOfDay = this._editAxes.dayGridAxis;
+    this._edit.gridAxisOfTime = this._editAxes.timeGridAxis;
+    this._edit.gridAxisOfCustom = this._editAxes.customGridAxis;
+    notifyListeners();
+  }
+
+  set editTimeGridAxis(GridAxis gridAxis) {
+    this._editAxes.timeGridAxis = gridAxis;
+    this._edit.gridAxisOfDay = this._editAxes.dayGridAxis;
+    this._edit.gridAxisOfTime = this._editAxes.timeGridAxis;
+    this._edit.gridAxisOfCustom = this._editAxes.customGridAxis;
+    notifyListeners();
+  }
+
+  set editCustomGridAxis(GridAxis gridAxis) {
+    this._editAxes.customGridAxis = gridAxis;
+    this._edit.gridAxisOfDay = this._editAxes.dayGridAxis;
+    this._edit.gridAxisOfTime = this._editAxes.timeGridAxis;
+    this._edit.gridAxisOfCustom = this._editAxes.customGridAxis;
+    notifyListeners();
+  }
+
+  // auxiliary methods
+  TimetableAxes _newAxes(EditTimetable editTtb) {
+    return TimetableAxes(
+      day: TimetableAxis(
+        gridAxis: editTtb.gridAxisOfDay,
+        dataAxis: DataAxis.day,
+        list: editTtb.axisDay,
+        listStr: editTtb.axisDayShortStr,
+      ),
+      time: TimetableAxis(
+        gridAxis: editTtb.gridAxisOfTime,
+        dataAxis: DataAxis.time,
+        list: editTtb.axisTime,
+        listStr: editTtb.axisTimeStr,
+      ),
+      custom: TimetableAxis(
+        gridAxis: editTtb.gridAxisOfCustom,
+        dataAxis: DataAxis.custom,
+        list: editTtb.axisCustom,
+        listStr: editTtb.axisCustom,
+      ),
+    );
+  }
+
+  TimetableAxes _updateAxesKeepGridAxis(
+      EditTimetable editTtb, TimetableAxes keepGridAxis) {
+    return TimetableAxes(
+      day: TimetableAxis(
+        gridAxis: keepGridAxis.dayGridAxis,
+        dataAxis: DataAxis.day,
+        list: editTtb.axisDay,
+        listStr: editTtb.axisDayShortStr,
+      ),
+      time: TimetableAxis(
+        gridAxis: keepGridAxis.timeGridAxis,
+        dataAxis: DataAxis.time,
+        list: editTtb.axisTime,
+        listStr: editTtb.axisTimeStr,
+      ),
+      custom: TimetableAxis(
+        gridAxis: keepGridAxis.customGridAxis,
+        dataAxis: DataAxis.custom,
+        list: editTtb.axisCustom,
+        listStr: editTtb.axisCustom,
+      ),
+    );
+  }
+
+  void update() {
+    notifyListeners();
+  }
+}
+
+// --------------------------------------------------------------------------------
+// TimetableScroll class for Provider
+// --------------------------------------------------------------------------------
+
 class TimetableScroll extends ChangeNotifier {
+  // properties
   LinkedScrollControllerGroup hori;
   LinkedScrollControllerGroup vert;
   List<ScrollController> _horiScroll;
@@ -16,19 +194,21 @@ class TimetableScroll extends ChangeNotifier {
 
   bool changed;
 
+  // constructor
   TimetableScroll({
     @required int horiLength,
     @required int vertLength,
   }) : changed = false {
     hori = LinkedScrollControllerGroup();
     vert = LinkedScrollControllerGroup();
-    newTimetableScroll(
+    _newTimetableScroll(
       horiLength: horiLength,
       vertLength: vertLength,
     );
   }
 
-  void newTimetableScroll({
+  // methods
+  void _newTimetableScroll({
     @required int horiLength,
     @required int vertLength,
   }) {
@@ -55,13 +235,17 @@ class TimetableScroll extends ChangeNotifier {
 // --------------------------------------------------------------------------------
 // Timetable Drag Data related classes
 // --------------------------------------------------------------------------------
+
 abstract class TimetableDragData {
+  // properties
   String _display;
 
+  // getter methods
   String get display => this._display;
   bool get isEmpty => this._display == null || this._display.isEmpty;
   bool get isNotEmpty => this._display != null && this._display.isNotEmpty;
 
+  // abstract getter methods
   bool get hasSubject;
   bool get hasMember;
   bool get hasSubjectOnly;
@@ -71,10 +255,12 @@ abstract class TimetableDragData {
 
 // [TimetableDragDataSubject] class
 class TimetableDragSubject extends TimetableDragData {
+  // constructors
   TimetableDragSubject({String display}) {
     super._display = display;
   }
 
+  // getter methods
   @override
   String get display => super._display;
   bool get isEmpty => super.isEmpty;
@@ -86,15 +272,18 @@ class TimetableDragSubject extends TimetableDragData {
   bool get hasMemberOnly => false;
   bool get hasSubjectAndMember => false;
 
+  // setter methods
   set display(String value) => super._display = value;
 }
 
 // [TimetableDragDataMember] class
 class TimetableDragMember extends TimetableDragData {
+  // constructors
   TimetableDragMember({String display}) {
     super._display = display;
   }
 
+  // getter methods
   String get display => super._display;
   bool get isEmpty => super.isEmpty;
   bool get isNotEmpty => super.isNotEmpty;
@@ -105,6 +294,7 @@ class TimetableDragMember extends TimetableDragData {
   bool get hasMemberOnly => this.isNotEmpty;
   bool get hasSubjectAndMember => false;
 
+  // setter methods
   set display(String value) => super._display = value;
 }
 
@@ -159,10 +349,11 @@ class TimetableDragSubjectMember extends TimetableDragData {
 }
 
 // --------------------------------------------------------------------------------
-// TimetableDisplayInfo class for Provider
+// TimetableEditMode class for Provider
 // --------------------------------------------------------------------------------
 
 class TimetableEditMode extends ChangeNotifier {
+  // properties
   bool _editing;
   bool _viewMe;
   bool _binVisible;
@@ -171,6 +362,7 @@ class TimetableEditMode extends ChangeNotifier {
   bool _isDragging;
   TimetableDragData _isDraggingData;
 
+  // constructors
   TimetableEditMode({bool editMode})
       : this._editing = editMode ?? false,
         this._viewMe = false,
@@ -179,6 +371,7 @@ class TimetableEditMode extends ChangeNotifier {
         this._isDragging = false,
         this._binVisible = false;
 
+  // getter methods
   bool get editing => this._editing;
   bool get viewMe => this._viewMe;
   bool get binVisible => this._binVisible;
@@ -194,6 +387,7 @@ class TimetableEditMode extends ChangeNotifier {
   TimetableDragData get isDraggingData =>
       this._editing ? this._isDraggingData : null;
 
+  // setter methods
   set editing(bool value) {
     this._editing = value;
     notifyListeners();
@@ -256,11 +450,13 @@ String getAxisTypeStr(DataAxis axisType) {
 }
 
 class TimetableAxis {
+  // properties
   GridAxis _gridAxis;
   DataAxis _dataAxis;
   List<dynamic> _list;
   List<String> _listStr;
 
+  // constructors
   TimetableAxis({
     @required GridAxis gridAxis,
     @required DataAxis dataAxis,
@@ -278,6 +474,7 @@ class TimetableAxis {
         this._listStr =
             ttbAxis.listStr == null ? [] : List.from(ttbAxis.listStr);
 
+  // getter methods
   GridAxis get gridAxis => this._gridAxis;
   DataAxis get dataAxis => this._dataAxis;
   List get list => () {
@@ -298,11 +495,13 @@ class TimetableAxis {
       }();
   List<String> get listStr => this._listStr;
 
+  // setter methods
   set gridAxis(GridAxis gridAxis) => this._gridAxis = gridAxis;
   set dataAxis(DataAxis dataAxis) => this._dataAxis = dataAxis;
 }
 
 class TimetableAxes extends ChangeNotifier {
+  // properties
   TimetableAxis _day;
   TimetableAxis _time;
   TimetableAxis _custom;
@@ -330,7 +529,7 @@ class TimetableAxes extends ChangeNotifier {
         gridAxis: GridAxis.z,
         dataAxis: DataAxis.custom,
       );
-    } else if (!updateAxes(x: day, y: time, z: custom)) {
+    } else if (!_updateAxes(x: day, y: time, z: custom)) {
       this._day = TimetableAxis(
         gridAxis: GridAxis.x,
         dataAxis: DataAxis.day,
@@ -419,58 +618,61 @@ class TimetableAxes extends ChangeNotifier {
     notifyListeners();
   }
 
+  // auxiliary methods
   void _swapGridAxis(DataAxis thisDataAxis, GridAxis newGridAxis) {
     GridAxis thisGridAxis;
 
     // if this is day
-    if (_day.dataAxis == thisDataAxis) {
-      thisGridAxis = _day.gridAxis;
-      _day.gridAxis = newGridAxis;
-      if (_time.gridAxis == newGridAxis) {
-        _time.gridAxis = thisGridAxis;
-      } else if (_custom.gridAxis == newGridAxis) {
-        _custom.gridAxis = thisGridAxis;
+    if (this._day.dataAxis == thisDataAxis) {
+      thisGridAxis = this._day.gridAxis;
+      this._day.gridAxis = newGridAxis;
+      if (this._time.gridAxis == newGridAxis) {
+        this._time.gridAxis = thisGridAxis;
+      } else if (this._custom.gridAxis == newGridAxis) {
+        this._custom.gridAxis = thisGridAxis;
       }
     }
+
     // if this is time
-    else if (_time.dataAxis == thisDataAxis) {
-      thisGridAxis = _time.gridAxis;
-      _time.gridAxis = newGridAxis;
-      if (_day.gridAxis == newGridAxis) {
-        _day.gridAxis = thisGridAxis;
-      } else if (_custom.gridAxis == newGridAxis) {
-        _custom.gridAxis = thisGridAxis;
+    else if (this._time.dataAxis == thisDataAxis) {
+      thisGridAxis = this._time.gridAxis;
+      this._time.gridAxis = newGridAxis;
+      if (this._day.gridAxis == newGridAxis) {
+        this._day.gridAxis = thisGridAxis;
+      } else if (this._custom.gridAxis == newGridAxis) {
+        this._custom.gridAxis = thisGridAxis;
       }
     }
+
     // if this is custom
-    else if (_custom.dataAxis == thisDataAxis) {
-      thisGridAxis = _custom.gridAxis;
-      _custom.gridAxis = newGridAxis;
-      if (_day.gridAxis == newGridAxis) {
-        _day.gridAxis = thisGridAxis;
-      } else if (_time.gridAxis == newGridAxis) {
-        _time.gridAxis = thisGridAxis;
+    else if (this._custom.dataAxis == thisDataAxis) {
+      thisGridAxis = this._custom.gridAxis;
+      this._custom.gridAxis = newGridAxis;
+      if (this._day.gridAxis == newGridAxis) {
+        this._day.gridAxis = thisGridAxis;
+      } else if (this._time.gridAxis == newGridAxis) {
+        this._time.gridAxis = thisGridAxis;
       }
     }
   }
 
-  // auxiliary methods
-  @override
-  String toString() {
-    return _day.gridAxis.toString() +
-        ' ' +
-        _day.dataAxis.toString() +
-        '\n' +
-        _time.gridAxis.toString() +
-        ' ' +
-        _time.dataAxis.toString() +
-        '\n' +
-        _custom.gridAxis.toString() +
-        ' ' +
-        _custom.dataAxis.toString();
+  TimetableAxis _axisFromDataAxis(DataAxis dataAxis) {
+    return this._day.dataAxis == dataAxis
+        ? this._day
+        : this._time.dataAxis == dataAxis
+            ? this._time
+            : this._custom.dataAxis == dataAxis ? this._custom : null;
   }
 
-  bool updateAxes({
+  TimetableAxis _axisFromGridAxis(GridAxis gridAxis) {
+    return this._day.gridAxis == gridAxis
+        ? this._day
+        : this._time.gridAxis == gridAxis
+            ? this._time
+            : this._custom.gridAxis == gridAxis ? this._custom : null;
+  }
+
+  bool _updateAxes({
     TimetableAxis x,
     TimetableAxis y,
     TimetableAxis z,
@@ -492,7 +694,7 @@ class TimetableAxes extends ChangeNotifier {
       this._time = y;
       this._custom = z;
 
-      _isEmpty = false;
+      this._isEmpty = false;
 
       notifyListeners();
       return true;
@@ -506,61 +708,63 @@ class TimetableAxes extends ChangeNotifier {
     this._time = null;
     this._custom = null;
 
-    _isEmpty = true;
+    this._isEmpty = true;
     notifyListeners();
   }
 
-  TimetableAxis _axisFromDataAxis(DataAxis dataAxis) {
-    return this._day.dataAxis == dataAxis
-        ? this._day
-        : this._time.dataAxis == dataAxis
-            ? this._time
-            : this._custom.dataAxis == dataAxis ? this._custom : null;
-  }
-
-  TimetableAxis _axisFromGridAxis(GridAxis gridAxis) {
-    return this._day.gridAxis == gridAxis
-        ? this._day
-        : this._time.gridAxis == gridAxis
-            ? this._time
-            : this._custom.gridAxis == gridAxis ? this._custom : null;
+  @override
+  String toString() {
+    return this._day.gridAxis.toString() +
+        ' ' +
+        this._day.dataAxis.toString() +
+        '\n' +
+        this._time.gridAxis.toString() +
+        ' ' +
+        this._time.dataAxis.toString() +
+        '\n' +
+        this._custom.gridAxis.toString() +
+        ' ' +
+        this._custom.dataAxis.toString();
   }
 }
 
 // --------------------------------------------------------------------------------
-// TimetableSlot related classes
+// TimetableCoord related classes
 // --------------------------------------------------------------------------------
 
 class TimetableCoord {
+  // properties
   Weekday day;
   Time time;
   String custom;
 
+  // constructors
   TimetableCoord({this.day, this.time, this.custom});
 
   TimetableCoord.copy(TimetableCoord coord)
-      : day = coord.day,
-        time = coord.time,
-        custom = coord.custom;
+      : this.day = coord.day,
+        this.time = coord.time,
+        this.custom = coord.custom;
 
+  // methods
   @override
-  bool operator ==(coord) {
+  bool operator ==(o) {
     return this.day == null ||
             this.time == null ||
             this.time.startTime == null ||
             this.time.endTime == null ||
             this.custom == null ||
-            coord == null ||
-            coord.day == null ||
-            coord.time == null ||
-            coord.time.startTime == null ||
-            coord.time.endTime == null ||
-            coord.custom == null
+            o == null ||
+            o.day == null ||
+            o.time == null ||
+            o.time.startTime == null ||
+            o.time.endTime == null ||
+            o.custom == null
         ? false
-        : this.day == coord.day &&
-                this.time.startTime == coord.time.startTime &&
-                this.time.endTime == coord.time.endTime &&
-                this.custom == coord.custom
+        : this.day == o.day &&
+                this.time.startTime == o.time.startTime &&
+                this.time.endTime == o.time.endTime &&
+                this.custom == o.custom
             ? true
             : false;
   }
@@ -569,29 +773,33 @@ class TimetableCoord {
   get hashCode => hash3(day, time, custom);
 }
 
+// --------------------------------------------------------------------------------
+// TimetableGridData class
+// --------------------------------------------------------------------------------
+
 class TimetableGridData {
+  // properties
   TimetableCoord _coord;
   TimetableDragSubjectMember _dragData;
 
+  // constructors
   TimetableGridData({
     TimetableCoord coord,
     TimetableDragSubjectMember dragData,
-  })  : _coord = coord ?? TimetableCoord(),
-        _dragData = dragData ?? TimetableDragSubjectMember();
+  })  : this._coord = coord ?? TimetableCoord(),
+        this._dragData = dragData ?? TimetableDragSubjectMember();
 
   TimetableGridData.copy(TimetableGridData gridData)
-      : _coord = gridData.coord,
-        _dragData = gridData._dragData;
+      : this._coord = gridData.coord,
+        this._dragData = gridData._dragData;
 
+  // getter methods
   TimetableCoord get coord => this._coord;
   TimetableDragSubjectMember get dragData => this._dragData;
 
+  // setter methods
   set coord(TimetableCoord val) => this._coord = val;
   set dragData(TimetableDragSubjectMember val) => this._dragData = val;
-
-  bool hasSameCoordAs(TimetableCoord coord) {
-    return coord == null ? false : this._coord == coord;
-  }
 
   @override
   String toString() {
@@ -611,31 +819,30 @@ class TimetableGridData {
   }
 }
 
+// --------------------------------------------------------------------------------
+// TimetableGridDataList class for Provider
+// --------------------------------------------------------------------------------
+
 class TimetableGridDataList extends ChangeNotifier {
+  // properties
   List<TimetableGridData> _value;
 
-  TimetableGridDataList({value}) : _value = value ?? [];
+  // constructors
+  TimetableGridDataList({value}) : this._value = value ?? [];
 
   TimetableGridDataList.from(TimetableGridDataList gridDataList)
-      : _value = gridDataList._value ?? [];
+      : this._value = gridDataList._value ?? [];
 
+  // getter methods
   List<TimetableGridData> get value => List.unmodifiable(this._value);
 
-  @override
-  String toString() {
-    String string = '';
-    _value.forEach((gridData) {
-      string += gridData.toString() + '\n';
-    });
-    return string;
-  }
-
+  // methods
   bool push(TimetableGridData newGridData) {
     if (newGridData != null) {
       TimetableGridData toRemove;
 
       for (TimetableGridData gridData in this._value) {
-        if (gridData.hasSameCoordAs(newGridData.coord)) {
+        if (gridData.coord == newGridData.coord) {
           toRemove = gridData;
           break;
         }
@@ -657,7 +864,7 @@ class TimetableGridDataList extends ChangeNotifier {
     TimetableGridData toRemove;
 
     for (TimetableGridData gridData in this._value) {
-      if (gridData.hasSameCoordAs(newGridData.coord)) {
+      if (gridData.coord == newGridData.coord) {
         toRemove = gridData;
         break;
       }
@@ -671,5 +878,14 @@ class TimetableGridDataList extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  @override
+  String toString() {
+    String string = '';
+    this._value.forEach((gridData) {
+      string += gridData.toString() + '\n';
+    });
+    return string;
   }
 }

@@ -257,7 +257,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
         ],
       ),
       drawer: HomeDrawer(DrawerEnum.timetable),
-      body: ttbStatus.edit == null || !ttbStatus.edit.isValid()
+      body: ttbStatus.edit == null || !ttbStatus.edit.isValid
           ? Container()
           : SafeArea(
               child: TimetableDisplay(editMode: _editMode),

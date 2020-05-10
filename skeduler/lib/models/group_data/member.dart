@@ -26,26 +26,26 @@ class Member {
     ColorShade colorShade,
     List<Time> times,
   }) {
-    _email = id;
-    _name = name;
-    _nickname = nickname;
-    _description = description;
-    _role = role;
-    _colorShade = colorShade;
-    _times = times;
+    this._email = id;
+    this._name = name;
+    this._nickname = nickname;
+    this._description = description;
+    this._role = role;
+    this._colorShade = colorShade;
+    this._times = times;
   }
 
   // getter methods
-  String get id => _email;
-  String get name => _name;
-  String get nickname => _nickname;
-  String get display => _nickname ?? _name ?? _email;
-  String get description => _description;
-  MemberRole get role => _role;
-  String get roleStr => memberRoleStr(_role);
-  IconData get roleIcon => _memberRoleIcon(_role);
-  ColorShade get colorShade => _colorShade;
-  List<Time> get times => _times;
+  String get id => this._email;
+  String get name => this._name;
+  String get nickname => this._nickname;
+  String get display => this._nickname ?? this._name ?? this._email;
+  String get description => this._description;
+  MemberRole get role => this._role;
+  String get roleStr => memberRoleStr(this._role);
+  IconData get roleIcon => _memberRoleIcon(this._role);
+  ColorShade get colorShade => this._colorShade;
+  List<Time> get times => this._times;
 }
 
 enum MemberRole {

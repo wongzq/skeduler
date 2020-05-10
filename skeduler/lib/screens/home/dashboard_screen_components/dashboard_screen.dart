@@ -12,7 +12,7 @@ import 'package:skeduler/shared/ui_settings.dart';
 
 class DashboardScreen extends StatelessWidget {
   // properties
-  static const double _bodyPadding = 5.0;
+  final double _bodyPadding = 5.0;
 
   // methods
   @override
@@ -55,7 +55,7 @@ class DashboardScreen extends StatelessWidget {
                 if (groups[index] != null) {
                   return StreamBuilder(
                       stream:
-                          dbService.getGroupMemberMyData(groups[index].docId),
+                          dbService.streamGroupMemberMe(groups[index].docId),
                       builder: (context, snapshot) {
                         Member me = snapshot != null ? snapshot.data : null;
 
@@ -76,7 +76,7 @@ class DashboardScreen extends StatelessWidget {
                                   builder: (context) {
                                     return StreamBuilder(
                                         stream: dbService
-                                            .getGroup(groups[index].docId),
+                                            .streamGroup(groups[index].docId),
                                         builder: (context, snapshot) {
                                           Group group = snapshot != null
                                               ? snapshot.data

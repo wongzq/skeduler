@@ -17,7 +17,7 @@ class ScheduleView extends StatelessWidget {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     return StreamBuilder(
-      stream: dbService.getGroupMemberMyData(groupStatus.group.docId),
+      stream: dbService.streamGroupMemberMe(groupStatus.group.docId),
       builder: (context, snapshot) {
         Member member = snapshot.data;
 

@@ -64,7 +64,7 @@ class MemberSelector extends StatelessWidget {
     ScrollController controller = ScrollController();
 
     return StreamBuilder(
-        stream: dbService.getGroupMembers(groupStatus.group.docId),
+        stream: dbService.streamGroupMembers(groupStatus.group.docId),
         builder: (context, snapshot) {
           List<Member> members =
               snapshot != null && snapshot.data != null ? snapshot.data : [];

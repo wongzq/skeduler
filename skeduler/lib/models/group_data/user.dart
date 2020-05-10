@@ -13,11 +13,11 @@ class User {
     email = '',
     name = '',
   }) {
-    _email = email;
-    _name = name;
+    this._email = email;
+    this._name = name;
   }
 
   // getter methods
-  String get email => _email;
-  String get name => _name;
+  String get email => this._email;
+  String get name => this._name;
 }

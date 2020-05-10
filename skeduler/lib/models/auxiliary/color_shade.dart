@@ -25,32 +25,32 @@ class ColorShade {
   }) {
     // use [Color] to set the values for [String] and [Shade]
     if (color != null && themeId == null && shade == null) {
-      setWithColor(color);
+      _setWithColor(color);
     }
 
     // use [String] and [Shade] to set the value for [Color]
     else if (color == null && themeId != null) {
-      setWithThemeIdAndShade(themeId, shade);
+      _setWithThemeIdAndShade(themeId, shade);
     }
   }
 
   // getter methods
-  Color get color => _color;
-  String get themeId => _themeId;
-  Shade get shade => _shade;
-  int get shadeIndex => _shade.index;
+  Color get color => this._color;
+  String get themeId => this._themeId;
+  Shade get shade => this._shade;
+  int get shadeIndex => this._shade.index;
 
   // setter methods
-  set color(Color color) => setWithColor(color);
-  set themeId(String themeId) => setWithThemeIdAndShade(themeId, _shade);
-  set shade(Shade shade) => setWithThemeIdAndShade(_themeId, shade);
+  set color(Color color) => _setWithColor(color);
+  set themeId(String themeId) => _setWithThemeIdAndShade(themeId, this._shade);
+  set shade(Shade shade) => _setWithThemeIdAndShade(this._themeId, shade);
 
   // auxiliary methods
-  bool setWithColor(Color color) {
+  bool _setWithColor(Color color) {
     if (themeIdFromColor(color) != null && themeIdFromColor(color) != '') {
-      _color = color;
-      _themeId = themeIdFromColor(color);
-      _shade = shadeFromColor(color);
+      this._color = color;
+      this._themeId = themeIdFromColor(color);
+      this._shade = shadeFromColor(color);
 
       return true;
     } else {
@@ -58,15 +58,15 @@ class ColorShade {
     }
   }
 
-  bool setWithThemeIdAndShade(String themeId, Shade shade) {
+  bool _setWithThemeIdAndShade(String themeId, Shade shade) {
     int index = myAppThemes.indexWhere((theme) => theme.id == themeId);
 
     if (index != -1) {
       shade = shade ?? Shade.primaryColor;
 
-      _color = colorFromThemeIdAndShade(themeId, shade);
-      _themeId = themeId;
-      _shade = shade;
+      this._color = colorFromThemeIdAndShade(themeId, shade);
+      this._themeId = themeId;
+      this._shade = shade;
 
       return true;
     } else {
@@ -74,6 +74,7 @@ class ColorShade {
     }
   }
 
+  // static methods
   static String themeIdFromColor(Color color) {
     int index = myAppThemes.indexWhere((AppTheme theme) {
       return theme.data.primaryColor == color ||
@@ -91,7 +92,7 @@ class ColorShade {
       if (theme.data.primaryColorDark == color) {
         shade = Shade.primaryColorDark;
       } else if (theme.data.primaryColor == color) {
-        shade =  Shade.primaryColor;
+        shade = Shade.primaryColor;
       } else if (theme.data.accentColor == color) {
         shade = Shade.accentColor;
       } else if (theme.data.primaryColorLight == color) {
