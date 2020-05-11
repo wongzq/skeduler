@@ -50,7 +50,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                   Timetable timetable =
                       snapshotTtb != null ? snapshotTtb.data : null;
 
-                  if (_viewTodayTtb) {
+                  if (_viewTodayTtb && timetable != null) {
                     if (ttbStatus.curr == null) {
                       ttbStatus.curr = timetable;
                     } else if (ttbStatus.curr.docId == timetable.docId) {

@@ -102,10 +102,13 @@ class MemberListTile extends StatelessWidget {
           : Column(
               children: <Widget>[
                 Container(
-                  color: Colors.red,
+                  color: member.id == me.id
+                      ? getOriginThemeData(ThemeProvider.themeOf(context).id)
+                          .primaryColorLight
+                      : null,
                   child: ListTile(
                     leading: Icon(member.roleIcon),
-                    title: Text(member.nickname),
+                    title: Text(member.display),
                     subtitle: Text(member.name),
                   ),
                 ),
@@ -126,22 +129,20 @@ class MemberListTile extends StatelessWidget {
             child: ListTile(
               leading: Icon(
                 member.roleIcon,
-                color: member.id == me.id
-                    ? Theme.of(context).brightness == Brightness.light
-                        ? Colors.black
-                        : Colors.black
-                    : null,
+                color: member.id == me.id ? Colors.black : null,
               ),
               title: Text(
-                member.nickname,
+                member.role == MemberRole.pending ? member.id : member.nickname,
                 style:
                     TextStyle(color: member.id == me.id ? Colors.black : null),
               ),
-              subtitle: Text(
-                member.name,
-                style: TextStyle(
-                    color: member.id == me.id ? Colors.grey[700] : null),
-              ),
+              subtitle: member.role == MemberRole.pending
+                  ? null
+                  : Text(
+                      member.name,
+                      style: TextStyle(
+                          color: member.id == me.id ? Colors.grey[700] : null),
+                    ),
               trailing: member.role == MemberRole.owner
                   ? me.role == MemberRole.owner
                       ? PopupMenuButton(
