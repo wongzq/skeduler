@@ -87,11 +87,23 @@ class _AxisTimeState extends State<AxisTime> {
             itemBuilder: (context) {
               return [
                 PopupMenuItem(
-                  child: Text('Edit'),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.edit),
+                      SizedBox(width: 10.0),
+                      Text('Edit'),
+                    ],
+                  ),
                   value: TimeslotOption.edit,
                 ),
                 PopupMenuItem(
-                  child: Text('Remove'),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.delete),
+                      SizedBox(width: 10.0),
+                      Text('Remove'),
+                    ],
+                  ),
                   value: TimeslotOption.remove,
                 ),
               ];

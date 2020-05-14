@@ -315,7 +315,7 @@ class EditTimetable extends ChangeNotifier {
     this._axisDay = ttb.axisDay;
     this._axisTime = ttb.axisTime;
     this._axisCustom = ttb.axisCustom;
-    this._gridDataList = null;
+    this._gridDataList = TimetableGridDataList();
     notifyListeners();
   }
 }

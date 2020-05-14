@@ -40,15 +40,33 @@ class _AxisCustomState extends State<AxisCustom> {
             itemBuilder: (context) {
               return [
                 PopupMenuItem(
-                  child: Text('Edit'),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.edit),
+                      SizedBox(width: 10.0),
+                      Text('Edit'),
+                    ],
+                  ),
                   value: CustomOption.edit,
                 ),
                 PopupMenuItem(
-                  child: Text('Reorder'),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.reorder),
+                      SizedBox(width: 10.0),
+                      Text('Reorder'),
+                    ],
+                  ),
                   value: CustomOption.reorder,
                 ),
                 PopupMenuItem(
-                  child: Text('Remove'),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.delete),
+                      SizedBox(width: 10.0),
+                      Text('Remove'),
+                    ],
+                  ),
                   value: CustomOption.remove,
                 ),
               ];
@@ -215,7 +233,7 @@ class _AxisCustomState extends State<AxisCustom> {
     if (widget.valGetCustoms != null) {
       _customVals = widget.valGetCustoms();
     }
-    
+
     return ExpansionTile(
       onExpansionChanged: (expanded) => setState(() => _expanded = !_expanded),
       initiallyExpanded: widget.initiallyExpanded,

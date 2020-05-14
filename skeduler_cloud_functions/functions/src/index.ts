@@ -67,6 +67,7 @@ export const groupMemberNicknameUpdated = functions.firestore
               const newGridData = Object.assign(Object(), gridData);
               newGridData.member = newNickname;
 
+              // remove previous gridData
               promises.push(
                 groupTimetablesColRef.doc(timetable.id).update({
                   gridDataList: admin.firestore.FieldValue.arrayRemove(
@@ -75,6 +76,7 @@ export const groupMemberNicknameUpdated = functions.firestore
                 })
               );
 
+              // add updated gridData
               promises.push(
                 groupTimetablesColRef.doc(timetable.id).update({
                   gridDataList: admin.firestore.FieldValue.arrayUnion(

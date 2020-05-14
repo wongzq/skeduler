@@ -76,7 +76,7 @@ class TimetableSettings extends StatelessWidget {
                       axisTime: ttbStatus.temp.axisTime,
                       axisCustom: ttbStatus.temp.axisCustom,
                     );
-
+                    ttbStatus.update();
                     Navigator.of(context).maybePop();
                   }
 

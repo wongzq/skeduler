@@ -177,6 +177,9 @@ class TimetableStatus extends ChangeNotifier {
   }
 
   void update() {
+    this.curr = this._curr;
+    this.edit = this._edit;
+    this.temp = this._temp;
     notifyListeners();
   }
 }
@@ -828,7 +831,8 @@ class TimetableGridDataList extends ChangeNotifier {
   List<TimetableGridData> _value;
 
   // constructors
-  TimetableGridDataList({value}) : this._value = value ?? [];
+  TimetableGridDataList({List<TimetableGridData> value})
+      : this._value = value ?? [];
 
   TimetableGridDataList.from(TimetableGridDataList gridDataList)
       : this._value = gridDataList._value ?? [];

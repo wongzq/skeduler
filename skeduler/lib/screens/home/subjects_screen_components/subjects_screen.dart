@@ -7,6 +7,7 @@ import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/subject.dart';
 import 'package:skeduler/screens/home/subjects_screen_components/subject_list_tile.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/components/add_subject_dialog.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
@@ -132,112 +133,24 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                   foregroundColor: getFABIconForegroundColor(context),
                   backgroundColor: getFABIconBackgroundColor(context),
                   child: Icon(Icons.add),
-                  onPressed: () {
-                    showDialog(
+                  onPressed: () async {
+                    _tempSubjects = List.from(_groupStatus.group.subjects);
+
+                    setState(() => _isUpdating = true);
+
+                    await showDialog(
                       context: context,
                       builder: (context) {
                         GlobalKey<FormState> formKey = GlobalKey<FormState>();
-                        String newSubjectName;
-                        String newSubjectNickname;
 
-                        return AlertDialog(
-                          title: Text(
-                            'New subject',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          content: Form(
-                            key: formKey,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                TextFormField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Subject short form (optional)',
-                                    hintStyle: TextStyle(
-                                      fontSize: 15.0,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                  onChanged: (value) =>
-                                      newSubjectNickname = value.trim(),
-                                  validator: (value) => null,
-                                ),
-                                TextFormField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Subject full name',
-                                    hintStyle: TextStyle(
-                                      fontSize: 15.0,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                  onChanged: (value) =>
-                                      newSubjectName = value.trim(),
-                                  validator: (value) =>
-                                      value == null || value.trim() == ''
-                                          ? 'Subject name cannot be empty'
-                                          : null,
-                                ),
-                              ],
-                            ),
-                          ),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('CANCEL'),
-                              onPressed: () => Navigator.of(context).maybePop(),
-                            ),
-                            FlatButton(
-                              child: Text('SAVE'),
-                              onPressed: () async {
-                                if (formKey.currentState.validate()) {
-                                  Navigator.of(context).maybePop();
-
-                                  _tempSubjects =
-                                      List.from(_groupStatus.group.subjects);
-
-                                  setState(() => _isUpdating = true);
-
-                                  await dbService
-                                      .updateGroupSubjects(
-                                    _groupStatus.group.docId,
-                                    _groupStatus.group.subjects,
-                                  )
-                                      .then((value) async {
-                                    if (value) {
-                                      _groupStatus.group.subjects.add(Subject(
-                                        name: newSubjectName,
-                                        nickname: newSubjectNickname,
-                                      ));
-
-                                      String returnMsg =
-                                          await dbService.addGroupSubject(
-                                              _groupStatus.group.docId,
-                                              Subject(
-                                                name: newSubjectName,
-                                                nickname: newSubjectNickname,
-                                              ));
-
-                                      setState(() {
-                                        _isUpdating = false;
-                                        _groupStatus.hasChanges = false;
-                                      });
-                                      Fluttertoast.showToast(
-                                        msg: returnMsg,
-                                        toastLength: Toast.LENGTH_LONG,
-                                      );
-                                    } else {
-                                      Fluttertoast.showToast(
-                                        msg: 'Failed to update subjects',
-                                        toastLength: Toast.LENGTH_LONG,
-                                      );
-                                    }
-                                  });
-                                }
-                              },
-                            ),
-                          ],
-                        );
+                        return AddSubjectDialog(formKey: formKey);
                       },
                     );
+                    
+                    setState(() {
+                      _isUpdating = false;
+                      _groupStatus.hasChanges = false;
+                    });
                   },
                 ),
               ],

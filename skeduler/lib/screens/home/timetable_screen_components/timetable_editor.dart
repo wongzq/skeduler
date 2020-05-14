@@ -7,12 +7,12 @@ import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/subject.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_display.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_switch_dialog.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/components/add_subject_dialog.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 enum TimetableEditorOption {
@@ -133,103 +133,14 @@ class _TimetableEditorState extends State<TimetableEditor> {
 
                 case TimetableEditorOption.addSubject:
                   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-                  String newSubjectName;
-                  String newSubjectNickname;
 
-                  await showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text(
-                            'New subject',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                          content: Form(
-                            key: formKey,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                TextFormField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Subject short form (optional)',
-                                    hintStyle: TextStyle(
-                                      fontSize: 15.0,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                  onChanged: (value) =>
-                                      newSubjectNickname = value.trim(),
-                                  validator: (value) => null,
-                                ),
-                                TextFormField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Subject full name',
-                                    hintStyle: TextStyle(
-                                      fontSize: 15.0,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                  onChanged: (value) =>
-                                      newSubjectName = value.trim(),
-                                  validator: (value) =>
-                                      value == null || value.trim() == ''
-                                          ? 'Subject name cannot be empty'
-                                          : null,
-                                ),
-                              ],
-                            ),
-                          ),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('CANCEL'),
-                              onPressed: () => Navigator.of(context).maybePop(),
-                            ),
-                            FlatButton(
-                              child: Text('SAVE'),
-                              onPressed: () async {
-                                if (formKey.currentState.validate()) {
-                                  Navigator.of(context).maybePop();
-
-                                  await dbService
-                                      .updateGroupSubjects(
-                                    groupStatus.group.docId,
-                                    groupStatus.group.subjects,
-                                  )
-                                      .then((value) async {
-                                    if (value) {
-                                      groupStatus.group.subjects.add(Subject(
-                                        name: newSubjectName,
-                                        nickname: newSubjectNickname,
-                                      ));
-
-                                      String returnMsg =
-                                          await dbService.addGroupSubject(
-                                              groupStatus.group.docId,
-                                              Subject(
-                                                name: newSubjectName,
-                                                nickname: newSubjectNickname,
-                                              ));
-
-                                      setState(() {
-                                        groupStatus.hasChanges = false;
-                                      });
-                                      Fluttertoast.showToast(
-                                        msg: returnMsg,
-                                        toastLength: Toast.LENGTH_LONG,
-                                      );
-                                    } else {
-                                      Fluttertoast.showToast(
-                                        msg: 'Failed to update subjects',
-                                        toastLength: Toast.LENGTH_LONG,
-                                      );
-                                    }
-                                  });
-                                }
-                              },
-                            ),
-                          ],
-                        );
-                      });
+                  setState(() async {
+                    await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AddSubjectDialog(formKey: formKey);
+                        });
+                  });
                   break;
 
                 case TimetableEditorOption.addDummy:
