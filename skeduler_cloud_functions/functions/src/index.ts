@@ -1,5 +1,5 @@
-import * as firebaseAdmin from "firebase-admin";
-firebaseAdmin.initializeApp();
+import * as admin from "firebase-admin";
+admin.initializeApp();
 
-exports.users = require("./users");
-exports.groupMembers = require("./group_members");
+export * from "./users/user";
+export * from "./groups/group_member";
