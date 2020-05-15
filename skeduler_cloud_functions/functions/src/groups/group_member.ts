@@ -1,25 +1,16 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 
-// export const groupMemberDeleted = functions.firestore
-//   .document("/groups/{groupDocId}/members/{memberDocId}")
-//   .onDelete(async (snapshot, context) => {
-//     const groupDocId = context.params.groupDocId;
-//     const memberDocId = context.params.memberDocId;
-
-//     if (snapshot === null) {
-//       return null;
-//     } else {
-//       return await admin.firestore().collection('groups');
-//     }
-//   });
-
 export const updateGroupMemberNickname = functions.firestore
   .document("/groups/{groupDocId}/members/{memberDocId}")
   .onUpdate(async (change, context) => {
-    const before = change.before.data();
-    const after = change.after.data();
     const groupDocId: string = context.params.groupDocId;
+    const before:
+      | FirebaseFirestore.DocumentData
+      | undefined = change.before.data();
+    const after:
+      | FirebaseFirestore.DocumentData
+      | undefined = change.after.data();
 
     if (before == null || after == null) {
       return null;
@@ -27,7 +18,7 @@ export const updateGroupMemberNickname = functions.firestore
       const oldNickname: string = before.nickname;
       const newNickname: string = after.nickname;
 
-      if (oldNickname !== newNickname) {
+      if (oldNickname != newNickname) {
         const groupDocRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData> = admin
           .firestore()
           .collection("groups")
@@ -38,9 +29,9 @@ export const updateGroupMemberNickname = functions.firestore
         await groupDocRef
           .collection("timetables")
           .get()
-          .then(async (snapshot) => {
-            snapshot.forEach(async (timetable) => {
-              const gridDataList: any[] = timetable.data().gridDataList;
+          .then(async (timetablesSnap) => {
+            timetablesSnap.forEach(async (timetableDocSnap) => {
+              const gridDataList: any[] = timetableDocSnap.data().gridDataList;
 
               gridDataList.forEach((gridData) => {
                 if (gridData.member == oldNickname) {
@@ -51,7 +42,7 @@ export const updateGroupMemberNickname = functions.firestore
                   promises.push(
                     groupDocRef
                       .collection("timetables")
-                      .doc(timetable.id)
+                      .doc(timetableDocSnap.id)
                       .update({
                         gridDataList: admin.firestore.FieldValue.arrayRemove(
                           gridData
@@ -63,7 +54,7 @@ export const updateGroupMemberNickname = functions.firestore
                   promises.push(
                     groupDocRef
                       .collection("timetables")
-                      .doc(timetable.id)
+                      .doc(timetableDocSnap.id)
                       .update({
                         gridDataList: admin.firestore.FieldValue.arrayUnion(
                           newGridData
@@ -74,6 +65,7 @@ export const updateGroupMemberNickname = functions.firestore
               });
             });
           });
+
         return Promise.all(promises);
       } else {
         return null;

@@ -179,22 +179,6 @@ class DatabaseService {
         'name': ownerName,
       },
       'members': [ownerEmail],
-    }).then((_) async {
-      // await inviteMemberToGroup(
-      //   groupDocId: newGroupDoc.documentID,
-      //   newMemberEmail: ownerEmail,
-      //   memberRole: MemberRole.owner,
-      // );
-      // await usersCollection.document(userId).get().then((groupData) async {
-      //   await groupsCollection
-      //       .document(newGroupDoc.documentID)
-      //       .collection('members')
-      //       .document(userId)
-      //       .updateData({
-      //     'name': groupData.data['name'],
-      //     'nickname': groupData.data['name'],
-      //   });
-      // });
     });
   }
 
@@ -258,11 +242,13 @@ class DatabaseService {
     String newDummyNickname,
   }) async {
     String errorMsg;
+    String dummyDocId =
+        newDummyName.replaceAll(RegExp('[^A-Za-z0-9]'), "").toLowerCase();
 
     DocumentReference groupDummyRef = groupsCollection
         .document(groupDocId)
         .collection('members')
-        .document(newDummyName);
+        .document(dummyDocId);
 
     await groupDummyRef.get().then((member) async {
       !member.exists

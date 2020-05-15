@@ -5,7 +5,9 @@ export const createGroup = functions.firestore
   .document("/groups/{groupDocId}")
   .onCreate(async (snapshot, context) => {
     const groupDocId: string = context.params.groupDocId;
-    const groupData = snapshot.data();
+    const groupData:
+      | FirebaseFirestore.DocumentData
+      | undefined = snapshot.data();
 
     if (snapshot == null || groupData == null) {
       return null;
@@ -13,13 +15,14 @@ export const createGroup = functions.firestore
       const ownerEmail: string = groupData.owner.email;
       const ownerName: string = groupData.owner.name;
 
+      // {role: 4} is group owner
       return await admin
         .firestore()
         .collection("groups")
         .doc(groupDocId)
         .collection("members")
         .doc(ownerEmail)
-        .set({ name: ownerName, nickname: ownerName, role: 3 });
+        .set({ name: ownerName, nickname: ownerName, role: 4 });
     }
   });
 
@@ -41,12 +44,12 @@ export const deleteGroup = functions.firestore
           .doc(groupDocId)
           .collection("members")
           .listDocuments()
-          .then(async (documents) => {
+          .then(async (memberDocRefs) => {
             const memberDeletePromises: Promise<
               FirebaseFirestore.WriteResult
             >[] = [];
-            documents.forEach(async (document) => {
-              memberDeletePromises.push(document.delete());
+            memberDocRefs.forEach(async (memberDocRef) => {
+              memberDeletePromises.push(memberDocRef.delete());
             });
             return Promise.all(memberDeletePromises);
           })
@@ -60,12 +63,12 @@ export const deleteGroup = functions.firestore
           .doc(groupDocId)
           .collection("timetables")
           .listDocuments()
-          .then(async (documents) => {
+          .then(async (timetableDocRefs) => {
             const timetableDeletePromises: Promise<
               FirebaseFirestore.WriteResult
             >[] = [];
-            documents.forEach(async (document) => {
-              timetableDeletePromises.push(document.delete());
+            timetableDocRefs.forEach(async (timetableDocRef) => {
+              timetableDeletePromises.push(timetableDocRef.delete());
             });
             return Promise.all(timetableDeletePromises);
           })

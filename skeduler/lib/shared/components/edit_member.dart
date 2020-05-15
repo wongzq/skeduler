@@ -142,60 +142,30 @@ class _EditMemberState extends State<EditMember> {
                         _formKeyName.currentState.validate() &&
                         _formKeyNickname.currentState.validate()) {
                       // if dummy id remains the same
-                      if (_editName == widget.member.name) {
-                        await dbService
-                            .updateGroupMember(
-                          groupDocId: groupStatus.group.docId,
-                          member: Member(
-                            id: widget.member.id,
-                            name: widget.member.name,
-                            nickname: _editNickname,
-                            role: _editRole,
-                          ),
-                        )
-                            .then((result) {
-                          if (result) {
-                            Fluttertoast.showToast(
-                              msg: 'Successfully updated member details',
-                              toastLength: Toast.LENGTH_LONG,
-                            );
-                            Navigator.of(context).maybePop();
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: 'Failed to update member details',
-                              toastLength: Toast.LENGTH_LONG,
-                            );
-                          }
-                        });
-                      }
-
-                      // if dummy id is different, replaces old document
-                      else {
-                        await dbService
-                            .addDummyToGroup(
-                          groupDocId: groupStatus.group.docId,
-                          newDummyName: _editName,
-                          newDummyNickname: _editNickname,
-                        )
-                            .then((errorMsg) async {
-                          if (errorMsg == null) {
-                            await dbService.removeMemberFromGroup(
-                              groupDocId: groupStatus.group.docId,
-                              memberDocId: widget.member.id,
-                            );
-                            Fluttertoast.showToast(
-                              msg: 'Successfully updated member details',
-                              toastLength: Toast.LENGTH_LONG,
-                            );
-                            Navigator.of(context).maybePop();
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: errorMsg,
-                              toastLength: Toast.LENGTH_LONG,
-                            );
-                          }
-                        });
-                      }
+                      await dbService
+                          .updateGroupMember(
+                        groupDocId: groupStatus.group.docId,
+                        member: Member(
+                          id: widget.member.id,
+                          name: _editName,
+                          nickname: _editNickname,
+                          role: _editRole,
+                        ),
+                      )
+                          .then((result) {
+                        if (result) {
+                          Fluttertoast.showToast(
+                            msg: 'Successfully updated member details',
+                            toastLength: Toast.LENGTH_LONG,
+                          );
+                          Navigator.of(context).maybePop();
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: 'Failed to update member details',
+                            toastLength: Toast.LENGTH_LONG,
+                          );
+                        }
+                      });
                     }
                   },
                 ),
@@ -207,38 +177,38 @@ class _EditMemberState extends State<EditMember> {
               child: Column(
                 children: <Widget>[
                   // id
-                  widget.member.role == MemberRole.owner ||
-                          widget.member.role == MemberRole.admin ||
-                          widget.member.role == MemberRole.member
-                      ? Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20.0,
-                            vertical: 10.0,
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                      vertical: 10.0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Container(
+                          width: 100,
+                          child: Text(
+                            widget.member.role == MemberRole.owner ||
+                                    widget.member.role == MemberRole.admin ||
+                                    widget.member.role == MemberRole.member
+                                ? 'Email'
+                                : 'ID',
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              color: Colors.grey,
+                            ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                width: 100,
-                                child: Text(
-                                  'Email',
-                                  style: TextStyle(
-                                    fontSize: 15.0,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: TextFormField(
-                                  style: TextStyle(color: Colors.grey),
-                                  enabled: false,
-                                  initialValue: widget.member.id,
-                                ),
-                              )
-                            ],
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            style: TextStyle(color: Colors.grey),
+                            enabled: false,
+                            initialValue: widget.member.id,
                           ),
                         )
-                      : Container(),
+                      ],
+                    ),
+                  ),
 
                   // name
                   widget.member.role == MemberRole.owner ||

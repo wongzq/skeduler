@@ -4,8 +4,12 @@ import * as admin from "firebase-admin";
 export const updateUserName = functions.firestore
   .document("/users/{userDocId}")
   .onUpdate(async (change, context) => {
-    const before = change.before.data();
-    const after = change.after.data();
+    const before:
+      | FirebaseFirestore.DocumentData
+      | undefined = change.before.data();
+    const after:
+      | FirebaseFirestore.DocumentData
+      | undefined = change.after.data();
 
     if (before == null || after == null) {
       return null;
@@ -20,11 +24,11 @@ export const updateUserName = functions.firestore
           .collection("groups")
           .where("owner", "==", { email: change.before.id, name: before.name })
           .get()
-          .then(async (snapshot) => {
+          .then(async (groupsSnap) => {
             const updateGroupPromises: Promise<any>[] = [];
-            snapshot.forEach(async (group) => {
+            groupsSnap.forEach(async (groupDocSnap) => {
               updateGroupPromises.push(
-                group.ref.update({
+                groupDocSnap.ref.update({
                   owner: {
                     email: change.after.id,
                     name: after.name,
@@ -42,11 +46,11 @@ export const updateUserName = functions.firestore
           .collection("groups")
           .where("members", "array-contains", userDocId)
           .get()
-          .then(async (querySnapshot) => {
+          .then(async (groupsSnap) => {
             const updateGroupMemberPromises: Promise<any>[] = [];
-            querySnapshot.forEach(async (groupDoc) => {
+            groupsSnap.forEach(async (groupDocSnap) => {
               updateGroupMemberPromises.push(
-                groupDoc.ref
+                groupDocSnap.ref
                   .collection("members")
                   .doc(userDocId)
                   .update({ name: after.name })
