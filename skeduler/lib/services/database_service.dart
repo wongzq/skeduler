@@ -180,21 +180,21 @@ class DatabaseService {
       },
       'members': [ownerEmail],
     }).then((_) async {
-      await inviteMemberToGroup(
-        groupDocId: newGroupDoc.documentID,
-        newMemberEmail: ownerEmail,
-        memberRole: MemberRole.owner,
-      );
-      await usersCollection.document(userId).get().then((groupData) async {
-        await groupsCollection
-            .document(newGroupDoc.documentID)
-            .collection('members')
-            .document(userId)
-            .updateData({
-          'name': groupData.data['name'],
-          'nickname': groupData.data['name'],
-        });
-      });
+      // await inviteMemberToGroup(
+      //   groupDocId: newGroupDoc.documentID,
+      //   newMemberEmail: ownerEmail,
+      //   memberRole: MemberRole.owner,
+      // );
+      // await usersCollection.document(userId).get().then((groupData) async {
+      //   await groupsCollection
+      //       .document(newGroupDoc.documentID)
+      //       .collection('members')
+      //       .document(userId)
+      //       .updateData({
+      //     'name': groupData.data['name'],
+      //     'nickname': groupData.data['name'],
+      //   });
+      // });
     });
   }
 
@@ -244,17 +244,7 @@ class DatabaseService {
   Future deleteGroup(String groupDocId) async {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
-        : await groupsCollection
-            .document(groupDocId)
-            .collection('members')
-            .getDocuments()
-            .then((members) {
-            for (DocumentSnapshot snap in members.documents) {
-              snap.reference.delete();
-            }
-          }).then((_) async {
-            await groupsCollection.document(groupDocId).delete();
-          });
+        : await groupsCollection.document(groupDocId).delete();
   }
 
   // --------------------------------------------------------------------------------
