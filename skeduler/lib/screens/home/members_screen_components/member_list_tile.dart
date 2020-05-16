@@ -102,7 +102,7 @@ class MemberListTile extends StatelessWidget {
           : Column(
               children: <Widget>[
                 Container(
-                  color: member.id == me.id
+                  color: member.docId == me.docId
                       ? getOriginThemeData(ThemeProvider.themeOf(context).id)
                           .primaryColorLight
                       : null,
@@ -122,33 +122,33 @@ class MemberListTile extends StatelessWidget {
       return Column(
         children: <Widget>[
           Container(
-            color: member.id == me.id
+            color: member.docId == me.docId
                 ? getOriginThemeData(ThemeProvider.themeOf(context).id)
                     .primaryColorLight
                 : null,
             child: ListTile(
               leading: Icon(
                 member.roleIcon,
-                color: member.id == me.id ? Colors.black : null,
+                color: member.docId == me.docId ? Colors.black : null,
               ),
               title: Text(
-                member.role == MemberRole.pending ? member.id : member.nickname,
+                member.role == MemberRole.pending ? member.docId : member.nickname,
                 style:
-                    TextStyle(color: member.id == me.id ? Colors.black : null),
+                    TextStyle(color: member.docId == me.docId ? Colors.black : null),
               ),
               subtitle: member.role == MemberRole.pending
                   ? null
                   : Text(
                       member.name,
                       style: TextStyle(
-                          color: member.id == me.id ? Colors.grey[700] : null),
+                          color: member.docId == me.docId ? Colors.grey[700] : null),
                     ),
               trailing: member.role == MemberRole.owner
                   ? me.role == MemberRole.owner
                       ? PopupMenuButton(
                           icon: Icon(
                             Icons.more_vert,
-                            color: member.id == me.id ? Colors.black : null,
+                            color: member.docId == me.docId ? Colors.black : null,
                           ),
                           itemBuilder: (context) {
                             return [
@@ -171,7 +171,7 @@ class MemberListTile extends StatelessWidget {
                   : PopupMenuButton(
                       icon: Icon(
                         Icons.more_vert,
-                        color: member.id == me.id ? Colors.black : null,
+                        color: member.docId == me.docId ? Colors.black : null,
                       ),
                       itemBuilder: (context) {
                         // If member is admin
@@ -268,14 +268,14 @@ class MemberListTile extends StatelessWidget {
                                                 .updateGroupMemberRole(
                                               groupDocId:
                                                   groupStatus.group.docId,
-                                              memberDocId: member.id,
+                                              memberDocId: member.docId,
                                               role: MemberRole.owner,
                                             );
                                             await dbService
                                                 .updateGroupMemberRole(
                                               groupDocId:
                                                   groupStatus.group.docId,
-                                              memberDocId: me.id,
+                                              memberDocId: me.docId,
                                               role: MemberRole.admin,
                                             );
 
@@ -287,7 +287,7 @@ class MemberListTile extends StatelessWidget {
                                               colorShade:
                                                   groupStatus.group.colorShade,
                                               ownerName: member.name,
-                                              ownerEmail: member.id,
+                                              ownerEmail: member.docId,
                                             );
                                           }
                                         },
@@ -298,13 +298,13 @@ class MemberListTile extends StatelessWidget {
                           } else if (value == MemberOption.makeAdmin) {
                             await dbService.updateGroupMemberRole(
                               groupDocId: groupStatus.group.docId,
-                              memberDocId: member.id,
+                              memberDocId: member.docId,
                               role: MemberRole.admin,
                             );
                           } else if (value == MemberOption.makeMember) {
                             await dbService.updateGroupMemberRole(
                               groupDocId: groupStatus.group.docId,
-                              memberDocId: member.id,
+                              memberDocId: member.docId,
                               role: MemberRole.member,
                             );
                           } else if (value == MemberOption.edit) {
@@ -318,7 +318,7 @@ class MemberListTile extends StatelessWidget {
                           } else if (value == MemberOption.remove) {
                             await dbService.removeMemberFromGroup(
                               groupDocId: groupStatus.group.docId,
-                              memberDocId: member.id,
+                              memberDocId: member.docId,
                             );
                           }
                         } else {

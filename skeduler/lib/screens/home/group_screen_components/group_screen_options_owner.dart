@@ -254,11 +254,6 @@ class GroupScreenOptionsOwner extends StatelessWidget {
                         if (formKey.currentState.validate()) {
                           Navigator.of(dialogContext).maybePop();
 
-                          groupStatus.group.subjects.add(Subject(
-                            name: newSubjectName,
-                            nickname: newSubjectNickname,
-                          ));
-
                           await dbService
                               .addGroupSubject(
                                   groupStatus.group.docId,

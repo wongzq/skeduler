@@ -77,7 +77,7 @@ class GroupScreenOptionsMember extends StatelessWidget {
                         ),
                         onPressed: () {
                           dbService.leaveGroup(groupStatus.group.docId);
-                          groupStatus.group = null;
+                          groupStatus.reset();
                           groupDocId.value = null;
                           Navigator.of(context)
                               .popUntil((route) => route.isFirst);

@@ -9,13 +9,13 @@ import 'package:skeduler/models/group_data/time.dart';
 
 class TimetableMetadata {
   // properties
-  String id;
+  String docId;
   Timestamp startDate;
   Timestamp endDate;
 
   // constructors
   TimetableMetadata({
-    this.id,
+    this.docId,
     this.startDate,
     this.endDate,
   });
@@ -23,7 +23,7 @@ class TimetableMetadata {
   // getter methods
   Map<String, dynamic> get asMap {
     return {
-      'id': this.id,
+      'docId': this.docId,
       'startDate': this.startDate,
       'endDate': this.endDate,
     };
@@ -206,7 +206,7 @@ class EditTimetable extends ChangeNotifier {
   List<String> get axisCustom => this._axisCustom;
   TimetableGridDataList get gridDataList => this._gridDataList;
   TimetableMetadata get metadata => TimetableMetadata(
-        id: this._docId,
+        docId: this._docId,
         startDate: Timestamp.fromDate(this._startDate),
         endDate: Timestamp.fromDate(this._endDate),
       );
@@ -227,8 +227,8 @@ class EditTimetable extends ChangeNotifier {
       List.generate(_axisTime.length, (index) => getTimeStr(_axisTime[index]));
 
   // setter methods
-  set docId(String id) {
-    this._docId = id;
+  set docId(String docId) {
+    this._docId = docId;
     notifyListeners();
   }
 

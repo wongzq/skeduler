@@ -97,6 +97,17 @@ class DatabaseService {
             .map(_membersFromSnapshots);
   }
 
+  // get [Group][Subject]'s data as stream
+  Stream<List<Subject>> streamGroupSubjects(String groupDocId) {
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : groupsCollection
+            .document(groupDocId)
+            .collection('subjects')
+            .snapshots()
+            .map(_subjectsFromSnapshots);
+  }
+
   // get [Group][Timetable] data
   Future<Timetable> getGroupTimetable(
     String groupDocId,
@@ -141,7 +152,7 @@ class DatabaseService {
                         .toDate()
                         .add(Duration(days: 1))
                         .isAtSameMomentAs(DateTime.now()))) {
-          timetableIdForToday = metadata.id;
+          timetableIdForToday = metadata.docId;
         }
       });
     }).then((_) => timetableIdForToday);
@@ -321,7 +332,7 @@ class DatabaseService {
     return await groupsCollection
         .document(groupDocId)
         .collection('members')
-        .document(member.id)
+        .document(member.docId)
         .updateData({
           'name': member.name,
           'nickname': member.nickname,
@@ -402,162 +413,94 @@ class DatabaseService {
   }
 
   // --------------------------------------------------------------------------------
-  // Modifying methods for Timetable
+  // Modifying methods for Subject
   // --------------------------------------------------------------------------------
 
   Future<String> addGroupSubject(String groupDocId, Subject newSubject) async {
+    String subjectDocId = newSubject.name
+        .trim()
+        .replaceAll(RegExp('[^A-Za-z0-9]'), '')
+        .toLowerCase();
+
     return groupDocId == null || groupDocId.trim() == ''
         ? null
-        : await groupsCollection.document(groupDocId).get().then((group) async {
-            if (group.exists) {
-              List<Subject> subjects =
-                  _subjectsFromDynamicList(group.data['subjects'] ?? []);
-              bool subjectFound = false;
-
-              subjects.forEach((subject) {
-                if (subject.name.toUpperCase() ==
-                        newSubject.name.toUpperCase() ||
-                    subject.nickname.toUpperCase() ==
-                        newSubject.nickname.toUpperCase()) {
-                  subjectFound = true;
-                }
-              });
-
-              if (subjectFound) {
-                return 'Subject ${newSubject.display} already exists';
-              } else {
-                await groupsCollection.document(groupDocId).updateData({
-                  'subjects': FieldValue.arrayUnion([
-                    {
-                      'name': newSubject.name,
-                      'nickname': newSubject.nickname,
-                    }
-                  ])
-                });
+        : await groupsCollection
+            .document(groupDocId)
+            .collection('subjects')
+            .document(subjectDocId)
+            .get()
+            .then((document) async {
+            if (document.exists) {
+              return 'Subject ${newSubject.display} already exists';
+            } else {
+              return await groupsCollection
+                  .document(groupDocId)
+                  .collection('subjects')
+                  .document(subjectDocId)
+                  .setData(
+                {
+                  'name': newSubject.name,
+                  'nickname': newSubject.nickname,
+                },
+              ).then((_) {
                 return 'Successfully added ${newSubject.display}';
-              }
-            } else {
-              return 'Group not found';
+              });
             }
           });
   }
 
-  Future<String> editGroupSubject(
-    String groupDocId, {
-    @required Subject prevSubject,
-    @required Subject newSubject,
-  }) async {
+  Future<String> updateGroupSubject(
+    String groupDocId,
+    Subject editSubject,
+  ) async {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
-        : await groupsCollection.document(groupDocId).get().then((group) async {
-            if (group.exists) {
-              List<Subject> subjects =
-                  _subjectsFromDynamicList(group.data['subjects'] ?? []);
-              bool subjectFound = false;
-              Subject toRemove;
-
-              subjects.forEach((subject) {
-                if (subject.name.toUpperCase() ==
-                        prevSubject.name.toUpperCase() ||
-                    subject.nickname.toUpperCase() ==
-                        prevSubject.nickname.toUpperCase()) {
-                  subjectFound = true;
-                  toRemove =
-                      Subject(name: subject.name, nickname: subject.nickname);
-                }
+        : await groupsCollection
+            .document(groupDocId)
+            .collection('subjects')
+            .document(editSubject.docId)
+            .get()
+            .then((document) async {
+            if (document.exists) {
+              return await groupsCollection
+                  .document(groupDocId)
+                  .collection('subjects')
+                  .document(editSubject.docId)
+                  .updateData(
+                {
+                  'name': editSubject.name,
+                  'nickname': editSubject.nickname,
+                },
+              ).then((_) {
+                return 'Successfully added ${editSubject.display}';
               });
-
-              if (subjectFound) {
-                await groupsCollection.document(groupDocId).updateData({
-                  'subjects': FieldValue.arrayRemove([
-                    {
-                      'name': toRemove.name,
-                      'nickname': toRemove.nickname,
-                    }
-                  ])
-                });
-
-                await groupsCollection.document(groupDocId).updateData({
-                  'subjects': FieldValue.arrayUnion([
-                    {
-                      'name': newSubject.name,
-                      'nickname': newSubject.nickname,
-                    }
-                  ])
-                });
-
-                return 'Successfully updated ${newSubject.display}';
-              } else {
-                return 'Subject ${prevSubject.display} can\'t be found';
-              }
             } else {
-              return 'Group not found';
+              return 'Subject ${editSubject.display} not found';
             }
           });
   }
 
-  Future<String> removeGroupSubject(
-      String groupDocId, Subject newSubject) async {
+  Future<String> removeGroupSubject(String groupDocId, Subject subject) async {
     return groupDocId == null || groupDocId.trim() == ''
         ? null
-        : await groupsCollection.document(groupDocId).get().then((group) async {
-            if (group.exists) {
-              List<Subject> subjects =
-                  _subjectsFromDynamicList(group.data['subjects'] ?? []);
-              bool subjectFound = false;
-              Subject toRemove;
-
-              subjects.forEach((subject) {
-                if (subject.name.toUpperCase() ==
-                        newSubject.name.toUpperCase() ||
-                    subject.nickname == null ||
-                    subject.nickname.toUpperCase() ==
-                        newSubject.nickname.toUpperCase()) {
-                  subjectFound = true;
-                  toRemove =
-                      Subject(name: subject.name, nickname: subject.nickname);
-                }
-              });
-
-              if (subjectFound) {
-                await groupsCollection.document(groupDocId).updateData({
-                  'subjects': FieldValue.arrayRemove([
-                    {
-                      'name': toRemove.name,
-                      'nickname': toRemove.nickname,
-                    }
-                  ])
-                });
-                return 'Successfully removed ${newSubject.display}';
-              } else {
-                return 'Subject ${newSubject.display} can\'t be found';
-              }
-            } else {
-              return 'Group not found';
-            }
-          });
+        : await groupsCollection
+            .document(groupDocId)
+            .collection('subjects')
+            .document(subject.docId)
+            .delete()
+            .then((_) => 'Successfully removed ${subject.display}')
+            .catchError((_) => 'Failed to remove ${subject.display}');
   }
 
-  Future<bool> updateGroupSubjects(
-      String groupDocId, List<Subject> subjects) async {
+  Future<bool> updateGroupSubjectsOrder(
+      String groupDocId, List<String> subjectMetadatas) async {
     return groupDocId == null || groupDocId.trim() == ''
         ? false
         : await groupsCollection
             .document(groupDocId)
-            .updateData({'subjects': []}).then((_) async {
-            return await groupsCollection
-                .document(groupDocId)
-                .updateData({
-                  'subjects': () {
-                    List<Map<String, dynamic>> subjectList = [];
-                    subjects
-                        .forEach((subject) => subjectList.add(subject.asMap));
-                    return subjectList;
-                  }()
-                })
-                .then((_) => true)
-                .catchError((_) => false);
-          }).catchError((_) => false);
+            .updateData({'subjects': subjectMetadatas})
+            .then((_) => true)
+            .catchError((_) => false);
   }
 
   // --------------------------------------------------------------------------------
@@ -623,9 +566,9 @@ class DatabaseService {
     // remove previous metadata
     timetableMetadatas.removeWhere((meta) {
       if (oldTimetableMetadata != null) {
-        return meta.id == oldTimetableMetadata.id;
+        return meta.docId == oldTimetableMetadata.docId;
       } else {
-        return meta.id == newTimetableMetadata.id;
+        return meta.docId == newTimetableMetadata.docId;
       }
     });
 
@@ -633,7 +576,7 @@ class DatabaseService {
     if (newTimetableMetadata != null) {
       timetableMetadatas.add(
         TimetableMetadata(
-          id: newTimetableMetadata.id,
+          docId: newTimetableMetadata.docId,
           startDate: newTimetableMetadata.startDate,
           endDate: newTimetableMetadata.endDate,
         ),
@@ -660,7 +603,7 @@ class DatabaseService {
         _timetableMetadatasFromDynamicList(timetablesSnapshot);
 
     timetableMetadatas.removeWhere((timetableMetadata) {
-      return timetableMetadata.id == timetableId;
+      return timetableMetadata.docId == timetableId;
     });
 
     return List.generate(timetableMetadatas.length, (index) {
@@ -679,21 +622,23 @@ class DatabaseService {
     return groupDocId == null || groupDocId.trim() == ''
         ? false
         : await timetablesRef
-            .document(newTimetableMetadata.id)
+            .document(newTimetableMetadata.docId)
             .get()
             .then((groupData) async {
             // If there is another timetable with the same ID
             // Then, it doesn't replace the pre-existing timetable
             if (!groupData.exists) {
               await timetablesRef
-                  .document(oldTimetableMetadata.id)
+                  .document(oldTimetableMetadata.docId)
                   .get()
                   .then((groupData) async {
                 await timetablesRef
-                    .document(newTimetableMetadata.id)
+                    .document(newTimetableMetadata.docId)
                     .setData(groupData.data);
 
-                await timetablesRef.document(oldTimetableMetadata.id).delete();
+                await timetablesRef
+                    .document(oldTimetableMetadata.docId)
+                    .delete();
 
                 await groupsCollection
                     .document(groupDocId)
@@ -900,8 +845,10 @@ class DatabaseService {
             ),
             ownerEmail: snapshot.data['owner']['email'] ?? '',
             ownerName: snapshot.data['owner']['name'] ?? '',
-            members: _stringsFromDynamicList(snapshot.data['members'] ?? []),
-            subjects: _subjectsFromDynamicList(snapshot.data['subjects'] ?? []),
+            memberMetadatas:
+                _stringsFromDynamicList(snapshot.data['members'] ?? []),
+            subjectMetadatas:
+                _stringsFromDynamicList(snapshot.data['subjects'] ?? []),
             timetableMetadatas: _timetableMetadatasFromDynamicList(
               snapshot.data['timetables'] ?? [],
             ),
@@ -913,7 +860,7 @@ class DatabaseService {
   Member _memberFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
         ? Member(
-            id: snapshot.documentID,
+            docId: snapshot.documentID,
             name: snapshot.data['name'],
             nickname: snapshot.data['nickname'] ?? snapshot.data['name'],
             description: snapshot.data['description'],
@@ -924,7 +871,18 @@ class DatabaseService {
             // ),
             times: _timesFromDynamicList(snapshot.data['times'] ?? []),
           )
-        : Member(id: null);
+        : Member(docId: null);
+  }
+
+  // convert snapshot to [Subject]
+  Subject _subjectFromSnapshot(DocumentSnapshot snapshot) {
+    return snapshot.data != null
+        ? Subject(
+            docId: snapshot.documentID,
+            name: snapshot.data['name'],
+            nickname: snapshot.data['nickname'],
+          )
+        : Subject();
   }
 
   // convert snapshot to [Timetable]
@@ -968,6 +926,11 @@ class DatabaseService {
     return query.documents.map(_memberFromSnapshot).toList();
   }
 
+  // convert document snapshots into [Subject]s
+  List<Subject> _subjectsFromSnapshots(QuerySnapshot query) {
+    return query.documents.map(_subjectFromSnapshot).toList();
+  }
+
   // convert [List<dynamic>] into [List<TimetableMetadata]
   List<TimetableMetadata> _timetableMetadatasFromDynamicList(
       List<dynamic> timetables) {
@@ -977,7 +940,7 @@ class DatabaseService {
       Map map = elem as Map;
       timetableMetadatas.add(
         TimetableMetadata(
-          id: map['id'],
+          docId: map['docId'],
           startDate: map['startDate'],
           endDate: map['endDate'],
         ),
@@ -1020,20 +983,6 @@ class DatabaseService {
     list.forEach((elem) => listStr.add(elem as String));
 
     return listStr;
-  }
-
-  List<Subject> _subjectsFromDynamicList(List<dynamic> subjectsDynamic) {
-    List<Subject> subjects = [];
-
-    subjectsDynamic.forEach((elem) {
-      Map map = elem as Map;
-      subjects.add(Subject(
-        name: map['name'],
-        nickname: map['nickname'],
-      ));
-    });
-
-    return subjects;
   }
 
   // convert [List<dynamic>] into [List<TimetableGridData]

@@ -99,12 +99,12 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                         .forEach((timetableMetadata) {
                                       popupOptions.add(
                                         PopupMenuItem(
-                                          value: timetableMetadata.id,
+                                          value: timetableMetadata.docId,
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
-                                              Text(timetableMetadata.id),
+                                              Text(timetableMetadata.docId),
                                               Text(
                                                 DateFormat('dd MMM').format(
                                                         timetableMetadata

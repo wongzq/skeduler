@@ -4,9 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/subject.dart';
-import 'package:skeduler/screens/home/subjects_screen_components/subject_list_tile.dart';
 import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/screens/home/subjects_screen_components/subject_list_tile.dart';
 import 'package:skeduler/shared/components/add_subject_dialog.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -18,43 +17,30 @@ class SubjectsScreen extends StatefulWidget {
 }
 
 class _SubjectsScreenState extends State<SubjectsScreen> {
+  DatabaseService _dbService;
   GroupStatus _groupStatus;
 
-  bool _isUpdating = false;
-  List<Subject> _tempSubjects = [];
+  bool _orderChanged;
+  List<String> _tempSubjectMetadatas;
 
   List<Widget> _generateSubjects() {
     List<Widget> widgets = [];
 
-    if (_isUpdating) {
-      _tempSubjects = _tempSubjects ?? [];
-      _tempSubjects.forEach((subject) {
+    if (_orderChanged) {
+      GroupStatus.reorderSubjects(
+        subjects: _groupStatus.subjects,
+        subjectMetadatas: _tempSubjectMetadatas,
+      ).forEach((subject) {
         widgets.add(SubjectListTile(
           key: UniqueKey(),
           subject: subject,
-          valSetIsUpdating: (value) {
-            setState(() {
-              _tempSubjects =
-                  value ? List.from(_groupStatus.group.subjects) : [];
-              if (value == false) _groupStatus.hasChanges = false;
-              _isUpdating = value;
-            });
-          },
         ));
       });
     } else {
-      _groupStatus.group.subjects.forEach((subject) {
+      _groupStatus.subjects.forEach((subject) {
         widgets.add(SubjectListTile(
           key: UniqueKey(),
           subject: subject,
-          valSetIsUpdating: (value) {
-            setState(() {
-              _tempSubjects =
-                  value ? List.from(_groupStatus.group.subjects) : [];
-              if (value == false) _groupStatus.hasChanges = false;
-              _isUpdating = value;
-            });
-          },
         ));
       });
     }
@@ -63,9 +49,39 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
   }
 
   @override
+  void initState() {
+    _orderChanged = false;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    DatabaseService dbService = Provider.of<DatabaseService>(context);
+    _dbService = Provider.of<DatabaseService>(context);
     _groupStatus = Provider.of<GroupStatus>(context);
+
+    _tempSubjectMetadatas = () {
+      bool renewSubjectMetadatas = false;
+
+      if (_tempSubjectMetadatas == null) {
+        renewSubjectMetadatas = true;
+      } else {
+        _groupStatus.group.subjectMetadatas.forEach((subjectMetadata) {
+          if (!_tempSubjectMetadatas.contains(subjectMetadata)) {
+            renewSubjectMetadatas = true;
+          }
+        });
+
+        _tempSubjectMetadatas.forEach((subjectMetadata) {
+          if (!_groupStatus.group.subjectMetadatas.contains(subjectMetadata)) {
+            renewSubjectMetadatas = true;
+          }
+        });
+      }
+
+      return renewSubjectMetadatas
+          ? List<String>.from(_groupStatus.group.subjectMetadatas)
+          : _tempSubjectMetadatas;
+    }();
 
     return _groupStatus.group == null
         ? Loading()
@@ -95,49 +111,43 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Visibility(
-                  visible: _groupStatus.hasChanges,
+                  visible: _orderChanged,
                   child: FloatingActionButton(
                     heroTag: 'Subjects Save',
                     foregroundColor: getFABIconForegroundColor(context),
                     backgroundColor: getFABIconBackgroundColor(context),
                     child: Icon(Icons.save),
                     onPressed: () async {
-                      setState(() {
-                        _isUpdating = true;
-                        _tempSubjects = List.from(_groupStatus.group.subjects);
-                      });
-                      if (await dbService.updateGroupSubjects(
-                          _groupStatus.group.docId,
-                          _groupStatus.group.subjects)) {
-                        _groupStatus.hasChanges = false;
+                      await _dbService
+                          .updateGroupSubjectsOrder(
+                        _groupStatus.group.docId,
+                        _tempSubjectMetadatas,
+                      )
+                          .then((_) {
+                        _orderChanged = false;
                         Fluttertoast.showToast(
-                          msg: 'Successfully updated subjects',
+                          msg: 'Successfully updated subjects order',
                           toastLength: Toast.LENGTH_LONG,
                         );
-                      } else {
+                      }).catchError((_) {
                         Fluttertoast.showToast(
-                          msg: 'Failed to update subjects',
+                          msg: 'Failed to update subjects order',
                           toastLength: Toast.LENGTH_LONG,
                         );
-                      }
-                      setState(() {
-                        _isUpdating = false;
-                        _tempSubjects = [];
                       });
                     },
                   ),
                 ),
-                SizedBox(height: 20.0),
+                Visibility(
+                  visible: _orderChanged,
+                  child: SizedBox(height: 20.0),
+                ),
                 FloatingActionButton(
                   heroTag: 'Subjects Add',
                   foregroundColor: getFABIconForegroundColor(context),
                   backgroundColor: getFABIconBackgroundColor(context),
                   child: Icon(Icons.add),
                   onPressed: () async {
-                    _tempSubjects = List.from(_groupStatus.group.subjects);
-
-                    setState(() => _isUpdating = true);
-
                     await showDialog(
                       context: context,
                       builder: (context) {
@@ -146,11 +156,6 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                         return AddSubjectDialog(formKey: formKey);
                       },
                     );
-                    
-                    setState(() {
-                      _isUpdating = false;
-                      _groupStatus.hasChanges = false;
-                    });
                   },
                 ),
               ],
@@ -158,16 +163,17 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
             body: ReorderableListView(
               onReorder: (int oldIndex, int newIndex) {
                 setState(() {
-                  Subject subject = _groupStatus.group.subjects[oldIndex];
-                  _groupStatus.group.subjects.removeAt(oldIndex);
+                  _orderChanged = true;
 
-                  if (newIndex >= _groupStatus.group.subjects.length) {
-                    _groupStatus.group.subjects.add(subject);
+                  String subjectMetadata = _tempSubjectMetadatas[oldIndex];
+
+                  _tempSubjectMetadatas.removeAt(oldIndex);
+
+                  if (newIndex >= _tempSubjectMetadatas.length) {
+                    _tempSubjectMetadatas.add(subjectMetadata);
                   } else {
-                    _groupStatus.group.subjects.insert(newIndex, subject);
+                    _tempSubjectMetadatas.insert(newIndex, subjectMetadata);
                   }
-
-                  _groupStatus.hasChanges = true;
                 });
               },
               children: _generateSubjects(),

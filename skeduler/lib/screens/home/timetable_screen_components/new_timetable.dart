@@ -68,13 +68,13 @@ class _NewTimetableState extends State<NewTimetable> {
                   popupOptions.add(
                     PopupMenuItem<CopyTimetableData>(
                       value: CopyTimetableData(
-                        ttbId: timetableMetadata.id,
+                        ttbId: timetableMetadata.docId,
                         copyType: CopyTimetableType.copyTimetable,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('Copy ' + timetableMetadata.id),
+                          Text('Copy ' + timetableMetadata.docId),
                         ],
                       ),
                     ),
@@ -82,13 +82,13 @@ class _NewTimetableState extends State<NewTimetable> {
                   popupOptions.add(
                     PopupMenuItem<CopyTimetableData>(
                       value: CopyTimetableData(
-                        ttbId: timetableMetadata.id,
+                        ttbId: timetableMetadata.docId,
                         copyType: CopyTimetableType.copyTimetableAxes,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text('Copy ' + timetableMetadata.id + ' axes'),
+                          Text('Copy ' + timetableMetadata.docId + ' axes'),
                         ],
                       ),
                     ),
@@ -113,8 +113,6 @@ class _NewTimetableState extends State<NewTimetable> {
                     setState(() {
                       ttbStatus.temp.updateTimetableFromCopy(timetable);
                     });
-
-                    print(ttbStatus.temp.docId);
 
                     Fluttertoast.showToast(
                       msg: 'Successfully copied ' + value.ttbId,
@@ -251,7 +249,7 @@ class _NewTimetableState extends State<NewTimetable> {
 
                       timetableMetadatas.add(
                         TimetableMetadata(
-                          id: ttbStatus.temp.docId,
+                          docId: ttbStatus.temp.docId,
                           startDate:
                               Timestamp.fromDate(ttbStatus.temp.startDate),
                           endDate: Timestamp.fromDate(ttbStatus.temp.endDate),
@@ -262,7 +260,7 @@ class _NewTimetableState extends State<NewTimetable> {
                         bool nameFound = false;
                         groupStatus.group.timetableMetadatas
                             .forEach((timetableMetadata) {
-                          if (timetableMetadata.id == ttbStatus.temp.docId) {
+                          if (timetableMetadata.docId == ttbStatus.temp.docId) {
                             nameFound = true;
                           }
                         });

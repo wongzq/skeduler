@@ -4,3 +4,4 @@ admin.initializeApp();
 export * from "./users/user";
 export * from "./groups/group";
 export * from "./groups/group_member";
+export * from "./groups/group_subject";

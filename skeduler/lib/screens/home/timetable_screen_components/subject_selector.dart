@@ -112,15 +112,15 @@ class _SubjectSelectorState extends State<SubjectSelector> {
           ),
           scrollDirection: Axis.horizontal,
           controller: controller,
-          itemCount: groupStatus.group.subjects.length + 1,
+          itemCount: groupStatus.group.subjectMetadatas.length + 1,
           itemBuilder: (BuildContext context, int index) {
-            if (groupStatus.group.subjects.length == 0) {
+            if (groupStatus.group.subjectMetadatas.length == 0) {
               return Padding(
                 padding: EdgeInsets.all(_chipPadding + _chipPaddingExtra),
                 child: _buildMaterialActionChipToAddSubject(),
               );
             } else {
-              return index == groupStatus.group.subjects.length
+              return index == groupStatus.group.subjectMetadatas.length
                   ? Container(
                       height: 1,
                       width: widget.additionalSpacing,
@@ -131,22 +131,20 @@ class _SubjectSelectorState extends State<SubjectSelector> {
                         children: [
                           LongPressDraggable<TimetableDragData>(
                             data: TimetableDragSubject(
-                              display:
-                                  groupStatus.group.subjects[index].display,
+                              display: groupStatus.subjects[index].display,
                             ),
                             feedback: _buildMaterialActionChip(
-                              groupStatus.group.subjects[index],
+                              groupStatus.subjects[index],
                               _chipWidth,
                             ),
                             child: _buildMaterialActionChip(
-                              groupStatus.group.subjects[index],
+                              groupStatus.subjects[index],
                               _chipWidth,
                             ),
                             onDragStarted: () {
                               editMode.isDragging = true;
                               editMode.isDraggingData = TimetableDragSubject(
-                                display:
-                                    groupStatus.group.subjects[index].display,
+                                display: groupStatus.subjects[index].display,
                               );
                             },
                             onDragCompleted: () {

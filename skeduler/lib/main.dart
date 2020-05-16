@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
+import 'package:skeduler/models/group_data/member.dart';
+import 'package:skeduler/models/group_data/subject.dart';
 import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/route_generator.dart';
@@ -113,35 +115,63 @@ class MyApp extends StatelessWidget {
                         builder: (_, dbService, __) {
                           return Consumer<ValueNotifier<String>>(
                             builder: (_, groupDocId, __) {
-                              return StreamBuilder(
-                                  stream: dbService.streamGroup(groupDocId.value),
-                                  builder: (_, snapshot) {
-                                    return ChangeNotifierProvider<
-                                        GroupStatus>.value(
-                                      value: GroupStatus(
-                                        group: snapshot != null
-                                            ? snapshot.data
-                                            : null,
-                                      ),
-                                      child: MaterialApp(
-                                        title: 'Skeduler',
-                                        debugShowCheckedModeBanner: false,
-                                        theme:
-                                            ThemeProvider.themeOf(themeContext)
-                                                .data
-                                                .copyWith(
-                                                  splashColor:
-                                                      Colors.transparent,
-                                                  highlightColor:
-                                                      Colors.transparent,
-                                                  splashFactory:
-                                                      InkRipple.splashFactory,
-                                                ),
-                                        initialRoute: '/dashboard',
-                                        onGenerateRoute:
-                                            RouteGenerator.generateRoute,
-                                      ),
-                                    );
+                              // stream Group
+                              return StreamBuilder<Group>(
+                                  stream:
+                                      dbService.streamGroup(groupDocId.value),
+                                  builder: (_, groupSnap) {
+                                    // stream Group Members
+                                    return StreamBuilder<List<Member>>(
+                                        stream: dbService.streamGroupMembers(
+                                            groupDocId.value),
+                                        builder: (_, membersSnap) {
+                                          // stream Group Subjects
+                                          return StreamBuilder<List<Subject>>(
+                                              stream:
+                                                  dbService.streamGroupSubjects(
+                                                      groupDocId.value),
+                                              builder: (_, subjectsSnap) {
+                                                // Provider for GroupStatus
+                                                  return ChangeNotifierProvider<
+                                                    GroupStatus>.value(
+                                                  value: GroupStatus(
+                                                    group: groupSnap != null
+                                                        ? groupSnap.data
+                                                        : null,
+                                                    members: membersSnap != null
+                                                        ? membersSnap.data
+                                                        : null,
+                                                    subjects:
+                                                        subjectsSnap != null
+                                                            ? subjectsSnap.data
+                                                            : null,
+                                                  ),
+                                                  child: MaterialApp(
+                                                    title: 'Skeduler',
+                                                    debugShowCheckedModeBanner:
+                                                        false,
+                                                    theme:
+                                                        ThemeProvider.themeOf(
+                                                                themeContext)
+                                                            .data
+                                                            .copyWith(
+                                                              splashColor: Colors
+                                                                  .transparent,
+                                                              highlightColor:
+                                                                  Colors
+                                                                      .transparent,
+                                                              splashFactory:
+                                                                  InkRipple
+                                                                      .splashFactory,
+                                                            ),
+                                                    initialRoute: '/dashboard',
+                                                    onGenerateRoute:
+                                                        RouteGenerator
+                                                            .generateRoute,
+                                                  ),
+                                                );
+                                              });
+                                        });
                                   });
                             },
                           );

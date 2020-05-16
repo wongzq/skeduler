@@ -9,12 +9,10 @@ enum SubjectOption { edit, remove }
 
 class SubjectListTile extends StatelessWidget {
   final Subject subject;
-  final ValueSetter<bool> valSetIsUpdating;
 
   const SubjectListTile({
     Key key,
     @required this.subject,
-    this.valSetIsUpdating,
   }) : super(key: key);
 
   @override
@@ -117,36 +115,26 @@ class SubjectListTile extends StatelessWidget {
                                 if (formKey.currentState.validate()) {
                                   Navigator.of(context).maybePop();
 
-                                  valSetIsUpdating(true);
-
-                                  int index = groupStatus.group.subjects
-                                      .indexOf(subject);
-
-                                  groupStatus.group.subjects.insert(
-                                      index,
-                                      Subject(
-                                        name: newSubjectName,
-                                        nickname: newSubjectNickname,
-                                      ));
-
-                                  groupStatus.group.subjects
-                                      .removeAt(index + 1);
-
-                                  if (await dbService.updateGroupSubjects(
-                                      groupStatus.group.docId,
-                                      groupStatus.group.subjects)) {
+                                  await dbService
+                                      .updateGroupSubject(
+                                    groupStatus.group.docId,
+                                    Subject(
+                                      docId: subject.docId,
+                                      name: newSubjectName,
+                                      nickname: newSubjectNickname,
+                                    ),
+                                  )
+                                      .then((_) {
                                     Fluttertoast.showToast(
-                                      msg: 'Successfully updated subjects',
+                                      msg: 'Successfully updated subject',
                                       toastLength: Toast.LENGTH_LONG,
                                     );
-                                  } else {
+                                  }).catchError((_) {
                                     Fluttertoast.showToast(
-                                      msg: 'Failed to update subjects',
+                                      msg: 'Failed to update subject',
                                       toastLength: Toast.LENGTH_LONG,
                                     );
-                                  }
-
-                                  valSetIsUpdating(false);
+                                  });
                                 }
                               },
                             ),
@@ -154,6 +142,7 @@ class SubjectListTile extends StatelessWidget {
                         );
                       });
                   break;
+
                 case SubjectOption.remove:
                   dbService.removeGroupSubject(
                       groupStatus.group.docId, subject);
@@ -162,9 +151,7 @@ class SubjectListTile extends StatelessWidget {
             },
           ),
         ),
-        Divider(
-          height: 1.0,
-        ),
+        Divider(height: 1.0),
       ],
     );
   }

@@ -6,7 +6,7 @@ import 'package:skeduler/models/group_data/time.dart';
 
 class Member {
   // properties
-  String _id;
+  String _docId;
   String _name;
   String _nickname;
   String _description;
@@ -18,7 +18,7 @@ class Member {
 
   // constructors
   Member({
-    @required String id,
+    @required String docId,
     String name,
     String nickname,
     String description,
@@ -26,7 +26,7 @@ class Member {
     ColorShade colorShade,
     List<Time> times,
   }) {
-    this._id = id;
+    this._docId = docId;
     this._name = name;
     this._nickname = nickname;
     this._description = description;
@@ -36,10 +36,10 @@ class Member {
   }
 
   // getter methods
-  String get id => this._id;
+  String get docId => this._docId;
   String get name => this._name;
   String get nickname => this._nickname;
-  String get display => this._nickname ?? this._name ?? this._id;
+  String get display => this._nickname ?? this._name ?? this._docId;
   String get description => this._description;
   MemberRole get role => this._role;
   String get roleStr => memberRoleStr(this._role);

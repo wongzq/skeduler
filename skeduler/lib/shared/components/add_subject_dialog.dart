@@ -18,8 +18,8 @@ class AddSubjectDialog extends StatefulWidget {
 }
 
 class _AddSubjectDialogState extends State<AddSubjectDialog> {
-  String newSubjectName;
-  String newSubjectNickname;
+  String _newSubjectName;
+  String _newSubjectNickname;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class _AddSubjectDialogState extends State<AddSubjectDialog> {
                   fontStyle: FontStyle.italic,
                 ),
               ),
-              onChanged: (value) => newSubjectNickname = value.trim(),
+              onChanged: (value) => _newSubjectNickname = value.trim(),
               validator: (value) => null,
             ),
             TextFormField(
@@ -55,7 +55,7 @@ class _AddSubjectDialogState extends State<AddSubjectDialog> {
                   fontStyle: FontStyle.italic,
                 ),
               ),
-              onChanged: (value) => newSubjectName = value.trim(),
+              onChanged: (value) => _newSubjectName = value.trim(),
               validator: (value) => value == null || value.trim() == ''
                   ? 'Subject name cannot be empty'
                   : null,
@@ -73,40 +73,24 @@ class _AddSubjectDialogState extends State<AddSubjectDialog> {
           onPressed: () async {
             if (widget.formKey.currentState.validate()) {
               Navigator.of(context).maybePop();
-              await dbService
-                  .updateGroupSubjects(
+
+              String returnMsg = await dbService.addGroupSubject(
                 groupStatus.group.docId,
-                groupStatus.group.subjects,
-              )
-                  .then((value) async {
-                if (value) {
-                  groupStatus.group.subjects.add(Subject(
-                    name: newSubjectName,
-                    nickname: newSubjectNickname,
-                  ));
+                Subject(
+                  name: _newSubjectName,
+                  nickname: _newSubjectNickname,
+                ),
+              );
 
-                  String returnMsg = await dbService.addGroupSubject(
-                    groupStatus.group.docId,
-                    Subject(
-                      name: newSubjectName,
-                      nickname: newSubjectNickname,
-                    ),
-                  );
-
-                  setState(() {
-                    groupStatus.hasChanges = false;
-                  });
-                  Fluttertoast.showToast(
-                    msg: returnMsg,
-                    toastLength: Toast.LENGTH_LONG,
-                  );
-                } else {
-                  Fluttertoast.showToast(
-                    msg: 'Failed to update subjects',
-                    toastLength: Toast.LENGTH_LONG,
-                  );
-                }
-              });
+              Fluttertoast.showToast(
+                msg: returnMsg,
+                toastLength: Toast.LENGTH_LONG,
+              );
+            } else {
+              Fluttertoast.showToast(
+                msg: 'Failed to update subjects',
+                toastLength: Toast.LENGTH_LONG,
+              );
             }
           },
         ),

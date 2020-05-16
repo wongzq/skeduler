@@ -19,8 +19,8 @@ class Group {
   String _ownerName;
 
   List<TimetableMetadata> _timetableMetadatas;
-  List<String> _members;
-  List<Subject> _subjects;
+  List<String> _memberMetadatas;
+  List<String> _subjectMetadatas;
 
   // constructors
   Group({
@@ -31,8 +31,8 @@ class Group {
     String ownerEmail = '',
     String ownerName = '',
     List<TimetableMetadata> timetableMetadatas = const [],
-    List<String> members = const [],
-    List<Subject> subjects = const [],
+    List<String> memberMetadatas = const [],
+    List<String> subjectMetadatas = const [],
   }) {
     this._docId = docId;
 
@@ -43,8 +43,8 @@ class Group {
     this._ownerName = ownerName;
 
     this._timetableMetadatas = List.from(timetableMetadatas);
-    this._members = List.from(members);
-    this._subjects = List.from(subjects);
+    this._memberMetadatas = List.from(memberMetadatas);
+    this._subjectMetadatas = List.from(subjectMetadatas);
   }
 
   // getter methods
@@ -55,11 +55,11 @@ class Group {
   ColorShade get colorShade => this._colorShade ?? ColorShade();
   String get ownerEmail => this._ownerEmail;
   String get ownerName => this._ownerName;
-  int get numOfMembers => this._members.length;
+  int get numOfMembers => this._memberMetadatas.length;
 
   List<TimetableMetadata> get timetableMetadatas => this._timetableMetadatas;
-  List<String> get members => this._members;
-  List<Subject> get subjects => this._subjects;
+  List<String> get memberMetadatas => this._memberMetadatas;
+  List<String> get subjectMetadatas => this._subjectMetadatas;
 }
 
 // --------------------------------------------------------------------------------
@@ -91,21 +91,6 @@ class GroupMetadata extends ChangeNotifier {
 }
 
 // --------------------------------------------------------------------------------
-// Members Metadata class for Provider
-// --------------------------------------------------------------------------------
-
-class MembersStatus extends ChangeNotifier {
-  // properties
-  List<Member> _members;
-
-  // constructors
-  MembersStatus({List<Member> members}) : this._members = members ?? [];
-
-  // getter methods
-  List<Member> get members => List.unmodifiable(this._members);
-}
-
-// --------------------------------------------------------------------------------
 // Group Status class for Provider
 // --------------------------------------------------------------------------------
 
@@ -113,36 +98,50 @@ class GroupStatus extends ChangeNotifier {
   // properties
   Group _group;
   List<Member> _members;
-
-  bool _hasChanges;
+  List<Subject> _subjects;
 
   /// constructors
   GroupStatus({
     Group group,
     List<Member> members,
+    List<Subject> subjects,
     bool hasChanges = false,
-  })  : _group = group,
-        _members = members ?? [],
-        _hasChanges = hasChanges;
+  })  : this._group = group,
+        this._members = members ?? [],
+        this._subjects = subjects ?? [];
 
   // getter methods
   Group get group => this._group;
   List<Member> get members => this._members;
-  bool get hasChanges => this._hasChanges;
+  List<Subject> get subjects => reorderSubjects(
+        subjects: this._subjects,
+        subjectMetadatas: this._group._subjectMetadatas,
+      );
 
-  // setter methods
-  set group(value) {
-    this._group = group;
-    notifyListeners();
+  void reset() {
+    this._group = null;
+    this._members = null;
+    this._subjects = null;
   }
 
-  set members(value) {
-    this._members = members;
-    notifyListeners();
-  }
+  // auxiliary functions
+  static List<Subject> reorderSubjects({
+    @required List<Subject> subjects,
+    @required List<String> subjectMetadatas,
+  }) {
+    List<Subject> reorderedSubjects = [];
 
-  set hasChanges(value) {
-    this._hasChanges = value;
-    notifyListeners();
+    for (int i = 0; i < subjectMetadatas.length; i++) {
+      Subject subjectFound = subjects.firstWhere(
+        (subject) => subject.docId == subjectMetadatas[i],
+        orElse: () => null,
+      );
+
+      if (subjectFound != null) {
+        reorderedSubjects.add(subjectFound);
+      }
+    }
+
+    return reorderedSubjects;
   }
 }

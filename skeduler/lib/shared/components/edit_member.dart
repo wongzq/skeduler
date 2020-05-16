@@ -92,7 +92,7 @@ class _EditMemberState extends State<EditMember> {
                         _editRole == MemberRole.owner) {
                       await dbService.updateGroupMemberRole(
                         groupDocId: groupStatus.group.docId,
-                        memberDocId: widget.me.id,
+                        memberDocId: widget.me.docId,
                         role: MemberRole.admin,
                       );
 
@@ -102,7 +102,7 @@ class _EditMemberState extends State<EditMember> {
                         description: groupStatus.group.description,
                         colorShade: groupStatus.group.colorShade,
                         ownerName: _editName,
-                        ownerEmail: widget.member.id,
+                        ownerEmail: widget.member.docId,
                       );
                     }
 
@@ -115,7 +115,7 @@ class _EditMemberState extends State<EditMember> {
                           .updateGroupMember(
                         groupDocId: groupStatus.group.docId,
                         member: Member(
-                          id: widget.member.id,
+                          docId: widget.member.docId,
                           name: widget.member.name,
                           nickname: _editNickname,
                           role: _editRole,
@@ -146,7 +146,7 @@ class _EditMemberState extends State<EditMember> {
                           .updateGroupMember(
                         groupDocId: groupStatus.group.docId,
                         member: Member(
-                          id: widget.member.id,
+                          docId: widget.member.docId,
                           name: _editName,
                           nickname: _editNickname,
                           role: _editRole,
@@ -203,7 +203,7 @@ class _EditMemberState extends State<EditMember> {
                           child: TextFormField(
                             style: TextStyle(color: Colors.grey),
                             enabled: false,
-                            initialValue: widget.member.id,
+                            initialValue: widget.member.docId,
                           ),
                         )
                       ],

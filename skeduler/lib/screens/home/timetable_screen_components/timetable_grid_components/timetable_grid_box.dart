@@ -48,7 +48,7 @@ class TimetableGridBox extends StatefulWidget {
 class _TimetableGridBoxState extends State<TimetableGridBox> {
   // properties
   User _user;
-  MembersStatus _membersStatus;
+  GroupStatus _groupStatus;
   TimetableGridData _gridData;
 
   TimetableStatus _ttbStatus;
@@ -133,8 +133,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                               : _editMode.viewMe
                                   ? () {
                                       Member member =
-                                          _membersStatus.members.firstWhere(
-                                        (member) => member.id == _user.email,
+                                          _groupStatus.members.firstWhere(
+                                        (member) => member.docId == _user.email,
                                         orElse: () => null,
                                       );
 
@@ -433,7 +433,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
     bool isAvailable = false;
 
     if (dragData is TimetableDragMember) {
-      _membersStatus.members.forEach((member) {
+      _groupStatus.members.forEach((member) {
         if (member.display == dragData.display) {
           memberFound = member;
         }
@@ -441,7 +441,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
     } else if (dragData is TimetableDragSubject) {
       isAvailable = true;
     } else if (dragData is TimetableDragSubjectMember) {
-      _membersStatus.members.forEach((member) {
+      _groupStatus.members.forEach((member) {
         if (member.display == dragData.member.display) {
           memberFound = member;
         }
@@ -530,9 +530,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
         ? Provider.of<User>(context)
         : null;
 
-    _membersStatus = widget.gridBoxType == GridBoxType.content
-        ? Provider.of<MembersStatus>(context)
-        : null;
+    _groupStatus = Provider.of<GroupStatus>(context);
 
     _editMode = widget.gridBoxType == GridBoxType.content ||
             widget.gridBoxType == GridBoxType.switchBox

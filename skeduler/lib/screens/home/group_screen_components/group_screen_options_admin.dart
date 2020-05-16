@@ -80,7 +80,7 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
                         ),
                         onPressed: () {
                           dbService.leaveGroup(groupStatus.group.docId);
-                          groupStatus.group = null;
+                          groupStatus.reset();
                           groupDocId.value = null;
                           Navigator.of(context)
                               .popUntil((route) => route.isFirst);
@@ -229,10 +229,6 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
                         if (formKey.currentState.validate()) {
                           Navigator.of(dialogContext).maybePop();
 
-                          groupStatus.group.subjects.add(Subject(
-                            name: newSubjectName,
-                            nickname: newSubjectNickname,
-                          ));
 
                           await dbService
                               .addGroupSubject(
