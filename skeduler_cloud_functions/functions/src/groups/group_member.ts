@@ -83,6 +83,7 @@ export const updateGroupMember = functions.firestore
             timetablesSnap.forEach(async (timetableDocSnap) => {
               const gridDataList: any[] = timetableDocSnap.data().gridDataList;
 
+              // find corresponding gridData
               gridDataList.forEach((gridData) => {
                 if (gridData.member == before.nickname) {
                   const newGridData = Object.assign(Object(), gridData);
@@ -115,10 +116,8 @@ export const updateGroupMember = functions.firestore
               });
             });
           });
-
-        return Promise.all(promises);
-      } else {
-        return null;
       }
+
+      return Promise.all(promises);
     }
   });

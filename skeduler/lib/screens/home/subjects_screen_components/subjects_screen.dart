@@ -124,7 +124,9 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                         _tempSubjectMetadatas,
                       )
                           .then((_) {
-                        _orderChanged = false;
+                        setState(() {
+                          _orderChanged = false;
+                        });
                         Fluttertoast.showToast(
                           msg: 'Successfully updated subjects order',
                           toastLength: Toast.LENGTH_LONG,
