@@ -107,9 +107,23 @@ class MemberListTile extends StatelessWidget {
                           .primaryColorLight
                       : null,
                   child: ListTile(
-                    leading: Icon(member.roleIcon),
-                    title: Text(member.display),
-                    subtitle: Text(member.name),
+                    leading: Icon(
+                      member.roleIcon,
+                      color: member.docId == me.docId ? Colors.black : null,
+                    ),
+                    title: Text(
+                      member.display,
+                      style: TextStyle(
+                          color:
+                              member.docId == me.docId ? Colors.black : null),
+                    ),
+                    subtitle: Text(
+                      member.name,
+                      style: TextStyle(
+                          color: member.docId == me.docId
+                              ? Colors.grey[700]
+                              : null),
+                    ),
                   ),
                 ),
                 Divider(height: 1.0),
@@ -132,23 +146,28 @@ class MemberListTile extends StatelessWidget {
                 color: member.docId == me.docId ? Colors.black : null,
               ),
               title: Text(
-                member.role == MemberRole.pending ? member.docId : member.nickname,
-                style:
-                    TextStyle(color: member.docId == me.docId ? Colors.black : null),
+                member.role == MemberRole.pending
+                    ? member.docId
+                    : member.nickname,
+                style: TextStyle(
+                    color: member.docId == me.docId ? Colors.black : null),
               ),
               subtitle: member.role == MemberRole.pending
                   ? null
                   : Text(
                       member.name,
                       style: TextStyle(
-                          color: member.docId == me.docId ? Colors.grey[700] : null),
+                          color: member.docId == me.docId
+                              ? Colors.grey[700]
+                              : null),
                     ),
               trailing: member.role == MemberRole.owner
                   ? me.role == MemberRole.owner
                       ? PopupMenuButton(
                           icon: Icon(
                             Icons.more_vert,
-                            color: member.docId == me.docId ? Colors.black : null,
+                            color:
+                                member.docId == me.docId ? Colors.black : null,
                           ),
                           itemBuilder: (context) {
                             return [
