@@ -86,44 +86,46 @@ class MemberSelector extends StatelessWidget {
                           height: 1,
                           width: additionalSpacing,
                         )
-                      : Padding(
-                          padding:
-                              EdgeInsets.all(_chipPadding + _chipPaddingExtra),
-                          child: Center(
-                            child: Wrap(
-                              children: [
-                                LongPressDraggable<TimetableDragData>(
-                                  data: TimetableDragMember(
-                                    display: members[index].display,
-                                  ),
-                                  feedback: _buildMaterialActionChip(
-                                    members[index],
-                                    _chipWidth,
-                                  ),
-                                  child: _buildMaterialActionChip(
-                                    members[index],
-                                    _chipWidth,
-                                  ),
-                                  onDragStarted: () {
-                                    editMode.isDragging = true;
-                                    editMode.isDraggingData =
-                                        TimetableDragMember(
-                                      display: members[index].display,
-                                    );
-                                  },
-                                  onDragCompleted: () {
-                                    editMode.isDragging = false;
-                                    editMode.isDraggingData = null;
-                                  },
-                                  onDraggableCanceled: (_, __) {
-                                    editMode.isDragging = false;
-                                    editMode.isDraggingData = null;
-                                  },
+                      : members[index].role == MemberRole.pending
+                          ? Container()
+                          : Padding(
+                              padding: EdgeInsets.all(
+                                  _chipPadding + _chipPaddingExtra),
+                              child: Center(
+                                child: Wrap(
+                                  children: [
+                                    LongPressDraggable<TimetableDragData>(
+                                      data: TimetableDragMember(
+                                        display: members[index].display,
+                                      ),
+                                      feedback: _buildMaterialActionChip(
+                                        members[index],
+                                        _chipWidth,
+                                      ),
+                                      child: _buildMaterialActionChip(
+                                        members[index],
+                                        _chipWidth,
+                                      ),
+                                      onDragStarted: () {
+                                        editMode.isDragging = true;
+                                        editMode.isDraggingData =
+                                            TimetableDragMember(
+                                          display: members[index].display,
+                                        );
+                                      },
+                                      onDragCompleted: () {
+                                        editMode.isDragging = false;
+                                        editMode.isDraggingData = null;
+                                      },
+                                      onDraggableCanceled: (_, __) {
+                                        editMode.isDragging = false;
+                                        editMode.isDraggingData = null;
+                                      },
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        );
+                              ),
+                            );
                 },
               ),
             ),
