@@ -179,7 +179,6 @@ class MemberListTile extends StatelessWidget {
                               Navigator.of(context).pushNamed(
                                 '/members/editMember',
                                 arguments: RouteArgsEditMember(
-                                  me: me,
                                   member: member,
                                 ),
                               );
@@ -330,7 +329,6 @@ class MemberListTile extends StatelessWidget {
                             Navigator.of(context).pushNamed(
                               '/members/editMember',
                               arguments: RouteArgsEditMember(
-                                me: me,
                                 member: member,
                               ),
                             );

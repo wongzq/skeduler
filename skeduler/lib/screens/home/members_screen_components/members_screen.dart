@@ -54,67 +54,60 @@ class _MembersScreenState extends State<MembersScreen> {
                       ),
                       drawer: HomeDrawer(DrawerEnum.members),
                     )
-                  : StreamBuilder(
-                      stream: dbService.streamGroupMemberMe(groupStatus.group.docId),
-                      builder: (context, snapshot) {
-                        Member me = snapshot != null ? snapshot.data : null;
-
-                        return me == null
-                            ? Loading()
-                            : Scaffold(
-                                appBar: AppBar(
-                                  title: groupStatus.group.name == null
-                                      ? Text(
-                                          'Members',
-                                          style: textStyleAppBarTitle,
-                                        )
-                                      : Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              groupStatus.group.name,
-                                              style: textStyleAppBarTitle,
-                                            ),
-                                            Text(
-                                              'Members',
-                                              style: textStyleBody,
-                                            )
-                                          ],
-                                        ),
-                                ),
-                                drawer: HomeDrawer(DrawerEnum.members),
-                                floatingActionButton:
-                                    me.role == MemberRole.owner
-                                        ? MembersScreenOptionsOwner()
-                                        : me.role == MemberRole.admin
-                                            ? MembersScreenOptionsAdmin()
-                                            : me.role == MemberRole.member
-                                                ? MembersScreenOptionsMember()
-                                                : Container(),
-                                body: ListView.builder(
-                                  physics: BouncingScrollPhysics(
-                                    parent: AlwaysScrollableScrollPhysics(),
+                  : groupStatus.me == null
+                      ? Loading()
+                      : Scaffold(
+                          appBar: AppBar(
+                            title: groupStatus.group.name == null
+                                ? Text(
+                                    'Members',
+                                    style: textStyleAppBarTitle,
+                                  )
+                                : Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        groupStatus.group.name,
+                                        style: textStyleAppBarTitle,
+                                      ),
+                                      Text(
+                                        'Members',
+                                        style: textStyleBody,
+                                      )
+                                    ],
                                   ),
-                                  itemCount:
-                                      members != null ? members.length : 0,
-                                  itemBuilder: (context, index) {
-                                    if (members != null) {
-                                      members.sort((member1, member2) => member2
-                                          .role.index
-                                          .compareTo(member1.role.index));
-                                    }
+                          ),
+                          drawer: HomeDrawer(DrawerEnum.members),
+                          floatingActionButton:
+                              groupStatus.me.role == MemberRole.owner
+                                  ? MembersScreenOptionsOwner()
+                                  : groupStatus.me.role == MemberRole.admin
+                                      ? MembersScreenOptionsAdmin()
+                                      : groupStatus.me.role == MemberRole.member
+                                          ? MembersScreenOptionsMember()
+                                          : Container(),
+                          body: ListView.builder(
+                            physics: BouncingScrollPhysics(
+                              parent: AlwaysScrollableScrollPhysics(),
+                            ),
+                            itemCount: members != null ? members.length : 0,
+                            itemBuilder: (context, index) {
+                              if (members != null) {
+                                members.sort((member1, member2) => member2
+                                    .role.index
+                                    .compareTo(member1.role.index));
+                              }
 
-                                    return members != null
-                                        ? MemberListTile(
-                                            me: me,
-                                            member: members[index],
-                                          )
-                                        : Container();
-                                  },
-                                ),
-                              );
-                      });
+                              return members != null
+                                  ? MemberListTile(
+                                      me: groupStatus.me,
+                                      member: members[index],
+                                    )
+                                  : Container();
+                            },
+                          ),
+                        );
             },
           );
   }

@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:skeduler/models/group_data/user.dart';
-import 'package:skeduler/services/database_service.dart';
 
 class AuthService {
   final FirebaseAuth _authService = FirebaseAuth.instance;
@@ -41,9 +40,6 @@ class AuthService {
     try {
       AuthResult result = await _authService.createUserWithEmailAndPassword(
           email: email, password: password);
-
-      // create a new document for the user with the uid
-      await DatabaseService(userId: result.user.uid).setUserData(email, name);
 
       return _userFromFirebaseUser(result.user);
     } catch (e) {

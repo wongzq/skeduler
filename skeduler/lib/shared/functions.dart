@@ -13,7 +13,7 @@ Future<bool> checkInternetConnection() async {
   return await InternetAddress.lookup('google.com')
       .then((result) =>
           result.isNotEmpty && result[0].rawAddress.isNotEmpty ? true : false)
-      .timeout(Duration(seconds: 5))
+      .timeout(Duration(seconds: 5), onTimeout: () => false)
       .catchError((_) => false);
 }
 

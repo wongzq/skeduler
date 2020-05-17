@@ -10,12 +10,10 @@ import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class EditMember extends StatefulWidget {
-  final Member me;
   final Member member;
 
   const EditMember({
     Key key,
-    @required this.me,
     @required this.member,
   }) : super(key: key);
 
@@ -88,11 +86,11 @@ class _EditMemberState extends State<EditMember> {
                   ),
                   onPressed: () async {
                     // if transfer ownership
-                    if (widget.me.role == MemberRole.owner &&
+                    if (groupStatus.me.role == MemberRole.owner &&
                         _editRole == MemberRole.owner) {
                       await dbService.updateGroupMemberRole(
                         groupDocId: groupStatus.group.docId,
-                        memberDocId: widget.me.docId,
+                        memberDocId: groupStatus.me.docId,
                         role: MemberRole.admin,
                       );
 
@@ -111,8 +109,8 @@ class _EditMemberState extends State<EditMember> {
                             widget.member.role == MemberRole.admin ||
                             widget.member.role == MemberRole.member) &&
                         _formKeyNickname.currentState.validate()) {
-                      await dbService
-                          .updateGroupMember(
+                      OperationStatus status =
+                          await dbService.updateGroupMember(
                         groupDocId: groupStatus.group.docId,
                         member: Member(
                           docId: widget.member.docId,
@@ -120,21 +118,18 @@ class _EditMemberState extends State<EditMember> {
                           nickname: _editNickname,
                           role: _editRole,
                         ),
-                      )
-                          .then((result) {
-                        if (result) {
-                          Fluttertoast.showToast(
-                            msg: 'Successfully updated member details',
-                            toastLength: Toast.LENGTH_LONG,
-                          );
-                          Navigator.of(context).maybePop();
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: 'Failed to update member details',
-                            toastLength: Toast.LENGTH_LONG,
-                          );
-                        }
-                      });
+                      );
+
+                      if (status.completed) {
+                        Fluttertoast.showToast(
+                          msg: status.message,
+                          toastLength: Toast.LENGTH_LONG,
+                        );
+                      }
+
+                      if (status.success) {
+                        Navigator.of(context).maybePop();
+                      }
                     }
 
                     // general update group dummy details
@@ -142,8 +137,8 @@ class _EditMemberState extends State<EditMember> {
                         _formKeyName.currentState.validate() &&
                         _formKeyNickname.currentState.validate()) {
                       // if dummy id remains the same
-                      await dbService
-                          .updateGroupMember(
+                      OperationStatus status =
+                          await dbService.updateGroupMember(
                         groupDocId: groupStatus.group.docId,
                         member: Member(
                           docId: widget.member.docId,
@@ -151,21 +146,18 @@ class _EditMemberState extends State<EditMember> {
                           nickname: _editNickname,
                           role: _editRole,
                         ),
-                      )
-                          .then((result) {
-                        if (result) {
-                          Fluttertoast.showToast(
-                            msg: 'Successfully updated member details',
-                            toastLength: Toast.LENGTH_LONG,
-                          );
-                          Navigator.of(context).maybePop();
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: 'Failed to update member details',
-                            toastLength: Toast.LENGTH_LONG,
-                          );
-                        }
-                      });
+                      );
+
+                      if (status.completed) {
+                        Fluttertoast.showToast(
+                          msg: status.message,
+                          toastLength: Toast.LENGTH_LONG,
+                        );
+                      }
+                      
+                      if (status.success) {
+                        Navigator.of(context).maybePop();
+                      }
                     }
                   },
                 ),
@@ -306,7 +298,7 @@ class _EditMemberState extends State<EditMember> {
                           underline: Container(),
                           items:
                               // if I am owner, and I am editing owner, admin or member
-                              widget.me.role == MemberRole.owner &&
+                              groupStatus.me.role == MemberRole.owner &&
                                       (widget.member.role == MemberRole.admin ||
                                           widget.member.role ==
                                               MemberRole.member)
@@ -337,7 +329,7 @@ class _EditMemberState extends State<EditMember> {
                                                 MemberRole.dummy)),
                                           ),
                                         ]
-                                      : widget.me.role == MemberRole.admin
+                                      : groupStatus.me.role == MemberRole.admin
                                           ? [
                                               DropdownMenuItem<MemberRole>(
                                                 value: MemberRole.admin,
@@ -355,7 +347,7 @@ class _EditMemberState extends State<EditMember> {
                                   widget.member.role == MemberRole.dummy
                               ? null
                               : (value) {
-                                  if (widget.me.role == MemberRole.owner &&
+                                  if (groupStatus.me.role == MemberRole.owner &&
                                       value == MemberRole.owner) {
                                     GlobalKey<FormState> formKey =
                                         GlobalKey<FormState>();

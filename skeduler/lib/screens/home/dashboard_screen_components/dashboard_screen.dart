@@ -53,79 +53,82 @@ class DashboardScreen extends StatelessWidget {
               itemCount: groups != null ? groups.length : 0,
               itemBuilder: (BuildContext context, int index) {
                 if (groups[index] != null) {
-                  return StreamBuilder(
+                  return StreamBuilder<Member>(
                       stream:
                           dbService.streamGroupMemberMe(groups[index].docId),
-                      builder: (context, snapshot) {
-                        Member me = snapshot != null ? snapshot.data : null;
+                      builder: (context, meSnap) {
+                        Member me = meSnap != null ? meSnap.data : null;
 
                         return GestureDetector(
                           behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            if (me != null &&
-                                me.role != null &&
-                                me.role != MemberRole.pending) {
-                              groupDocId.value = groups[index].docId;
-                              Navigator.of(context).pushNamed(
-                                '/group',
-                                arguments: RouteArgs(),
-                              );
-                            } else {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return StreamBuilder(
-                                        stream: dbService
-                                            .streamGroup(groups[index].docId),
-                                        builder: (context, snapshot) {
-                                          Group group = snapshot != null
-                                              ? snapshot.data
-                                              : null;
+                          onTap: () async {
+                            if (me != null && me.role != null) {
+                              if (me.role == MemberRole.owner ||
+                                  me.role == MemberRole.admin ||
+                                  me.role == MemberRole.member) {
+                                groupDocId.value = groups[index].docId;
+                                Navigator.of(context).pushNamed(
+                                  '/group',
+                                  arguments: RouteArgs(),
+                                );
+                              } else if (me.role == MemberRole.pending) {
+                                await showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return StreamBuilder(
+                                          stream: dbService
+                                              .streamGroup(groups[index].docId),
+                                          builder: (context, snapshot) {
+                                            Group group = snapshot != null
+                                                ? snapshot.data
+                                                : null;
 
-                                          return group == null
-                                              ? Container()
-                                              : AlertDialog(
-                                                  content: Text(
-                                                      'You have been invited to join ' +
-                                                          group.name),
-                                                  actions: <Widget>[
-                                                    // DECLINE button
-                                                    FlatButton(
-                                                      child: Text('DECLINE'),
-                                                      onPressed: () async {
-                                                        await dbService
-                                                            .declineGroupInvitation(
-                                                                groups[index]
-                                                                    .docId);
+                                            return group == null
+                                                ? Container()
+                                                : AlertDialog(
+                                                    content: Text(
+                                                        'You have been invited to join ' +
+                                                            group.name),
+                                                    actions: <Widget>[
+                                                      // DECLINE button
+                                                      FlatButton(
+                                                        child: Text('DECLINE'),
+                                                        onPressed: () async {
+                                                          await dbService
+                                                              .declineGroupInvitation(
+                                                                  groups[index]
+                                                                      .docId);
 
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    ),
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
 
-                                                    // ACCEPT button
-                                                    FlatButton(
-                                                      child: Text('ACCEPT'),
-                                                      onPressed: () async {
-                                                        await dbService
-                                                            .acceptGroupInvitation(
-                                                                groups[index]
-                                                                    .docId);
+                                                      // ACCEPT button
+                                                      FlatButton(
+                                                        child: Text('ACCEPT'),
+                                                        onPressed: () async {
+                                                          await dbService
+                                                              .acceptGroupInvitation(
+                                                                  groups[index]
+                                                                      .docId);
 
-                                                        groupDocId.value =
-                                                            groups[index].docId;
-                                                        Navigator.of(context)
-                                                            .popAndPushNamed(
-                                                          '/group',
-                                                          arguments:
-                                                              RouteArgs(),
-                                                        );
-                                                      },
-                                                    ),
-                                                  ],
-                                                );
-                                        });
-                                  });
+                                                          groupDocId.value =
+                                                              groups[index]
+                                                                  .docId;
+                                                          Navigator.of(context)
+                                                              .popAndPushNamed(
+                                                            '/group',
+                                                            arguments:
+                                                                RouteArgs(),
+                                                          );
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                          });
+                                    });
+                              }
                             }
                           },
                           child: GroupCard(

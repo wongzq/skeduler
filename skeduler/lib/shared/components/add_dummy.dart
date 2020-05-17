@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
+import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/components/loading.dart';
@@ -14,8 +15,11 @@ class AddDummy extends StatefulWidget {
 }
 
 class _AddDummyState extends State<AddDummy> {
-  String _newDummyName;
   GlobalKey<FormState> _formKeyName = GlobalKey<FormState>();
+
+  String _newDummyId;
+  String _newDummyNickname;
+  String _newDummyName;
 
   @override
   Widget build(BuildContext context) {
@@ -63,27 +67,33 @@ class _AddDummyState extends State<AddDummy> {
                   heroTag: 'Add Dummy Confirm',
                   backgroundColor: Colors.green,
                   onPressed: () async {
-                    if (_formKeyName.currentState.validate()) {
-                      await dbService
-                          .addDummyToGroup(
-                        groupDocId: groupStatus.group.docId,
-                        newDummyName: _newDummyName,
-                      )
-                          .then((errorMsg) {
-                        if (errorMsg == null) {
-                          Fluttertoast.showToast(
-                            msg: _newDummyName + ' has been added',
-                            toastLength: Toast.LENGTH_LONG,
-                          );
+                    unfocus();
+                    _formKeyName.currentState.validate();
 
-                          Navigator.of(context).maybePop();
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: errorMsg,
-                            toastLength: Toast.LENGTH_LONG,
-                          );
-                        }
-                      });
+                    if (_formKeyName.currentState.validate()) {
+                      // format dummy details
+                      OperationStatus status = await dbService.addDummyToGroup(
+                        groupDocId: groupStatus.group.docId,
+                        dummy: Member(
+                          docId: _newDummyId.trim(),
+                          name: _newDummyName.trim(),
+                          nickname: _newDummyNickname == null ||
+                                  _newDummyNickname.trim() == ''
+                              ? _newDummyName.trim()
+                              : _newDummyNickname.trim(),
+                        ),
+                      );
+
+                      if (status.completed) {
+                        Fluttertoast.showToast(
+                          msg: status.message,
+                          toastLength: Toast.LENGTH_LONG,
+                        );
+                      }
+
+                      if (status.success) {
+                        Navigator.of(context).maybePop();
+                      }
                     }
                   },
                   child: Icon(
@@ -98,16 +108,47 @@ class _AddDummyState extends State<AddDummy> {
               onTap: () => unfocus(),
               child: Column(
                 children: <Widget>[
-                  // Required fields
-                  // Email
+                  // ID
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    child: LabelTextInput(
+                      enabled: false,
+                      hintText: _newDummyId == null || _newDummyId.trim() == ''
+                          ? 'automated'
+                          : _newDummyId,
+                      label: 'ID',
+                    ),
+                  ),
+
+                  // Nickname
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    child: LabelTextInput(
+                      initialValue: _newDummyNickname,
+                      hintText: 'Optional',
+                      label: 'Nickname',
+                      valSetText: (value) {
+                        _newDummyNickname = value;
+                      },
+                    ),
+                  ),
+
+                  // Name
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
                     child: LabelTextInput(
                       initialValue: _newDummyName,
                       hintText: 'Required',
                       label: 'Name',
                       valSetText: (value) {
-                        _newDummyName = value;
+                        setState(() {
+                          _newDummyName = value;
+
+                          _newDummyId = value
+                              .trim()
+                              .replaceAll(RegExp('[^A-Za-z0-9]'), '')
+                              .toLowerCase();
+                        });
                       },
                       formKey: _formKeyName,
                       validator: (value) {

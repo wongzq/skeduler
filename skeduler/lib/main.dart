@@ -131,45 +131,61 @@ class MyApp extends StatelessWidget {
                                                   dbService.streamGroupSubjects(
                                                       groupDocId.value),
                                               builder: (_, subjectsSnap) {
-                                                // Provider for GroupStatus
-                                                  return ChangeNotifierProvider<
-                                                    GroupStatus>.value(
-                                                  value: GroupStatus(
-                                                    group: groupSnap != null
-                                                        ? groupSnap.data
-                                                        : null,
-                                                    members: membersSnap != null
-                                                        ? membersSnap.data
-                                                        : null,
-                                                    subjects:
-                                                        subjectsSnap != null
-                                                            ? subjectsSnap.data
-                                                            : null,
-                                                  ),
-                                                  child: MaterialApp(
-                                                    title: 'Skeduler',
-                                                    debugShowCheckedModeBanner:
-                                                        false,
-                                                    theme:
-                                                        ThemeProvider.themeOf(
-                                                                themeContext)
-                                                            .data
-                                                            .copyWith(
-                                                              splashColor: Colors
-                                                                  .transparent,
-                                                              highlightColor:
-                                                                  Colors
-                                                                      .transparent,
-                                                              splashFactory:
-                                                                  InkRipple
-                                                                      .splashFactory,
-                                                            ),
-                                                    initialRoute: '/dashboard',
-                                                    onGenerateRoute:
-                                                        RouteGenerator
-                                                            .generateRoute,
-                                                  ),
-                                                );
+                                                return StreamBuilder<Member>(
+                                                    stream: dbService
+                                                        .streamGroupMemberMe(
+                                                            groupDocId.value),
+                                                    builder: (_, meSnap) {
+                                                      // Provider for GroupStatus
+                                                      return ChangeNotifierProvider<
+                                                          GroupStatus>.value(
+                                                        value: GroupStatus(
+                                                          group: groupSnap !=
+                                                                  null
+                                                              ? groupSnap.data
+                                                              : null,
+                                                          members:
+                                                              membersSnap !=
+                                                                      null
+                                                                  ? membersSnap
+                                                                      .data
+                                                                  : null,
+                                                          subjects:
+                                                              subjectsSnap !=
+                                                                      null
+                                                                  ? subjectsSnap
+                                                                      .data
+                                                                  : null,
+                                                          me: meSnap != null
+                                                              ? meSnap.data
+                                                              : null,
+                                                        ),
+                                                        child: MaterialApp(
+                                                          title: 'Skeduler',
+                                                          debugShowCheckedModeBanner:
+                                                              false,
+                                                          theme: ThemeProvider
+                                                                  .themeOf(
+                                                                      themeContext)
+                                                              .data
+                                                              .copyWith(
+                                                                splashColor: Colors
+                                                                    .transparent,
+                                                                highlightColor:
+                                                                    Colors
+                                                                        .transparent,
+                                                                splashFactory:
+                                                                    InkRipple
+                                                                        .splashFactory,
+                                                              ),
+                                                          initialRoute:
+                                                              '/dashboard',
+                                                          onGenerateRoute:
+                                                              RouteGenerator
+                                                                  .generateRoute,
+                                                        ),
+                                                      );
+                                                    });
                                               });
                                         });
                                   });

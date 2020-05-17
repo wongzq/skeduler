@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
@@ -10,13 +12,29 @@ import 'package:skeduler/models/group_data/subject.dart';
 import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/models/group_data/user.dart';
+import 'package:skeduler/shared/functions.dart';
 
 class DatabaseService {
   // properties
   final String userId;
 
   // constructors method
-  DatabaseService({this.userId});
+  DatabaseService({
+    this.userId,
+  });
+
+  // methods
+  Future<bool> dbCheckInternetConnection() async {
+    if (await checkInternetConnection()) {
+      return true;
+    } else {
+      Fluttertoast.showToast(
+        msg: 'Please check your internet connection',
+        toastLength: Toast.LENGTH_LONG,
+      );
+      return false;
+    }
+  }
 
   // --------------------------------------------------------------------------------
   // Collection References
@@ -113,6 +131,10 @@ class DatabaseService {
     String groupDocId,
     String timetableDocId,
   ) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     return groupDocId == null ||
             groupDocId.trim() == '' ||
             timetableDocId == null ||
@@ -130,6 +152,10 @@ class DatabaseService {
 
   Future<String> getGroupTimetableIdForToday(String groupDocId) async {
     String timetableIdForToday;
+
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
 
     return await groupsCollection.document(groupDocId).get().then((group) {
       // get timetable metadatas from group document's field value
@@ -164,6 +190,10 @@ class DatabaseService {
 
   // set [User] data
   Future setUserData(String email, String name) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     return await usersCollection.document(email).setData({
       'name': name,
     });
@@ -177,8 +207,11 @@ class DatabaseService {
     String ownerEmail,
     String ownerName,
   ) async {
-    DocumentReference newGroupDoc = groupsCollection.document();
-    return await newGroupDoc.setData({
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
+    return await groupsCollection.document().setData({
       'name': name,
       'description': description,
       'colorShade': {
@@ -199,6 +232,10 @@ class DatabaseService {
 
   // update [User] data
   Future updateUserData({String name}) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     return await usersCollection.document(userId).updateData({
       'name': name,
     });
@@ -217,6 +254,10 @@ class DatabaseService {
     String ownerEmail,
     String ownerName,
   }) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     if (groupDocId == null || groupDocId.trim() == '') {
       return null;
     } else {
@@ -237,6 +278,10 @@ class DatabaseService {
 
   // Delete [Group]
   Future deleteGroup(String groupDocId) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     return groupDocId == null || groupDocId.trim() == ''
         ? null
         : await groupsCollection.document(groupDocId).delete();
@@ -247,65 +292,81 @@ class DatabaseService {
   // --------------------------------------------------------------------------------
 
   // add Dummy to [Group]
-  Future<String> addDummyToGroup({
+  Future<OperationStatus> addDummyToGroup({
     @required String groupDocId,
-    @required String newDummyName,
-    String newDummyNickname,
+    @required Member dummy,
   }) async {
-    String errorMsg;
-    String dummyDocId =
-        newDummyName.replaceAll(RegExp('[^A-Za-z0-9]'), "").toLowerCase();
+    if (!(await dbCheckInternetConnection())) {
+      return OperationStatus(OperationResult.abort, '');
+    }
 
     DocumentReference groupDummyRef = groupsCollection
         .document(groupDocId)
         .collection('members')
-        .document(dummyDocId);
+        .document(dummy.docId);
 
-    await groupDummyRef.get().then((member) async {
-      !member.exists
-          ? await groupsCollection.document(groupDocId).updateData({
-              'members': FieldValue.arrayUnion([newDummyName])
-            }).then((_) async {
-              await groupDummyRef.setData({
-                'role': MemberRole.dummy.index,
-                'name': newDummyName,
-                'nickname': newDummyNickname ?? newDummyName,
-              });
-            })
-          : errorMsg = 'Dummy is already in the group';
-    });
-
-    return errorMsg;
+    return groupDocId == null ||
+            groupDocId.trim() == '' ||
+            dummy == null ||
+            dummy.docId == null ||
+            dummy.docId.trim() == ''
+        ? OperationStatus(OperationResult.fail, 'Failed to add dummy')
+        : await groupDummyRef
+            .get()
+            .then((member) async => member.exists
+                ? OperationStatus(
+                    OperationResult.fail, 'ID ${dummy.docId} already exists')
+                : await groupDummyRef
+                    .setData({
+                      'role': MemberRole.dummy.index,
+                      'name': dummy.name,
+                      'nickname': dummy.display,
+                    })
+                    .then((_) => OperationStatus(OperationResult.success,
+                        'Successfully added ${dummy.display}'))
+                    .catchError((_) => OperationStatus(OperationResult.fail,
+                        'Failed to add ${dummy.display}')))
+            .catchError((_) => OperationStatus(
+                OperationResult.fail, 'Failed to add ${dummy.display}'));
   }
 
   // add [Member] to [Group]
-  Future<String> inviteMemberToGroup({
+  Future<OperationStatus> inviteMemberToGroup({
     @required String groupDocId,
     @required String newMemberEmail,
     MemberRole memberRole = MemberRole.pending,
   }) async {
-    String errorMsg;
+    if (!(await dbCheckInternetConnection())) {
+      return OperationStatus(OperationResult.abort, '');
+    }
 
     DocumentReference groupMemberRef = groupsCollection
         .document(groupDocId)
         .collection('members')
         .document(newMemberEmail);
 
-    await usersCollection.document(newMemberEmail).get().then((user) async {
-      user.exists
-          ? await groupMemberRef.get().then((member) async {
-              !member.exists
-                  ? await groupsCollection.document(groupDocId).updateData({
-                      'members': FieldValue.arrayUnion([newMemberEmail])
-                    }).then((_) async {
-                      await groupMemberRef.setData({'role': memberRole.index});
-                    })
-                  : errorMsg = 'User is already in the group';
-            })
-          : errorMsg = 'User not found';
-    });
-
-    return errorMsg;
+    return groupDocId == null ||
+            groupDocId.trim() == '' ||
+            newMemberEmail == null ||
+            newMemberEmail.trim() == ''
+        ? OperationStatus(
+            OperationResult.fail, 'Failed to invite member to group')
+        : await usersCollection
+            .document(newMemberEmail)
+            .get()
+            .then((user) async => user.exists
+                ? await groupMemberRef.get().then((member) async => member.exists
+                    ? OperationStatus(
+                        OperationResult.fail, 'User is already in the group')
+                    : await groupMemberRef
+                        .setData({'role': memberRole.index})
+                        .then((_) => OperationStatus(OperationResult.success,
+                            'Successfully invited $newMemberEmail'))
+                        .catchError((_) => OperationStatus(OperationResult.fail,
+                            'Failed to invite $newMemberEmail')))
+                : OperationStatus(OperationResult.fail, 'User not found'))
+            .catchError(
+                (_) => OperationStatus(OperationResult.fail, 'Failed to invite $newMemberEmail'));
   }
 
   // remove [Member] from [Group]
@@ -313,33 +374,41 @@ class DatabaseService {
     @required String groupDocId,
     @required String memberDocId,
   }) async {
-    return await groupsCollection.document(groupDocId).updateData({
-      'members': FieldValue.arrayRemove([memberDocId])
-    }).then((_) async {
-      await groupsCollection
-          .document(groupDocId)
-          .collection('members')
-          .document(memberDocId)
-          .delete();
-    });
-  }
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
 
-  // update [Member] in group
-  Future<bool> updateGroupMember({
-    @required String groupDocId,
-    @required Member member,
-  }) async {
     return await groupsCollection
         .document(groupDocId)
         .collection('members')
-        .document(member.docId)
-        .updateData({
-          'name': member.name,
-          'nickname': member.nickname,
-          'role': member.role.index,
-        })
-        .then((_) => true)
-        .catchError((_) => false);
+        .document(memberDocId)
+        .delete();
+  }
+
+  // update [Member] in group
+  Future<OperationStatus> updateGroupMember({
+    @required String groupDocId,
+    @required Member member,
+  }) async {
+    if (!(await dbCheckInternetConnection())) {
+      return OperationStatus(OperationResult.abort, '');
+    }
+
+    return groupDocId == null || groupDocId.trim() == ''
+        ? OperationResult.fail
+        : await groupsCollection
+            .document(groupDocId)
+            .collection('members')
+            .document(member.docId)
+            .updateData({
+              'name': member.name,
+              'nickname': member.nickname,
+              'role': member.role.index,
+            })
+            .then((_) => OperationStatus(
+                OperationResult.success, 'Successfully updated member details'))
+            .catchError((_) => OperationStatus(
+                OperationResult.fail, 'Failed to update member details'));
   }
 
   // update [Member]'s role in group
@@ -348,6 +417,10 @@ class DatabaseService {
     @required String memberDocId,
     @required MemberRole role,
   }) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     return await groupsCollection
         .document(groupDocId)
         .collection('members')
@@ -357,6 +430,10 @@ class DatabaseService {
 
   // [Member] accepts [Group] invitation
   Future acceptGroupInvitation(String groupDocId) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     return groupDocId == null || groupDocId.trim() == ''
         ? null
         : await usersCollection.document(userId).get().then((userData) async {
@@ -377,6 +454,10 @@ class DatabaseService {
 
   // [Member] declines [Group] invitation
   Future declineGroupInvitation(String groupDocId) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     return groupDocId == null || groupDocId.trim() == ''
         ? null
         : await groupsCollection.document(groupDocId).updateData({
@@ -392,6 +473,10 @@ class DatabaseService {
 
   // [Member] leaves [Group]
   Future leaveGroup(String groupDocId) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     return groupDocId == null || groupDocId.trim() == ''
         ? null
         : await groupsCollection
@@ -416,91 +501,123 @@ class DatabaseService {
   // Modifying methods for Subject
   // --------------------------------------------------------------------------------
 
-  Future<String> addGroupSubject(String groupDocId, Subject newSubject) async {
-    String subjectDocId = newSubject.name
-        .trim()
-        .replaceAll(RegExp('[^A-Za-z0-9]'), '')
-        .toLowerCase();
+  Future<OperationStatus> addGroupSubject(
+      String groupDocId, Subject newSubject) async {
+    if (!(await dbCheckInternetConnection())) {
+      return OperationStatus(OperationResult.abort, '');
+    }
 
-    return groupDocId == null || groupDocId.trim() == ''
-        ? null
+    return groupDocId == null ||
+            groupDocId.trim() == '' ||
+            newSubject == null ||
+            newSubject.docId == null ||
+            newSubject.docId.trim() == ''
+        ? OperationStatus(OperationResult.fail, 'Failed to add subject')
         : await groupsCollection
             .document(groupDocId)
             .collection('subjects')
-            .document(subjectDocId)
+            .document(newSubject.docId)
             .get()
-            .then((document) async {
-            if (document.exists) {
-              return 'Subject ${newSubject.display} already exists';
-            } else {
-              return await groupsCollection
-                  .document(groupDocId)
-                  .collection('subjects')
-                  .document(subjectDocId)
-                  .setData(
-                {
-                  'name': newSubject.name,
-                  'nickname': newSubject.nickname,
-                },
-              ).then((_) {
-                return 'Successfully added ${newSubject.display}';
-              });
-            }
-          });
+            .then((subject) async => subject.exists
+                ? OperationStatus(OperationResult.fail,
+                    'Subject ${newSubject.docId} already exists')
+                : await groupsCollection
+                    .document(groupDocId)
+                    .collection('subjects')
+                    .document(newSubject.docId)
+                    .setData(
+                      {
+                        'name': newSubject.name,
+                        'nickname': newSubject.nickname,
+                      },
+                    )
+                    .then((_) => OperationStatus(OperationResult.success,
+                        'Successfully added ${newSubject.display}'))
+                    .catchError((_) => OperationStatus(OperationResult.fail,
+                        'Failed to add ${newSubject.display}')))
+            .catchError((_) => OperationStatus(
+                OperationResult.fail, 'Failed to add ${newSubject.display}'));
   }
 
-  Future<String> updateGroupSubject(
+  Future<OperationStatus> updateGroupSubject(
     String groupDocId,
     Subject editSubject,
   ) async {
-    return groupDocId == null || groupDocId.trim() == ''
-        ? null
+    if (!(await dbCheckInternetConnection())) {
+      return OperationStatus(OperationResult.abort, '');
+    }
+
+    return groupDocId == null ||
+            groupDocId.trim() == '' ||
+            editSubject == null ||
+            editSubject.docId == null ||
+            editSubject.docId.trim() == ''
+        ? OperationStatus(OperationResult.fail, 'Failed to update subject')
         : await groupsCollection
             .document(groupDocId)
             .collection('subjects')
             .document(editSubject.docId)
             .get()
-            .then((document) async {
-            if (document.exists) {
-              return await groupsCollection
-                  .document(groupDocId)
-                  .collection('subjects')
-                  .document(editSubject.docId)
-                  .updateData(
-                {
-                  'name': editSubject.name,
-                  'nickname': editSubject.nickname,
-                },
-              ).then((_) {
-                return 'Successfully added ${editSubject.display}';
-              });
-            } else {
-              return 'Subject ${editSubject.display} not found';
-            }
-          });
+            .then((subject) async => subject.exists
+                ? await groupsCollection
+                    .document(groupDocId)
+                    .collection('subjects')
+                    .document(editSubject.docId)
+                    .updateData(
+                      {
+                        'name': editSubject.name,
+                        'nickname': editSubject.nickname,
+                      },
+                    )
+                    .then((_) => OperationStatus(OperationResult.success,
+                        'Successfully added ${editSubject.display}'))
+                    .catchError((_) => OperationStatus(
+                        OperationResult.fail, 'Failed to update subject'))
+                : OperationStatus(OperationResult.fail, 'Subject not found'))
+            .catchError((_) => OperationStatus(
+                OperationResult.fail, 'Failed to add ${editSubject.display}'));
   }
 
-  Future<String> removeGroupSubject(String groupDocId, Subject subject) async {
-    return groupDocId == null || groupDocId.trim() == ''
-        ? null
+  Future<OperationStatus> removeGroupSubject(
+      String groupDocId, Subject subject) async {
+    if (!(await dbCheckInternetConnection())) {
+      return OperationStatus(OperationResult.abort, '');
+    }
+
+    return groupDocId == null ||
+            groupDocId.trim() == '' ||
+            subject == null ||
+            subject.docId == null ||
+            subject.docId.trim() == ''
+        ? OperationStatus(OperationResult.fail, 'Failed to remove subject')
         : await groupsCollection
             .document(groupDocId)
             .collection('subjects')
             .document(subject.docId)
             .delete()
-            .then((_) => 'Successfully removed ${subject.display}')
-            .catchError((_) => 'Failed to remove ${subject.display}');
+            .then((_) => OperationStatus(OperationResult.success,
+                'Successfully removed ${subject.display}'))
+            .catchError((_) => OperationStatus(
+                OperationResult.fail, 'Failed to remove ${subject.display}'));
   }
 
-  Future<bool> updateGroupSubjectsOrder(
+  Future<OperationStatus> updateGroupSubjectsOrder(
       String groupDocId, List<String> subjectMetadatas) async {
-    return groupDocId == null || groupDocId.trim() == ''
-        ? false
+    if (!(await dbCheckInternetConnection())) {
+      return OperationStatus(OperationResult.abort, '');
+    }
+
+    return groupDocId == null ||
+            groupDocId.trim() == '' ||
+            subjectMetadatas == null
+        ? OperationStatus(OperationResult.fail, 'Failed to update subjects')
         : await groupsCollection
             .document(groupDocId)
             .updateData({'subjects': subjectMetadatas})
-            .then((_) => true)
-            .catchError((_) => false);
+            .then((_) => OperationStatus(
+                OperationResult.success, 'Successfully updated subjects order'))
+            .catchError((_) => OperationStatus(
+                OperationResult.fail, 'Failed to update subjects order'));
   }
 
   // --------------------------------------------------------------------------------
@@ -512,6 +629,10 @@ class DatabaseService {
     String groupDocId,
     EditTimetable editTtb,
   ) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     CollectionReference timetablesRef =
         groupsCollection.document(groupDocId).collection('timetables');
 
@@ -612,15 +733,19 @@ class DatabaseService {
   }
 
   // update [Group][Timetable]'s documentID by cloning document with a new ID
-  Future<bool> updateGroupTimetableDocId(
+  Future<OperationStatus> updateGroupTimetableDocId(
     String groupDocId,
     TimetableMetadata oldTimetableMetadata,
     TimetableMetadata newTimetableMetadata,
   ) async {
+    if (!(await dbCheckInternetConnection())) {
+      return OperationStatus(OperationResult.abort, '');
+    }
+
     CollectionReference timetablesRef =
         groupsCollection.document(groupDocId).collection('timetables');
     return groupDocId == null || groupDocId.trim() == ''
-        ? false
+        ? OperationResult.fail
         : await timetablesRef
             .document(newTimetableMetadata.docId)
             .get()
@@ -653,9 +778,11 @@ class DatabaseService {
                   });
                 });
               });
-              return true;
+              return OperationStatus(
+                  OperationResult.success, 'Successfully updated timetable');
             } else {
-              return false;
+              return OperationStatus(
+                  OperationResult.fail, 'Timetable ID already exists');
             }
           });
   }
@@ -664,6 +791,10 @@ class DatabaseService {
     String groupDocId,
     String timetableId,
   ) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     return await groupsCollection
         .document(groupDocId)
         .collection('timetables')
@@ -691,6 +822,10 @@ class DatabaseService {
     String memberDocId,
     List<Time> newTimes,
   ) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     memberDocId =
         memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
 
@@ -759,6 +894,10 @@ class DatabaseService {
     String memberDocId,
     List<Time> removeTimes,
   ) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     memberDocId =
         memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
 
@@ -1011,4 +1150,27 @@ class DatabaseService {
 
     return TimetableGridDataList(value: gridDataList);
   }
+}
+
+enum OperationResult { success, fail, abort }
+
+class OperationStatus {
+  // properties
+  OperationResult _result;
+  String _message;
+
+  // constructor
+  OperationStatus(
+    OperationResult result,
+    String message,
+  )   : this._result = result,
+        this._message = message;
+
+  bool get completed =>
+      this._result == OperationResult.success ||
+      this._result == OperationResult.fail;
+  bool get success => this._result == OperationResult.success;
+  bool get fail => this._result == OperationResult.fail;
+  bool get abort => this._result == OperationResult.abort;
+  String get message => this._message ?? '';
 }

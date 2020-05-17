@@ -100,15 +100,18 @@ class GroupStatus extends ChangeNotifier {
   List<Member> _members;
   List<Subject> _subjects;
 
+  Member _me;
+
   /// constructors
   GroupStatus({
     Group group,
     List<Member> members,
     List<Subject> subjects,
-    bool hasChanges = false,
+    Member me,
   })  : this._group = group,
         this._members = members ?? [],
-        this._subjects = subjects ?? [];
+        this._subjects = subjects ?? [],
+        this._me = me;
 
   // getter methods
   Group get group => this._group;
@@ -117,11 +120,13 @@ class GroupStatus extends ChangeNotifier {
         subjects: this._subjects,
         subjectMetadatas: this._group._subjectMetadatas,
       );
+  Member get me => this._me;
 
   void reset() {
     this._group = null;
     this._members = null;
     this._subjects = null;
+    this._me = null;
   }
 
   // auxiliary functions

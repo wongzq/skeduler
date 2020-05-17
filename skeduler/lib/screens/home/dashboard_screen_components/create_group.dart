@@ -70,6 +70,7 @@ class _CreateGroupState extends State<CreateGroup> {
                       _groupOwnerEmail,
                       _groupOwnerName,
                     );
+                    
                     Navigator.of(context).maybePop();
                   }
                 : null,

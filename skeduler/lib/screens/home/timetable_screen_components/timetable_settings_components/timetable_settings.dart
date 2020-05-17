@@ -85,32 +85,33 @@ class TimetableSettings extends StatelessWidget {
                       ttbStatus.edit.docId.trim() != '' &&
                       ttbStatus.edit.docId != ttbStatus.temp.docId) {
                     // change ID by cloning old document with new ID
-                    await dbService
-                        .updateGroupTimetableDocId(
+                    OperationStatus status =
+                        await dbService.updateGroupTimetableDocId(
                       groupStatus.group.docId,
                       ttbStatus.edit.metadata,
                       ttbStatus.temp.metadata,
-                    )
-                        .then((changed) async {
-                      if (changed) {
-                        // Update document with new data
-                        ttbStatus.edit.updateTimetableSettings(
-                          docId: ttbStatus.temp.docId,
-                          startDate: ttbStatus.temp.startDate,
-                          endDate: ttbStatus.temp.endDate,
-                          axisDay: ttbStatus.temp.axisDay,
-                          axisTime: ttbStatus.temp.axisTime,
-                          axisCustom: ttbStatus.temp.axisCustom,
-                        );
-                        ttbStatus.update();
-                        Navigator.of(context).maybePop();
-                      } else {
-                        Fluttertoast.showToast(
-                          msg: 'Timetable ID already exists',
-                          toastLength: Toast.LENGTH_LONG,
-                        );
-                      }
-                    });
+                    );
+
+                    if (status.completed) {
+                      Fluttertoast.showToast(
+                        msg: status.message,
+                        toastLength: Toast.LENGTH_LONG,
+                      );
+                    }
+
+                    if (status.success) {
+                      // Update document with new data
+                      ttbStatus.edit.updateTimetableSettings(
+                        docId: ttbStatus.temp.docId,
+                        startDate: ttbStatus.temp.startDate,
+                        endDate: ttbStatus.temp.endDate,
+                        axisDay: ttbStatus.temp.axisDay,
+                        axisTime: ttbStatus.temp.axisTime,
+                        axisCustom: ttbStatus.temp.axisCustom,
+                      );
+                      ttbStatus.update();
+                      Navigator.of(context).maybePop();
+                    }
                   }
                 }
               },

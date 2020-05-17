@@ -94,7 +94,7 @@ class _AxisTimeState extends State<AxisTime> {
                       Text('Edit'),
                     ],
                   ),
-                  value: TimeslotOption.edit,
+                  value: AvailabilityOption.edit,
                 ),
                 PopupMenuItem(
                   child: Row(
@@ -104,13 +104,13 @@ class _AxisTimeState extends State<AxisTime> {
                       Text('Remove'),
                     ],
                   ),
-                  value: TimeslotOption.remove,
+                  value: AvailabilityOption.remove,
                 ),
               ];
             },
             onSelected: (val) {
               switch (val) {
-                case TimeslotOption.edit:
+                case AvailabilityOption.edit:
                   showDialog(
                     context: context,
                     builder: (context) {
@@ -164,7 +164,7 @@ class _AxisTimeState extends State<AxisTime> {
                   );
                   break;
 
-                case TimeslotOption.remove:
+                case AvailabilityOption.remove:
                   showDialog(
                     context: context,
                     builder: (context) {

@@ -68,25 +68,22 @@ class _AddMemberState extends State<AddMember> {
                   ),
                   onPressed: () async {
                     if (_formKeyEmail.currentState.validate()) {
-                      await dbService
-                          .inviteMemberToGroup(
+                      OperationStatus status =
+                          await dbService.inviteMemberToGroup(
                         groupDocId: groupStatus.group.docId,
                         newMemberEmail: _newMemberEmail,
-                      )
-                          .then((errorMsg) {
-                        if (errorMsg == null) {
-                          Fluttertoast.showToast(
-                            msg: _newMemberEmail + ' has been invited',
-                            toastLength: Toast.LENGTH_LONG,
-                          );
-                          Navigator.of(context).maybePop();
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: errorMsg,
-                            toastLength: Toast.LENGTH_LONG,
-                          );
-                        }
-                      });
+                      );
+
+                      if (status.completed) {
+                        Fluttertoast.showToast(
+                          msg: status.message,
+                          toastLength: Toast.LENGTH_LONG,
+                        );
+                      }
+
+                      if (status.success) {
+                        Navigator.of(context).maybePop();
+                      }
                     }
                   },
                 ),

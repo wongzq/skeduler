@@ -229,27 +229,25 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
                         if (formKey.currentState.validate()) {
                           Navigator.of(dialogContext).maybePop();
 
-
-                          await dbService
-                              .addGroupSubject(
+                          OperationStatus status =
+                              await dbService.addGroupSubject(
                                   groupStatus.group.docId,
                                   Subject(
                                     name: newSubjectName,
                                     nickname: newSubjectNickname,
-                                  ))
-                              .then((returnMsg) {
-                            Navigator.of(context)
-                                .pushNamed('/subjects', arguments: RouteArgs());
+                                  ));
+
+                          if (status.completed) {
                             Fluttertoast.showToast(
-                              msg: returnMsg,
+                              msg: status.message,
                               toastLength: Toast.LENGTH_LONG,
                             );
-                          });
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: 'Failed to update subjects',
-                            toastLength: Toast.LENGTH_LONG,
-                          );
+                          }
+
+                          if (status.success) {
+                            Navigator.of(context)
+                                .pushNamed('/subjects', arguments: RouteArgs());
+                          }
                         }
                       },
                     ),

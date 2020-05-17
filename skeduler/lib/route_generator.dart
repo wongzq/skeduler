@@ -86,7 +86,6 @@ class RouteGenerator {
         if (args is RouteArgsEditMember) {
           return CustomTransitionRoute.fadeSlideRight(
               page: wrapWidget(EditMember(
-            me: args.me,
             member: args.member,
           )));
         }

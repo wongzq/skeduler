@@ -118,25 +118,22 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                     backgroundColor: getFABIconBackgroundColor(context),
                     child: Icon(Icons.save),
                     onPressed: () async {
-                      await _dbService
-                          .updateGroupSubjectsOrder(
+                      OperationStatus status =
+                          await _dbService.updateGroupSubjectsOrder(
                         _groupStatus.group.docId,
                         _tempSubjectMetadatas,
-                      )
-                          .then((_) {
-                        setState(() {
-                          _orderChanged = false;
-                        });
+                      );
+
+                      if (status.completed) {
                         Fluttertoast.showToast(
-                          msg: 'Successfully updated subjects order',
+                          msg: status.message,
                           toastLength: Toast.LENGTH_LONG,
                         );
-                      }).catchError((_) {
-                        Fluttertoast.showToast(
-                          msg: 'Failed to update subjects order',
-                          toastLength: Toast.LENGTH_LONG,
-                        );
-                      });
+                      }
+
+                      if (status.success) {
+                        setState(() => _orderChanged = false);
+                      }
                     },
                   ),
                 ),
