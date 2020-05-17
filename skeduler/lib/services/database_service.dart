@@ -992,7 +992,7 @@ class DatabaseService {
               snapshot.data['timetables'] ?? [],
             ),
           )
-        : Group(docId: null);
+        : null;
   }
 
   // convert snapshot to [Member]
