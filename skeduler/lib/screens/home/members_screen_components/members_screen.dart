@@ -91,21 +91,18 @@ class _MembersScreenState extends State<MembersScreen> {
                             physics: BouncingScrollPhysics(
                               parent: AlwaysScrollableScrollPhysics(),
                             ),
-                            itemCount: members != null && members.isNotEmpty
-                                ? members.length
-                                : 0,
+                            itemCount: members != null ? members.length : 0,
                             itemBuilder: (context, index) {
                               if (members != null) {
                                 members.sort((a, b) =>
                                     b.role.index.compareTo(a.role.index));
+                                return MemberListTile(
+                                  me: groupStatus.me,
+                                  member: members[index],
+                                );
+                              } else {
+                                return Container();
                               }
-
-                              return members != null && members[index] != null
-                                  ? MemberListTile(
-                                      me: groupStatus.me,
-                                      member: members[index],
-                                    )
-                                  : Container();
                             },
                           ),
                         );
