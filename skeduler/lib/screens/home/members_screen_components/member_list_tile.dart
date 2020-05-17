@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
@@ -234,114 +233,103 @@ class MemberListTile extends StatelessWidget {
                         }
                       },
                       onSelected: (value) async {
-                        if (await checkInternetConnection()) {
-                          if (value == MemberOption.makeOwner) {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: Text(
-                                      'Transfer ownership to ' +
-                                          (member.name ?? ''),
-                                      style: TextStyle(fontSize: 16.0),
-                                    ),
-                                    content: Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Form(
-                                            key: formKey,
-                                            child: TextFormField(
-                                              autofocus: true,
-                                              decoration: InputDecoration(
-                                                  hintText: 'Type \'Confirm\''),
-                                              validator: (value) {
-                                                if (value == 'Confirm') {
-                                                  return null;
-                                                } else {
-                                                  return 'Word doesn\'t match';
-                                                }
-                                              },
-                                            ),
+                        if (value == MemberOption.makeOwner) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    'Transfer ownership to ' +
+                                        (member.name ?? ''),
+                                    style: TextStyle(fontSize: 16.0),
+                                  ),
+                                  content: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Form(
+                                          key: formKey,
+                                          child: TextFormField(
+                                            autofocus: true,
+                                            decoration: InputDecoration(
+                                                hintText: 'Type \'Confirm\''),
+                                            validator: (value) {
+                                              if (value == 'Confirm') {
+                                                return null;
+                                              } else {
+                                                return 'Word doesn\'t match';
+                                              }
+                                            },
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                    actions: <Widget>[
-                                      // CANCEL button
-                                      FlatButton(
-                                        child: Text('CANCEL'),
-                                        onPressed: () {
-                                          Navigator.of(context).maybePop();
-                                        },
-                                      ),
-
-                                      // CONFIRM button
-                                      FlatButton(
-                                        child: Text('CONFIRM'),
-                                        onPressed: () async {
-                                          if (formKey.currentState.validate()) {
-                                            Navigator.of(context).maybePop();
-
-                                            await dbService
-                                                .updateGroupMemberRole(
-                                              groupDocId:
-                                                  groupStatus.group.docId,
-                                              memberDocId: member.docId,
-                                              role: MemberRole.owner,
-                                            );
-                                            await dbService
-                                                .updateGroupMemberRole(
-                                              groupDocId:
-                                                  groupStatus.group.docId,
-                                              memberDocId: me.docId,
-                                              role: MemberRole.admin,
-                                            );
-
-                                            await dbService.updateGroupData(
-                                              groupStatus.group.docId,
-                                              name: groupStatus.group.name,
-                                              description:
-                                                  groupStatus.group.description,
-                                              colorShade:
-                                                  groupStatus.group.colorShade,
-                                              ownerName: member.name,
-                                              ownerEmail: member.docId,
-                                            );
-                                          }
-                                        },
                                       ),
                                     ],
-                                  );
-                                });
-                          } else if (value == MemberOption.makeAdmin) {
-                            await dbService.updateGroupMemberRole(
-                              groupDocId: groupStatus.group.docId,
-                              memberDocId: member.docId,
-                              role: MemberRole.admin,
-                            );
-                          } else if (value == MemberOption.makeMember) {
-                            await dbService.updateGroupMemberRole(
-                              groupDocId: groupStatus.group.docId,
-                              memberDocId: member.docId,
-                              role: MemberRole.member,
-                            );
-                          } else if (value == MemberOption.edit) {
-                            Navigator.of(context).pushNamed(
-                              '/members/editMember',
-                              arguments: RouteArgsEditMember(
-                                member: member,
-                              ),
-                            );
-                          } else if (value == MemberOption.remove) {
-                            await dbService.removeMemberFromGroup(
-                              groupDocId: groupStatus.group.docId,
-                              memberDocId: member.docId,
-                            );
-                          }
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: 'Please check your internet connection',
-                            toastLength: Toast.LENGTH_LONG,
+                                  ),
+                                  actions: <Widget>[
+                                    // CANCEL button
+                                    FlatButton(
+                                      child: Text('CANCEL'),
+                                      onPressed: () {
+                                        Navigator.of(context).maybePop();
+                                      },
+                                    ),
+
+                                    // CONFIRM button
+                                    FlatButton(
+                                      child: Text('CONFIRM'),
+                                      onPressed: () async {
+                                        if (formKey.currentState.validate()) {
+                                          Navigator.of(context).maybePop();
+
+                                          await dbService.updateGroupMemberRole(
+                                            groupDocId: groupStatus.group.docId,
+                                            memberDocId: member.docId,
+                                            role: MemberRole.owner,
+                                          );
+                                          await dbService.updateGroupMemberRole(
+                                            groupDocId: groupStatus.group.docId,
+                                            memberDocId: me.docId,
+                                            role: MemberRole.admin,
+                                          );
+
+                                          await dbService.updateGroupData(
+                                            groupStatus.group.docId,
+                                            name: groupStatus.group.name,
+                                            description:
+                                                groupStatus.group.description,
+                                            colorShade:
+                                                groupStatus.group.colorShade,
+                                            ownerName: member.name,
+                                            ownerEmail: member.docId,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+                        } else if (value == MemberOption.makeAdmin) {
+                          await dbService.updateGroupMemberRole(
+                            groupDocId: groupStatus.group.docId,
+                            memberDocId: member.docId,
+                            role: MemberRole.admin,
+                          );
+                        } else if (value == MemberOption.makeMember) {
+                          await dbService.updateGroupMemberRole(
+                            groupDocId: groupStatus.group.docId,
+                            memberDocId: member.docId,
+                            role: MemberRole.member,
+                          );
+                        } else if (value == MemberOption.edit) {
+                          Navigator.of(context).pushNamed(
+                            '/members/editMember',
+                            arguments: RouteArgsEditMember(
+                              member: member,
+                            ),
+                          );
+                        } else if (value == MemberOption.remove) {
+                          await dbService.removeMemberFromGroup(
+                            groupDocId: groupStatus.group.docId,
+                            memberDocId: member.docId,
                           );
                         }
                       },

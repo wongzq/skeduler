@@ -136,44 +136,45 @@ class MyApp extends StatelessWidget {
                                                         .streamGroupMemberMe(
                                                             groupDocId.value),
                                                     builder: (_, meSnap) {
-                                                      GroupStatus groupStatus =
-                                                          GroupStatus(
-                                                        group: groupDocId
-                                                                    .value !=
-                                                                null
-                                                            ? groupSnap != null
-                                                                ? groupSnap.data
-                                                                : null
-                                                            : null,
-                                                        members: groupDocId
-                                                                    .value !=
-                                                                null
-                                                            ? membersSnap !=
-                                                                    null
-                                                                ? membersSnap
-                                                                    .data
-                                                                : null
-                                                            : null,
-                                                        subjects: groupDocId
-                                                                    .value !=
-                                                                null
-                                                            ? subjectsSnap !=
-                                                                    null
-                                                                ? subjectsSnap
-                                                                    .data
-                                                                : null
-                                                            : null,
-                                                        me: groupDocId.value !=
-                                                                null
-                                                            ? meSnap != null
-                                                                ? meSnap.data
-                                                                : null
-                                                            : null,
-                                                      );
                                                       // Provider for GroupStatus
                                                       return ChangeNotifierProvider<
                                                           GroupStatus>.value(
-                                                        value: groupStatus,
+                                                        value: GroupStatus(
+                                                          group: groupDocId
+                                                                      .value !=
+                                                                  null
+                                                              ? groupSnap !=
+                                                                      null
+                                                                  ? groupSnap
+                                                                      .data
+                                                                  : null
+                                                              : null,
+                                                          members: groupDocId
+                                                                      .value !=
+                                                                  null
+                                                              ? membersSnap !=
+                                                                      null
+                                                                  ? membersSnap
+                                                                      .data
+                                                                  : null
+                                                              : null,
+                                                          subjects: groupDocId
+                                                                      .value !=
+                                                                  null
+                                                              ? subjectsSnap !=
+                                                                      null
+                                                                  ? subjectsSnap
+                                                                      .data
+                                                                  : null
+                                                              : null,
+                                                          me: groupDocId
+                                                                      .value !=
+                                                                  null
+                                                              ? meSnap != null
+                                                                  ? meSnap.data
+                                                                  : null
+                                                              : null,
+                                                        ),
                                                         child: MaterialApp(
                                                           title: 'Skeduler',
                                                           debugShowCheckedModeBanner:

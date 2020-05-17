@@ -8,6 +8,7 @@ import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class AddDummy extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class AddDummy extends StatefulWidget {
 }
 
 class _AddDummyState extends State<AddDummy> {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _formKeyName = GlobalKey<FormState>();
 
   String _newDummyId;
@@ -29,6 +31,7 @@ class _AddDummyState extends State<AddDummy> {
     return groupStatus.group == null
         ? Loading()
         : Scaffold(
+            key: _scaffoldKey,
             appBar: AppBar(
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,6 +74,34 @@ class _AddDummyState extends State<AddDummy> {
                     _formKeyName.currentState.validate();
 
                     if (_formKeyName.currentState.validate()) {
+                      _scaffoldKey.currentState.showSnackBar(
+                        SnackBar(
+                          backgroundColor:
+                              Theme.of(context).scaffoldBackgroundColor,
+                          content: Row(
+                            children: <Widget>[
+                              CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  getOriginThemeData(
+                                    ThemeProvider.themeOf(context).id,
+                                  ).accentColor,
+                                ),
+                              ),
+                              SizedBox(width: 20.0),
+                              Text(
+                                'Adding dummy . . .',
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .primaryTextTheme
+                                      .bodyText1
+                                      .color,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+
                       // format dummy details
                       OperationStatus status = await dbService.addDummyToGroup(
                         groupDocId: groupStatus.group.docId,
@@ -85,6 +116,7 @@ class _AddDummyState extends State<AddDummy> {
                       );
 
                       if (status.completed) {
+                        _scaffoldKey.currentState.hideCurrentSnackBar();
                         Fluttertoast.showToast(
                           msg: status.message,
                           toastLength: Toast.LENGTH_LONG,

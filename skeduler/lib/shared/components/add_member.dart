@@ -7,6 +7,7 @@ import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:theme_provider/theme_provider.dart';
 
 class AddMember extends StatefulWidget {
   @override
@@ -14,6 +15,7 @@ class AddMember extends StatefulWidget {
 }
 
 class _AddMemberState extends State<AddMember> {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _formKeyEmail = GlobalKey<FormState>();
   String _newMemberEmail;
 
@@ -25,6 +27,7 @@ class _AddMemberState extends State<AddMember> {
     return groupStatus.group == null
         ? Loading()
         : Scaffold(
+          key: _scaffoldKey,
             appBar: AppBar(
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,6 +71,34 @@ class _AddMemberState extends State<AddMember> {
                   ),
                   onPressed: () async {
                     if (_formKeyEmail.currentState.validate()) {
+                      _scaffoldKey.currentState.showSnackBar(
+                        SnackBar(
+                          backgroundColor:
+                              Theme.of(context).scaffoldBackgroundColor,
+                          content: Row(
+                            children: <Widget>[
+                              CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  getOriginThemeData(
+                                    ThemeProvider.themeOf(context).id,
+                                  ).accentColor,
+                                ),
+                              ),
+                              SizedBox(width: 20.0),
+                              Text(
+                                'Inviting member . . .',
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .primaryTextTheme
+                                      .bodyText1
+                                      .color,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                      
                       OperationStatus status =
                           await dbService.inviteMemberToGroup(
                         groupDocId: groupStatus.group.docId,
@@ -75,6 +106,7 @@ class _AddMemberState extends State<AddMember> {
                       );
 
                       if (status.completed) {
+                        _scaffoldKey.currentState.hideCurrentSnackBar();
                         Fluttertoast.showToast(
                           msg: status.message,
                           toastLength: Toast.LENGTH_LONG,

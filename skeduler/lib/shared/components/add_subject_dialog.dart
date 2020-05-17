@@ -94,6 +94,7 @@ class _AddSubjectDialogState extends State<AddSubjectDialog> {
           child: Text('SAVE'),
           onPressed: () async {
             if (widget.formKey.currentState.validate()) {
+            
               OperationStatus status = await dbService.addGroupSubject(
                 groupStatus.group.docId,
                 Subject(
