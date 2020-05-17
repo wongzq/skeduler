@@ -3,7 +3,7 @@ import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/screens/home/settings_screen_components/change_theme.dart';
 import 'package:skeduler/screens/home/settings_screen_components/change_user_data.dart';
-import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -15,10 +15,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Group',
-          style: textStyleAppBarTitle,
-        ),
+        title: AppBarTitle(title: 'Settings'),
       ),
       drawer: HomeDrawer(DrawerEnum.settings),
       body: Column(

@@ -11,6 +11,7 @@ import 'package:skeduler/screens/home/members_screen_components/members_screen_o
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class MembersScreen extends StatefulWidget {
   @override
@@ -33,24 +34,11 @@ class _MembersScreenState extends State<MembersScreen> {
               return members == null || members.isEmpty
                   ? Scaffold(
                       appBar: AppBar(
-                        title: groupStatus.group.name == null
-                            ? Text(
-                                'Members',
-                                style: textStyleAppBarTitle,
-                              )
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    groupStatus.group.name,
-                                    style: textStyleAppBarTitle,
-                                  ),
-                                  Text(
-                                    'Members',
-                                    style: textStyleBody,
-                                  )
-                                ],
-                              ),
+                        title: AppBarTitle(
+                          title: groupStatus.group.name,
+                          alternateTitle: 'Members',
+                          subtitle: 'Members',
+                        ),
                       ),
                       drawer: HomeDrawer(DrawerEnum.members),
                     )
@@ -58,25 +46,11 @@ class _MembersScreenState extends State<MembersScreen> {
                       ? Loading()
                       : Scaffold(
                           appBar: AppBar(
-                            title: groupStatus.group.name == null
-                                ? Text(
-                                    'Members',
-                                    style: textStyleAppBarTitle,
-                                  )
-                                : Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        groupStatus.group.name,
-                                        style: textStyleAppBarTitle,
-                                      ),
-                                      Text(
-                                        'Members',
-                                        style: textStyleBody,
-                                      )
-                                    ],
-                                  ),
+                            title: AppBarTitle(
+                              title: groupStatus.group.name,
+                              alternateTitle: 'Members',
+                              subtitle: 'Members',
+                            ),
                           ),
                           drawer: HomeDrawer(DrawerEnum.members),
                           floatingActionButton:

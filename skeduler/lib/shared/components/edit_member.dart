@@ -8,6 +8,7 @@ import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class EditMember extends StatefulWidget {
   final Member member;
@@ -46,20 +47,12 @@ class _EditMemberState extends State<EditMember> {
         ? Loading()
         : Scaffold(
             appBar: AppBar(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    groupStatus.group.name,
-                    style: textStyleAppBarTitle,
-                  ),
-                  Text(
-                    widget.member.role == MemberRole.dummy
-                        ? 'Edit dummy'
-                        : 'Edit member',
-                    style: textStyleBody,
-                  ),
-                ],
+              title: AppBarTitle(
+                title: groupStatus.group.name,
+                alternateTitle: 'Group',
+                subtitle: widget.member.role == MemberRole.dummy
+                    ? 'Edit dummy'
+                    : 'Edit member',
               ),
             ),
             floatingActionButton: Row(
@@ -154,7 +147,7 @@ class _EditMemberState extends State<EditMember> {
                           toastLength: Toast.LENGTH_LONG,
                         );
                       }
-                      
+
                       if (status.success) {
                         Navigator.of(context).maybePop();
                       }

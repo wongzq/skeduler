@@ -9,6 +9,7 @@ import 'package:skeduler/screens/home/group_screen_components/group_screen_optio
 import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class GroupScreen extends StatefulWidget {
   final void Function({String groupName}) refresh;
@@ -26,36 +27,18 @@ class _GroupScreenState extends State<GroupScreen> {
 
     return groupStatus.group == null
         ? Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'Group',
-                style: textStyleAppBarTitle,
-              ),
-            ),
+            appBar: AppBar(title: AppBarTitle(title: 'Group')),
             drawer: HomeDrawer(DrawerEnum.group),
           )
         : groupStatus.me == null
             ? Loading()
             : Scaffold(
                 appBar: AppBar(
-                  title: groupStatus.group.name == null
-                      ? Text(
-                          'Group',
-                          style: textStyleAppBarTitle,
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              groupStatus.group.name,
-                              style: textStyleAppBarTitle,
-                            ),
-                            Text(
-                              'Group',
-                              style: textStyleBody,
-                            )
-                          ],
-                        ),
+                  title: AppBarTitle(
+                    title: groupStatus.group.name,
+                    alternateTitle: 'Group',
+                    subtitle: 'Group',
+                  ),
                 ),
                 drawer: HomeDrawer(DrawerEnum.group),
                 floatingActionButton: groupStatus.me != null

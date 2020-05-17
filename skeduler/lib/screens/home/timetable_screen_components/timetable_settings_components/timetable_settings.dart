@@ -14,6 +14,7 @@ import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class TimetableSettings extends StatelessWidget {
   @override
@@ -42,24 +43,11 @@ class TimetableSettings extends StatelessWidget {
 
                 Navigator.of(context).maybePop();
               }),
-          title: ttbStatus.temp.docId == null
-              ? Text(
-                  'Timetable Settings',
-                  style: textStyleAppBarTitle,
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      ttbStatus.temp.docId,
-                      style: textStyleAppBarTitle,
-                    ),
-                    Text(
-                      'Timetable Settings',
-                      style: textStyleBody,
-                    )
-                  ],
-                ),
+          title: AppBarTitle(
+            title: ttbStatus.temp.docId,
+            alternateTitle: 'Timetable settings',
+            subtitle: 'Timetable settings',
+          ),
         ),
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,

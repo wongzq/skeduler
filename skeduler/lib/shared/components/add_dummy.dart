@@ -8,7 +8,7 @@ import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
-import 'package:theme_provider/theme_provider.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class AddDummy extends StatefulWidget {
   @override
@@ -20,8 +20,8 @@ class _AddDummyState extends State<AddDummy> {
   GlobalKey<FormState> _formKeyName = GlobalKey<FormState>();
 
   String _newDummyId;
-  String _newDummyNickname;
   String _newDummyName;
+  String _newDummyNickname;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class _AddDummyState extends State<AddDummy> {
                   Text(
                     'Add dummy',
                     style: textStyleBody,
-                  )
+                  ),
                 ],
               ),
             ),
@@ -71,35 +71,10 @@ class _AddDummyState extends State<AddDummy> {
                   backgroundColor: Colors.green,
                   onPressed: () async {
                     unfocus();
-                    _formKeyName.currentState.validate();
 
                     if (_formKeyName.currentState.validate()) {
                       _scaffoldKey.currentState.showSnackBar(
-                        SnackBar(
-                          backgroundColor:
-                              Theme.of(context).scaffoldBackgroundColor,
-                          content: Row(
-                            children: <Widget>[
-                              CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  getOriginThemeData(
-                                    ThemeProvider.themeOf(context).id,
-                                  ).accentColor,
-                                ),
-                              ),
-                              SizedBox(width: 20.0),
-                              Text(
-                                'Adding dummy . . .',
-                                style: TextStyle(
-                                  color: Theme.of(context)
-                                      .primaryTextTheme
-                                      .bodyText1
-                                      .color,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        LoadingSnackBar(context, 'Adding dummy . . .'),
                       );
 
                       // format dummy details

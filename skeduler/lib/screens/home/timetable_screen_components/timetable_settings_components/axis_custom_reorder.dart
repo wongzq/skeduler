@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_custom.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class AxisCustomReoder extends StatefulWidget {
   final List<String> axisCustom;
@@ -137,7 +138,7 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reorder'),
+        title: AppBarTitle(title: 'Reorder'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),

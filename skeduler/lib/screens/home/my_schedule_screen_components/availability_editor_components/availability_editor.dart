@@ -7,6 +7,7 @@ import 'package:skeduler/screens/home/my_schedule_screen_components/availability
 import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/month_editor.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/time_editor.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class AvailabilityEditor extends StatelessWidget {
   @override
@@ -22,24 +23,11 @@ class AvailabilityEditor extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        title: groupStatus.group.name == null
-            ? Text(
-                'My Schedule Editor',
-                style: textStyleAppBarTitle,
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    groupStatus.group.name,
-                    style: textStyleAppBarTitle,
-                  ),
-                  Text(
-                    'My Schedule Editor',
-                    style: textStyleBody,
-                  )
-                ],
-              ),
+        title: AppBarTitle(
+          title: groupStatus.group.name,
+          alternateTitle: 'My schedule editor',
+          subtitle: 'My schedule editor',
+        ),
       ),
       body: SafeArea(
         child: LayoutBuilder(

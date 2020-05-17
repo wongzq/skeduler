@@ -16,6 +16,7 @@ import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 enum CopyTimetableType { copyTimetable, copyTimetableAxes }
@@ -53,10 +54,7 @@ class _NewTimetableState extends State<NewTimetable> {
 
                 Navigator.of(context).maybePop();
               }),
-          title: Text(
-            'New Timetable',
-            style: textStyleAppBarTitle,
-          ),
+          title: AppBarTitle(title: 'New Timetable'),
           actions: <Widget>[
             PopupMenuButton<CopyTimetableData>(
               icon: Icon(Icons.content_copy),

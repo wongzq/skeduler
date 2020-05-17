@@ -9,6 +9,7 @@ import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class DashboardScreen extends StatelessWidget {
   // properties
@@ -22,12 +23,7 @@ class DashboardScreen extends StatelessWidget {
         Provider.of<ValueNotifier<String>>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Dashboard',
-          style: textStyleAppBarTitle,
-        ),
-      ),
+      appBar: AppBar(title: AppBarTitle(title: 'Dashboard')),
       drawer: HomeDrawer(DrawerEnum.dashboard),
       floatingActionButton: FloatingActionButton(
         foregroundColor: getFABIconForegroundColor(context),

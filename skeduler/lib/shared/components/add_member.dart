@@ -7,6 +7,7 @@ import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class AddMember extends StatefulWidget {
@@ -27,20 +28,12 @@ class _AddMemberState extends State<AddMember> {
     return groupStatus.group == null
         ? Loading()
         : Scaffold(
-          key: _scaffoldKey,
+            key: _scaffoldKey,
             appBar: AppBar(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    groupStatus.group.name,
-                    style: textStyleAppBarTitle,
-                  ),
-                  Text(
-                    'Add member',
-                    style: textStyleBody,
-                  ),
-                ],
+              title: AppBarTitle(
+                title: groupStatus.group.name,
+                alternateTitle: 'Add member',
+                subtitle: 'Add member',
               ),
             ),
             floatingActionButton: Row(
@@ -98,7 +91,7 @@ class _AddMemberState extends State<AddMember> {
                           ),
                         ),
                       );
-                      
+
                       OperationStatus status =
                           await dbService.inviteMemberToGroup(
                         groupDocId: groupStatus.group.docId,

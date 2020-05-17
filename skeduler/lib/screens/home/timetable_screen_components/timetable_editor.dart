@@ -14,6 +14,7 @@ import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/add_subject_dialog.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 enum TimetableEditorOption {
   switchAxis,
@@ -41,31 +42,19 @@ class _TimetableEditorState extends State<TimetableEditor> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            icon: Icon(
-              Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
-            ),
-            onPressed: () {
-              ttbStatus.edit = null;
-              Navigator.of(context).maybePop();
-            }),
-        title: ttbStatus.edit == null
-            ? Text(
-                'Timetable Editor',
-                style: textStyleAppBarTitle,
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    ttbStatus.edit.docId ?? '',
-                    style: textStyleAppBarTitle,
-                  ),
-                  Text(
-                    'Timetable Editor',
-                    style: textStyleBody,
-                  )
-                ],
-              ),
+          icon: Icon(
+            Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
+          ),
+          onPressed: () {
+            ttbStatus.edit = null;
+            Navigator.of(context).maybePop();
+          },
+        ),
+        title: AppBarTitle(
+          title: ttbStatus.edit == null ? null : ttbStatus.edit.docId,
+          alternateTitle: 'Timetable editor',
+          subtitle: 'Timetable editor',
+        ),
         actions: <Widget>[
           PopupMenuButton<TimetableEditorOption>(
             itemBuilder: (context) {

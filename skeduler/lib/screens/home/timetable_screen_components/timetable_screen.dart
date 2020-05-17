@@ -11,6 +11,7 @@ import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_display.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class TimetableScreen extends StatefulWidget {
   @override
@@ -58,26 +59,20 @@ class _TimetableScreenState extends State<TimetableScreen> {
                 ? Container()
                 : Scaffold(
                     appBar: AppBar(
-                      title: groupStatus.group.name == null ||
-                              timetable == null ||
-                              !timetable.isValid
-                          ? Text(
-                              'Timetable',
-                              style: textStyleAppBarTitle,
-                            )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  groupStatus.group.name,
-                                  style: textStyleAppBarTitle,
-                                ),
-                                Text(
-                                  'Timetable: ${ttbStatus.curr.docId}',
-                                  style: textStyleBody,
-                                ),
-                              ],
-                            ),
+                      title: AppBarTitle(
+                        title: groupStatus.group.name == null ||
+                                timetable == null ||
+                                !timetable.isValid
+                            ? null
+                            : groupStatus.group.name,
+                        alternateTitle: 'Timetable',
+                        subtitle: groupStatus.group.name == null ||
+                                timetable == null ||
+                                !timetable.isValid ||
+                                ttbStatus.curr == null
+                            ? null
+                            : 'Timetable: ${ttbStatus.curr.docId}',
+                      ),
                       actions: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(right: 10.0),

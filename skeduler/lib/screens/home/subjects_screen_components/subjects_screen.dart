@@ -10,6 +10,7 @@ import 'package:skeduler/shared/components/add_subject_dialog.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class SubjectsScreen extends StatefulWidget {
   @override
@@ -87,24 +88,11 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
         ? Loading()
         : Scaffold(
             appBar: AppBar(
-              title: _groupStatus.group.name == null
-                  ? Text(
-                      'Subjects',
-                      style: textStyleAppBarTitle,
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          _groupStatus.group.name,
-                          style: textStyleAppBarTitle,
-                        ),
-                        Text(
-                          'Subjects',
-                          style: textStyleBody,
-                        ),
-                      ],
-                    ),
+              title: AppBarTitle(
+                title: _groupStatus.group.name,
+                alternateTitle: 'Subjects',
+                subtitle: 'Subjects',
+              ),
             ),
             drawer: HomeDrawer(DrawerEnum.subjects),
             floatingActionButton: Column(

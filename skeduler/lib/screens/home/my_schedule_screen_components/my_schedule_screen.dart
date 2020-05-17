@@ -6,6 +6,7 @@ import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/availability_tab.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class MyScheduleScreen extends StatefulWidget {
   @override
@@ -46,24 +47,11 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
         : Scaffold(
             appBar: AppBar(
               elevation: 0.0,
-              title: groupStatus.group.name == null
-                  ? Text(
-                      'My Schedule',
-                      style: textStyleAppBarTitle,
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          groupStatus.group.name,
-                          style: textStyleAppBarTitle,
-                        ),
-                        Text(
-                          'My Schedule',
-                          style: textStyleBody,
-                        )
-                      ],
-                    ),
+              title: AppBarTitle(
+                title: groupStatus.group.name,
+                alternateTitle: 'My schedule',
+                subtitle: 'My schedule',
+              ),
               bottom: TabBar(
                 onTap: (tab) {
                   setState(() {});
