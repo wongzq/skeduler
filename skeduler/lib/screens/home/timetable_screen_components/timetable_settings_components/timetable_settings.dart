@@ -60,9 +60,21 @@ class TimetableSettings extends StatelessWidget {
                     )
                   ],
                 ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.check),
+        ),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            FloatingActionButton(
+              heroTag: 'Timetable Settings Cancel',
+              backgroundColor: Colors.red,
+              child: Icon(Icons.close),
+              onPressed: () => Navigator.of(context).maybePop(),
+            ),
+            SizedBox(width: 20.0),
+            FloatingActionButton(
+              heroTag: 'Timetable Settings Confirm',
+              backgroundColor: Colors.green,
+              child: Icon(Icons.check),
               onPressed: () async {
                 if (formKey.currentState.validate()) {
                   // check if new timetable (docId is null)
@@ -115,7 +127,7 @@ class TimetableSettings extends StatelessWidget {
                   }
                 }
               },
-            )
+            ),
           ],
         ),
         body: ListView(

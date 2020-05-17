@@ -53,13 +53,25 @@ class _CreateGroupState extends State<CreateGroup> {
           'Create group',
           style: textStyleAppBarTitle,
         ),
+      ),
 
-        // Icon: Tick to update
-        actions: <Widget>[
-          FlatButton(
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          FloatingActionButton(
+            heroTag: 'Create Group Cancel',
+            backgroundColor: Colors.red,
+            child: Icon(Icons.close),
+            onPressed: () => Navigator.of(context).maybePop(),
+          ),
+          SizedBox(width: 20.0),
+          FloatingActionButton(
+            heroTag: 'Create Group Confirm',
+            backgroundColor:
+                _nameValid && _descValid ? Colors.green : Colors.grey,
             child: Icon(
               Icons.check,
-              color: _nameValid && _descValid ? Colors.green : null,
+              color: Colors.white,
             ),
             onPressed: _nameValid && _descValid
                 ? () {
@@ -70,7 +82,7 @@ class _CreateGroupState extends State<CreateGroup> {
                       _groupOwnerEmail,
                       _groupOwnerName,
                     );
-                    
+
                     Navigator.of(context).maybePop();
                   }
                 : null,
