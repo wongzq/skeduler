@@ -54,14 +54,20 @@ class TimetableSettings extends StatelessWidget {
             FloatingActionButton(
               heroTag: 'Timetable Settings Cancel',
               backgroundColor: Colors.red,
-              child: Icon(Icons.close),
+              child: Icon(
+                Icons.close,
+                color: Colors.white,
+              ),
               onPressed: () => Navigator.of(context).maybePop(),
             ),
             SizedBox(width: 20.0),
             FloatingActionButton(
               heroTag: 'Timetable Settings Confirm',
               backgroundColor: Colors.green,
-              child: Icon(Icons.check),
+              child: Icon(
+                Icons.check,
+                color: Colors.white,
+              ),
               onPressed: () async {
                 if (formKey.currentState.validate()) {
                   // check if new timetable (docId is null)
