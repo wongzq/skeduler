@@ -7,14 +7,13 @@ import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/color_selector.dart';
 import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/ui_settings.dart';
 import 'package:skeduler/shared/widgets.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class EditGroup extends StatefulWidget {
   final Group group;
 
-  const EditGroup(this.group);
+  EditGroup({Key key, @required this.group}) : super(key: key);
 
   @override
   _EditGroupState createState() => _EditGroupState();

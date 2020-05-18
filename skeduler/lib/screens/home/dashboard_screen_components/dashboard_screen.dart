@@ -8,7 +8,6 @@ import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dar
 import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/ui_settings.dart';
 import 'package:skeduler/shared/widgets.dart';
 
 class DashboardScreen extends StatelessWidget {

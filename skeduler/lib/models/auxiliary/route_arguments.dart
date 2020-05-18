@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
+import 'package:skeduler/models/group_data/subject.dart';
 
 // --------------------------------------------------------------------------------
 // Route Arguments Template
@@ -10,6 +11,7 @@ abstract class _RouteArgsTemplate {
   // properties
   Group _group;
   Member _member;
+  Subject _subject;
   List<String> _axisCustom;
   void Function(List<String>) _valSetAxisCustom;
 
@@ -22,6 +24,10 @@ abstract class _RouteArgsTemplate {
 
   _RouteArgsTemplate.member(
     this._member,
+  );
+
+  _RouteArgsTemplate.subject(
+    this._subject,
   );
 
   _RouteArgsTemplate.reorderAxisCustom(
@@ -50,6 +56,14 @@ class RouteArgsEditMember extends _RouteArgsTemplate {
   }) : super.member(member);
 
   get member => this._member;
+}
+
+class RouteArgsEditSubject extends _RouteArgsTemplate {
+  RouteArgsEditSubject({
+    @required Subject subject,
+  }) : super.subject(subject);
+
+  get subject => this._subject;
 }
 
 class RouteArgsReorderAxisCustom extends _RouteArgsTemplate {

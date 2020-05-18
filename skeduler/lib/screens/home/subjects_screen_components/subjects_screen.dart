@@ -3,13 +3,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
+import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/screens/home/subjects_screen_components/subject_list_tile.dart';
-import 'package:skeduler/shared/components/add_subject_dialog.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/ui_settings.dart';
 import 'package:skeduler/shared/widgets.dart';
 
 class SubjectsScreen extends StatefulWidget {
@@ -135,13 +134,9 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                   backgroundColor: getFABIconBackgroundColor(context),
                   child: Icon(Icons.add),
                   onPressed: () async {
-                    await showDialog(
-                      context: context,
-                      builder: (context) {
-                        GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-                        return AddSubjectDialog(formKey: formKey);
-                      },
+                    Navigator.of(context).pushNamed(
+                      '/subjects/addSubject',
+                      arguments: RouteArgs(),
                     );
                   },
                 ),

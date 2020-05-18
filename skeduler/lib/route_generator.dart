@@ -14,7 +14,9 @@ import 'package:skeduler/screens/home/timetable_screen_components/timetable_edit
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_screen.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_custom_reorder.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/timetable_settings.dart';
+import 'package:skeduler/shared/components/add_subject.dart';
 import 'package:skeduler/shared/components/edit_member.dart';
+import 'package:skeduler/shared/components/edit_subject.dart';
 import 'package:skeduler/wrapper.dart';
 import 'package:skeduler/shared/components/add_dummy.dart';
 import 'package:skeduler/shared/components/add_member.dart';
@@ -57,7 +59,7 @@ class RouteGenerator {
       case '/group/edit':
         if (args is RouteArgsGroup) {
           return CustomTransitionRoute.fadeSlideRight(
-              page: wrapWidget(EditGroup(args.group)));
+              page: wrapWidget(EditGroup(group: args.group)));
         }
         break;
 
@@ -85,9 +87,7 @@ class RouteGenerator {
       case '/members/editMember':
         if (args is RouteArgsEditMember) {
           return CustomTransitionRoute.fadeSlideRight(
-              page: wrapWidget(EditMember(
-            member: args.member,
-          )));
+              page: wrapWidget(EditMember(member: args.member)));
         }
         break;
 
@@ -95,6 +95,20 @@ class RouteGenerator {
         if (args is RouteArgs) {
           return CustomTransitionRoute.fadeScale(
               page: wrapWidget(SubjectsScreen()));
+        }
+        break;
+
+      case '/subjects/addSubject':
+        if (args is RouteArgs) {
+          return CustomTransitionRoute.fadeSlideRight(
+              page: wrapWidget(AddSubject()));
+        }
+        break;
+
+      case '/subjects/editSubject':
+        if (args is RouteArgsEditSubject) {
+          return CustomTransitionRoute.fadeSlideRight(
+              page: wrapWidget(EditSubject(subject: args.subject)));
         }
         break;
 

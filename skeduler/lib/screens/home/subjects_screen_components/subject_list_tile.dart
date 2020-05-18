@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/subject.dart';
 import 'package:skeduler/services/database_service.dart';
@@ -55,11 +56,10 @@ class SubjectListTile extends StatelessWidget {
             onSelected: (option) {
               switch (option) {
                 case SubjectOption.edit:
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return EditSubjectDialog(subject: subject);
-                      });
+                  Navigator.of(context).pushNamed(
+                    '/subjects/editSubject',
+                    arguments: RouteArgsEditSubject(subject: subject),
+                  );
                   break;
 
                 case SubjectOption.remove:

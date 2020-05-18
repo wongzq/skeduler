@@ -10,7 +10,6 @@ import 'package:skeduler/screens/home/members_screen_components/members_screen_o
 import 'package:skeduler/screens/home/members_screen_components/members_screen_options_owner.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/loading.dart';
-import 'package:skeduler/shared/ui_settings.dart';
 import 'package:skeduler/shared/widgets.dart';
 
 class MembersScreen extends StatefulWidget {

@@ -570,12 +570,12 @@ class DatabaseService {
                       },
                     )
                     .then((_) => OperationStatus(OperationResult.success,
-                        'Successfully added ${editSubject.display}'))
+                        'Successfully updated ${editSubject.display}'))
                     .catchError((_) => OperationStatus(
                         OperationResult.fail, 'Failed to update subject'))
                 : OperationStatus(OperationResult.fail, 'Subject not found'))
             .catchError((_) => OperationStatus(
-                OperationResult.fail, 'Failed to add ${editSubject.display}'));
+                OperationResult.fail, 'Failed to update ${editSubject.display}'));
   }
 
   Future<OperationStatus> removeGroupSubject(

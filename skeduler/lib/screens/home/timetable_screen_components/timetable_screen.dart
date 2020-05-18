@@ -10,7 +10,6 @@ import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_display.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/ui_settings.dart';
 import 'package:skeduler/shared/widgets.dart';
 
 class TimetableScreen extends StatefulWidget {

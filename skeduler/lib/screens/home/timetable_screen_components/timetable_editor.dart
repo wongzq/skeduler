@@ -12,8 +12,6 @@ import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_display.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_switch_dialog.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/components/add_subject_dialog.dart';
-import 'package:skeduler/shared/ui_settings.dart';
 import 'package:skeduler/shared/widgets.dart';
 
 enum TimetableEditorOption {
@@ -121,14 +119,11 @@ class _TimetableEditorState extends State<TimetableEditor> {
                   break;
 
                 case TimetableEditorOption.addSubject:
-                  GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-                  setState(() async {
-                    await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AddSubjectDialog(formKey: formKey);
-                        });
+                  setState(() {
+                    Navigator.of(context).pushNamed(
+                      '/subjects/addSubject',
+                      arguments: RouteArgs(),
+                    );
                   });
                   break;
 

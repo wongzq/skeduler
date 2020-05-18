@@ -15,7 +15,6 @@ import 'package:skeduler/screens/home/timetable_screen_components/timetable_sett
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/ui_settings.dart';
 import 'package:skeduler/shared/widgets.dart';
 import 'package:theme_provider/theme_provider.dart';
 

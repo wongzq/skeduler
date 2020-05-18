@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/subject.dart';
-import 'package:skeduler/shared/components/add_subject_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
 
 class SubjectSelector extends StatefulWidget {
@@ -50,14 +50,12 @@ class _SubjectSelectorState extends State<SubjectSelector> {
             ],
           ),
         ),
-        onPressed: () async {
-          GlobalKey<FormState> formKey = GlobalKey<FormState>();
-          setState(() async {
-            await showDialog(
-                context: context,
-                builder: (context) {
-                  return AddSubjectDialog(formKey: formKey);
-                });
+        onPressed: () {
+          setState(() {
+            Navigator.of(context).pushNamed(
+              '/subjects/addSubject',
+              arguments: RouteArgs(),
+            );
           });
         },
       ),

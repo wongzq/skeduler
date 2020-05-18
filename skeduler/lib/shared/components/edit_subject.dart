@@ -9,18 +9,27 @@ import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/widgets.dart';
 
-class AddSubject extends StatefulWidget {
+class EditSubject extends StatefulWidget {
+  final Subject subject;
+
+  const EditSubject({Key key, @required this.subject}) : super(key: key);
   @override
-  _AddSubjectState createState() => _AddSubjectState();
+  _EditSubjectState createState() => _EditSubjectState();
 }
 
-class _AddSubjectState extends State<AddSubject> {
+class _EditSubjectState extends State<EditSubject> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _formKeyName = GlobalKey<FormState>();
 
-  String _newSubjectId;
   String _newSubjectName;
   String _newSubjectNickname;
+
+  @override
+  void initState() {
+    _newSubjectName = widget.subject.name;
+    _newSubjectNickname = widget.subject.nickname;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +43,8 @@ class _AddSubjectState extends State<AddSubject> {
             appBar: AppBar(
               title: AppBarTitle(
                 title: groupStatus.group.name,
-                alternateTitle: 'Add subject',
-                subtitle: 'Add subject',
+                alternateTitle: 'Edit subject',
+                subtitle: 'Edit subject',
               ),
             ),
             floatingActionButton: Row(
@@ -43,7 +52,7 @@ class _AddSubjectState extends State<AddSubject> {
               children: <Widget>[
                 // Cancel add subject
                 FloatingActionButton(
-                  heroTag: 'Add Subject Cancel',
+                  heroTag: 'Edit Subject Cancel',
                   backgroundColor: Colors.red,
                   child: Icon(
                     Icons.close,
@@ -58,7 +67,7 @@ class _AddSubjectState extends State<AddSubject> {
 
                 // Confirm add subject
                 FloatingActionButton(
-                  heroTag: 'Add Subject Confirm',
+                  heroTag: 'Edit Subject Confirm',
                   backgroundColor: Colors.green,
                   child: Icon(
                     Icons.check,
@@ -69,13 +78,14 @@ class _AddSubjectState extends State<AddSubject> {
 
                     if (_formKeyName.currentState.validate()) {
                       _scaffoldKey.currentState.showSnackBar(
-                        LoadingSnackBar(context, 'Adding subject . . .'),
+                        LoadingSnackBar(context, 'Updating subject . . .'),
                       );
 
-                      OperationStatus status = await dbService.addGroupSubject(
+                      OperationStatus status =
+                          await dbService.updateGroupSubject(
                         groupStatus.group.docId,
                         Subject(
-                          docId: _newSubjectId.trim(),
+                          docId: widget.subject.docId,
                           name: _newSubjectName.trim(),
                           nickname: _newSubjectNickname == null ||
                                   _newSubjectNickname.trim() == ''
@@ -109,10 +119,7 @@ class _AddSubjectState extends State<AddSubject> {
                     padding: EdgeInsets.symmetric(horizontal: 10.0),
                     child: LabelTextInput(
                       enabled: false,
-                      hintText:
-                          _newSubjectId == null || _newSubjectId.trim() == ''
-                              ? 'automated'
-                              : _newSubjectId,
+                      hintText: widget.subject.docId,
                       label: 'ID',
                     ),
                   ),
@@ -138,11 +145,6 @@ class _AddSubjectState extends State<AddSubject> {
                       valSetText: (value) {
                         setState(() {
                           _newSubjectName = value;
-
-                          _newSubjectId = value
-                              .trim()
-                              .replaceAll(RegExp('[^A-Za-z0-9]'), '')
-                              .toLowerCase();
                         });
                       },
                       formKey: _formKeyName,

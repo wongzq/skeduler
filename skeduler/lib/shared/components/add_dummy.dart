@@ -54,13 +54,13 @@ class _AddDummyState extends State<AddDummy> {
                 FloatingActionButton(
                   heroTag: 'Add Dummy Cancel',
                   backgroundColor: Colors.red,
-                  onPressed: () {
-                    Navigator.of(context).maybePop();
-                  },
                   child: Icon(
                     Icons.close,
                     color: Colors.white,
                   ),
+                  onPressed: () {
+                    Navigator.of(context).maybePop();
+                  },
                 ),
 
                 SizedBox(width: 20.0),
@@ -69,6 +69,10 @@ class _AddDummyState extends State<AddDummy> {
                 FloatingActionButton(
                   heroTag: 'Add Dummy Confirm',
                   backgroundColor: Colors.green,
+                  child: Icon(
+                    Icons.check,
+                    color: Colors.white,
+                  ),
                   onPressed: () async {
                     unfocus();
 
@@ -77,7 +81,6 @@ class _AddDummyState extends State<AddDummy> {
                         LoadingSnackBar(context, 'Adding dummy . . .'),
                       );
 
-                      // format dummy details
                       OperationStatus status = await dbService.addDummyToGroup(
                         groupDocId: groupStatus.group.docId,
                         dummy: Member(
@@ -103,10 +106,6 @@ class _AddDummyState extends State<AddDummy> {
                       }
                     }
                   },
-                  child: Icon(
-                    Icons.check,
-                    color: Colors.white,
-                  ),
                 ),
               ],
             ),
@@ -134,9 +133,7 @@ class _AddDummyState extends State<AddDummy> {
                       initialValue: _newDummyNickname,
                       hintText: 'Optional',
                       label: 'Nickname',
-                      valSetText: (value) {
-                        _newDummyNickname = value;
-                      },
+                      valSetText: (value) => _newDummyNickname = value,
                     ),
                   ),
 
