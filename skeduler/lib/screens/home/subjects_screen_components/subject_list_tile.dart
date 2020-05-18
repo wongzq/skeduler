@@ -4,7 +4,6 @@ import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/subject.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/components/edit_subject_dialog.dart';
 
 enum SubjectOption { edit, remove }
 
