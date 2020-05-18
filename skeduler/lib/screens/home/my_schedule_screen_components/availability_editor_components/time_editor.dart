@@ -531,7 +531,7 @@ class _TimeEditorState extends State<TimeEditor> {
                             elevation: 3.0,
                             onPressed: _validDate
                                 ? () async {
-                                    showDialog(
+                                    await showDialog(
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(

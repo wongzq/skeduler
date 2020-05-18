@@ -197,88 +197,9 @@ class GroupScreenOptionsOwner extends StatelessWidget {
             ),
           ),
           onTap: () {
-            showDialog(
-              context: context,
-              builder: (dialogContext) {
-                GlobalKey<FormState> formKey = GlobalKey<FormState>();
-                String newSubjectName;
-                String newSubjectNickname;
-
-                return AlertDialog(
-                  title: Text(
-                    'New subject',
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                  content: Form(
-                    key: formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        TextFormField(
-                          decoration: InputDecoration(
-                            hintText: 'Subject short form (optional)',
-                            hintStyle: TextStyle(
-                              fontSize: 15.0,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                          onChanged: (value) =>
-                              newSubjectNickname = value.trim(),
-                          validator: (value) => null,
-                        ),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            hintText: 'Subject full name',
-                            hintStyle: TextStyle(
-                              fontSize: 15.0,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                          onChanged: (value) => newSubjectName = value.trim(),
-                          validator: (value) =>
-                              value == null || value.trim() == ''
-                                  ? 'Subject name cannot be empty'
-                                  : null,
-                        ),
-                      ],
-                    ),
-                  ),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text('CANCEL'),
-                      onPressed: () => Navigator.of(dialogContext).maybePop(),
-                    ),
-                    FlatButton(
-                      child: Text('SAVE'),
-                      onPressed: () async {
-                        if (formKey.currentState.validate()) {
-                          Navigator.of(dialogContext).maybePop();
-
-                          OperationStatus status =
-                              await dbService.addGroupSubject(
-                                  groupStatus.group.docId,
-                                  Subject(
-                                    name: newSubjectName,
-                                    nickname: newSubjectNickname,
-                                  ));
-
-                          if (status.completed) {
-                            Fluttertoast.showToast(
-                              msg: status.message,
-                              toastLength: Toast.LENGTH_LONG,
-                            );
-                          }
-
-                          if (status.success) {
-                            Navigator.of(context)
-                                .pushNamed('/subjects', arguments: RouteArgs());
-                          }
-                        }
-                      },
-                    ),
-                  ],
-                );
-              },
+            Navigator.of(context).pushNamed(
+              '/subjects/addSubject',
+              arguments: RouteArgs(),
             );
           },
         ),

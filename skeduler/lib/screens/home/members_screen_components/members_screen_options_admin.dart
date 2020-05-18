@@ -5,6 +5,7 @@ import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class MembersScreenOptionsAdmin extends StatelessWidget {
   @override
@@ -58,36 +59,24 @@ class MembersScreenOptionsAdmin extends StatelessWidget {
                     ),
                   ),
                 ),
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          content: Text('Exit \'${groupStatus.group.name}\' group?'),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('CANCEL'),
-                              onPressed: () {
-                                Navigator.of(context).maybePop();
-                              },
-                            ),
-                            FlatButton(
-                              child: Text(
-                                'EXIT',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                ),
-                              ),
-                              onPressed: () {
-                                dbService.leaveGroup(groupStatus.group.docId);
-                                groupDocId.value = null;
-                                Navigator.of(context)
-                                    .popUntil((route) => route.isFirst);
-                              },
-                            ),
-                          ],
-                        );
-                      });
+                onTap: () async {
+                  await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return SimpleAlertDialog(
+                        context: context,
+                        contentDisplay:
+                            'Exit \'${groupStatus.group.name}\' group?',
+                        confirmDisplay: 'EXIT',
+                        confirmFunction: () {
+                          dbService.leaveGroup(groupStatus.group.docId);
+                          groupDocId.value = null;
+                          Navigator.of(context)
+                              .popUntil((route) => route.isFirst);
+                        },
+                      );
+                    },
+                  );
                 },
               ),
 

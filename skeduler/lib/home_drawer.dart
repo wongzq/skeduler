@@ -8,6 +8,7 @@ import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/shared/functions.dart';
+import 'package:skeduler/shared/widgets.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class HomeDrawer extends StatelessWidget {
@@ -225,26 +226,15 @@ class HomeDrawer extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return AlertDialog(
-                          content: Text('Do you want to logout?'),
-                          actions: <Widget>[
-                            // CANCEL button
-                            FlatButton(
-                              child: Text('CANCEL'),
-                              onPressed: () {
-                                Navigator.of(context).maybePop();
-                              },
-                            ),
-
-                            // OK button
-                            FlatButton(
-                              child: Text('OK'),
-                              onPressed: () {
-                                _authService.logOut();
-                                RestartWidget.restartApp(context);
-                              },
-                            ),
-                          ],
+                        return SimpleAlertDialog(
+                          context: context,
+                          contentDisplay: 'Do you want to logout?',
+                          confirmDisplay: 'YES',
+                          cancelDisplay: 'NO',
+                          confirmFunction: () async {
+                            _authService.logOut();
+                            RestartWidget.restartApp(context);
+                          },
                         );
                       },
                     );

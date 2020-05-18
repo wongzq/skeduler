@@ -160,7 +160,7 @@ class _EditMemberState extends State<EditMember> {
               onTap: () => unfocus(),
               child: Column(
                 children: <Widget>[
-                  // id
+                  // ID
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 20.0,
@@ -194,7 +194,24 @@ class _EditMemberState extends State<EditMember> {
                     ),
                   ),
 
-                  // name
+                  // Nickname
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    child: LabelTextInput(
+                      initialValue: widget.member.nickname,
+                      hintText: 'Required',
+                      label: 'Nickname',
+                      valSetText: (value) {
+                        _editNickname = value;
+                      },
+                      formKey: _formKeyNickname,
+                      validator: (value) => value == null || value.trim() == ''
+                          ? 'Nickname cannot be empty'
+                          : null,
+                    ),
+                  ),
+
+                  // Name
                   widget.member.role == MemberRole.owner ||
                           widget.member.role == MemberRole.admin ||
                           widget.member.role == MemberRole.member
@@ -242,23 +259,6 @@ class _EditMemberState extends State<EditMember> {
                               ),
                             )
                           : Container(),
-
-                  // nickname
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.0),
-                    child: LabelTextInput(
-                      initialValue: widget.member.nickname,
-                      hintText: 'Required',
-                      label: 'Nickname',
-                      valSetText: (value) {
-                        _editNickname = value;
-                      },
-                      formKey: _formKeyNickname,
-                      validator: (value) => value == null || value.trim() == ''
-                          ? 'Nickname cannot be empty'
-                          : null,
-                    ),
-                  ),
 
                   // member role
                   Padding(

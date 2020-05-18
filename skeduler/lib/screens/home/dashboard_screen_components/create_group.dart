@@ -58,7 +58,10 @@ class _CreateGroupState extends State<CreateGroup> {
           FloatingActionButton(
             heroTag: 'Create Group Cancel',
             backgroundColor: Colors.red,
-            child: Icon(Icons.close),
+            child: Icon(
+              Icons.close,
+              color: Colors.white,
+            ),
             onPressed: () => Navigator.of(context).maybePop(),
           ),
           SizedBox(width: 20.0),

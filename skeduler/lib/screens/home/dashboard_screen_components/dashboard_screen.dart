@@ -68,61 +68,51 @@ class DashboardScreen extends StatelessWidget {
                                 );
                               } else if (me.role == MemberRole.pending) {
                                 await showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return StreamBuilder(
-                                          stream: dbService
-                                              .streamGroup(groups[index].docId),
-                                          builder: (context, snapshot) {
-                                            Group group = snapshot != null
-                                                ? snapshot.data
-                                                : null;
+                                  context: context,
+                                  builder: (context) {
+                                    return StreamBuilder(
+                                      stream: dbService
+                                          .streamGroup(groups[index].docId),
+                                      builder: (context, snapshot) {
+                                        Group group = snapshot != null
+                                            ? snapshot.data
+                                            : null;
 
-                                            return group == null
-                                                ? Container()
-                                                : AlertDialog(
-                                                    content: Text(
-                                                        'You have been invited to join ' +
-                                                            group.name),
-                                                    actions: <Widget>[
-                                                      // DECLINE button
-                                                      FlatButton(
-                                                        child: Text('DECLINE'),
-                                                        onPressed: () async {
-                                                          await dbService
-                                                              .declineGroupInvitation(
-                                                                  groups[index]
-                                                                      .docId);
+                                        return group == null
+                                            ? Container()
+                                            : SimpleAlertDialog(
+                                                context: context,
+                                                contentDisplay:
+                                                    'You have been invited to join ' +
+                                                        group.name,
+                                                cancelDisplay: 'DECLINE',
+                                                cancelFunction: () async {
+                                                  await dbService
+                                                      .declineGroupInvitation(
+                                                          groups[index].docId);
 
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
+                                                  Navigator.of(context)
+                                                      .maybePop();
+                                                },
+                                                confirmDisplay: 'ACCEPT',
+                                                confirmFunction: () async {
+                                                  await dbService
+                                                      .acceptGroupInvitation(
+                                                          groups[index].docId);
 
-                                                      // ACCEPT button
-                                                      FlatButton(
-                                                        child: Text('ACCEPT'),
-                                                        onPressed: () async {
-                                                          await dbService
-                                                              .acceptGroupInvitation(
-                                                                  groups[index]
-                                                                      .docId);
-
-                                                          groupDocId.value =
-                                                              groups[index]
-                                                                  .docId;
-                                                          Navigator.of(context)
-                                                              .popAndPushNamed(
-                                                            '/group',
-                                                            arguments:
-                                                                RouteArgs(),
-                                                          );
-                                                        },
-                                                      ),
-                                                    ],
+                                                  groupDocId.value =
+                                                      groups[index].docId;
+                                                  Navigator.of(context)
+                                                      .popAndPushNamed(
+                                                    '/group',
+                                                    arguments: RouteArgs(),
                                                   );
-                                          });
-                                    });
+                                                },
+                                              );
+                                      },
+                                    );
+                                  },
+                                );
                               }
                             }
                           },

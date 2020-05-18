@@ -6,6 +6,7 @@ import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
+import 'package:skeduler/shared/widgets.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class MemberListTile extends StatelessWidget {
@@ -234,7 +235,7 @@ class MemberListTile extends StatelessWidget {
                       },
                       onSelected: (value) async {
                         if (value == MemberOption.makeOwner) {
-                          showDialog(
+                          await showDialog(
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
@@ -327,9 +328,22 @@ class MemberListTile extends StatelessWidget {
                             ),
                           );
                         } else if (value == MemberOption.remove) {
-                          await dbService.removeMemberFromGroup(
-                            groupDocId: groupStatus.group.docId,
-                            memberDocId: member.docId,
+                          await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return SimpleAlertDialog(
+                                context: context,
+                                contentDisplay:
+                                    'Remove ${member.display} from the group?',
+                                confirmDisplay: 'REMOVE',
+                                confirmFunction: () async {
+                                  await dbService.removeMemberFromGroup(
+                                    groupDocId: groupStatus.group.docId,
+                                    memberDocId: member.docId,
+                                  );
+                                },
+                              );
+                            },
                           );
                         }
                       },

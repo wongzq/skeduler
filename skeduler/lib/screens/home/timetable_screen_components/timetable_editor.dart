@@ -136,29 +136,19 @@ class _TimetableEditorState extends State<TimetableEditor> {
 
                 case TimetableEditorOption.clearData:
                   await showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          content: Text('Clear all data from the timetable?'),
-                          actions: <Widget>[
-                            FlatButton(
-                              onPressed: () {
-                                Navigator.of(context).maybePop();
-                              },
-                              child: Text('CANCEL'),
-                            ),
-                            FlatButton(
-                              onPressed: () {
-                                setState(() {
-                                  ttbStatus.edit.gridDataList.popAll();
-                                });
-                                Navigator.of(context).maybePop();
-                              },
-                              child: Text('CLEAR DATA'),
-                            ),
-                          ],
-                        );
-                      });
+                    context: context,
+                    builder: (context) {
+                      return SimpleAlertDialog(
+                        context: context,
+                        contentDisplay: 'Clear all data from the timetable?',
+                        confirmDisplay: 'CLEAR DATA',
+                        confirmFunction: () {
+                          setState(() => ttbStatus.edit.gridDataList.popAll());
+                          Navigator.of(context).maybePop();
+                        },
+                      );
+                    },
+                  );
                   break;
 
                 case TimetableEditorOption.settings:

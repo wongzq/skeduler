@@ -3,6 +3,43 @@ import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 import 'package:theme_provider/theme_provider.dart';
 
+class SimpleAlertDialog extends AlertDialog {
+  SimpleAlertDialog({
+    @required BuildContext context,
+    String titleDisplay,
+    String contentDisplay,
+    String confirmDisplay,
+    String cancelDisplay,
+    Function confirmFunction,
+    Function cancelFunction,
+  }) : super(
+          title: titleDisplay == null
+              ? null
+              : Text(
+                  titleDisplay,
+                  style: TextStyle(fontSize: 16.0),
+                ),
+          content: contentDisplay == null ? null : Text(contentDisplay),
+          actions: <Widget>[
+            // CANCEL button
+            FlatButton(
+              child: Text(cancelDisplay ?? 'CANCEL'),
+              onPressed: () => cancelFunction == null
+                  ? Navigator.of(context).maybePop()
+                  : cancelFunction(),
+            ),
+
+            // CONFIRM button
+            FlatButton(
+              child: Text(confirmDisplay ?? 'CONFIRM'),
+              onPressed: () => confirmFunction == null
+                  ? Navigator.of(context).maybePop()
+                  : confirmFunction(),
+            ),
+          ],
+        );
+}
+
 class AppBarTitle extends StatelessWidget {
   final String title;
   final String alternateTitle;

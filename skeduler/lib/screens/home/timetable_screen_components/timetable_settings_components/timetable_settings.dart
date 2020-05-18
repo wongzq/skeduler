@@ -225,38 +225,23 @@ class TimetableSettings extends StatelessWidget {
                     ),
                   ),
                 ),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          content: Text(
-                              'Do you want to delete \'${ttbStatus.temp.docId}\' timetable?'),
-                          actions: <Widget>[
-                            // CANCEL button
-                            FlatButton(
-                              child: Text('CANCEL'),
-                              onPressed: () {
-                                Navigator.of(context).maybePop();
-                              },
-                            ),
-
-                            // OK button
-                            FlatButton(
-                              child: Text(
-                                'DELETE',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                              onPressed: () async {
-                                await dbService.deleteGroupTimetable(
-                                    groupStatus.group.docId,
-                                    ttbStatus.edit.docId);
-                                Navigator.of(context).maybePop();
-                              },
-                            ),
-                          ],
-                        );
-                      });
+                onPressed: () async {
+                  await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return SimpleAlertDialog(
+                        context: context,
+                        contentDisplay:
+                            'Do you want to delete \'${ttbStatus.temp.docId}\' timetable?',
+                        confirmDisplay: 'DELETE',
+                        confirmFunction: () async {
+                          await dbService.deleteGroupTimetable(
+                              groupStatus.group.docId, ttbStatus.edit.docId);
+                          Navigator.of(context).maybePop();
+                        },
+                      );
+                    },
+                  );
                 },
               ),
             ),

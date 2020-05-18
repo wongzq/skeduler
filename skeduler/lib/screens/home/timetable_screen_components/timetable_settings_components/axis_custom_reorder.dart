@@ -51,16 +51,16 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                     ),
                   ];
                 },
-                onSelected: (val) {
+                onSelected: (val) async {
                   switch (val) {
                     case CustomOption.edit:
-                      showDialog(
+                      await showDialog(
                         context: context,
                         builder: (context) {
                           return AlertDialog(
                             title: Text(
                               'Edit custom value',
-                              style: TextStyle(fontSize: 15.0),
+                              style: TextStyle(fontSize: 16.0),
                             ),
                             content: Form(
                               key: formKey,

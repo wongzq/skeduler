@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/screens/authentication/authentication.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 Widget wrapWidget(Widget widget) {
   return Wrapper(widget);
@@ -21,18 +22,13 @@ class _WrapperState extends State<Wrapper> {
     return await showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog(
-              content: Text('Do you want to exit Skeduler?'),
-              actions: <Widget>[
-                FlatButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text('NO'),
-                ),
-                FlatButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text('YES'),
-                )
-              ],
+            return SimpleAlertDialog(
+              context: context,
+              contentDisplay: 'Do you want to exit Skeduler?',
+              confirmDisplay: 'YES',
+              cancelDisplay: 'NO',
+              confirmFunction: () => Navigator.of(context).pop(true),
+              cancelFunction: () => Navigator.of(context).pop(false),
             );
           },
         ) ??
