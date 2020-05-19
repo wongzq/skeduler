@@ -190,37 +190,6 @@ List<Time> generateTimes({
   return times;
 }
 
-List<Time> generateTimesRemoveSameDay(
-    List<Time> prevTimes, List<Time> newTimes) {
-  prevTimes = prevTimes ?? [];
-  newTimes = newTimes ?? [];
-  List<Time> timesRemoveSameDay = [];
-
-  for (int n = 0; n < newTimes.length; n++) {
-    timesRemoveSameDay.add(newTimes[n]);
-  }
-
-  for (int p = 0; p < prevTimes.length; p++) {
-    for (int n = 0; n < newTimes.length; n++) {
-      if (!((prevTimes[p].startTime.year == newTimes[n].startTime.year &&
-              prevTimes[p].startTime.month == newTimes[n].startTime.month &&
-              prevTimes[p].startTime.day == newTimes[n].startTime.day) ||
-          (prevTimes[p].endTime.year == newTimes[n].endTime.year &&
-              prevTimes[p].endTime.month == newTimes[n].endTime.month &&
-              prevTimes[p].endTime.day == newTimes[n].endTime.day))) {
-        timesRemoveSameDay.add(prevTimes[p]);
-      }
-    }
-  }
-
-  timesRemoveSameDay.sort((a, b) {
-    return a.startTime.microsecondsSinceEpoch
-        .compareTo(b.startTime.microsecondsSinceEpoch);
-  });
-
-  return timesRemoveSameDay;
-}
-
 // auxiliary function to check if all [Time] in [List<Time>] is consecutive with no conflicts of time
 bool isConsecutiveTimes(List<Time> times) {
   bool isConsecutive = true;

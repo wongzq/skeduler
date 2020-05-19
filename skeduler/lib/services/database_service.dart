@@ -574,8 +574,8 @@ class DatabaseService {
                     .catchError((_) => OperationStatus(
                         OperationResult.fail, 'Failed to update subject'))
                 : OperationStatus(OperationResult.fail, 'Subject not found'))
-            .catchError((_) => OperationStatus(
-                OperationResult.fail, 'Failed to update ${editSubject.display}'));
+            .catchError((_) => OperationStatus(OperationResult.fail,
+                'Failed to update ${editSubject.display}'));
   }
 
   Future<OperationStatus> removeGroupSubject(
@@ -839,51 +839,52 @@ class DatabaseService {
             .then((member) async {
             if (member.exists) {
               List<Time> prevTimes;
-              List<Time> timesRemoveSameDay;
-              List<Map<String, Timestamp>> timestamps = [];
+              List<Map<String, Timestamp>> removeTimestamps = [];
+              List<Map<String, Timestamp>> newTimestamps = [];
 
-              if (member.data['times'] != null) {
-                // get previous times
-                prevTimes = _timesFromDynamicList(member.data['times']);
+              // get previous times
+              prevTimes = _timesFromDynamicList(member.data['times']);
 
-                // generate new times that overwrites previous times on the same day
-                timesRemoveSameDay =
-                    generateTimesRemoveSameDay(prevTimes, newTimes);
-
-                // remove previous times
-                await groupsCollection
-                    .document(groupDocId)
-                    .collection('members')
-                    .document(memberDocId)
-                    .updateData({'times': FieldValue.delete()});
-
-                // convert [List<Time>] into [List<Map<String, Timestamp>] to be stored in Firestore
-                timesRemoveSameDay.forEach((time) {
-                  Timestamp startTimestamp = Timestamp.fromDate(time.startTime);
-                  Timestamp endTimestamp = Timestamp.fromDate(time.endTime);
-                  timestamps.add({
-                    'startTime': startTimestamp,
-                    'endTime': endTimestamp,
-                  });
+              // remove previous times that are on the same day
+              prevTimes.forEach((pTime) {
+                newTimes.forEach((nTime) {
+                  if ((pTime.startTime.year == nTime.startTime.year &&
+                          pTime.startTime.month == nTime.startTime.month &&
+                          pTime.startTime.day == nTime.startTime.day) ||
+                      (pTime.endTime.year == nTime.endTime.year &&
+                          pTime.endTime.month == nTime.endTime.month &&
+                          pTime.endTime.day == nTime.endTime.day)) {
+                    removeTimestamps.add({
+                      'startTime': Timestamp.fromDate(pTime.startTime),
+                      'endTime': Timestamp.fromDate(pTime.endTime),
+                    });
+                  }
                 });
-              } else {
-                // convert [List<Time>] into [List<Map<String, Timestamp>] to be stored in Firestore
-                newTimes.forEach((time) {
-                  Timestamp startTimestamp = Timestamp.fromDate(time.startTime);
-                  Timestamp endTimestamp = Timestamp.fromDate(time.endTime);
-                  timestamps.add({
-                    'startTime': startTimestamp,
-                    'endTime': endTimestamp,
-                  });
+              });
+
+              await groupsCollection
+                  .document(groupDocId)
+                  .collection('members')
+                  .document(memberDocId)
+                  .updateData(
+                      {'times': FieldValue.arrayRemove(removeTimestamps)});
+
+              // convert [List<Time>] into [List<Map<String, Timestamp>]
+              newTimes.forEach((time) {
+                Timestamp startTimestamp = Timestamp.fromDate(time.startTime);
+                Timestamp endTimestamp = Timestamp.fromDate(time.endTime);
+                newTimestamps.add({
+                  'startTime': startTimestamp,
+                  'endTime': endTimestamp,
                 });
-              }
+              });
 
               // add new times to Firestore
               await groupsCollection
                   .document(groupDocId)
                   .collection('members')
                   .document(memberDocId)
-                  .updateData({'times': FieldValue.arrayUnion(timestamps)});
+                  .updateData({'times': FieldValue.arrayUnion(newTimestamps)});
             }
           });
   }
