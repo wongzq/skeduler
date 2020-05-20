@@ -32,7 +32,7 @@ class Member {
     this._description = description;
     this._role = role;
     this._colorShade = colorShade;
-    this._times = times;
+    this._times = _chronologicalTimes(times);
   }
 
   // getter methods
@@ -46,6 +46,13 @@ class Member {
   IconData get roleIcon => _memberRoleIcon(this._role);
   ColorShade get colorShade => this._colorShade;
   List<Time> get times => this._times;
+
+  // auxiliary function
+  List<Time> _chronologicalTimes(List<Time> times) {
+    List<Time> chronologicalTimes = List<Time>.from(times);
+    chronologicalTimes.sort((a, b) => a.startTime.compareTo(b.startTime));
+    return chronologicalTimes;
+  }
 }
 
 enum MemberRole {

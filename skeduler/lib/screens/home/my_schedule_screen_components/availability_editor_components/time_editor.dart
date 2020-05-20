@@ -11,13 +11,16 @@ import 'package:skeduler/screens/home/my_schedule_screen_components/availability
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/components/custom_time_picker.dart';
 import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/widgets.dart';
 
 class TimeEditor extends StatefulWidget {
+  final GlobalKey<ScaffoldState> scaffoldKey;
   final ValueGetter<List<Month>> valGetMonths;
   final ValueGetter<List<Weekday>> valGetWeekdays;
 
   const TimeEditor({
     Key key,
+    @required this.scaffoldKey,
     @required this.valGetMonths,
     @required this.valGetWeekdays,
   }) : super(key: key);
@@ -92,6 +95,8 @@ class _TimeEditorState extends State<TimeEditor> {
   }
 
   DateTime getFirstDayOfStartMonth() {
+    print(widget.valGetMonths);
+
     if (widget.valGetMonths != null) {
       return DateTime(
         DateTime.now().year,
@@ -103,14 +108,21 @@ class _TimeEditorState extends State<TimeEditor> {
   }
 
   DateTime getLastDayOfLastMonth() {
+    print(widget.valGetMonths);
+
+    print('Last Day of Last Month ' +
+        daysInMonth(DateTime.now().year, widget.valGetMonths().last.index + 1)
+            .toString());
+
     if (widget.valGetMonths != null) {
       return DateTime(
+        DateTime.now().year,
+        widget.valGetMonths().last.index + 1,
+        daysInMonth(
           DateTime.now().year,
           widget.valGetMonths().last.index + 1,
-          daysInMonth(
-            DateTime.now().year,
-            widget.valGetMonths().last.index + 1,
-          ));
+        ),
+      );
     } else {
       return null;
     }
@@ -485,6 +497,10 @@ class _TimeEditorState extends State<TimeEditor> {
                             elevation: 3.0,
                             onPressed: _validTime && _validDate
                                 ? () async {
+                                    widget.scaffoldKey.currentState
+                                        .showSnackBar(LoadingSnackBar(context,
+                                            'Updating available times . . .'));
+
                                     List<Time> newTimes = generateTimes(
                                       months: widget.valGetMonths(),
                                       weekDays: widget.valGetWeekdays(),
@@ -494,10 +510,19 @@ class _TimeEditorState extends State<TimeEditor> {
                                       endDate:
                                           _endDate ?? getLastDayOfLastMonth(),
                                     );
+
+                                    for (Time time in newTimes) {
+                                      print(time);
+                                    }
+
                                     await dbService.updateGroupMemberTimes(
-                                        groupStatus.group.docId,
-                                        null,
-                                        newTimes);
+                                      groupStatus.group.docId,
+                                      null,
+                                      newTimes,
+                                    );
+
+                                    widget.scaffoldKey.currentState
+                                        .hideCurrentSnackBar();
                                   }
                                 : null,
                             child: Text(
@@ -532,92 +557,104 @@ class _TimeEditorState extends State<TimeEditor> {
                             onPressed: _validDate
                                 ? () async {
                                     await showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            content: RichText(
-                                              text: TextSpan(
-                                                children: <TextSpan>[
-                                                  TextSpan(
-                                                    text:
-                                                        'Remove from your schedule?\n\n',
-                                                    style: TextStyle(
-                                                      color: Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.dark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                      fontSize: 15.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          content: RichText(
+                                            text: TextSpan(
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                  text:
+                                                      'Remove from your schedule?\n\n',
+                                                  style: TextStyle(
+                                                    color: Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                    fontSize: 15.0,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
-                                                  TextSpan(
-                                                    text: DateFormat(
-                                                                'EEEE, d MMMM')
-                                                            .format(
-                                                          _startDate ??
-                                                              getFirstDayOfStartMonth(),
-                                                        ) +
-                                                        ' to ' +
-                                                        DateFormat(
-                                                                'EEEE, d MMMM')
-                                                            .format(
-                                                          _endDate ??
-                                                              getLastDayOfLastMonth(),
-                                                        ),
-                                                    style: TextStyle(
-                                                      color: Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.dark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                    ),
+                                                ),
+                                                TextSpan(
+                                                  text: DateFormat(
+                                                              'EEEE, d MMMM')
+                                                          .format(
+                                                        _startDate ??
+                                                            getFirstDayOfStartMonth(),
+                                                      ) +
+                                                      ' to ' +
+                                                      DateFormat('EEEE, d MMMM')
+                                                          .format(
+                                                        _endDate ??
+                                                            getLastDayOfLastMonth(),
+                                                      ),
+                                                  style: TextStyle(
+                                                    color: Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.white
+                                                        : Colors.black,
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
-                                            actions: <Widget>[
-                                              FlatButton(
-                                                child: Text('CANCEL'),
-                                                onPressed: () =>
-                                                    Navigator.of(context)
-                                                        .maybePop(),
+                                          ),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                              child: Text('CANCEL'),
+                                              onPressed: () =>
+                                                  Navigator.of(context)
+                                                      .maybePop(),
+                                            ),
+                                            FlatButton(
+                                              child: Text(
+                                                'REMOVE',
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                ),
                                               ),
-                                              FlatButton(
-                                                  child: Text(
-                                                    'REMOVE',
-                                                    style: TextStyle(
-                                                      color: Colors.red,
-                                                    ),
-                                                  ),
-                                                  onPressed: () async {
-                                                    List<Time> removeTimes =
-                                                        generateTimes(
-                                                      months:
-                                                          widget.valGetMonths(),
-                                                      weekDays: widget
-                                                          .valGetWeekdays(),
-                                                      time: Time(
-                                                          _startTime, _endTime),
-                                                      startDate: _startDate ??
-                                                          getFirstDayOfStartMonth(),
-                                                      endDate: _endDate ??
-                                                          getLastDayOfLastMonth(),
-                                                    );
+                                              onPressed: () async {
+                                                widget.scaffoldKey.currentState
+                                                    .showSnackBar(LoadingSnackBar(
+                                                        context,
+                                                        'Updating available times . . .'));
 
-                                                    await dbService
-                                                        .removeGroupMemberTimes(
-                                                      groupStatus.group.docId,
-                                                      null,
-                                                      removeTimes,
-                                                    );
+                                                List<Time> removeTimes =
+                                                    generateTimes(
+                                                  months: widget.valGetMonths(),
+                                                  weekDays:
+                                                      widget.valGetWeekdays(),
+                                                  time: Time(
+                                                      _startTime, _endTime),
+                                                  startDate: _startDate ??
+                                                      getFirstDayOfStartMonth(),
+                                                  endDate: _endDate ??
+                                                      getLastDayOfLastMonth(),
+                                                );
+
+                                                await dbService
+                                                    .removeGroupMemberTimes(
+                                                  groupStatus.group.docId,
+                                                  null,
+                                                  removeTimes,
+                                                )
+                                                    .then(
+                                                  (_) {
+                                                    widget.scaffoldKey
+                                                        .currentState
+                                                        .hideCurrentSnackBar();
+
                                                     Navigator.of(context)
                                                         .maybePop();
-                                                  }),
-                                            ],
-                                          );
-                                        });
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
                                   }
                                 : null,
                             child: Text(

@@ -29,6 +29,7 @@ class TimetableEditor extends StatefulWidget {
 }
 
 class _TimetableEditorState extends State<TimetableEditor> {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TimetableEditMode _editMode = TimetableEditMode(editMode: true);
 
   @override
@@ -38,6 +39,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(
@@ -160,6 +162,9 @@ class _TimetableEditorState extends State<TimetableEditor> {
                   break;
 
                 case TimetableEditorOption.save:
+                  _scaffoldKey.currentState.showSnackBar(
+                      LoadingSnackBar(context, 'Saving timetable . . .'));
+
                   await dbService
                       .updateGroupTimetable(
                           groupStatus.group.docId, ttbStatus.edit)
@@ -174,6 +179,8 @@ class _TimetableEditorState extends State<TimetableEditor> {
                       toastLength: Toast.LENGTH_LONG,
                     );
                   });
+                  
+                  _scaffoldKey.currentState.hideCurrentSnackBar();
                   break;
 
                 default:

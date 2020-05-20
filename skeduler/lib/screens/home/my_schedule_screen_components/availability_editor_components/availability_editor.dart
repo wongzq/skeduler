@@ -9,6 +9,8 @@ import 'package:skeduler/screens/home/my_schedule_screen_components/availability
 import 'package:skeduler/shared/widgets.dart';
 
 class AvailabilityEditor extends StatelessWidget {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
@@ -20,12 +22,13 @@ class AvailabilityEditor extends StatelessWidget {
         EditorsStatus(currentEditor: CurrentEditor.month);
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         elevation: 0.0,
         title: AppBarTitle(
           title: groupStatus.group.name,
-          alternateTitle: 'My schedule editor',
-          subtitle: 'My schedule editor',
+          alternateTitle: 'Availability editor',
+          subtitle: 'Availability editor',
         ),
       ),
       body: SafeArea(
@@ -44,7 +47,7 @@ class AvailabilityEditor extends StatelessWidget {
               create: (context) => editorsStatus,
               child: ListView(
                 controller: ScrollController(),
-                physics: const AlwaysScrollableScrollPhysics(),
+                physics: AlwaysScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 children: <Widget>[
                   // Month Editor
@@ -70,8 +73,19 @@ class AvailabilityEditor extends StatelessWidget {
 
                   // Time Editor
                   TimeEditor(
-                    valGetMonths: () => _monthsSelected,
-                    valGetWeekdays: () => _weekdaysSelected,
+                    scaffoldKey: _scaffoldKey,
+                    valGetMonths: () {
+                      _monthsSelected
+                          .sort((a, b) => a.index.compareTo(b.index));
+                      print(_monthsSelected);
+                      return _monthsSelected;
+                    },
+                    valGetWeekdays: () {
+                      _weekdaysSelected
+                          .sort((a, b) => a.index.compareTo(b.index));
+                      print(_weekdaysSelected);
+                      return _weekdaysSelected;
+                    },
                   ),
                 ],
               ),

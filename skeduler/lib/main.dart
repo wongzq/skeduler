@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:quiver/time.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/models/group_data/subject.dart';
+import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/route_generator.dart';

@@ -20,6 +20,8 @@ class EditGroup extends StatefulWidget {
 }
 
 class _EditGroupState extends State<EditGroup> {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   String _groupName;
   String _groupDescription;
   ColorShade _groupColorShade;
@@ -48,6 +50,7 @@ class _EditGroupState extends State<EditGroup> {
     GlobalKey<FormState> _formKeyDesc = GlobalKey<FormState>();
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(title: AppBarTitle(title: 'Group')),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -71,7 +74,7 @@ class _EditGroupState extends State<EditGroup> {
           FloatingActionButton(
             heroTag: 'Edit Group Confirm',
             backgroundColor: Colors.green,
-            onPressed: () {
+            onPressed: () async {
               if (_formKeyName.currentState.validate() &&
                   _formKeyDesc.currentState.validate()) {
                 if (_groupName.trim() != widget.group.name ||
@@ -79,7 +82,10 @@ class _EditGroupState extends State<EditGroup> {
                     _groupColorShade.themeId !=
                         widget.group.colorShade.themeId ||
                     _groupColorShade.shade != widget.group.colorShade.shade) {
-                  dbService.updateGroupData(
+                  _scaffoldKey.currentState.showSnackBar(
+                      LoadingSnackBar(context, 'Saving group info . . .'));
+
+                  await dbService.updateGroupData(
                     widget.group.docId,
                     name: _groupName.trim(),
                     description: _groupDescription.trim(),
@@ -87,7 +93,10 @@ class _EditGroupState extends State<EditGroup> {
                     ownerName: _groupOwnerName.trim(),
                     ownerEmail: _groupOwnerEmail.trim(),
                   );
+
+                  _scaffoldKey.currentState.hideCurrentSnackBar();
                 }
+                
                 Navigator.of(context).maybePop();
               }
             },
