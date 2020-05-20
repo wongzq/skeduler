@@ -17,6 +17,7 @@ class SubjectsScreen extends StatefulWidget {
 }
 
 class _SubjectsScreenState extends State<SubjectsScreen> {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   DatabaseService _dbService;
   GroupStatus _groupStatus;
 
@@ -86,6 +87,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
     return _groupStatus.group == null
         ? Loading()
         : Scaffold(
+            key: _scaffoldKey,
             appBar: AppBar(
               title: AppBarTitle(
                 title: _groupStatus.group.name,
@@ -105,6 +107,9 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                     backgroundColor: getFABIconBackgroundColor(context),
                     child: Icon(Icons.save),
                     onPressed: () async {
+                      _scaffoldKey.currentState.showSnackBar(LoadingSnackBar(
+                          context, 'Updating subjects order . . .'));
+
                       OperationStatus status =
                           await _dbService.updateGroupSubjectsOrder(
                         _groupStatus.group.docId,
@@ -116,6 +121,8 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                           msg: status.message,
                           toastLength: Toast.LENGTH_LONG,
                         );
+
+                        _scaffoldKey.currentState.hideCurrentSnackBar();
                       }
 
                       if (status.success) {
@@ -145,8 +152,6 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
             body: ReorderableListView(
               onReorder: (int oldIndex, int newIndex) {
                 setState(() {
-                  _orderChanged = true;
-
                   String subjectMetadata = _tempSubjectMetadatas[oldIndex];
 
                   _tempSubjectMetadatas.removeAt(oldIndex);
@@ -156,6 +161,16 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                   } else {
                     _tempSubjectMetadatas.insert(newIndex, subjectMetadata);
                   }
+
+                  bool sameOrder = true;
+                  for (int i = 0; i < _tempSubjectMetadatas.length; i++) {
+                    if (_tempSubjectMetadatas[i] !=
+                        _groupStatus.group.subjectMetadatas[i]) {
+                      sameOrder = false;
+                    }
+                  }
+
+                  _orderChanged = !sameOrder;
                 });
               },
               children: _generateSubjects(),
