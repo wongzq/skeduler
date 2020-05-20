@@ -842,32 +842,33 @@ class DatabaseService {
               List<Map<String, Timestamp>> removeTimestamps = [];
               List<Map<String, Timestamp>> newTimestamps = [];
 
-              // get previous times
-              prevTimes = _timesFromDynamicList(member.data['times']);
+              // get previous times and remove times on the same day
+              if (member.data['times'] != null) {
+                prevTimes = _timesFromDynamicList(member.data['times']);
 
-              // remove previous times that are on the same day
-              prevTimes.forEach((pTime) {
-                newTimes.forEach((nTime) {
-                  if ((pTime.startTime.year == nTime.startTime.year &&
-                          pTime.startTime.month == nTime.startTime.month &&
-                          pTime.startTime.day == nTime.startTime.day) ||
-                      (pTime.endTime.year == nTime.endTime.year &&
-                          pTime.endTime.month == nTime.endTime.month &&
-                          pTime.endTime.day == nTime.endTime.day)) {
-                    removeTimestamps.add({
-                      'startTime': Timestamp.fromDate(pTime.startTime),
-                      'endTime': Timestamp.fromDate(pTime.endTime),
-                    });
-                  }
+                prevTimes.forEach((pTime) {
+                  newTimes.forEach((nTime) {
+                    if ((pTime.startTime.year == nTime.startTime.year &&
+                            pTime.startTime.month == nTime.startTime.month &&
+                            pTime.startTime.day == nTime.startTime.day) ||
+                        (pTime.endTime.year == nTime.endTime.year &&
+                            pTime.endTime.month == nTime.endTime.month &&
+                            pTime.endTime.day == nTime.endTime.day)) {
+                      removeTimestamps.add({
+                        'startTime': Timestamp.fromDate(pTime.startTime),
+                        'endTime': Timestamp.fromDate(pTime.endTime),
+                      });
+                    }
+                  });
                 });
-              });
 
-              await groupsCollection
-                  .document(groupDocId)
-                  .collection('members')
-                  .document(memberDocId)
-                  .updateData(
-                      {'times': FieldValue.arrayRemove(removeTimestamps)});
+                await groupsCollection
+                    .document(groupDocId)
+                    .collection('members')
+                    .document(memberDocId)
+                    .updateData(
+                        {'times': FieldValue.arrayRemove(removeTimestamps)});
+              }
 
               // convert [List<Time>] into [List<Map<String, Timestamp>]
               newTimes.forEach((time) {

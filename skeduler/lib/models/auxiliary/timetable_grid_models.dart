@@ -190,7 +190,7 @@ class TimetableStatus extends ChangeNotifier {
   }) {
     TimetableGridDataList tmpGridDataList =
         TimetableGridDataList.from(this._temp.gridDataList);
-    
+
     tmpGridDataList._value.forEach((gridData) {
       if (gridData._coord.custom == prev) {
         TimetableGridData tmpGridData = TimetableGridData.copy(gridData);
@@ -392,6 +392,8 @@ class TimetableDragSubjectMember extends TimetableDragData {
 
 class TimetableEditMode extends ChangeNotifier {
   // properties
+  bool _isPlaceholder;
+
   bool _editing;
   bool _viewMe;
   bool _binVisible;
@@ -401,8 +403,11 @@ class TimetableEditMode extends ChangeNotifier {
   TimetableDragData _isDraggingData;
 
   // constructors
-  TimetableEditMode({bool editMode})
-      : this._editing = editMode ?? false,
+  TimetableEditMode({
+    bool isPlaceholder,
+    @required bool editMode,
+  })  : this._isPlaceholder = isPlaceholder ?? false,
+        this._editing = editMode ?? false,
         this._viewMe = false,
         this._dragSubject = editMode,
         this._dragMember = editMode,
@@ -410,6 +415,7 @@ class TimetableEditMode extends ChangeNotifier {
         this._binVisible = false;
 
   // getter methods
+  bool get isPlaceholder => this._isPlaceholder;
   bool get editing => this._editing;
   bool get viewMe => this._viewMe;
   bool get binVisible => this._binVisible;

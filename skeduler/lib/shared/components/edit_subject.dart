@@ -78,7 +78,7 @@ class _EditSubjectState extends State<EditSubject> {
 
                     if (_formKeyName.currentState.validate()) {
                       _scaffoldKey.currentState.showSnackBar(
-                        LoadingSnackBar(context, 'Updating subject . . .'),
+                        LoadingSnackBar(context, 'Saving subject . . .'),
                       );
 
                       OperationStatus status =

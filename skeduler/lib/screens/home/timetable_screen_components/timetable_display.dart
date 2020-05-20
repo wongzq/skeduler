@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
-import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/member_selector.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/subject_selector.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid.dart';
-import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:theme_provider/theme_provider.dart';
 
@@ -15,7 +12,7 @@ class TimetableDisplay extends StatefulWidget {
 
   TimetableDisplay({
     Key key,
-    this.editMode,
+    @required this.editMode,
   }) : super(key: key);
 
   @override
@@ -27,30 +24,18 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
   int _animationDuration = 300;
   Curve _animationCurve = Curves.easeInCubic;
 
-  TimetableEditMode _editMode;
-
-  @override
-  void initState() {
-    _editMode = widget.editMode ?? TimetableEditMode();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    DatabaseService dbService = Provider.of<DatabaseService>(context);
-    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
+    return ChangeNotifierProvider<TimetableEditMode>.value(
+      value: widget.editMode,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          double selectorHeight = 80;
+          double timetableDisplayHeight =
+              constraints.maxHeight - selectorHeight * 2;
 
-    return StreamBuilder<List<Member>>(
-      stream: dbService.streamGroupMembers(groupStatus.group.docId),
-      builder: (context, snapshot) {
-        return ChangeNotifierProvider<TimetableEditMode>.value(
-          value: _editMode,
-          child: LayoutBuilder(builder: (context, constraints) {
-            double selectorHeight = 80;
-            double timetableDisplayHeight =
-                constraints.maxHeight - selectorHeight * 2;
-
-            return Consumer<TimetableEditMode>(builder: (context, editMode, _) {
+          return Consumer<TimetableEditMode>(
+            builder: (context, editMode, _) {
               return Stack(
                 children: <Widget>[
                   Container(
@@ -277,10 +262,10 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
                         ),
                 ],
               );
-            });
-          }),
-        );
-      },
+            },
+          );
+        },
+      ),
     );
   }
 }

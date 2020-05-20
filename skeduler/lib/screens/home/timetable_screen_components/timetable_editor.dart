@@ -179,7 +179,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                       toastLength: Toast.LENGTH_LONG,
                     );
                   });
-                  
+
                   _scaffoldKey.currentState.hideCurrentSnackBar();
                   break;
 

@@ -93,7 +93,9 @@ class LoadingSnackBar extends SnackBar {
               Text(
                 message,
                 style: TextStyle(
-                  color: Theme.of(context).primaryTextTheme.bodyText1.color,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.black
+                      : Colors.white,
                 ),
               ),
             ],

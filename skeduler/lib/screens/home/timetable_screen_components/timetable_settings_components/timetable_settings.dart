@@ -22,6 +22,7 @@ class TimetableSettings extends StatelessWidget {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
 
+    GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     ttbStatus.temp = ttbStatus.temp != null && ttbStatus.temp.isValid
@@ -33,6 +34,7 @@ class TimetableSettings extends StatelessWidget {
     return GestureDetector(
       onTap: () => unfocus(),
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           leading: IconButton(
               icon: Icon(
@@ -235,9 +237,23 @@ class TimetableSettings extends StatelessWidget {
                             'Do you want to delete \'${ttbStatus.temp.docId}\' timetable?',
                         confirmDisplay: 'DELETE',
                         confirmFunction: () async {
-                          await dbService.deleteGroupTimetable(
-                              groupStatus.group.docId, ttbStatus.edit.docId);
                           Navigator.of(context).maybePop();
+
+                          _scaffoldKey.currentState.showSnackBar(
+                              LoadingSnackBar(
+                                  context, 'Deleting timetable . . .'));
+
+                          await dbService
+                              .deleteGroupTimetable(
+                                  groupStatus.group.docId, ttbStatus.edit.docId)
+                              .then((_) {
+                            _scaffoldKey.currentState.hideCurrentSnackBar();
+
+                            Fluttertoast.showToast(
+                              msg: 'Successfully deleted timetable',
+                              toastLength: Toast.LENGTH_LONG,
+                            );
+                          });
                         },
                       );
                     },

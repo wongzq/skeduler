@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
+import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/models/group_data/subject.dart';
 import 'package:skeduler/services/database_service.dart';
 
@@ -27,47 +28,50 @@ class SubjectListTile extends StatelessWidget {
           leading: Icon(Icons.class_),
           title: Text(subject.display ?? ''),
           subtitle: Text(subject.name ?? ''),
-          trailing: PopupMenuButton<SubjectOption>(
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem<SubjectOption>(
-                  value: SubjectOption.edit,
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.edit),
-                      SizedBox(width: 10.0),
-                      Text('Edit'),
-                    ],
-                  ),
-                ),
-                PopupMenuItem<SubjectOption>(
-                  value: SubjectOption.remove,
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.delete),
-                      SizedBox(width: 10.0),
-                      Text('Remove'),
-                    ],
-                  ),
-                ),
-              ];
-            },
-            onSelected: (option) {
-              switch (option) {
-                case SubjectOption.edit:
-                  Navigator.of(context).pushNamed(
-                    '/subjects/editSubject',
-                    arguments: RouteArgsEditSubject(subject: subject),
-                  );
-                  break;
+          trailing: groupStatus.me.role == MemberRole.owner ||
+                  groupStatus.me.role == MemberRole.admin
+              ? PopupMenuButton<SubjectOption>(
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem<SubjectOption>(
+                        value: SubjectOption.edit,
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.edit),
+                            SizedBox(width: 10.0),
+                            Text('Edit'),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem<SubjectOption>(
+                        value: SubjectOption.remove,
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.delete),
+                            SizedBox(width: 10.0),
+                            Text('Remove'),
+                          ],
+                        ),
+                      ),
+                    ];
+                  },
+                  onSelected: (option) {
+                    switch (option) {
+                      case SubjectOption.edit:
+                        Navigator.of(context).pushNamed(
+                          '/subjects/editSubject',
+                          arguments: RouteArgsEditSubject(subject: subject),
+                        );
+                        break;
 
-                case SubjectOption.remove:
-                  dbService.removeGroupSubject(
-                      groupStatus.group.docId, subject);
-                  break;
-              }
-            },
-          ),
+                      case SubjectOption.remove:
+                        dbService.removeGroupSubject(
+                            groupStatus.group.docId, subject);
+                        break;
+                    }
+                  },
+                )
+              : null,
         ),
         Divider(height: 1.0),
       ],

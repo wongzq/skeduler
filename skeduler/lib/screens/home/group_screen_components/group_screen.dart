@@ -60,8 +60,17 @@ class _GroupScreenState extends State<GroupScreen> {
                         padding: EdgeInsets.all(20.0),
                         alignment: Alignment.topLeft,
                         child: Text(
-                          groupStatus.group.description,
-                          style: textStyleBody,
+                          groupStatus.group.description == null ||
+                                  groupStatus.group.description.trim() == ''
+                              ? 'No group description'
+                              : groupStatus.group.description,
+                          style: groupStatus.group.description == null ||
+                                  groupStatus.group.description.trim() == ''
+                              ? textStyleBody.copyWith(
+                                  color: Colors.grey,
+                                  fontStyle: FontStyle.italic,
+                                )
+                              : textStyleBody,
                         ),
                       ),
               );

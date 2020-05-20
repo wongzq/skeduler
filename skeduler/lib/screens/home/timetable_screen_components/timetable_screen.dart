@@ -6,6 +6,7 @@ import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
+import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/models/group_data/timetable.dart';
 import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_display.dart';
@@ -42,26 +43,60 @@ class _TimetableScreenState extends State<TimetableScreen> {
           ),
           builder: (context, snapshotTtb) {
             Timetable timetable = snapshotTtb != null ? snapshotTtb.data : null;
+            bool isPlaceholder;
 
-            if (_viewTodayTtb && timetable != null) {
-              if (ttbStatus.curr == null) {
-                ttbStatus.curr = timetable;
-              } else if (ttbStatus.curr.docId == timetable.docId) {
-                ttbStatus.curr = timetable;
-              } else {
-                ttbStatus.curr = null;
-                ttbStatus.curr = timetable;
+            if (timetable != null && timetable.isValid) {
+              isPlaceholder = false;
+
+              if (_viewTodayTtb) {
+                if (ttbStatus.curr == null) {
+                  ttbStatus.curr = timetable;
+                } else if (ttbStatus.curr.docId == timetable.docId) {
+                  ttbStatus.curr = timetable;
+                } else {
+                  ttbStatus.curr = null;
+                  ttbStatus.curr = timetable;
+                }
               }
+            } else {
+              isPlaceholder = true;
+              ttbStatus.curr = null;
+              ttbStatus.curr = Timetable(
+                docId: null,
+                gridAxisOfDay: GridAxis.x,
+                gridAxisOfTime: GridAxis.y,
+                gridAxisOfCustom: GridAxis.z,
+                axisDay: [
+                  Weekday.mon,
+                  Weekday.tue,
+                  Weekday.wed,
+                  Weekday.thu,
+                  Weekday.fri,
+                ],
+                axisTime: [
+                  Time(
+                    DateTime(DateTime.now().year, 1, 1, DateTime.now().hour),
+                    DateTime(DateTime.now().year, 1, 1,
+                        DateTime.now().add(Duration(hours: 1)).hour),
+                  ),
+                  Time(
+                    DateTime(DateTime.now().year, 1, 1,
+                        DateTime.now().add(Duration(hours: 2)).hour),
+                    DateTime(DateTime.now().year, 1, 1,
+                        DateTime.now().add(Duration(hours: 3)).hour),
+                  ),
+                ],
+                axisCustom: ['A', 'B'],
+                gridDataList: TimetableGridDataList(),
+              );
             }
 
             return groupStatus.group == null
-                ? Container()
+                ? Scaffold()
                 : Scaffold(
                     appBar: AppBar(
                       title: AppBarTitle(
-                        title: groupStatus.group.name == null ||
-                                timetable == null ||
-                                !timetable.isValid
+                        title: groupStatus.group.name == null
                             ? null
                             : groupStatus.group.name,
                         alternateTitle: 'Timetable',
@@ -69,7 +104,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                 timetable == null ||
                                 !timetable.isValid ||
                                 ttbStatus.curr == null
-                            ? null
+                            ? 'No timetable for today'
                             : 'Timetable: ${ttbStatus.curr.docId}',
                       ),
                       actions: <Widget>[
@@ -221,12 +256,13 @@ class _TimetableScreenState extends State<TimetableScreen> {
                       ],
                     ),
                     drawer: HomeDrawer(DrawerEnum.timetable),
-                    body: groupStatus.me == null ||
-                            timetable == null ||
-                            !timetable.isValid
+                    body: groupStatus.me == null
                         ? Container()
                         : TimetableDisplay(
-                            editMode: TimetableEditMode(editMode: false),
+                            editMode: TimetableEditMode(
+                              isPlaceholder: isPlaceholder,
+                              editMode: false,
+                            ),
                           ),
                   );
           },

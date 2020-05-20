@@ -33,6 +33,7 @@ class NewTimetable extends StatefulWidget {
 }
 
 class _NewTimetableState extends State<NewTimetable> {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -44,6 +45,7 @@ class _NewTimetableState extends State<NewTimetable> {
     return GestureDetector(
       onTap: () => unfocus(),
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           leading: IconButton(
               icon: Icon(
@@ -239,6 +241,9 @@ class _NewTimetableState extends State<NewTimetable> {
                 ),
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
+                    _scaffoldKey.currentState.showSnackBar(
+                        LoadingSnackBar(context, 'Creating timetable . . .'));
+
                     if (ttbStatus.temp.startDate != null &&
                         ttbStatus.temp.endDate != null) {
                       List<TimetableMetadata> timetableMetadatas =
@@ -274,7 +279,8 @@ class _NewTimetableState extends State<NewTimetable> {
                             ttbStatus.temp,
                           )
                               .then((_) {
-                            ttbStatus.edit = ttbStatus.temp;
+                            _scaffoldKey.currentState.hideCurrentSnackBar();
+                            ttbStatus.edit = EditTimetable.copy(ttbStatus.temp);
                             ttbStatus.temp = null;
 
                             Navigator.of(context).popAndPushNamed(
