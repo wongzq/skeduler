@@ -210,8 +210,8 @@ class TimetableSettings extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(20.0),
               child: RaisedButton(
-                color: Colors.red[300],
-                highlightColor: Colors.red[500],
+                color: Colors.red.shade300,
+                highlightColor: Colors.red.shade500,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),

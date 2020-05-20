@@ -64,7 +64,7 @@ class _AuthenticationState extends State<Authentication>
         GestureDetector(
           onTap: () => unfocus(),
           child: Scaffold(
-            backgroundColor: Colors.grey[200],
+            backgroundColor: Colors.grey.shade200,
             appBar: AppBar(
               title: Text(
                 'Skeduler',

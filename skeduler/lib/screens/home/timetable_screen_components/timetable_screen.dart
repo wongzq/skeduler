@@ -86,7 +86,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                         DateTime.now().add(Duration(hours: 3)).hour),
                   ),
                 ],
-                axisCustom: ['A', 'B'],
+                axisCustom: ['Test A', 'Test B'],
                 gridDataList: TimetableGridDataList(),
               );
             }

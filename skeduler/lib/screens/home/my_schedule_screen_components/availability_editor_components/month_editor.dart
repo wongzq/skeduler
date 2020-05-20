@@ -88,7 +88,7 @@ class _MonthEditorState extends State<MonthEditor> {
           child: ActionChip(
             backgroundColor: _monthsSelected.contains(Month.values[item.key])
                 ? originTheme.primaryColorLight
-                : Colors.grey[200],
+                : Colors.grey.shade200,
             elevation: 3.0,
             labelPadding: EdgeInsets.symmetric(
               horizontal: _chipLabelHoriPadding,

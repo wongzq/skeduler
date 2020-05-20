@@ -121,7 +121,7 @@ class MemberListTile extends StatelessWidget {
                       member.name,
                       style: TextStyle(
                           color: member.docId == me.docId
-                              ? Colors.grey[700]
+                              ? Colors.grey.shade700
                               : null),
                     ),
                   ),
@@ -158,7 +158,7 @@ class MemberListTile extends StatelessWidget {
                       member.name,
                       style: TextStyle(
                           color: member.docId == me.docId
-                              ? Colors.grey[700]
+                              ? Colors.grey.shade700
                               : null),
                     ),
               trailing: member.role == MemberRole.owner

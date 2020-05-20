@@ -89,7 +89,9 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                 switch (widget.gridBoxType) {
                   case GridBoxType.header:
                     color = _editMode != null && _editMode.isPlaceholder
-                        ? Colors.grey
+                        ? Theme.of(context).brightness == Brightness.light
+                            ? Colors.grey.shade500
+                            : Colors.grey.shade600
                         : getOriginThemeData(themeId).primaryColor;
                     break;
 
@@ -98,13 +100,10 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                       Color activatedColor =
                           getOriginThemeData(themeId).primaryColorLight;
 
-                      Color deactivatedColor =
-                          Theme.of(context).brightness == Brightness.light
-                              ? Colors.grey[400]
-                              : Colors.grey;
+                      Color deactivatedColor = Colors.grey.shade400;
 
                       return _editMode != null && _editMode.isPlaceholder
-                          ? deactivatedColor
+                          ? Colors.grey.shade400
                           : _editMode.editing
                               ? _editMode.isDragging
                                   ? _editMode.isDraggingData.hasSubjectOnly ||
@@ -156,7 +155,9 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
                   case GridBoxType.switchBox:
                     color = _editMode != null && _editMode.isPlaceholder
-                        ? Colors.grey
+                        ? Theme.of(context).brightness == Brightness.light
+                            ? Colors.grey.shade500
+                            : Colors.grey.shade600
                         : getOriginThemeData(themeId).primaryColor;
                     break;
 

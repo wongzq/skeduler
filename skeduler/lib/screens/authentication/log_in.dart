@@ -57,7 +57,7 @@ class _LogInState extends State<LogIn> {
               minWidth: MediaQuery.of(context).size.width,
               child: FlatButton(
                 color: Colors.teal,
-                disabledColor: Colors.grey[400],
+                disabledColor: Colors.grey.shade400,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
                     authInfo.emailValid && authInfo.passwordValid ? 50.0 : 5.0,
@@ -113,7 +113,7 @@ class _LogInState extends State<LogIn> {
                   style: TextStyle(
                     color: authInfo.emailValid && authInfo.passwordValid
                         ? Colors.white
-                        : Colors.grey[200],
+                        : Colors.grey.shade200,
                     fontSize: 18.0,
                     fontWeight: FontWeight.w400,
                     letterSpacing: 1.5,

@@ -101,7 +101,7 @@ class _DayEditorState extends State<DayEditor> {
             backgroundColor:
                 _weekdaysSelected.contains(Weekday.values[item.key])
                     ? originTheme.primaryColorLight
-                    : Colors.grey[200],
+                    : Colors.grey.shade200,
             elevation: 3.0,
             labelPadding: EdgeInsets.symmetric(
               horizontal: _chipLabelHoriPadding,
@@ -171,7 +171,7 @@ class _DayEditorState extends State<DayEditor> {
         child: ActionChip(
           backgroundColor: _allDaysSelected()
               ? originTheme.primaryColorLight
-              : Colors.grey[200],
+              : Colors.grey.shade200,
           elevation: 3.0,
           labelPadding: EdgeInsets.symmetric(
             horizontal: _chipLabelHoriPadding,

@@ -480,7 +480,7 @@ class _TimeEditorState extends State<TimeEditor> {
                           width: MediaQuery.of(context).size.width - 2,
                           child: RaisedButton(
                             color: originTheme.primaryColorLight,
-                            disabledColor: Colors.grey[200],
+                            disabledColor: Colors.grey.shade200,
                             disabledTextColor: Color(0xFFBBBBBB),
                             highlightColor: originTheme.primaryColor,
                             shape: RoundedRectangleBorder(
@@ -534,10 +534,10 @@ class _TimeEditorState extends State<TimeEditor> {
                           height: _buttonHeight,
                           width: MediaQuery.of(context).size.width - 2,
                           child: RaisedButton(
-                            color: Colors.red[300],
-                            disabledColor: Colors.grey[200],
+                            color: Colors.red.shade300,
+                            disabledColor: Colors.grey.shade200,
                             disabledTextColor: Color(0xFFBBBBBB),
-                            highlightColor: Colors.red[500],
+                            highlightColor: Colors.red.shade500,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0),
                             ),

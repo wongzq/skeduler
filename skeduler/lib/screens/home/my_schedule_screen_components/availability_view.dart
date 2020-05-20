@@ -83,8 +83,8 @@ class ScheduleView extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     color: Theme.of(context).brightness ==
                                             Brightness.light
-                                        ? Colors.grey[300]
-                                        : Colors.grey[700],
+                                        ? Colors.grey.shade300
+                                        : Colors.grey.shade700,
                                     borderRadius: BorderRadius.circular(50.0),
                                   ),
                                   child: Text(
@@ -112,8 +112,8 @@ class ScheduleView extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     color: Theme.of(context).brightness ==
                                             Brightness.light
-                                        ? Colors.grey[300]
-                                        : Colors.grey[700],
+                                        ? Colors.grey.shade300
+                                        : Colors.grey.shade700,
                                     borderRadius: BorderRadius.circular(50.0),
                                   ),
                                   child: Text(
@@ -213,7 +213,7 @@ class ScheduleView extends StatelessWidget {
                                     style: textStyleBodyLight.copyWith(
                                       color: Theme.of(context).brightness ==
                                               Brightness.light
-                                          ? Colors.grey[600]
+                                          ? Colors.grey.shade600
                                           : Colors.grey,
                                       fontSize: 13.0,
                                     ),
