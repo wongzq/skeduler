@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
@@ -20,6 +21,8 @@ class DashboardScreen extends StatelessWidget {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
+    TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
 
     return Scaffold(
       appBar: AppBar(title: AppBarTitle(title: 'Dashboard')),
@@ -61,7 +64,11 @@ class DashboardScreen extends StatelessWidget {
                               if (me.role == MemberRole.owner ||
                                   me.role == MemberRole.admin ||
                                   me.role == MemberRole.member) {
+                                ttbStatus.reset();
+                                groupStatus.reset();
+                                groupDocId.value = null;
                                 groupDocId.value = groups[index].docId;
+
                                 Navigator.of(context).pushNamed(
                                   '/group',
                                   arguments: RouteArgs(),
@@ -100,8 +107,12 @@ class DashboardScreen extends StatelessWidget {
                                                       .acceptGroupInvitation(
                                                           groups[index].docId);
 
+                                                  ttbStatus.reset();
+                                                  groupStatus.reset();
+                                                  groupDocId.value = null;
                                                   groupDocId.value =
                                                       groups[index].docId;
+
                                                   Navigator.of(context)
                                                       .popAndPushNamed(
                                                     '/group',

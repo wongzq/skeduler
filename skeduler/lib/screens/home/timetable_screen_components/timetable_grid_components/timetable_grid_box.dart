@@ -403,10 +403,13 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
         } else {
           if (_ttbStatus.currAxes.dayGridAxis == widget.gridAxis) {
             _ttbStatus.currDayGridAxis = newGridAxis;
+            _ttbStatus.currAxesIsCustom = true;
           } else if (_ttbStatus.currAxes.timeGridAxis == widget.gridAxis) {
             _ttbStatus.currTimeGridAxis = newGridAxis;
+            _ttbStatus.currAxesIsCustom = true;
           } else if (_ttbStatus.currAxes.customGridAxis == widget.gridAxis) {
             _ttbStatus.currCustomGridAxis = newGridAxis;
+            _ttbStatus.currAxesIsCustom = true;
           }
         }
       },

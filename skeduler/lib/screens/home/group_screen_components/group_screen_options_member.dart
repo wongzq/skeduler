@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -13,6 +14,7 @@ class GroupScreenOptionsMember extends StatelessWidget {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
+    TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
 
     return SpeedDial(
       foregroundColor: getFABIconForegroundColor(context),
@@ -64,9 +66,10 @@ class GroupScreenOptionsMember extends StatelessWidget {
                   context: context,
                   contentDisplay: 'Exit \'${groupStatus.group.name}\' group?',
                   confirmDisplay: 'EXIT',
-                  confirmFunction: () {
-                    dbService.leaveGroup(groupStatus.group.docId);
+                  confirmFunction: () async {
+                    await dbService.leaveGroup(groupStatus.group.docId);
                     groupStatus.reset();
+                    ttbStatus.reset();
                     groupDocId.value = null;
                     Navigator.of(context).popUntil((route) => route.isFirst);
                   },

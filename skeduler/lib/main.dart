@@ -117,93 +117,80 @@ class MyApp extends StatelessWidget {
                             builder: (_, groupDocId, __) {
                               // stream Group
                               return StreamBuilder<Group>(
-                                  stream:
-                                      dbService.streamGroup(groupDocId.value),
-                                  builder: (_, groupSnap) {
-                                    // stream Group Members
-                                    return StreamBuilder<List<Member>>(
-                                        stream: dbService.streamGroupMembers(
+                                stream: dbService.streamGroup(groupDocId.value),
+                                builder: (_, groupSnap) {
+                                  // stream Group Members
+                                  return StreamBuilder<List<Member>>(
+                                    stream: dbService
+                                        .streamGroupMembers(groupDocId.value),
+                                    builder: (_, membersSnap) {
+                                      // stream Group Subjects
+                                      return StreamBuilder<List<Subject>>(
+                                        stream: dbService.streamGroupSubjects(
                                             groupDocId.value),
-                                        builder: (_, membersSnap) {
-                                          // stream Group Subjects
-                                          return StreamBuilder<List<Subject>>(
-                                              stream:
-                                                  dbService.streamGroupSubjects(
-                                                      groupDocId.value),
-                                              builder: (_, subjectsSnap) {
-                                                return StreamBuilder<Member>(
-                                                    stream: dbService
-                                                        .streamGroupMemberMe(
-                                                            groupDocId.value),
-                                                    builder: (_, meSnap) {
-                                                      // Provider for GroupStatus
-                                                      return ChangeNotifierProvider<
-                                                          GroupStatus>.value(
-                                                        value: GroupStatus(
-                                                          group: groupDocId
-                                                                      .value !=
-                                                                  null
-                                                              ? groupSnap !=
-                                                                      null
-                                                                  ? groupSnap
-                                                                      .data
-                                                                  : null
-                                                              : null,
-                                                          members: groupDocId
-                                                                      .value !=
-                                                                  null
-                                                              ? membersSnap !=
-                                                                      null
-                                                                  ? membersSnap
-                                                                      .data
-                                                                  : null
-                                                              : null,
-                                                          subjects: groupDocId
-                                                                      .value !=
-                                                                  null
-                                                              ? subjectsSnap !=
-                                                                      null
-                                                                  ? subjectsSnap
-                                                                      .data
-                                                                  : null
-                                                              : null,
-                                                          me: groupDocId
-                                                                      .value !=
-                                                                  null
-                                                              ? meSnap != null
-                                                                  ? meSnap.data
-                                                                  : null
-                                                              : null,
-                                                        ),
-                                                        child: MaterialApp(
-                                                          title: 'Skeduler',
-                                                          debugShowCheckedModeBanner:
-                                                              false,
-                                                          theme: ThemeProvider
-                                                                  .themeOf(
-                                                                      themeContext)
-                                                              .data
-                                                              .copyWith(
-                                                                splashColor: Colors
-                                                                    .transparent,
-                                                                highlightColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                splashFactory:
-                                                                    InkRipple
-                                                                        .splashFactory,
-                                                              ),
-                                                          initialRoute:
-                                                              '/dashboard',
-                                                          onGenerateRoute:
-                                                              RouteGenerator
-                                                                  .generateRoute,
-                                                        ),
-                                                      );
-                                                    });
-                                              });
-                                        });
-                                  });
+                                        builder: (_, subjectsSnap) {
+                                          return StreamBuilder<Member>(
+                                            stream:
+                                                dbService.streamGroupMemberMe(
+                                                    groupDocId.value),
+                                            builder: (_, meSnap) {
+                                              // Provider for GroupStatus
+                                              return ChangeNotifierProvider<
+                                                  GroupStatus>.value(
+                                                value: GroupStatus(
+                                                  group:
+                                                      groupDocId.value != null
+                                                          ? groupSnap != null
+                                                              ? groupSnap.data
+                                                              : null
+                                                          : null,
+                                                  members:
+                                                      groupDocId.value != null
+                                                          ? membersSnap != null
+                                                              ? membersSnap.data
+                                                              : null
+                                                          : null,
+                                                  subjects: groupDocId.value !=
+                                                          null
+                                                      ? subjectsSnap != null
+                                                          ? subjectsSnap.data
+                                                          : null
+                                                      : null,
+                                                  me: groupDocId.value != null
+                                                      ? meSnap != null
+                                                          ? meSnap.data
+                                                          : null
+                                                      : null,
+                                                ),
+                                                child: MaterialApp(
+                                                  title: 'Skeduler',
+                                                  debugShowCheckedModeBanner:
+                                                      false,
+                                                  theme: ThemeProvider.themeOf(
+                                                          themeContext)
+                                                      .data
+                                                      .copyWith(
+                                                        splashColor:
+                                                            Colors.transparent,
+                                                        highlightColor:
+                                                            Colors.transparent,
+                                                        splashFactory: InkRipple
+                                                            .splashFactory,
+                                                      ),
+                                                  initialRoute: '/dashboard',
+                                                  onGenerateRoute:
+                                                      RouteGenerator
+                                                          .generateRoute,
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                              );
                             },
                           );
                         },

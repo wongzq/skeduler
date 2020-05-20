@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -13,6 +14,7 @@ class GroupScreenOptionsOwner extends StatelessWidget {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     ValueNotifier<String> groupDocId =
         Provider.of<ValueNotifier<String>>(context);
+    TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
 
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -100,9 +102,12 @@ class GroupScreenOptionsOwner extends StatelessWidget {
                             color: Colors.red,
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           if (formKey.currentState.validate()) {
-                            dbService.deleteGroup(groupStatus.group.docId);
+                            await dbService
+                                .deleteGroup(groupStatus.group.docId);
+                            groupStatus.reset();
+                            ttbStatus.reset();
                             groupDocId.value = null;
                             Navigator.of(context)
                                 .popUntil((route) => route.isFirst);

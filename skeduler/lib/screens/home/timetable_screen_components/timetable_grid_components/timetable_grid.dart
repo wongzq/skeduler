@@ -4,17 +4,7 @@ import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_headers.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_slots.dart';
 
-class TimetableGrid extends StatefulWidget {
-  // constructors
-  TimetableGrid({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  _TimetableGridState createState() => _TimetableGridState();
-}
-
-class _TimetableGridState extends State<TimetableGrid> {
+class TimetableGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);

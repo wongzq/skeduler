@@ -16,6 +16,7 @@ class TimetableStatus extends ChangeNotifier {
   Timetable _curr;
   TimetableAxes _currAxes;
   TimetableScroll _currScroll;
+  bool _currAxesIsCustom;
 
   // editing
   EditTimetable _edit;
@@ -29,12 +30,18 @@ class TimetableStatus extends ChangeNotifier {
   Timetable get curr => this._curr;
   TimetableAxes get currAxes => this._currAxes;
   TimetableScroll get currScroll => this._currScroll;
+  bool get currAxesIsCustom => this._currAxesIsCustom;
 
   EditTimetable get edit => this._edit;
   TimetableAxes get editAxes => this._editAxes;
   TimetableScroll get editScroll => this._editScroll;
 
   EditTimetable get temp => this._temp;
+
+  set currAxesIsCustom(bool isCustom) {
+    this._currAxesIsCustom = isCustom;
+    notifyListeners();
+  }
 
   // setter methods
   set curr(Timetable ttb) {
@@ -44,22 +51,34 @@ class TimetableStatus extends ChangeNotifier {
     if (ttb == null) {
       this._currAxes = null;
       this._currScroll = null;
+      this._currAxesIsCustom = false;
     }
     // new currAxes
     else if (this._currAxes == null) {
-      this._currAxes = _newAxes(this._curr == null
-          ? EditTimetable()
-          : EditTimetable.fromTimetable(this._curr));
+      this._currAxesIsCustom = false;
+      this._currAxes = _newAxes(
+        this._curr == null ? EditTimetable() : EditTimetable.fromTimetable(ttb),
+      );
       this._currScroll = TimetableScroll(horiLength: 100, vertLength: 100);
     }
     // update currAxes keep grid axis
     else {
-      this._currAxes = _updateAxesKeepGridAxis(
-        this._curr == null
-            ? EditTimetable()
-            : EditTimetable.fromTimetable(this._curr),
-        this._currAxes,
-      );
+      if (this._currAxesIsCustom == false) {
+        this._currAxesIsCustom = false;
+        this._currAxes = _newAxes(
+          this._curr == null
+              ? EditTimetable()
+              : EditTimetable.fromTimetable(ttb),
+        );
+        this._currScroll = TimetableScroll(horiLength: 100, vertLength: 100);
+      } else {
+        this._currAxes = _updateAxesKeepGridAxis(
+          this._curr == null
+              ? EditTimetable()
+              : EditTimetable.fromTimetable(ttb),
+          this._currAxes,
+        );
+      }
     }
   }
 
@@ -78,10 +97,7 @@ class TimetableStatus extends ChangeNotifier {
     }
     // update editAxes keep grid axes
     else {
-      this._editAxes = _updateAxesKeepGridAxis(
-        editTtb,
-        this._editAxes,
-      );
+      this._editAxes = _updateAxesKeepGridAxis(editTtb, this._editAxes);
     }
   }
 
@@ -180,6 +196,14 @@ class TimetableStatus extends ChangeNotifier {
     this.curr = this._curr;
     this.edit = this._edit;
     this.temp = this._temp;
+    notifyListeners();
+  }
+
+  void reset() {
+    this.curr = null;
+    this.edit = null;
+    this.temp = null;
+    this._currAxesIsCustom = false;
     notifyListeners();
   }
 }
@@ -720,14 +744,25 @@ class TimetableAxes extends ChangeNotifier {
     return this._day.gridAxis.toString() +
         ' ' +
         this._day.dataAxis.toString() +
-        '\n' +
+        ', ' +
         this._time.gridAxis.toString() +
         ' ' +
         this._time.dataAxis.toString() +
-        '\n' +
+        ', ' +
         this._custom.gridAxis.toString() +
         ' ' +
         this._custom.dataAxis.toString();
+    // return this._day.gridAxis.toString() +
+    //     ' ' +
+    //     this._day.dataAxis.toString() +
+    //     '\n' +
+    //     this._time.gridAxis.toString() +
+    //     ' ' +
+    //     this._time.dataAxis.toString() +
+    //     '\n' +
+    //     this._custom.gridAxis.toString() +
+    //     ' ' +
+    //     this._custom.dataAxis.toString();
   }
 }
 

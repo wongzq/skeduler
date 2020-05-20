@@ -127,6 +127,7 @@ class GroupStatus extends ChangeNotifier {
     this._members = null;
     this._subjects = null;
     this._me = null;
+    notifyListeners();
   }
 
   // auxiliary functions
