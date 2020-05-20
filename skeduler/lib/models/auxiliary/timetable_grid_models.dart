@@ -62,23 +62,17 @@ class TimetableStatus extends ChangeNotifier {
       this._currScroll = TimetableScroll(horiLength: 100, vertLength: 100);
     }
     // update currAxes keep grid axis
-    else {
-      if (this._currAxesIsCustom == false) {
-        this._currAxesIsCustom = false;
-        this._currAxes = _newAxes(
-          this._curr == null
-              ? EditTimetable()
-              : EditTimetable.fromTimetable(ttb),
-        );
-        this._currScroll = TimetableScroll(horiLength: 100, vertLength: 100);
-      } else {
-        this._currAxes = _updateAxesKeepGridAxis(
-          this._curr == null
-              ? EditTimetable()
-              : EditTimetable.fromTimetable(ttb),
-          this._currAxes,
-        );
-      }
+    else if (this._currAxesIsCustom == false) {
+      this._currAxesIsCustom = false;
+      this._currAxes = _newAxes(
+        this._curr == null ? EditTimetable() : EditTimetable.fromTimetable(ttb),
+      );
+      this._currScroll = TimetableScroll(horiLength: 100, vertLength: 100);
+    } else {
+      this._currAxes = _updateAxesKeepGridAxis(
+        this._curr == null ? EditTimetable() : EditTimetable.fromTimetable(ttb),
+        this._currAxes,
+      );
     }
   }
 
