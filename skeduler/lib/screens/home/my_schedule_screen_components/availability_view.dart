@@ -171,10 +171,10 @@ class ScheduleView extends StatelessWidget {
                                   ),
                                 ];
                               },
-                              onSelected: (val) {
+                              onSelected: (val) async {
                                 switch (val) {
                                   case AvailabilityOption.edit:
-                                    showDialog(
+                                    await showDialog(
                                       context: context,
                                       builder: (context) {
                                         DateTime newStartTime = groupStatus
@@ -211,7 +211,7 @@ class ScheduleView extends StatelessWidget {
                                     break;
 
                                   case AvailabilityOption.remove:
-                                    showDialog(
+                                    await showDialog(
                                       context: context,
                                       builder: (context) {
                                         return AlertDialog(

@@ -222,8 +222,8 @@ class HomeDrawer extends StatelessWidget {
                   leading: Icon(Icons.exit_to_app),
                   title: Text(_screens[DrawerEnum.logout]['title']),
                   selected: _selected == DrawerEnum.logout ? true : false,
-                  onTap: () {
-                    showDialog(
+                  onTap: () async {
+                    await showDialog(
                       context: context,
                       builder: (context) {
                         return SimpleAlertDialog(

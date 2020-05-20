@@ -108,10 +108,10 @@ class _AxisTimeState extends State<AxisTime> {
                 ),
               ];
             },
-            onSelected: (val) {
+            onSelected: (val) async {
               switch (val) {
                 case AvailabilityOption.edit:
-                  showDialog(
+                  await showDialog(
                     context: context,
                     builder: (context) {
                       DateTime newStartTime = time.startTime;
@@ -165,7 +165,7 @@ class _AxisTimeState extends State<AxisTime> {
                   break;
 
                 case AvailabilityOption.remove:
-                  showDialog(
+                  await showDialog(
                     context: context,
                     builder: (context) {
                       return AlertDialog(

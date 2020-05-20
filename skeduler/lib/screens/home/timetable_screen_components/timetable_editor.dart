@@ -111,7 +111,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
             onSelected: (value) async {
               switch (value) {
                 case TimetableEditorOption.switchAxis:
-                  showDialog(
+                  await showDialog(
                       context: context,
                       builder: (context) {
                         return TimetableSwitchDialog(_editMode.editing);

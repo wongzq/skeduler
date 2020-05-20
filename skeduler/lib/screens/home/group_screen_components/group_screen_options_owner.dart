@@ -60,8 +60,8 @@ class GroupScreenOptionsOwner extends StatelessWidget {
               ),
             ),
           ),
-          onTap: () {
-            showDialog(
+          onTap: () async {
+            await showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(

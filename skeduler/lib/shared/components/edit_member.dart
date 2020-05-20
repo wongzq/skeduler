@@ -338,13 +338,13 @@ class _EditMemberState extends State<EditMember> {
                           onChanged: widget.member.role == MemberRole.owner ||
                                   widget.member.role == MemberRole.dummy
                               ? null
-                              : (value) {
+                              : (value) async {
                                   if (groupStatus.me.role == MemberRole.owner &&
                                       value == MemberRole.owner) {
                                     GlobalKey<FormState> formKey =
                                         GlobalKey<FormState>();
 
-                                    showDialog(
+                                    await showDialog(
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(

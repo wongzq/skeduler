@@ -184,6 +184,25 @@ class TimetableStatus extends ChangeNotifier {
     );
   }
 
+  void updateTempAxisCustomValue({
+    @required String prev,
+    @required String next,
+  }) {
+    TimetableGridDataList tmpGridDataList =
+        TimetableGridDataList.from(this._temp.gridDataList);
+    
+    tmpGridDataList._value.forEach((gridData) {
+      if (gridData._coord.custom == prev) {
+        TimetableGridData tmpGridData = TimetableGridData.copy(gridData);
+        tmpGridData._coord.custom = next;
+
+        this._temp.gridDataList.pop(gridData);
+        this._temp.gridDataList.push(tmpGridData);
+      }
+    });
+    notifyListeners();
+  }
+
   void update() {
     this.curr = this._curr;
     this.edit = this._edit;
@@ -744,17 +763,6 @@ class TimetableAxes extends ChangeNotifier {
         this._custom.gridAxis.toString() +
         ' ' +
         this._custom.dataAxis.toString();
-    // return this._day.gridAxis.toString() +
-    //     ' ' +
-    //     this._day.dataAxis.toString() +
-    //     '\n' +
-    //     this._time.gridAxis.toString() +
-    //     ' ' +
-    //     this._time.dataAxis.toString() +
-    //     '\n' +
-    //     this._custom.gridAxis.toString() +
-    //     ' ' +
-    //     this._custom.dataAxis.toString();
   }
 }
 

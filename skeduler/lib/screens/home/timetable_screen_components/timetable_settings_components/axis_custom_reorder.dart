@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_custom.dart';
 import 'package:skeduler/shared/widgets.dart';
 
@@ -18,6 +20,7 @@ class AxisCustomReoder extends StatefulWidget {
 
 class _AxisCustomReoderState extends State<AxisCustomReoder> {
   // properties
+  TimetableStatus _ttbStatus;
   List<String> _customVals;
 
   // methods
@@ -71,10 +74,20 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                                   hintStyle: TextStyle(fontSize: 15.0),
                                 ),
                                 onChanged: (value) => newCustom = value,
-                                validator: (value) =>
-                                    value == null || value.trim() == ''
-                                        ? 'Value cannot be empty'
-                                        : null,
+                                validator: (value) {
+                                  if (value == null || value.trim() == '') {
+                                    return 'Value cannot be empty';
+                                  } else if (_ttbStatus.temp.axisCustom
+                                      .contains(value)) {
+                                    return 'Value already exists';
+                                  } else {
+                                    _ttbStatus.updateTempAxisCustomValue(
+                                      prev: custom,
+                                      next: value,
+                                    );
+                                    return null;
+                                  }
+                                },
                               ),
                             ),
                             actions: <Widget>[
@@ -136,14 +149,16 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
 
   @override
   Widget build(BuildContext context) {
+    _ttbStatus = Provider.of<TimetableStatus>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: AppBarTitle(title: 'Reorder'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
-            onPressed: () {
-              showDialog(
+            onPressed: () async {
+              await showDialog(
                   context: context,
                   builder: (context) {
                     GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -162,10 +177,16 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                             hintStyle: TextStyle(fontSize: 15.0),
                           ),
                           onChanged: (value) => newCustom = value,
-                          validator: (value) =>
-                              value == null || value.trim() == ''
-                                  ? 'Value cannot be empty'
-                                  : null,
+                          validator: (value) {
+                            if (value == null || value.trim() == '') {
+                              return 'Value cannot be empty';
+                            } else if (_ttbStatus.temp.axisCustom
+                                .contains(value)) {
+                              return 'Value already exists';
+                            } else {
+                              return null;
+                            }
+                          },
                         ),
                       ),
                       actions: <Widget>[
@@ -178,14 +199,14 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                           onPressed: () {
                             if (formKey.currentState.validate()) {
                               setState(() => widget.axisCustom.add(newCustom));
+                              
+                              // update through valueSetter
+                              if (widget.valSetAxisCustom != null) {
+                                widget.valSetAxisCustom(widget.axisCustom);
+                              }
+                              
+                              Navigator.of(context).maybePop();
                             }
-
-                            // update through valueSetter
-                            if (widget.valSetAxisCustom != null) {
-                              widget.valSetAxisCustom(widget.axisCustom);
-                            }
-
-                            Navigator.of(context).maybePop();
                           },
                         ),
                       ],

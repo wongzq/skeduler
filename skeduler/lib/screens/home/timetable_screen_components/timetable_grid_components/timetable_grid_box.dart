@@ -222,7 +222,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
   Widget _buildGridBoxSwitch(BoxConstraints constraints) {
     return GestureDetector(
-      onTap: () => showDialog(
+      onTap: () async => await showDialog(
         context: context,
         builder: (context) {
           return TimetableSwitchDialog(_editMode.editing);
