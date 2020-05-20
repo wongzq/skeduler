@@ -147,21 +147,14 @@ List<Time> generateTimes({
   @required DateTime startDate,
   @required DateTime endDate,
 }) {
-  print(startDate);
-  print(endDate);
-
   List<Time> times = [];
 
   // iterate through each month
   for (int month = 0; month < months.length; month++) {
-    print(months[month]);
     // iterate through each day
     for (int day = 0;
         day < daysInMonth(DateTime.now().year, months[month].index + 1);
         day++) {
-      if (day == 0)
-        print(daysInMonth(DateTime.now().year, months[month].index + 1));
-
       DateTime newTime =
           DateTime(DateTime.now().year, months[month].index + 1, day + 1);
 
@@ -186,20 +179,6 @@ List<Time> generateTimes({
             time.endTime.hour,
             time.endTime.minute,
           );
-          if ((newStartDateTime.isAtSameMomentAs(startDate) ||
-              newStartDateTime.isAfter(startDate))) {
-          } else {
-            print('start date not ok: ' + startDate.toString());
-            print('start date not ok: ' + newStartDateTime.toString());
-          }
-
-          if ((newEndDateTime
-                  .isAtSameMomentAs(endDate.add(Duration(days: 1))) ||
-              newEndDateTime.isBefore(endDate.add(Duration(days: 1))))) {
-          } else {
-            print('end date not ok: ' + endDate.toString());
-            print('end date not ok: ' + newEndDateTime.toString());
-          }
 
           if ((newStartDateTime.isAtSameMomentAs(startDate) ||
                   newStartDateTime.isAfter(startDate)) &&
@@ -207,8 +186,6 @@ List<Time> generateTimes({
                       .isAtSameMomentAs(endDate.add(Duration(days: 1))) ||
                   newEndDateTime.isBefore(endDate.add(Duration(days: 1))))) {
             times.add(Time(newStartDateTime, newEndDateTime));
-          } else {
-            print('fail');
           }
         }
       }

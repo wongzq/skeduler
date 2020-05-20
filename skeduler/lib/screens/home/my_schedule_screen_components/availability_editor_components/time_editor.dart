@@ -95,8 +95,6 @@ class _TimeEditorState extends State<TimeEditor> {
   }
 
   DateTime getFirstDayOfStartMonth() {
-    print(widget.valGetMonths);
-
     if (widget.valGetMonths != null) {
       return DateTime(
         DateTime.now().year,
@@ -108,12 +106,6 @@ class _TimeEditorState extends State<TimeEditor> {
   }
 
   DateTime getLastDayOfLastMonth() {
-    print(widget.valGetMonths);
-
-    print('Last Day of Last Month ' +
-        daysInMonth(DateTime.now().year, widget.valGetMonths().last.index + 1)
-            .toString());
-
     if (widget.valGetMonths != null) {
       return DateTime(
         DateTime.now().year,
@@ -510,10 +502,6 @@ class _TimeEditorState extends State<TimeEditor> {
                                       endDate:
                                           _endDate ?? getLastDayOfLastMonth(),
                                     );
-
-                                    for (Time time in newTimes) {
-                                      print(time);
-                                    }
 
                                     await dbService.updateGroupMemberTimes(
                                       groupStatus.group.docId,

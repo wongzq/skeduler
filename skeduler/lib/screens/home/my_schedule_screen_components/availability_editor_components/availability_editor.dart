@@ -77,13 +77,11 @@ class AvailabilityEditor extends StatelessWidget {
                     valGetMonths: () {
                       _monthsSelected
                           .sort((a, b) => a.index.compareTo(b.index));
-                      print(_monthsSelected);
                       return _monthsSelected;
                     },
                     valGetWeekdays: () {
                       _weekdaysSelected
                           .sort((a, b) => a.index.compareTo(b.index));
-                      print(_weekdaysSelected);
                       return _weekdaysSelected;
                     },
                   ),

@@ -56,7 +56,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   TimetableEditMode _editMode;
 
   bool _isHovered = false;
-  bool _showFootPrint = false;
+  bool _showTrace = false;
 
   // methods
   Widget _buildGridBox(
@@ -164,7 +164,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     color = Colors.transparent;
                     break;
                 }
-                return _showFootPrint || _isHovered
+                return _showTrace || _isHovered
                     ? color.withOpacity(0.5)
                     : color;
               }(),
@@ -311,7 +311,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                 child: _buildGridBox(constraints),
                 onDragStarted: () {
                   if (_editMode.editing == true) {
-                    _showFootPrint = true;
+                    _showTrace = true;
                     _editMode.binVisible = true;
                     _editMode.isDragging = true;
                     _editMode.isDraggingData = _gridData.dragData;
@@ -357,7 +357,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                 },
                 onDragCompleted: () {
                   if (_editMode.editing == true) {
-                    _showFootPrint = false;
+                    _showTrace = false;
                     _editMode.binVisible = false;
                     _editMode.isDragging = false;
                     _editMode.isDraggingData = null;
@@ -365,7 +365,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                 },
                 onDraggableCanceled: (_, __) {
                   if (_editMode.editing == true) {
-                    _showFootPrint = false;
+                    _showTrace = false;
                     _editMode.binVisible = false;
                     _editMode.isDragging = false;
                     _editMode.isDraggingData = null;
