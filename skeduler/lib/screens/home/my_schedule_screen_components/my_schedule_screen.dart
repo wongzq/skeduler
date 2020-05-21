@@ -4,6 +4,7 @@ import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/availability_tab.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_tab.dart';
 import 'package:skeduler/shared/components/loading.dart';
 import 'package:skeduler/shared/widgets.dart';
 
@@ -61,7 +62,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                   Tab(
                     text: null,
                     child: Text(
-                      'Availability',
+                      'Schedule',
                       style: TextStyle(
                         color: _tabController.index == 0
                             ? Theme.of(context).primaryTextTheme.bodyText1.color
@@ -78,7 +79,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                   Tab(
                     text: null,
                     child: Text(
-                      'Schedule',
+                      'Availability',
                       style: TextStyle(
                         color: _tabController.index == 1
                             ? Theme.of(context).primaryTextTheme.bodyText1.color
@@ -91,7 +92,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -99,8 +100,8 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
             body: TabBarView(
               controller: _tabController,
               children: <Widget>[
+                ScheduleTab(),
                 AvailabilityTab(),
-                Container(),
               ],
             ),
           );

@@ -89,6 +89,16 @@ class DatabaseService {
             .map(_memberFromSnapshot);
   }
 
+  Stream<List<Timetable>> streamGroupTimetables(String groupDocId) {
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : groupsCollection
+            .document(groupDocId)
+            .collection('timetables')
+            .snapshots()
+            .map(_timetablesFromSnapshots);
+  }
+
   // get [Group][Timetable] data of today as stream
   Stream<Timetable> streamGroupTimetableForToday(
     String groupDocId,
@@ -1099,6 +1109,11 @@ class DatabaseService {
   // convert document snapshots into [Subject]s
   List<Subject> _subjectsFromSnapshots(QuerySnapshot query) {
     return query.documents.map(_subjectFromSnapshot).toList();
+  }
+
+  // convert document snapshots into [Timetable]s
+  List<Timetable> _timetablesFromSnapshots(QuerySnapshot query) {
+    return query.documents.map(_timetableFromSnapshot).toList();
   }
 
   // convert [List<dynamic>] into [List<TimetableMetadata]

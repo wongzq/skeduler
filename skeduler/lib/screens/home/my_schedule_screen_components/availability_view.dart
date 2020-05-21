@@ -11,12 +11,12 @@ import 'package:theme_provider/theme_provider.dart';
 
 enum AvailabilityOption { edit, remove }
 
-class ScheduleView extends StatefulWidget {
+class AvailabilityView extends StatefulWidget {
   @override
-  _ScheduleViewState createState() => _ScheduleViewState();
+  _AvailabilityViewState createState() => _AvailabilityViewState();
 }
 
-class _ScheduleViewState extends State<ScheduleView> {
+class _AvailabilityViewState extends State<AvailabilityView> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
@@ -28,6 +28,7 @@ class _ScheduleViewState extends State<ScheduleView> {
         ? Container()
         : Column(
             children: <Widget>[
+              // Switch default availability
               Container(
                 child: Padding(
                   padding: EdgeInsets.symmetric(
@@ -196,6 +197,8 @@ class _ScheduleViewState extends State<ScheduleView> {
                         ],
                       ),
                     )
+
+                  // if times is not empty
                   : Expanded(
                       child: ListView.builder(
                         physics: BouncingScrollPhysics(

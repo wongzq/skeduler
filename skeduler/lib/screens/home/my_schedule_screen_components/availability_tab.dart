@@ -19,7 +19,7 @@ class _AvailabilityTabState extends State<AvailabilityTab> {
         ? Container()
         : Stack(
             children: <Widget>[
-              ScheduleView(),
+              AvailabilityView(),
               Positioned(
                 bottom: 20.0,
                 right: 20.0,
@@ -39,7 +39,7 @@ class _AvailabilityTabState extends State<AvailabilityTab> {
                     Icons.edit,
                   ),
                 ),
-              )
+              ),
             ],
           );
   }
