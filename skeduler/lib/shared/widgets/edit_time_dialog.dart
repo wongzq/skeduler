@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:skeduler/shared/components/custom_time_picker.dart';
+import 'package:skeduler/shared/widgets/custom_time_picker.dart';
 
 class EditTimeDialog extends StatefulWidget {
   final String contentText;

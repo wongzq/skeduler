@@ -6,7 +6,7 @@ import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 class GroupScreenOptionsAdmin extends StatelessWidget {
   @override

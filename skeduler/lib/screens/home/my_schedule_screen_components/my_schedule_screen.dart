@@ -5,8 +5,8 @@ import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/availability_tab.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_tab.dart';
-import 'package:skeduler/shared/components/loading.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/widgets/loading.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 class MyScheduleScreen extends StatefulWidget {
   @override

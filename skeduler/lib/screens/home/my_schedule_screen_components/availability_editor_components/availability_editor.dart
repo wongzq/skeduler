@@ -6,7 +6,7 @@ import 'package:skeduler/screens/home/my_schedule_screen_components/availability
 import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/editors_status.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/month_editor.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/time_editor.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 class AvailabilityEditor extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();

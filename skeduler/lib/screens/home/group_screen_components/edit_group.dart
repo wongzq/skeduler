@@ -4,10 +4,10 @@ import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/components/color_selector.dart';
-import 'package:skeduler/shared/components/label_text_input.dart';
+import 'package:skeduler/shared/widgets/color_selector.dart';
+import 'package:skeduler/shared/widgets/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class EditGroup extends StatefulWidget {

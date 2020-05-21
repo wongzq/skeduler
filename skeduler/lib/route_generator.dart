@@ -14,13 +14,13 @@ import 'package:skeduler/screens/home/timetable_screen_components/timetable_edit
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_screen.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_custom_reorder.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/timetable_settings.dart';
-import 'package:skeduler/shared/components/add_subject.dart';
-import 'package:skeduler/shared/components/edit_member.dart';
-import 'package:skeduler/shared/components/edit_subject.dart';
+import 'package:skeduler/shared/widgets/add_subject.dart';
+import 'package:skeduler/shared/widgets/edit_member.dart';
+import 'package:skeduler/shared/widgets/edit_subject.dart';
 import 'package:skeduler/wrapper.dart';
-import 'package:skeduler/shared/components/add_dummy.dart';
-import 'package:skeduler/shared/components/add_member.dart';
-import 'package:skeduler/shared/components/custom_transition_route.dart';
+import 'package:skeduler/shared/widgets/add_dummy.dart';
+import 'package:skeduler/shared/widgets/add_member.dart';
+import 'package:skeduler/shared/widgets/custom_transition_route.dart';
 
 // --------------------------------------------------------------------------------
 // Route Generator class

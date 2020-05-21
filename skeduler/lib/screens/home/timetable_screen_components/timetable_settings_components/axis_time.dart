@@ -3,7 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/availability_view.dart';
-import 'package:skeduler/shared/components/edit_time_dialog.dart';
+import 'package:skeduler/shared/widgets/edit_time_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:theme_provider/theme_provider.dart';
 

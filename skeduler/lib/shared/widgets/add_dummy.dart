@@ -2,34 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/subject.dart';
+import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/components/label_text_input.dart';
-import 'package:skeduler/shared/components/loading.dart';
+import 'package:skeduler/shared/widgets/label_text_input.dart';
+import 'package:skeduler/shared/widgets/loading.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/ui_settings.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
-class EditSubject extends StatefulWidget {
-  final Subject subject;
-
-  const EditSubject({Key key, @required this.subject}) : super(key: key);
+class AddDummy extends StatefulWidget {
   @override
-  _EditSubjectState createState() => _EditSubjectState();
+  _AddDummyState createState() => _AddDummyState();
 }
 
-class _EditSubjectState extends State<EditSubject> {
+class _AddDummyState extends State<AddDummy> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _formKeyName = GlobalKey<FormState>();
 
-  String _newSubjectName;
-  String _newSubjectNickname;
-
-  @override
-  void initState() {
-    _newSubjectName = widget.subject.name;
-    _newSubjectNickname = widget.subject.nickname;
-    super.initState();
-  }
+  String _newDummyId;
+  String _newDummyName;
+  String _newDummyNickname;
 
   @override
   Widget build(BuildContext context) {
@@ -41,18 +33,26 @@ class _EditSubjectState extends State<EditSubject> {
         : Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-              title: AppBarTitle(
-                title: groupStatus.group.name,
-                alternateTitle: 'Edit subject',
-                subtitle: 'Edit subject',
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    groupStatus.group.name,
+                    style: textStyleAppBarTitle,
+                  ),
+                  Text(
+                    'Add dummy',
+                    style: textStyleBody,
+                  ),
+                ],
               ),
             ),
             floatingActionButton: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                // Cancel add subject
+                // Cancel changes
                 FloatingActionButton(
-                  heroTag: 'Edit Subject Cancel',
+                  heroTag: 'Add Dummy Cancel',
                   backgroundColor: Colors.red,
                   child: Icon(
                     Icons.close,
@@ -65,9 +65,9 @@ class _EditSubjectState extends State<EditSubject> {
 
                 SizedBox(width: 20.0),
 
-                // Confirm add subject
+                // Confirm amd make changes
                 FloatingActionButton(
-                  heroTag: 'Edit Subject Confirm',
+                  heroTag: 'Add Dummy Confirm',
                   backgroundColor: Colors.green,
                   child: Icon(
                     Icons.check,
@@ -78,19 +78,18 @@ class _EditSubjectState extends State<EditSubject> {
 
                     if (_formKeyName.currentState.validate()) {
                       _scaffoldKey.currentState.showSnackBar(
-                        LoadingSnackBar(context, 'Saving subject . . .'),
+                        LoadingSnackBar(context, 'Adding dummy . . .'),
                       );
 
-                      OperationStatus status =
-                          await dbService.updateGroupSubject(
-                        groupStatus.group.docId,
-                        Subject(
-                          docId: widget.subject.docId,
-                          name: _newSubjectName.trim(),
-                          nickname: _newSubjectNickname == null ||
-                                  _newSubjectNickname.trim() == ''
-                              ? _newSubjectName.trim()
-                              : _newSubjectNickname.trim(),
+                      OperationStatus status = await dbService.addDummyToGroup(
+                        groupDocId: groupStatus.group.docId,
+                        dummy: Member(
+                          docId: _newDummyId.trim(),
+                          name: _newDummyName.trim(),
+                          nickname: _newDummyNickname == null ||
+                                  _newDummyNickname.trim() == ''
+                              ? _newDummyName.trim()
+                              : _newDummyNickname.trim(),
                         ),
                       );
 
@@ -120,7 +119,9 @@ class _EditSubjectState extends State<EditSubject> {
                     padding: EdgeInsets.symmetric(horizontal: 10.0),
                     child: LabelTextInput(
                       enabled: false,
-                      hintText: widget.subject.docId,
+                      hintText: _newDummyId == null || _newDummyId.trim() == ''
+                          ? 'automated'
+                          : _newDummyId,
                       label: 'ID',
                     ),
                   ),
@@ -129,10 +130,10 @@ class _EditSubjectState extends State<EditSubject> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10.0),
                     child: LabelTextInput(
-                      initialValue: _newSubjectNickname,
+                      initialValue: _newDummyNickname,
                       hintText: 'Optional',
                       label: 'Nickname',
-                      valSetText: (value) => _newSubjectNickname = value,
+                      valSetText: (value) => _newDummyNickname = value,
                     ),
                   ),
 
@@ -140,12 +141,17 @@ class _EditSubjectState extends State<EditSubject> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10.0),
                     child: LabelTextInput(
-                      initialValue: _newSubjectName,
+                      initialValue: _newDummyName,
                       hintText: 'Required',
                       label: 'Name',
                       valSetText: (value) {
                         setState(() {
-                          _newSubjectName = value;
+                          _newDummyName = value;
+
+                          _newDummyId = value
+                              .trim()
+                              .replaceAll(RegExp('[^A-Za-z0-9]'), '')
+                              .toLowerCase();
                         });
                       },
                       formKey: _formKeyName,

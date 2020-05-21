@@ -7,9 +7,9 @@ import 'package:skeduler/screens/home/group_screen_components/group_screen_optio
 import 'package:skeduler/screens/home/group_screen_components/group_screen_options_admin.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen_options_member.dart';
 import 'package:skeduler/home_drawer.dart';
-import 'package:skeduler/shared/components/loading.dart';
+import 'package:skeduler/shared/widgets/loading.dart';
 import 'package:skeduler/shared/ui_settings.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 class GroupScreen extends StatefulWidget {
   final void Function({String groupName}) refresh;

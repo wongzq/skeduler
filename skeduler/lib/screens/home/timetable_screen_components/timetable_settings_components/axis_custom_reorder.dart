@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_custom.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 class AxisCustomReoder extends StatefulWidget {
   final List<String> axisCustom;

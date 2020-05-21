@@ -9,8 +9,8 @@ import 'package:skeduler/screens/home/members_screen_components/members_screen_o
 import 'package:skeduler/screens/home/members_screen_components/members_screen_options_member.dart';
 import 'package:skeduler/screens/home/members_screen_components/members_screen_options_owner.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/components/loading.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/widgets/loading.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 class MembersScreen extends StatefulWidget {
   @override

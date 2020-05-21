@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/user.dart';
 import 'package:skeduler/screens/authentication/authentication.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 Widget wrapWidget(Widget widget) {
   return Wrapper(widget);

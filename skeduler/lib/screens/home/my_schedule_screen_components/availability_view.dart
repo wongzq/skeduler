@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/components/edit_time_dialog.dart';
+import 'package:skeduler/shared/widgets/edit_time_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 import 'package:theme_provider/theme_provider.dart';

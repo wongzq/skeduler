@@ -3,7 +3,7 @@ import 'package:skeduler/home_drawer.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/screens/home/settings_screen_components/change_theme.dart';
 import 'package:skeduler/screens/home/settings_screen_components/change_user_data.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override

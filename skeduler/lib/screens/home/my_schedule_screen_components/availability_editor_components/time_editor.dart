@@ -9,9 +9,9 @@ import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/time.dart';
 import 'package:skeduler/screens/home/my_schedule_screen_components/availability_editor_components/editors_status.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/components/custom_time_picker.dart';
+import 'package:skeduler/shared/widgets/custom_time_picker.dart';
 import 'package:skeduler/shared/ui_settings.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 class TimeEditor extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;

@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/components/label_text_input.dart';
-import 'package:skeduler/shared/components/loading.dart';
+import 'package:skeduler/shared/widgets/label_text_input.dart';
+import 'package:skeduler/shared/widgets/loading.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 class EditMember extends StatefulWidget {
   final Member member;

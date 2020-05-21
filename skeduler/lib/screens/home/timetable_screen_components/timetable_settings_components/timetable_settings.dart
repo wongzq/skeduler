@@ -11,9 +11,9 @@ import 'package:skeduler/screens/home/timetable_screen_components/timetable_sett
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/axis_time.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/timetable_settings_components/date_range.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/components/label_text_input.dart';
+import 'package:skeduler/shared/widgets/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 class TimetableSettings extends StatelessWidget {
   @override

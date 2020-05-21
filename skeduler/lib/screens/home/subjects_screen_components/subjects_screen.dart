@@ -8,9 +8,9 @@ import 'package:skeduler/models/group_data/group.dart';
 import 'package:skeduler/models/group_data/member.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/screens/home/subjects_screen_components/subject_list_tile.dart';
-import 'package:skeduler/shared/components/loading.dart';
+import 'package:skeduler/shared/widgets/loading.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/widgets.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 class SubjectsScreen extends StatefulWidget {
   @override
