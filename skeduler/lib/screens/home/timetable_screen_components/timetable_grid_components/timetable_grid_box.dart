@@ -502,7 +502,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
             if (memberFound.alwaysAvailable) {
               isAvailable = true;
               // iterate through each unavailable time
-              memberFound.notAvailableTimes.forEach((time) {
+              memberFound.timesUnavailable.forEach((time) {
                 if ((time.startTime.isBefore(gridStartTime) ||
                         time.startTime.isAtSameMomentAs(gridStartTime)) &&
                     (time.endTime.isAtSameMomentAs(gridEndTime) ||
@@ -512,7 +512,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
               });
             } else {
               // iterate through each time
-              memberFound.times.forEach((time) {
+              memberFound.timesAvailable.forEach((time) {
                 if ((time.startTime.isBefore(gridStartTime) ||
                         time.startTime.isAtSameMomentAs(gridStartTime)) &&
                     (time.endTime.isAtSameMomentAs(gridEndTime) ||

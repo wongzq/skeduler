@@ -14,8 +14,8 @@ class Member {
   MemberRole _role;
   ColorShade _colorShade;
 
-  List<Time> _times;
-  List<Time> _notAvailableTimes;
+  List<Time> _timesAvailable;
+  List<Time> _timesUnavailable;
 
   bool _alwaysAvailable;
 
@@ -27,8 +27,8 @@ class Member {
     String description,
     MemberRole role,
     ColorShade colorShade,
-    List<Time> times,
-    List<Time> notAvailableTimes,
+    List<Time> timesAvailable,
+    List<Time> timeUnavailable,
     bool alwaysAvailable,
   }) {
     this._docId = docId;
@@ -37,8 +37,8 @@ class Member {
     this._description = description;
     this._role = role;
     this._colorShade = colorShade;
-    this._times = _chronologicalTimes(times ?? []);
-    this._notAvailableTimes = _chronologicalTimes(notAvailableTimes ?? []);
+    this._timesAvailable = _chronologicalTimes(timesAvailable ?? []);
+    this._timesUnavailable = _chronologicalTimes(timeUnavailable ?? []);
     this._alwaysAvailable = alwaysAvailable ?? false;
   }
 
@@ -52,8 +52,8 @@ class Member {
   String get roleStr => memberRoleStr(this._role);
   IconData get roleIcon => _memberRoleIcon(this._role);
   ColorShade get colorShade => this._colorShade;
-  List<Time> get times => this._times ?? [];
-  List<Time> get notAvailableTimes => this._notAvailableTimes ?? [];
+  List<Time> get timesAvailable => this._timesAvailable ?? [];
+  List<Time> get timesUnavailable => this._timesUnavailable ?? [];
   bool get alwaysAvailable => this._alwaysAvailable ?? false;
 
   // auxiliary function

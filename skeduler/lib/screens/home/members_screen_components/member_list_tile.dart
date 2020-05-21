@@ -337,6 +337,7 @@ class MemberListTile extends StatelessWidget {
                                     'Remove ${member.display} from the group?',
                                 confirmDisplay: 'REMOVE',
                                 confirmFunction: () async {
+                                  Navigator.of(context).maybePop();
                                   await dbService.removeMemberFromGroup(
                                     groupDocId: groupStatus.group.docId,
                                     memberDocId: member.docId,

@@ -857,7 +857,7 @@ class DatabaseService {
       return null;
     }
 
-    String targetList = alwaysAvailable ? 'notAvailableTimes' : 'times';
+    String targetList = alwaysAvailable ? 'timesUnavailable' : 'timesAvailable';
 
     memberDocId =
         memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
@@ -934,7 +934,7 @@ class DatabaseService {
     if (!(await dbCheckInternetConnection())) {
       return null;
     }
-    String targetList = alwaysAvailable ? 'notAvailableTimes' : 'times';
+    String targetList = alwaysAvailable ? 'timesUnavailable' : 'timesAvailable';
 
     memberDocId =
         memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
@@ -1042,9 +1042,9 @@ class DatabaseService {
             nickname: snapshot.data['nickname'] ?? snapshot.data['name'],
             description: snapshot.data['description'],
             role: MemberRole.values[snapshot.data['role']],
-            times: _timesFromDynamicList(snapshot.data['times'] ?? []),
-            notAvailableTimes:
-                _timesFromDynamicList(snapshot.data['notAvailableTimes'] ?? []),
+            timesAvailable: _timesFromDynamicList(snapshot.data['timesAvailable'] ?? []),
+            timeUnavailable:
+                _timesFromDynamicList(snapshot.data['timesUnavailable'] ?? []),
             alwaysAvailable: snapshot.data['alwaysAvailable'] ?? false,
             // colorShade: ColorShade(
             //   themeId: snapshot.data['colorShade']['themeId'],

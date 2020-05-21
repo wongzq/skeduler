@@ -67,8 +67,8 @@ class _AvailabilityViewState extends State<AvailabilityView> {
               // if times is empty
               () {
                 return alwaysAvailable
-                    ? groupStatus.me.notAvailableTimes.length == 0
-                    : groupStatus.me.times.length == 0;
+                    ? groupStatus.me.timesUnavailable.length == 0
+                    : groupStatus.me.timesAvailable.length == 0;
               }()
                   ? Expanded(
                       child: ListView(
@@ -205,8 +205,8 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                           parent: AlwaysScrollableScrollPhysics(),
                         ),
                         itemCount: alwaysAvailable
-                            ? groupStatus.me.notAvailableTimes.length
-                            : groupStatus.me.times.length,
+                            ? groupStatus.me.timesUnavailable.length
+                            : groupStatus.me.timesAvailable.length,
                         itemBuilder: (context, index) {
                           return Container(
                             child: Column(
@@ -225,12 +225,12 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                       .format(alwaysAvailable
                                                           ? groupStatus
                                                               .me
-                                                              .notAvailableTimes[
+                                                              .timesUnavailable[
                                                                   index]
                                                               .startTime
                                                           : groupStatus
                                                               .me
-                                                              .times[index]
+                                                              .timesAvailable[index]
                                                               .startTime)
                                                       .toUpperCase(),
                                               style: TextStyle(
@@ -248,18 +248,18 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                           return alwaysAvailable
                                               ? groupStatus
                                                       .me
-                                                      .notAvailableTimes[
+                                                      .timesUnavailable[
                                                           index - 1]
                                                       .startTime
                                                       .month !=
                                                   groupStatus
                                                       .me
-                                                      .notAvailableTimes[index]
+                                                      .timesUnavailable[index]
                                                       .startTime
                                                       .month
-                                              : groupStatus.me.times[index - 1]
+                                              : groupStatus.me.timesAvailable[index - 1]
                                                       .startTime.month !=
-                                                  groupStatus.me.times[index]
+                                                  groupStatus.me.timesAvailable[index]
                                                       .startTime.month;
                                         }()
                                     ? Column(
@@ -274,12 +274,12 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                       .format(alwaysAvailable
                                                           ? groupStatus
                                                               .me
-                                                              .notAvailableTimes[
+                                                              .timesUnavailable[
                                                                   index]
                                                               .startTime
                                                           : groupStatus
                                                               .me
-                                                              .times[index]
+                                                              .timesAvailable[index]
                                                               .startTime)
                                                       .toUpperCase(),
                                               style: TextStyle(
@@ -311,12 +311,12 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                 alwaysAvailable
                                                     ? groupStatus
                                                         .me
-                                                        .notAvailableTimes[
+                                                        .timesUnavailable[
                                                             index]
                                                         .startTime
                                                     : groupStatus
                                                         .me
-                                                        .times[index]
+                                                        .timesAvailable[index]
                                                         .startTime),
                                             style: textStyleBody.copyWith(
                                                 fontSize: 15.0),
@@ -326,12 +326,12 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                 alwaysAvailable
                                                     ? groupStatus
                                                         .me
-                                                        .notAvailableTimes[
+                                                        .timesUnavailable[
                                                             index]
                                                         .startTime
                                                     : groupStatus
                                                         .me
-                                                        .times[index]
+                                                        .timesAvailable[index]
                                                         .startTime),
                                             style: textStyleBodyLight.copyWith(
                                               color: Theme.of(context)
@@ -365,12 +365,12 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                 alwaysAvailable
                                                     ? groupStatus
                                                         .me
-                                                        .notAvailableTimes[
+                                                        .timesUnavailable[
                                                             index]
                                                         .startTime
                                                     : groupStatus
                                                         .me
-                                                        .times[index]
+                                                        .timesAvailable[index]
                                                         .startTime),
                                             style: TextStyle(
                                               color: Colors.black,
@@ -398,11 +398,11 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                 alwaysAvailable
                                                     ? groupStatus
                                                         .me
-                                                        .notAvailableTimes[
+                                                        .timesUnavailable[
                                                             index]
                                                         .endTime
                                                     : groupStatus.me
-                                                        .times[index].endTime),
+                                                        .timesAvailable[index].endTime),
                                             style: TextStyle(
                                               color: Colors.black,
                                               letterSpacing: 1.0,
@@ -448,23 +448,23 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                         alwaysAvailable
                                                             ? groupStatus
                                                                 .me
-                                                                .notAvailableTimes[
+                                                                .timesUnavailable[
                                                                     index]
                                                                 .startTime
                                                             : groupStatus
                                                                 .me
-                                                                .times[index]
+                                                                .timesAvailable[index]
                                                                 .startTime;
                                                     DateTime newEndTime =
                                                         alwaysAvailable
                                                             ? groupStatus
                                                                 .me
-                                                                .notAvailableTimes[
+                                                                .timesUnavailable[
                                                                     index]
                                                                 .endTime
                                                             : groupStatus
                                                                 .me
-                                                                .times[index]
+                                                                .timesAvailable[index]
                                                                 .endTime;
 
                                                     return EditTimeDialog(
@@ -474,23 +474,23 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                           alwaysAvailable
                                                               ? groupStatus
                                                                   .me
-                                                                  .notAvailableTimes[
+                                                                  .timesUnavailable[
                                                                       index]
                                                                   .startTime
                                                               : groupStatus
                                                                   .me
-                                                                  .times[index]
+                                                                  .timesAvailable[index]
                                                                   .startTime,
                                                       initialEndTime:
                                                           alwaysAvailable
                                                               ? groupStatus
                                                                   .me
-                                                                  .notAvailableTimes[
+                                                                  .timesUnavailable[
                                                                       index]
                                                                   .endTime
                                                               : groupStatus
                                                                   .me
-                                                                  .times[index]
+                                                                  .timesAvailable[index]
                                                                   .endTime,
                                                       valSetStartTime:
                                                           (dateTime) =>
@@ -543,12 +543,12 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                               text: DateFormat('EEEE, d MMMM').format(alwaysAvailable
                                                                   ? groupStatus
                                                                       .me
-                                                                      .notAvailableTimes[
+                                                                      .timesUnavailable[
                                                                           index]
                                                                       .startTime
                                                                   : groupStatus
                                                                       .me
-                                                                      .times[
+                                                                      .timesAvailable[
                                                                           index]
                                                                       .startTime),
                                                             ),
@@ -580,11 +580,11 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                                 alwaysAvailable
                                                                     ? groupStatus
                                                                             .me
-                                                                            .notAvailableTimes[
+                                                                            .timesUnavailable[
                                                                         index]
                                                                     : groupStatus
                                                                             .me
-                                                                            .times[
+                                                                            .timesAvailable[
                                                                         index]
                                                               ],
                                                               alwaysAvailable,
@@ -610,10 +610,10 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                 index ==
                                         () {
                                           return alwaysAvailable
-                                              ? groupStatus.me.notAvailableTimes
+                                              ? groupStatus.me.timesUnavailable
                                                       .length -
                                                   1
-                                              : groupStatus.me.times.length - 1;
+                                              : groupStatus.me.timesAvailable.length - 1;
                                         }()
                                     ? SizedBox(height: 100.0)
                                     : Divider(height: 1.0),
