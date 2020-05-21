@@ -216,10 +216,12 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
               style: TextStyle(
                 color: widget.gridBoxType == GridBoxType.content
                     ? Colors.black
-                    : getOriginThemeData(ThemeProvider.themeOf(context).id)
-                        .primaryTextTheme
-                        .bodyText1
-                        .color,
+                    : _editMode.isPlaceholder
+                        ? Colors.white
+                        : getOriginThemeData(ThemeProvider.themeOf(context).id)
+                            .primaryTextTheme
+                            .bodyText1
+                            .color,
                 fontSize: 10.0,
                 fontStyle: _editMode != null && _editMode.isPlaceholder
                     ? FontStyle.italic
