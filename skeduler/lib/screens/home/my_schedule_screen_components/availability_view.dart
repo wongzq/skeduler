@@ -39,10 +39,10 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        alwaysAvailable
-                            ? 'Available always'
-                            : 'Available only on',
-                        style: textStyleBody,
+                        'Always available',
+                        style: alwaysAvailable
+                            ? textStyleBody
+                            : textStyleBody.copyWith(color: Colors.grey),
                       ),
                       Switch(
                         activeColor: getOriginThemeData(
