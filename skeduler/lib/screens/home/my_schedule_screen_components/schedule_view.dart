@@ -26,7 +26,7 @@ class ScheduleView extends StatelessWidget {
         timetables.forEach((timetable) {
           timetable.gridDataList.value.forEach((gridData) {
             if (gridData.dragData.member.display == groupStatus.me.display) {
-              generateTimes(
+              List<Time> scheduleTimes = generateTimes(
                 months: List.generate(
                   Month.values.length,
                   (index) => Month.values[index],
@@ -35,7 +35,9 @@ class ScheduleView extends StatelessWidget {
                 time: gridData.coord.time,
                 startDate: timetable.startDate,
                 endDate: timetable.endDate,
-              ).forEach((scheduleTime) {
+              );
+
+              scheduleTimes.forEach((scheduleTime) {
                 schedules.add(
                   Schedule(
                     day: gridData.coord.day,
@@ -50,6 +52,8 @@ class ScheduleView extends StatelessWidget {
             }
           });
         });
+
+        schedules.sort((a, b) => a.date.compareTo(b.date));
 
         return schedules.length <= 0
             ? Container(
