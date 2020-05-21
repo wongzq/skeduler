@@ -96,7 +96,7 @@ class ScheduleView extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                Divider(thickness: 1.0),
+                                Divider(height: 1.0),
                               ],
                             )
                           : Container(),
@@ -111,7 +111,7 @@ class ScheduleView extends StatelessWidget {
                           children: [
                             Container(
                               padding:
-                                  EdgeInsets.fromLTRB(20.0, 10.0, 0.0, 10.0),
+                                  EdgeInsets.fromLTRB(20.0, 15.0, 0.0, 15.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
@@ -216,7 +216,7 @@ class ScheduleView extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Divider(thickness: 1.0),
+                      Divider(height: 1.0),
                     ],
                   );
                 },

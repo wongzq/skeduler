@@ -93,7 +93,7 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                         ),
                                       ),
                                     ),
-                                    Divider(thickness: 1.0),
+                                    Divider(height: 1.0),
                                   ],
                                 ),
 
@@ -105,7 +105,7 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                     // Left section
                                     Container(
                                       padding: EdgeInsets.fromLTRB(
-                                          20.0, 10.0, 0.0, 10.0),
+                                          20.0, 15.0, 0.0, 15.0),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -239,7 +239,7 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                               ),
                                             ),
                                           ),
-                                          Divider(thickness: 1.0),
+                                          Divider(height: 1.0),
                                         ],
                                       )
                                     : Container(),
@@ -288,7 +288,7 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                               ),
                                             ),
                                           ),
-                                          Divider(thickness: 1.0),
+                                          Divider(height: 1.0),
                                         ],
                                       )
                                     : Container(),
@@ -301,7 +301,7 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                     // Left section
                                     Container(
                                       padding: EdgeInsets.fromLTRB(
-                                          20.0, 10.0, 0.0, 10.0),
+                                          20.0, 15.0, 0.0, 15.0),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -616,7 +616,7 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                               : groupStatus.me.times.length - 1;
                                         }()
                                     ? SizedBox(height: 100.0)
-                                    : Divider(thickness: 1.0),
+                                    : Divider(height: 1.0),
                               ],
                             ),
                           );
