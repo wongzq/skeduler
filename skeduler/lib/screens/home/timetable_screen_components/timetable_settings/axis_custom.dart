@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/option_enums.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 
@@ -277,8 +278,3 @@ class _AxisCustomState extends State<AxisCustom> {
   }
 }
 
-enum CustomOption {
-  edit,
-  reorder,
-  remove,
-}

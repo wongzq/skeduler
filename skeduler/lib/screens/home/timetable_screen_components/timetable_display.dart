@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/member_selector.dart';
 import 'package:skeduler/screens/home/timetable_screen_components/subject_selector.dart';
-import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_grid.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid/timetable_grid.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:theme_provider/theme_provider.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/screens/home/my_schedule_screen_components/schedule_view.dart';
+import 'package:skeduler/models/firestore/group.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/schedule/schedule_view.dart';
 
 class ScheduleTab extends StatelessWidget {
   @override

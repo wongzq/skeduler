@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/option_enums.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
-import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/member.dart';
+import 'package:skeduler/models/firestore/group.dart';
+import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
@@ -358,12 +359,4 @@ class MemberListTile extends StatelessWidget {
       return Container();
     }
   }
-}
-
-enum MemberOption {
-  makeOwner,
-  makeAdmin,
-  makeMember,
-  edit,
-  remove,
 }

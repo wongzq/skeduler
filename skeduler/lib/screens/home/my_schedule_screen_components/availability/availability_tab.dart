@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
-import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/screens/home/my_schedule_screen_components/availability_view.dart';
+import 'package:skeduler/models/firestore/group.dart';
+import 'package:skeduler/screens/home/my_schedule_screen_components/availability/availability_view.dart';
 import 'package:skeduler/shared/functions.dart';
 
 class AvailabilityTab extends StatefulWidget {

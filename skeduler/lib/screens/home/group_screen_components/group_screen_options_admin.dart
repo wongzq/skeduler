@@ -3,7 +3,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
-import 'package:skeduler/models/group_data/group.dart';
+import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/simple_widgets.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
-import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/member.dart';
+import 'package:skeduler/models/firestore/group.dart';
+import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen_options_owner.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen_options_admin.dart';
 import 'package:skeduler/screens/home/group_screen_components/group_screen_options_member.dart';

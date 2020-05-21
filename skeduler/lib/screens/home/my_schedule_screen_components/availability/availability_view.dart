@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/time.dart';
+import 'package:skeduler/models/auxiliary/option_enums.dart';
+import 'package:skeduler/models/firestore/group.dart';
+import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/widgets/edit_time_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 import 'package:theme_provider/theme_provider.dart';
 
-enum AvailabilityOption { edit, remove }
 
 class AvailabilityView extends StatefulWidget {
   @override
@@ -23,6 +23,9 @@ class _AvailabilityViewState extends State<AvailabilityView> {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     bool alwaysAvailable = groupStatus.me.alwaysAvailable;
+    List<Time> times = alwaysAvailable
+        ? groupStatus.me.timesUnavailable
+        : groupStatus.me.timesAvailable;
 
     return groupStatus.me == null
         ? Container()
@@ -66,9 +69,7 @@ class _AvailabilityViewState extends State<AvailabilityView> {
 
               // if times is empty
               () {
-                return alwaysAvailable
-                    ? groupStatus.me.timesUnavailable.length == 0
-                    : groupStatus.me.timesAvailable.length == 0;
+                return times.length == 0;
               }()
                   ? Expanded(
                       child: ListView(
@@ -204,9 +205,7 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                         physics: BouncingScrollPhysics(
                           parent: AlwaysScrollableScrollPhysics(),
                         ),
-                        itemCount: alwaysAvailable
-                            ? groupStatus.me.timesUnavailable.length
-                            : groupStatus.me.timesAvailable.length,
+                        itemCount: times.length,
                         itemBuilder: (context, index) {
                           return Container(
                             child: Column(
@@ -222,16 +221,8 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                       ? 'EXCEPT FOR '
                                                       : '') +
                                                   DateFormat('MMMM')
-                                                      .format(alwaysAvailable
-                                                          ? groupStatus
-                                                              .me
-                                                              .timesUnavailable[
-                                                                  index]
-                                                              .startTime
-                                                          : groupStatus
-                                                              .me
-                                                              .timesAvailable[index]
-                                                              .startTime)
+                                                      .format(times[index]
+                                                          .startTime)
                                                       .toUpperCase(),
                                               style: TextStyle(
                                                 fontSize: 16.0,
@@ -245,22 +236,10 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                     : Container(),
                                 index > 0 &&
                                         () {
-                                          return alwaysAvailable
-                                              ? groupStatus
-                                                      .me
-                                                      .timesUnavailable[
-                                                          index - 1]
-                                                      .startTime
-                                                      .month !=
-                                                  groupStatus
-                                                      .me
-                                                      .timesUnavailable[index]
-                                                      .startTime
-                                                      .month
-                                              : groupStatus.me.timesAvailable[index - 1]
-                                                      .startTime.month !=
-                                                  groupStatus.me.timesAvailable[index]
-                                                      .startTime.month;
+                                          return times[index - 1]
+                                                  .startTime
+                                                  .month !=
+                                              times[index].startTime.month;
                                         }()
                                     ? Column(
                                         children: <Widget>[
@@ -271,16 +250,8 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                       ? 'EXCEPT FOR '
                                                       : '') +
                                                   DateFormat('MMMM')
-                                                      .format(alwaysAvailable
-                                                          ? groupStatus
-                                                              .me
-                                                              .timesUnavailable[
-                                                                  index]
-                                                              .startTime
-                                                          : groupStatus
-                                                              .me
-                                                              .timesAvailable[index]
-                                                              .startTime)
+                                                      .format(times[index]
+                                                          .startTime)
                                                       .toUpperCase(),
                                               style: TextStyle(
                                                 fontSize: 16.0,
@@ -307,32 +278,14 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
                                           Text(
-                                            DateFormat('dd MMM').format(
-                                                alwaysAvailable
-                                                    ? groupStatus
-                                                        .me
-                                                        .timesUnavailable[
-                                                            index]
-                                                        .startTime
-                                                    : groupStatus
-                                                        .me
-                                                        .timesAvailable[index]
-                                                        .startTime),
+                                            DateFormat('dd MMM')
+                                                .format(times[index].startTime),
                                             style: textStyleBody.copyWith(
                                                 fontSize: 15.0),
                                           ),
                                           Text(
-                                            DateFormat('EEEE').format(
-                                                alwaysAvailable
-                                                    ? groupStatus
-                                                        .me
-                                                        .timesUnavailable[
-                                                            index]
-                                                        .startTime
-                                                    : groupStatus
-                                                        .me
-                                                        .timesAvailable[index]
-                                                        .startTime),
+                                            DateFormat('EEEE')
+                                                .format(times[index].startTime),
                                             style: textStyleBodyLight.copyWith(
                                               color: Theme.of(context)
                                                           .brightness ==
@@ -361,17 +314,8 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                 BorderRadius.circular(50.0),
                                           ),
                                           child: Text(
-                                            DateFormat('hh:mm aa').format(
-                                                alwaysAvailable
-                                                    ? groupStatus
-                                                        .me
-                                                        .timesUnavailable[
-                                                            index]
-                                                        .startTime
-                                                    : groupStatus
-                                                        .me
-                                                        .timesAvailable[index]
-                                                        .startTime),
+                                            DateFormat('hh:mm aa')
+                                                .format(times[index].startTime),
                                             style: TextStyle(
                                               color: Colors.black,
                                               letterSpacing: 1.0,
@@ -394,15 +338,8 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                 BorderRadius.circular(50.0),
                                           ),
                                           child: Text(
-                                            DateFormat('hh:mm aa').format(
-                                                alwaysAvailable
-                                                    ? groupStatus
-                                                        .me
-                                                        .timesUnavailable[
-                                                            index]
-                                                        .endTime
-                                                    : groupStatus.me
-                                                        .timesAvailable[index].endTime),
+                                            DateFormat('hh:mm aa')
+                                                .format(times[index].endTime),
                                             style: TextStyle(
                                               color: Colors.black,
                                               letterSpacing: 1.0,
@@ -445,53 +382,18 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                   context: context,
                                                   builder: (context) {
                                                     DateTime newStartTime =
-                                                        alwaysAvailable
-                                                            ? groupStatus
-                                                                .me
-                                                                .timesUnavailable[
-                                                                    index]
-                                                                .startTime
-                                                            : groupStatus
-                                                                .me
-                                                                .timesAvailable[index]
-                                                                .startTime;
+                                                        times[index].startTime;
                                                     DateTime newEndTime =
-                                                        alwaysAvailable
-                                                            ? groupStatus
-                                                                .me
-                                                                .timesUnavailable[
-                                                                    index]
-                                                                .endTime
-                                                            : groupStatus
-                                                                .me
-                                                                .timesAvailable[index]
-                                                                .endTime;
+                                                        times[index].endTime;
 
                                                     return EditTimeDialog(
                                                       contentText:
                                                           'Edit schedule time',
                                                       initialStartTime:
-                                                          alwaysAvailable
-                                                              ? groupStatus
-                                                                  .me
-                                                                  .timesUnavailable[
-                                                                      index]
-                                                                  .startTime
-                                                              : groupStatus
-                                                                  .me
-                                                                  .timesAvailable[index]
-                                                                  .startTime,
+                                                          times[index]
+                                                              .startTime,
                                                       initialEndTime:
-                                                          alwaysAvailable
-                                                              ? groupStatus
-                                                                  .me
-                                                                  .timesUnavailable[
-                                                                      index]
-                                                                  .endTime
-                                                              : groupStatus
-                                                                  .me
-                                                                  .timesAvailable[index]
-                                                                  .endTime,
+                                                          times[index].endTime,
                                                       valSetStartTime:
                                                           (dateTime) =>
                                                               newStartTime =
@@ -540,15 +442,9 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                               ),
                                                             ),
                                                             TextSpan(
-                                                              text: DateFormat('EEEE, d MMMM').format(alwaysAvailable
-                                                                  ? groupStatus
-                                                                      .me
-                                                                      .timesUnavailable[
-                                                                          index]
-                                                                      .startTime
-                                                                  : groupStatus
-                                                                      .me
-                                                                      .timesAvailable[
+                                                              text: DateFormat(
+                                                                      'EEEE, d MMMM')
+                                                                  .format(times[
                                                                           index]
                                                                       .startTime),
                                                             ),
@@ -576,17 +472,7 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                                               groupStatus
                                                                   .group.docId,
                                                               null,
-                                                              [
-                                                                alwaysAvailable
-                                                                    ? groupStatus
-                                                                            .me
-                                                                            .timesUnavailable[
-                                                                        index]
-                                                                    : groupStatus
-                                                                            .me
-                                                                            .timesAvailable[
-                                                                        index]
-                                                              ],
+                                                              [times[index]],
                                                               alwaysAvailable,
                                                             );
                                                             Navigator.of(
@@ -609,11 +495,7 @@ class _AvailabilityViewState extends State<AvailabilityView> {
 
                                 index ==
                                         () {
-                                          return alwaysAvailable
-                                              ? groupStatus.me.timesUnavailable
-                                                      .length -
-                                                  1
-                                              : groupStatus.me.timesAvailable.length - 1;
+                                          return times.length - 1;
                                         }()
                                     ? SizedBox(height: 100.0)
                                     : Divider(height: 1.0),

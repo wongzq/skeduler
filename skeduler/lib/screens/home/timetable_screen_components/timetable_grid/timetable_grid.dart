@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
-import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_headers.dart';
-import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_slots.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid/timetable_headers.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid/timetable_slots.dart';
 
 class TimetableGrid extends StatelessWidget {
   @override

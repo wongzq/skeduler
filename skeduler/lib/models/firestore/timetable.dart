@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
-import 'package:skeduler/models/group_data/time.dart';
+import 'package:skeduler/models/firestore/time.dart';
 
 // --------------------------------------------------------------------------------
 // TimetableMetadata class

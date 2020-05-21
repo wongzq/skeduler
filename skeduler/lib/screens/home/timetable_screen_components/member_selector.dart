@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
-import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/member.dart';
+import 'package:skeduler/models/firestore/group.dart';
+import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 

@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
-import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/member.dart';
-import 'package:skeduler/models/group_data/subject.dart';
-import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/models/group_data/timetable.dart';
-import 'package:skeduler/models/group_data/user.dart';
+import 'package:skeduler/models/firestore/group.dart';
+import 'package:skeduler/models/firestore/member.dart';
+import 'package:skeduler/models/firestore/subject.dart';
+import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/firestore/timetable.dart';
+import 'package:skeduler/models/firestore/user.dart';
 import 'package:skeduler/shared/functions.dart';
 
 class DatabaseService {

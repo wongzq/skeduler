@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/group_data/user.dart';
+import 'package:skeduler/models/firestore/user.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/widgets/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';

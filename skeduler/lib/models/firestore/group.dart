@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
-import 'package:skeduler/models/group_data/member.dart';
-import 'package:skeduler/models/group_data/subject.dart';
-import 'package:skeduler/models/group_data/timetable.dart';
+import 'package:skeduler/models/firestore/member.dart';
+import 'package:skeduler/models/firestore/subject.dart';
+import 'package:skeduler/models/firestore/timetable.dart';
 
 // --------------------------------------------------------------------------------
 // Group class

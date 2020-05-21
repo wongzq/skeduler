@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/schedule.dart';
-import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/models/group_data/timetable.dart';
+import 'package:skeduler/models/firestore/group.dart';
+import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/firestore/timetable.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';

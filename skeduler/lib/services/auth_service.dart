@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:skeduler/models/group_data/user.dart';
+import 'package:skeduler/models/firestore/user.dart';
 
 class AuthService {
   final FirebaseAuth _authService = FirebaseAuth.instance;

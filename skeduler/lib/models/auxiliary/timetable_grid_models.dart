@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:quiver/core.dart';
-import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/models/group_data/timetable.dart';
+import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/firestore/timetable.dart';
 
 // --------------------------------------------------------------------------------
 // TimetableStatus class for Provider

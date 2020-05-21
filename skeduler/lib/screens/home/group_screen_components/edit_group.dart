@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
-import 'package:skeduler/models/group_data/group.dart';
+import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/screens/home/dashboard_screen_components/group_card.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/widgets/color_selector.dart';

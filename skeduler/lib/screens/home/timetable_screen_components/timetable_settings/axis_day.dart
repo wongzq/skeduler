@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:skeduler/models/group_data/time.dart';
+import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/shared/functions.dart';
 
 class AxisDay extends StatefulWidget {

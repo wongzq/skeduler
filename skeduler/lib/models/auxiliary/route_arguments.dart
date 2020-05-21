@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/member.dart';
-import 'package:skeduler/models/group_data/subject.dart';
+import 'package:skeduler/models/firestore/group.dart';
+import 'package:skeduler/models/firestore/member.dart';
+import 'package:skeduler/models/firestore/subject.dart';
 
 // --------------------------------------------------------------------------------
 // Route Arguments Template

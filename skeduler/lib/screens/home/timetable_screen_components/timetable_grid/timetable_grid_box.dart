@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
-import 'package:skeduler/models/group_data/group.dart';
-import 'package:skeduler/models/group_data/member.dart';
-import 'package:skeduler/models/group_data/time.dart';
-import 'package:skeduler/models/group_data/user.dart';
-import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid_components/timetable_switch_dialog.dart';
+import 'package:skeduler/models/firestore/group.dart';
+import 'package:skeduler/models/firestore/member.dart';
+import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/firestore/user.dart';
+import 'package:skeduler/screens/home/timetable_screen_components/timetable_grid/timetable_switch_dialog.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:theme_provider/theme_provider.dart';
 

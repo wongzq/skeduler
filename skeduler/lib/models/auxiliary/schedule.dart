@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:skeduler/models/group_data/time.dart';
+import 'package:skeduler/models/firestore/time.dart';
 
 class Schedule {
   Weekday _day;
