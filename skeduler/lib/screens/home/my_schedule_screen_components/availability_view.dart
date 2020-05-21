@@ -32,13 +32,15 @@ class _ScheduleViewState extends State<ScheduleView> {
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 20.0,
-                    vertical: 10.0,
+                    vertical: 5.0,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        'Always available',
+                        alwaysAvailable
+                            ? 'Available always'
+                            : 'Available only on',
                         style: textStyleBody,
                       ),
                       Switch(
@@ -60,19 +62,6 @@ class _ScheduleViewState extends State<ScheduleView> {
                   ),
                 ),
               ),
-              // AnimatedContainer(
-              //   height: alwaysAvailable ? 20 : 0,
-              //   duration: Duration(milliseconds: 300),
-              //   child: Text(
-              //     'EXCEPT',
-              //     textAlign: TextAlign.left,
-              //     style: TextStyle(
-              //       fontSize: 16.0,
-              //       letterSpacing: 2.0,
-              //     ),
-              //   ),
-              // ),
-              // SizedBox(height: 10.0),
 
               // if times is empty
               () {
@@ -130,8 +119,7 @@ class _ScheduleViewState extends State<ScheduleView> {
                                           ),
                                           Text(
                                             'Time',
-                                            style:
-                                                textStyleBodyLight.copyWith(
+                                            style: textStyleBodyLight.copyWith(
                                               color: Colors.grey,
                                               fontSize: 13.0,
                                               fontStyle: FontStyle.italic,
@@ -147,11 +135,11 @@ class _ScheduleViewState extends State<ScheduleView> {
                                         Container(
                                           padding: EdgeInsets.all(10.0),
                                           decoration: BoxDecoration(
-                                            color: Theme.of(context)
-                                                        .brightness ==
-                                                    Brightness.light
-                                                ? Colors.grey.shade300
-                                                : Colors.grey.shade700,
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.light
+                                                    ? Colors.grey.shade300
+                                                    : Colors.grey.shade700,
                                             borderRadius:
                                                 BorderRadius.circular(50.0),
                                           ),
@@ -178,11 +166,11 @@ class _ScheduleViewState extends State<ScheduleView> {
                                         Container(
                                           padding: EdgeInsets.all(10.0),
                                           decoration: BoxDecoration(
-                                            color: Theme.of(context)
-                                                        .brightness ==
-                                                    Brightness.light
-                                                ? Colors.grey.shade300
-                                                : Colors.grey.shade700,
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.light
+                                                    ? Colors.grey.shade300
+                                                    : Colors.grey.shade700,
                                             borderRadius:
                                                 BorderRadius.circular(50.0),
                                           ),

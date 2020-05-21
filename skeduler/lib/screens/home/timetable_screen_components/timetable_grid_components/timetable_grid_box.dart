@@ -105,7 +105,9 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                       return _editMode != null && _editMode.isPlaceholder
                           ? Colors.grey.shade400
                           : _editMode.editing
+                              // something is dragging
                               ? _editMode.isDragging
+                                  // check validity
                                   ? _editMode.isDraggingData.hasSubjectOnly ||
                                           (_editMode
                                                   .isDraggingData.hasSubject &&
@@ -131,9 +133,11 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                                                           .isNotEmpty
                                                   ? activatedColor
                                                   : deactivatedColor
+                              // something is not dragging
                               : _gridData.dragData == null ||
                                       _gridData.dragData.isEmpty
                                   ? deactivatedColor
+                                  // view me
                                   : _editMode.viewMe
                                       ? () {
                                           Member member =
@@ -497,15 +501,28 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
           // if day matches
           if (Weekday.values[ttbDate.weekday - 1] == _gridData.coord.day) {
-            // iterate through each time
-            memberFound.times.forEach((time) {
-              if ((time.startTime.isBefore(gridStartTime) ||
-                      time.startTime.isAtSameMomentAs(gridStartTime)) &&
-                  (time.endTime.isAtSameMomentAs(gridEndTime) ||
-                      time.endTime.isAfter(gridEndTime))) {
-                isAvailable = true;
-              }
-            });
+            if (memberFound.alwaysAvailable) {
+              isAvailable = true;
+              // iterate through each unavailable time
+              memberFound.notAvailableTimes.forEach((time) {
+                if ((time.startTime.isBefore(gridStartTime) ||
+                        time.startTime.isAtSameMomentAs(gridStartTime)) &&
+                    (time.endTime.isAtSameMomentAs(gridEndTime) ||
+                        time.endTime.isAfter(gridEndTime))) {
+                  isAvailable = false;
+                }
+              });
+            } else {
+              // iterate through each time
+              memberFound.times.forEach((time) {
+                if ((time.startTime.isBefore(gridStartTime) ||
+                        time.startTime.isAtSameMomentAs(gridStartTime)) &&
+                    (time.endTime.isAtSameMomentAs(gridEndTime) ||
+                        time.endTime.isAfter(gridEndTime))) {
+                  isAvailable = true;
+                }
+              });
+            }
           }
         }
       }
