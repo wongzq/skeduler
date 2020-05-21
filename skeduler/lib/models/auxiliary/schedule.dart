@@ -24,8 +24,7 @@ class Schedule {
         this._member = member,
         this._subject = subject;
 
-  DateTime get date => DateTime(
-      this._startTime.year, this._startTime.month, this._startTime.day);
+  DateTime get date => this._startTime;
   String get dayStr => this._day == null ? '' : getWeekdayShortStr(this._day);
   String get monthStr =>
       this._startTime == null ? '' : DateFormat('MMMM').format(this._startTime);
