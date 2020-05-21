@@ -42,6 +42,9 @@ class _ScheduleViewState extends State<ScheduleView> {
                         style: textStyleBody,
                       ),
                       Switch(
+                        activeColor: getOriginThemeData(
+                                ThemeProvider.themeOf(context).id)
+                            .accentColor,
                         value: alwaysAvailable,
                         onChanged: (value) async {
                           await dbService
@@ -57,21 +60,21 @@ class _ScheduleViewState extends State<ScheduleView> {
                   ),
                 ),
               ),
-              AnimatedContainer(
-                height: alwaysAvailable ? 20 : 0,
-                duration: Duration(milliseconds: 300),
-                child: Text(
-                  'EXCEPT',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    letterSpacing: 2.0,
-                  ),
-                ),
-              ),
-              SizedBox(height: 10.0),
+              // AnimatedContainer(
+              //   height: alwaysAvailable ? 20 : 0,
+              //   duration: Duration(milliseconds: 300),
+              //   child: Text(
+              //     'EXCEPT',
+              //     textAlign: TextAlign.left,
+              //     style: TextStyle(
+              //       fontSize: 16.0,
+              //       letterSpacing: 2.0,
+              //     ),
+              //   ),
+              // ),
+              // SizedBox(height: 10.0),
 
-              // if times or notAvailableTimes is empty
+              // if times is empty
               () {
                 return alwaysAvailable
                     ? groupStatus.me.notAvailableTimes.length == 0
@@ -127,7 +130,8 @@ class _ScheduleViewState extends State<ScheduleView> {
                                           ),
                                           Text(
                                             'Time',
-                                            style: textStyleBodyLight.copyWith(
+                                            style:
+                                                textStyleBodyLight.copyWith(
                                               color: Colors.grey,
                                               fontSize: 13.0,
                                               fontStyle: FontStyle.italic,
@@ -143,11 +147,11 @@ class _ScheduleViewState extends State<ScheduleView> {
                                         Container(
                                           padding: EdgeInsets.all(10.0),
                                           decoration: BoxDecoration(
-                                            color:
-                                                Theme.of(context).brightness ==
-                                                        Brightness.light
-                                                    ? Colors.grey.shade300
-                                                    : Colors.grey.shade700,
+                                            color: Theme.of(context)
+                                                        .brightness ==
+                                                    Brightness.light
+                                                ? Colors.grey.shade300
+                                                : Colors.grey.shade700,
                                             borderRadius:
                                                 BorderRadius.circular(50.0),
                                           ),
@@ -174,11 +178,11 @@ class _ScheduleViewState extends State<ScheduleView> {
                                         Container(
                                           padding: EdgeInsets.all(10.0),
                                           decoration: BoxDecoration(
-                                            color:
-                                                Theme.of(context).brightness ==
-                                                        Brightness.light
-                                                    ? Colors.grey.shade300
-                                                    : Colors.grey.shade700,
+                                            color: Theme.of(context)
+                                                        .brightness ==
+                                                    Brightness.light
+                                                ? Colors.grey.shade300
+                                                : Colors.grey.shade700,
                                             borderRadius:
                                                 BorderRadius.circular(50.0),
                                           ),
@@ -223,18 +227,21 @@ class _ScheduleViewState extends State<ScheduleView> {
                                           Container(
                                             padding: EdgeInsets.all(10.0),
                                             child: Text(
-                                              DateFormat('MMMM')
-                                                  .format(alwaysAvailable
-                                                      ? groupStatus
-                                                          .me
-                                                          .notAvailableTimes[
-                                                              index]
-                                                          .startTime
-                                                      : groupStatus
-                                                          .me
-                                                          .times[index]
-                                                          .startTime)
-                                                  .toUpperCase(),
+                                              (alwaysAvailable
+                                                      ? 'EXCEPT FOR '
+                                                      : '') +
+                                                  DateFormat('MMMM')
+                                                      .format(alwaysAvailable
+                                                          ? groupStatus
+                                                              .me
+                                                              .notAvailableTimes[
+                                                                  index]
+                                                              .startTime
+                                                          : groupStatus
+                                                              .me
+                                                              .times[index]
+                                                              .startTime)
+                                                      .toUpperCase(),
                                               style: TextStyle(
                                                 fontSize: 16.0,
                                                 letterSpacing: 2.0,
@@ -269,18 +276,21 @@ class _ScheduleViewState extends State<ScheduleView> {
                                           Container(
                                             padding: EdgeInsets.all(10.0),
                                             child: Text(
-                                              DateFormat('MMMM')
-                                                  .format(alwaysAvailable
-                                                      ? groupStatus
-                                                          .me
-                                                          .notAvailableTimes[
-                                                              index]
-                                                          .startTime
-                                                      : groupStatus
-                                                          .me
-                                                          .times[index]
-                                                          .startTime)
-                                                  .toUpperCase(),
+                                              (alwaysAvailable
+                                                      ? 'EXCEPT FOR '
+                                                      : '') +
+                                                  DateFormat('MMMM')
+                                                      .format(alwaysAvailable
+                                                          ? groupStatus
+                                                              .me
+                                                              .notAvailableTimes[
+                                                                  index]
+                                                              .startTime
+                                                          : groupStatus
+                                                              .me
+                                                              .times[index]
+                                                              .startTime)
+                                                      .toUpperCase(),
                                               style: TextStyle(
                                                 fontSize: 16.0,
                                                 letterSpacing: 2.0,

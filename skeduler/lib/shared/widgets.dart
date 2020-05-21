@@ -17,9 +17,23 @@ class SimpleAlertDialog extends AlertDialog {
               ? null
               : Text(
                   titleDisplay,
-                  style: TextStyle(fontSize: 16.0),
+                  style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.black
+                        : Colors.white,
+                    fontSize: 16.0,
+                  ),
                 ),
-          content: contentDisplay == null ? null : Text(contentDisplay),
+          content: contentDisplay == null
+              ? null
+              : Text(
+                  contentDisplay,
+                  style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.black
+                        : Colors.white,
+                  ),
+                ),
           actions: <Widget>[
             // CANCEL button
             FlatButton(
