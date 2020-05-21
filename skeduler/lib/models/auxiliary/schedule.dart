@@ -24,16 +24,18 @@ class Schedule {
         this._member = member,
         this._subject = subject;
 
-  String get day => this._day == null ? '' : getWeekdayShortStr(this._day);
-  String get month =>
+  DateTime get date => DateTime(
+      this._startTime.year, this._startTime.month, this._startTime.day);
+  String get dayStr => this._day == null ? '' : getWeekdayShortStr(this._day);
+  String get monthStr =>
       this._startTime == null ? '' : DateFormat('MMMM').format(this._startTime);
-  String get date => this._startTime == null
+  String get dateStr => this._startTime == null
       ? ''
       : DateFormat('dd MMM').format(this._startTime);
-  String get startTime => this._startTime == null
+  String get startTimeStr => this._startTime == null
       ? ''
       : DateFormat('hh:mm aa').format(this._startTime) ?? '';
-  String get endTime => this._endTime == null
+  String get endTimeStr => this._endTime == null
       ? ''
       : DateFormat('hh:mm aa').format(this._endTime) ?? '';
   String get custom => this._custom ?? '';
