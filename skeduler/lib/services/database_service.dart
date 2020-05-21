@@ -816,15 +816,38 @@ class DatabaseService {
   // Modifying methods for Times
   // --------------------------------------------------------------------------------
 
+  Future updateGroupMemberAlwaysAvailable(
+    String groupDocId,
+    String memberDocId,
+    bool alwaysAvailable,
+  ) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+    memberDocId =
+        memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
+
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : await groupsCollection
+            .document(groupDocId)
+            .collection('members')
+            .document(memberDocId)
+            .updateData({'alwaysAvailable': alwaysAvailable});
+  }
+
   // update [Group][Member]'s available schedule times
   Future updateGroupMemberTimes(
     String groupDocId,
     String memberDocId,
     List<Time> newTimes,
+    bool alwaysAvailable,
   ) async {
     if (!(await dbCheckInternetConnection())) {
       return null;
     }
+
+    String targetList = alwaysAvailable ? 'notAvailableTimes' : 'times';
 
     memberDocId =
         memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
@@ -843,8 +866,8 @@ class DatabaseService {
               List<Map<String, Timestamp>> newTimestamps = [];
 
               // get previous times and remove times on the same day
-              if (member.data['times'] != null) {
-                prevTimes = _timesFromDynamicList(member.data['times']);
+              if (member.data[targetList] != null) {
+                prevTimes = _timesFromDynamicList(member.data[targetList]);
 
                 prevTimes.forEach((pTime) {
                   newTimes.forEach((nTime) {
@@ -867,7 +890,7 @@ class DatabaseService {
                     .collection('members')
                     .document(memberDocId)
                     .updateData(
-                        {'times': FieldValue.arrayRemove(removeTimestamps)});
+                        {targetList: FieldValue.arrayRemove(removeTimestamps)});
               }
 
               // convert [List<Time>] into [List<Map<String, Timestamp>]
@@ -885,7 +908,8 @@ class DatabaseService {
                   .document(groupDocId)
                   .collection('members')
                   .document(memberDocId)
-                  .updateData({'times': FieldValue.arrayUnion(newTimestamps)});
+                  .updateData(
+                      {targetList: FieldValue.arrayUnion(newTimestamps)});
             }
           });
   }
@@ -895,10 +919,12 @@ class DatabaseService {
     String groupDocId,
     String memberDocId,
     List<Time> removeTimes,
+    bool alwaysAvailable,
   ) async {
     if (!(await dbCheckInternetConnection())) {
       return null;
     }
+    String targetList = alwaysAvailable ? 'notAvailableTimes' : 'times';
 
     memberDocId =
         memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
@@ -915,8 +941,8 @@ class DatabaseService {
             .document(memberDocId)
             .get()
             .then((member) async {
-            if (member.data['times'] != null) {
-              prevTimes = _timesFromDynamicList(member.data['times']);
+            if (member.data[targetList] != null) {
+              prevTimes = _timesFromDynamicList(member.data[targetList]);
 
               for (int p = 0; p < prevTimes.length; p++) {
                 for (int r = 0; r < removeTimes.length; r++) {
@@ -954,7 +980,7 @@ class DatabaseService {
                   .collection('members')
                   .document(memberDocId)
                   .updateData(
-                      {'times': FieldValue.arrayRemove(removeTimestamps)});
+                      {targetList: FieldValue.arrayRemove(removeTimestamps)});
             }
           });
   }
@@ -1006,11 +1032,14 @@ class DatabaseService {
             nickname: snapshot.data['nickname'] ?? snapshot.data['name'],
             description: snapshot.data['description'],
             role: MemberRole.values[snapshot.data['role']],
+            times: _timesFromDynamicList(snapshot.data['times'] ?? []),
+            notAvailableTimes:
+                _timesFromDynamicList(snapshot.data['notAvailableTimes'] ?? []),
+            alwaysAvailable: snapshot.data['alwaysAvailable'] ?? false,
             // colorShade: ColorShade(
             //   themeId: snapshot.data['colorShade']['themeId'],
             //   shade: snapshot.data['colorShade']['shade'],
             // ),
-            times: _timesFromDynamicList(snapshot.data['times'] ?? []),
           )
         : Member(docId: null);
   }

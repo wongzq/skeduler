@@ -502,12 +502,21 @@ class _TimeEditorState extends State<TimeEditor> {
                                       endDate:
                                           _endDate ?? getLastDayOfLastMonth(),
                                     );
-
-                                    await dbService.updateGroupMemberTimes(
-                                      groupStatus.group.docId,
-                                      null,
-                                      newTimes,
-                                    );
+                                    if (groupStatus.me.alwaysAvailable) {
+                                      await dbService.updateGroupMemberTimes(
+                                        groupStatus.group.docId,
+                                        null,
+                                        newTimes,
+                                        true,
+                                      );
+                                    } else {
+                                      await dbService.updateGroupMemberTimes(
+                                        groupStatus.group.docId,
+                                        null,
+                                        newTimes,
+                                        false,
+                                      );
+                                    }
 
                                     widget.scaffoldKey.currentState
                                         .hideCurrentSnackBar();
@@ -626,6 +635,8 @@ class _TimeEditorState extends State<TimeEditor> {
                                                   groupStatus.group.docId,
                                                   null,
                                                   removeTimes,
+                                                  groupStatus
+                                                      .me.alwaysAvailable,
                                                 )
                                                     .then(
                                                   (_) {

@@ -15,6 +15,9 @@ class Member {
   ColorShade _colorShade;
 
   List<Time> _times;
+  List<Time> _notAvailableTimes;
+
+  bool _alwaysAvailable;
 
   // constructors
   Member({
@@ -25,6 +28,8 @@ class Member {
     MemberRole role,
     ColorShade colorShade,
     List<Time> times,
+    List<Time> notAvailableTimes,
+    bool alwaysAvailable,
   }) {
     this._docId = docId;
     this._name = name;
@@ -32,7 +37,9 @@ class Member {
     this._description = description;
     this._role = role;
     this._colorShade = colorShade;
-    this._times = _chronologicalTimes(times);
+    this._times = _chronologicalTimes(times ?? []);
+    this._notAvailableTimes = _chronologicalTimes(notAvailableTimes ?? []);
+    this._alwaysAvailable = alwaysAvailable ?? false;
   }
 
   // getter methods
@@ -45,10 +52,12 @@ class Member {
   String get roleStr => memberRoleStr(this._role);
   IconData get roleIcon => _memberRoleIcon(this._role);
   ColorShade get colorShade => this._colorShade;
-  List<Time> get times => this._times;
+  List<Time> get times => this._times ?? [];
+  List<Time> get notAvailableTimes => this._notAvailableTimes ?? [];
+  bool get alwaysAvailable => this._alwaysAvailable ?? false;
 
   // auxiliary function
-  List<Time> _chronologicalTimes(List<Time> times) {
+  static List<Time> _chronologicalTimes(List<Time> times) {
     List<Time> chronologicalTimes = List<Time>.from(times);
     chronologicalTimes.sort((a, b) => a.startTime.compareTo(b.startTime));
     return chronologicalTimes;

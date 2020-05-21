@@ -11,400 +11,618 @@ import 'package:theme_provider/theme_provider.dart';
 
 enum AvailabilityOption { edit, remove }
 
-class ScheduleView extends StatelessWidget {
+class ScheduleView extends StatefulWidget {
+  @override
+  _ScheduleViewState createState() => _ScheduleViewState();
+}
+
+class _ScheduleViewState extends State<ScheduleView> {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
+    bool alwaysAvailable = groupStatus.me.alwaysAvailable;
+
     return groupStatus.me == null
         ? Container()
-        : groupStatus.me.times.length == 0
-            ? ListView(
-                children: <Widget>[
-                  Container(
-                    child: Column(
-                      children: <Widget>[
-                        // Header
-                        Column(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.all(10.0),
-                              child: Text(
-                                'NO AVAILABLE TIMES',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontStyle: FontStyle.italic,
-                                  fontSize: 16.0,
-                                  letterSpacing: 2.0,
-                                ),
-                              ),
-                            ),
-                            Divider(thickness: 1.0),
-                          ],
-                        ),
-
-                        // Custom List Tile with Row
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            // Left section
-                            Container(
-                              padding:
-                                  EdgeInsets.fromLTRB(20.0, 10.0, 0.0, 10.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    DateFormat('dd MMM').format(DateTime.now()),
-                                    style: textStyleBody.copyWith(
-                                      color: Colors.grey,
-                                      fontSize: 15.0,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                  Text(
-                                    DateFormat('EEEE').format(DateTime.now()),
-                                    style: textStyleBodyLight.copyWith(
-                                      color: Colors.grey,
-                                      fontSize: 13.0,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Right section
-                            Row(
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).brightness ==
-                                            Brightness.light
-                                        ? Colors.grey.shade300
-                                        : Colors.grey.shade700,
-                                    borderRadius: BorderRadius.circular(50.0),
-                                  ),
-                                  child: Text(
-                                    DateFormat('hh:mm aa')
-                                        .format(DateTime.now()),
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontStyle: FontStyle.italic,
-                                      letterSpacing: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text(
-                                    'to',
-                                    style: TextStyle(
-                                      fontStyle: FontStyle.italic,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).brightness ==
-                                            Brightness.light
-                                        ? Colors.grey.shade300
-                                        : Colors.grey.shade700,
-                                    borderRadius: BorderRadius.circular(50.0),
-                                  ),
-                                  child: Text(
-                                    DateFormat('hh:mm aa').format(
-                                        DateTime.now().add(Duration(hours: 1))),
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontStyle: FontStyle.italic,
-                                      letterSpacing: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 30.0),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+        : Column(
+            children: <Widget>[
+              Container(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 10.0,
                   ),
-                ],
-              )
-            : ListView.builder(
-                physics: BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics(),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'Always available',
+                        style: textStyleBody,
+                      ),
+                      Switch(
+                        value: alwaysAvailable,
+                        onChanged: (value) async {
+                          await dbService
+                              .updateGroupMemberAlwaysAvailable(
+                                groupStatus.group.docId,
+                                null,
+                                value,
+                              )
+                              .then((_) => setState(() {}));
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                itemCount: groupStatus.me.times.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    child: Column(
-                      children: <Widget>[
-                        // Header
-                        index == 0
-                            ? Column(
-                                children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.all(10.0),
-                                    child: Text(
-                                      DateFormat('MMMM')
-                                          .format(groupStatus
-                                              .me.times[index].startTime)
-                                          .toUpperCase(),
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        letterSpacing: 2.0,
-                                      ),
-                                    ),
-                                  ),
-                                  Divider(thickness: 1.0),
-                                ],
-                              )
-                            : Container(),
-                        index > 0 &&
-                                groupStatus
-                                        .me.times[index - 1].startTime.month !=
-                                    groupStatus.me.times[index].startTime.month
-                            ? Column(
-                                children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.all(10.0),
-                                    child: Text(
-                                      DateFormat('MMMM')
-                                          .format(groupStatus
-                                              .me.times[index].startTime)
-                                          .toUpperCase(),
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        letterSpacing: 2.0,
-                                      ),
-                                    ),
-                                  ),
-                                  Divider(thickness: 1.0),
-                                ],
-                              )
-                            : Container(),
+              ),
+              AnimatedContainer(
+                height: alwaysAvailable ? 20 : 0,
+                duration: Duration(milliseconds: 300),
+                child: Text(
+                  'EXCEPT',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    letterSpacing: 2.0,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10.0),
 
-                        // Custom List Tile
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            // Left section
-                            Container(
-                              padding:
-                                  EdgeInsets.fromLTRB(20.0, 10.0, 0.0, 10.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    DateFormat('dd MMM').format(
-                                        groupStatus.me.times[index].startTime),
-                                    style:
-                                        textStyleBody.copyWith(fontSize: 15.0),
-                                  ),
-                                  Text(
-                                    DateFormat('EEEE').format(
-                                        groupStatus.me.times[index].startTime),
-                                    style: textStyleBodyLight.copyWith(
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.light
-                                          ? Colors.grey.shade600
-                                          : Colors.grey,
-                                      fontSize: 13.0,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Right section
-                            Row(
+              // if times or notAvailableTimes is empty
+              () {
+                return alwaysAvailable
+                    ? groupStatus.me.notAvailableTimes.length == 0
+                    : groupStatus.me.times.length == 0;
+              }()
+                  ? Expanded(
+                      child: ListView(
+                        children: <Widget>[
+                          Container(
+                            child: Column(
                               children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    color: getOriginThemeData(
-                                            ThemeProvider.themeOf(context).id)
-                                        .primaryColorLight,
-                                    borderRadius: BorderRadius.circular(50.0),
-                                  ),
-                                  child: Text(
-                                    DateFormat('hh:mm aa').format(
-                                        groupStatus.me.times[index].startTime),
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      letterSpacing: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text('to'),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    color: getOriginThemeData(
-                                            ThemeProvider.themeOf(context).id)
-                                        .primaryColorLight,
-                                    borderRadius: BorderRadius.circular(50.0),
-                                  ),
-                                  child: Text(
-                                    DateFormat('hh:mm aa').format(
-                                        groupStatus.me.times[index].endTime),
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      letterSpacing: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                PopupMenuButton(
-                                  icon: Icon(
-                                    Icons.more_vert,
-                                  ),
-                                  itemBuilder: (context) {
-                                    return [
-                                      PopupMenuItem(
-                                        child: Row(
-                                          children: <Widget>[
-                                            Icon(Icons.edit),
-                                            SizedBox(width: 10.0),
-                                            Text('Edit'),
-                                          ],
+                                // Header
+                                Column(
+                                  children: <Widget>[
+                                    Container(
+                                      padding: EdgeInsets.all(10.0),
+                                      child: Text(
+                                        alwaysAvailable
+                                            ? 'NO UNAVAILABLE TIMES'
+                                            : 'NO AVAILABLE TIMES',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 16.0,
+                                          letterSpacing: 2.0,
                                         ),
-                                        value: AvailabilityOption.edit,
                                       ),
-                                      PopupMenuItem(
-                                        child: Row(
-                                          children: <Widget>[
-                                            Icon(Icons.delete),
-                                            SizedBox(width: 10.0),
-                                            Text('Remove'),
-                                          ],
+                                    ),
+                                    Divider(thickness: 1.0),
+                                  ],
+                                ),
+
+                                // Custom List Tile with Row
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    // Left section
+                                    Container(
+                                      padding: EdgeInsets.fromLTRB(
+                                          20.0, 10.0, 0.0, 10.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            'Example',
+                                            style: textStyleBody.copyWith(
+                                              color: Colors.grey,
+                                              fontSize: 15.0,
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Time',
+                                            style: textStyleBodyLight.copyWith(
+                                              color: Colors.grey,
+                                              fontSize: 13.0,
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Right section
+                                    Row(
+                                      children: <Widget>[
+                                        Container(
+                                          padding: EdgeInsets.all(10.0),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.light
+                                                    ? Colors.grey.shade300
+                                                    : Colors.grey.shade700,
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                          ),
+                                          child: Text(
+                                            DateFormat('hh:mm aa')
+                                                .format(DateTime.now()),
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontStyle: FontStyle.italic,
+                                              letterSpacing: 1.0,
+                                            ),
+                                          ),
                                         ),
-                                        value: AvailabilityOption.remove,
-                                      ),
-                                    ];
-                                  },
-                                  onSelected: (val) async {
-                                    switch (val) {
-                                      case AvailabilityOption.edit:
-                                        await showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            DateTime newStartTime = groupStatus
-                                                .me.times[index].startTime;
-                                            DateTime newEndTime = groupStatus
-                                                .me.times[index].endTime;
-
-                                            return EditTimeDialog(
-                                              contentText: 'Edit schedule time',
-                                              initialStartTime: groupStatus
-                                                  .me.times[index].startTime,
-                                              initialEndTime: groupStatus
-                                                  .me.times[index].endTime,
-                                              valSetStartTime: (dateTime) =>
-                                                  newStartTime = dateTime,
-                                              valSetEndTime: (dateTime) =>
-                                                  newEndTime = dateTime,
-                                              onSave: () async {
-                                                await dbService
-                                                    .updateGroupMemberTimes(
-                                                  groupStatus.group.docId,
-                                                  null,
-                                                  [
-                                                    Time(
-                                                      newStartTime,
-                                                      newEndTime,
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                        );
-                                        break;
-
-                                      case AvailabilityOption.remove:
-                                        await showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              content: RichText(
-                                                text: TextSpan(
-                                                  children: <TextSpan>[
-                                                    TextSpan(
-                                                      text:
-                                                          'Remove this from your schedule?\n\n',
-                                                      style: TextStyle(
-                                                        fontSize: 15.0,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    TextSpan(
-                                                      text: DateFormat(
-                                                              'EEEE, d MMMM')
-                                                          .format(groupStatus
-                                                              .me
-                                                              .times[index]
-                                                              .startTime),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              actions: <Widget>[
-                                                FlatButton(
-                                                  child: Text('CANCEL'),
-                                                  onPressed: () =>
-                                                      Navigator.of(context)
-                                                          .pop(),
-                                                ),
-                                                FlatButton(
-                                                    child: Text(
-                                                      'REMOVE',
-                                                      style: TextStyle(
-                                                        color: Colors.red,
-                                                      ),
-                                                    ),
-                                                    onPressed: () async {
-                                                      await dbService
-                                                          .removeGroupMemberTimes(
-                                                        groupStatus.group.docId,
-                                                        null,
-                                                        [
-                                                          groupStatus
-                                                              .me.times[index]
-                                                        ],
-                                                      );
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    }),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                        break;
-                                    }
-                                  },
-                                )
+                                        Container(
+                                          padding: EdgeInsets.all(10.0),
+                                          child: Text(
+                                            'to',
+                                            style: TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.all(10.0),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.light
+                                                    ? Colors.grey.shade300
+                                                    : Colors.grey.shade700,
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                          ),
+                                          child: Text(
+                                            DateFormat('hh:mm aa').format(
+                                                DateTime.now()
+                                                    .add(Duration(hours: 1))),
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontStyle: FontStyle.italic,
+                                              letterSpacing: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 30.0),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
-                          ],
+                          ),
+                        ],
+                      ),
+                    )
+                  : Expanded(
+                      child: ListView.builder(
+                        physics: BouncingScrollPhysics(
+                          parent: AlwaysScrollableScrollPhysics(),
                         ),
+                        itemCount: alwaysAvailable
+                            ? groupStatus.me.notAvailableTimes.length
+                            : groupStatus.me.times.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            child: Column(
+                              children: <Widget>[
+                                // Header
+                                index == 0
+                                    ? Column(
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.all(10.0),
+                                            child: Text(
+                                              DateFormat('MMMM')
+                                                  .format(alwaysAvailable
+                                                      ? groupStatus
+                                                          .me
+                                                          .notAvailableTimes[
+                                                              index]
+                                                          .startTime
+                                                      : groupStatus
+                                                          .me
+                                                          .times[index]
+                                                          .startTime)
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 16.0,
+                                                letterSpacing: 2.0,
+                                              ),
+                                            ),
+                                          ),
+                                          Divider(thickness: 1.0),
+                                        ],
+                                      )
+                                    : Container(),
+                                index > 0 &&
+                                        () {
+                                          return alwaysAvailable
+                                              ? groupStatus
+                                                      .me
+                                                      .notAvailableTimes[
+                                                          index - 1]
+                                                      .startTime
+                                                      .month !=
+                                                  groupStatus
+                                                      .me
+                                                      .notAvailableTimes[index]
+                                                      .startTime
+                                                      .month
+                                              : groupStatus.me.times[index - 1]
+                                                      .startTime.month !=
+                                                  groupStatus.me.times[index]
+                                                      .startTime.month;
+                                        }()
+                                    ? Column(
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.all(10.0),
+                                            child: Text(
+                                              DateFormat('MMMM')
+                                                  .format(alwaysAvailable
+                                                      ? groupStatus
+                                                          .me
+                                                          .notAvailableTimes[
+                                                              index]
+                                                          .startTime
+                                                      : groupStatus
+                                                          .me
+                                                          .times[index]
+                                                          .startTime)
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 16.0,
+                                                letterSpacing: 2.0,
+                                              ),
+                                            ),
+                                          ),
+                                          Divider(thickness: 1.0),
+                                        ],
+                                      )
+                                    : Container(),
 
-                        index == groupStatus.me.times.length - 1
-                            ? SizedBox(height: 100.0)
-                            : Divider(thickness: 1.0),
-                      ],
+                                // Custom List Tile
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    // Left section
+                                    Container(
+                                      padding: EdgeInsets.fromLTRB(
+                                          20.0, 10.0, 0.0, 10.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            DateFormat('dd MMM').format(
+                                                alwaysAvailable
+                                                    ? groupStatus
+                                                        .me
+                                                        .notAvailableTimes[
+                                                            index]
+                                                        .startTime
+                                                    : groupStatus
+                                                        .me
+                                                        .times[index]
+                                                        .startTime),
+                                            style: textStyleBody.copyWith(
+                                                fontSize: 15.0),
+                                          ),
+                                          Text(
+                                            DateFormat('EEEE').format(
+                                                alwaysAvailable
+                                                    ? groupStatus
+                                                        .me
+                                                        .notAvailableTimes[
+                                                            index]
+                                                        .startTime
+                                                    : groupStatus
+                                                        .me
+                                                        .times[index]
+                                                        .startTime),
+                                            style: textStyleBodyLight.copyWith(
+                                              color: Theme.of(context)
+                                                          .brightness ==
+                                                      Brightness.light
+                                                  ? Colors.grey.shade600
+                                                  : Colors.grey,
+                                              fontSize: 13.0,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Right section
+                                    Row(
+                                      children: <Widget>[
+                                        Container(
+                                          padding: EdgeInsets.all(10.0),
+                                          decoration: BoxDecoration(
+                                            color: getOriginThemeData(
+                                                    ThemeProvider.themeOf(
+                                                            context)
+                                                        .id)
+                                                .primaryColorLight,
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                          ),
+                                          child: Text(
+                                            DateFormat('hh:mm aa').format(
+                                                alwaysAvailable
+                                                    ? groupStatus
+                                                        .me
+                                                        .notAvailableTimes[
+                                                            index]
+                                                        .startTime
+                                                    : groupStatus
+                                                        .me
+                                                        .times[index]
+                                                        .startTime),
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              letterSpacing: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.all(10.0),
+                                          child: Text('to'),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.all(10.0),
+                                          decoration: BoxDecoration(
+                                            color: getOriginThemeData(
+                                                    ThemeProvider.themeOf(
+                                                            context)
+                                                        .id)
+                                                .primaryColorLight,
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                          ),
+                                          child: Text(
+                                            DateFormat('hh:mm aa').format(
+                                                alwaysAvailable
+                                                    ? groupStatus
+                                                        .me
+                                                        .notAvailableTimes[
+                                                            index]
+                                                        .endTime
+                                                    : groupStatus.me
+                                                        .times[index].endTime),
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              letterSpacing: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        PopupMenuButton(
+                                          icon: Icon(
+                                            Icons.more_vert,
+                                          ),
+                                          itemBuilder: (context) {
+                                            return [
+                                              PopupMenuItem(
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Icon(Icons.edit),
+                                                    SizedBox(width: 10.0),
+                                                    Text('Edit'),
+                                                  ],
+                                                ),
+                                                value: AvailabilityOption.edit,
+                                              ),
+                                              PopupMenuItem(
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Icon(Icons.delete),
+                                                    SizedBox(width: 10.0),
+                                                    Text('Remove'),
+                                                  ],
+                                                ),
+                                                value:
+                                                    AvailabilityOption.remove,
+                                              ),
+                                            ];
+                                          },
+                                          onSelected: (val) async {
+                                            switch (val) {
+                                              case AvailabilityOption.edit:
+                                                await showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    DateTime newStartTime =
+                                                        alwaysAvailable
+                                                            ? groupStatus
+                                                                .me
+                                                                .notAvailableTimes[
+                                                                    index]
+                                                                .startTime
+                                                            : groupStatus
+                                                                .me
+                                                                .times[index]
+                                                                .startTime;
+                                                    DateTime newEndTime =
+                                                        alwaysAvailable
+                                                            ? groupStatus
+                                                                .me
+                                                                .notAvailableTimes[
+                                                                    index]
+                                                                .endTime
+                                                            : groupStatus
+                                                                .me
+                                                                .times[index]
+                                                                .endTime;
+
+                                                    return EditTimeDialog(
+                                                      contentText:
+                                                          'Edit schedule time',
+                                                      initialStartTime:
+                                                          alwaysAvailable
+                                                              ? groupStatus
+                                                                  .me
+                                                                  .notAvailableTimes[
+                                                                      index]
+                                                                  .startTime
+                                                              : groupStatus
+                                                                  .me
+                                                                  .times[index]
+                                                                  .startTime,
+                                                      initialEndTime:
+                                                          alwaysAvailable
+                                                              ? groupStatus
+                                                                  .me
+                                                                  .notAvailableTimes[
+                                                                      index]
+                                                                  .endTime
+                                                              : groupStatus
+                                                                  .me
+                                                                  .times[index]
+                                                                  .endTime,
+                                                      valSetStartTime:
+                                                          (dateTime) =>
+                                                              newStartTime =
+                                                                  dateTime,
+                                                      valSetEndTime:
+                                                          (dateTime) =>
+                                                              newEndTime =
+                                                                  dateTime,
+                                                      onSave: () async {
+                                                        await dbService
+                                                            .updateGroupMemberTimes(
+                                                          groupStatus
+                                                              .group.docId,
+                                                          null,
+                                                          [
+                                                            Time(
+                                                              newStartTime,
+                                                              newEndTime,
+                                                            ),
+                                                          ],
+                                                          groupStatus.me
+                                                              .alwaysAvailable,
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                );
+                                                break;
+
+                                              case AvailabilityOption.remove:
+                                                await showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      content: RichText(
+                                                        text: TextSpan(
+                                                          children: <TextSpan>[
+                                                            TextSpan(
+                                                              text:
+                                                                  'Remove this from your schedule?\n\n',
+                                                              style: TextStyle(
+                                                                fontSize: 15.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            TextSpan(
+                                                              text: DateFormat('EEEE, d MMMM').format(alwaysAvailable
+                                                                  ? groupStatus
+                                                                      .me
+                                                                      .notAvailableTimes[
+                                                                          index]
+                                                                      .startTime
+                                                                  : groupStatus
+                                                                      .me
+                                                                      .times[
+                                                                          index]
+                                                                      .startTime),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      actions: <Widget>[
+                                                        FlatButton(
+                                                          child: Text('CANCEL'),
+                                                          onPressed: () =>
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop(),
+                                                        ),
+                                                        FlatButton(
+                                                          child: Text(
+                                                            'REMOVE',
+                                                            style: TextStyle(
+                                                              color: Colors.red,
+                                                            ),
+                                                          ),
+                                                          onPressed: () async {
+                                                            await dbService
+                                                                .removeGroupMemberTimes(
+                                                              groupStatus
+                                                                  .group.docId,
+                                                              null,
+                                                              [
+                                                                alwaysAvailable
+                                                                    ? groupStatus
+                                                                            .me
+                                                                            .notAvailableTimes[
+                                                                        index]
+                                                                    : groupStatus
+                                                                            .me
+                                                                            .times[
+                                                                        index]
+                                                              ],
+                                                              alwaysAvailable,
+                                                            );
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                                break;
+                                            }
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+
+                                index ==
+                                        () {
+                                          return alwaysAvailable
+                                              ? groupStatus.me.notAvailableTimes
+                                                      .length -
+                                                  1
+                                              : groupStatus.me.times.length - 1;
+                                        }()
+                                    ? SizedBox(height: 100.0)
+                                    : Divider(thickness: 1.0),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  );
-                },
-              );
+            ],
+          );
   }
 }
