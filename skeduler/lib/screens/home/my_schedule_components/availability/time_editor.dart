@@ -42,8 +42,9 @@ class _TimeEditorState extends State<TimeEditor> {
   String _startDateStr;
   String _endDateStr;
 
-  DateTime _startTime = DateTime(DateTime.now().year);
-  DateTime _endTime = DateTime(DateTime.now().year);
+  DateTime _defaultTime;
+  DateTime _startTime;
+  DateTime _endTime;
   String _startTimeStr;
   String _endTimeStr;
 
@@ -51,6 +52,7 @@ class _TimeEditorState extends State<TimeEditor> {
   bool _validDate = true;
 
   bool _dateRangeExpanded;
+  bool _timeRangeExpanded;
 
   double _spacing = 5.0;
   double _bodyPadding = 10.0;
@@ -72,7 +74,9 @@ class _TimeEditorState extends State<TimeEditor> {
 
   // validate time
   void _validateTime() {
-    if (_endTime.isAfter(_startTime)) {
+    if (_startTime == null || _endTime == null) {
+      _validTime = false;
+    } else if (_endTime.isAfter(_startTime)) {
       _validTime = true;
     } else {
       _validTime = false;
@@ -167,9 +171,9 @@ class _TimeEditorState extends State<TimeEditor> {
                 pickerModel: CustomTimePicker(
                   currentTime: () {
                     if (start) {
-                      return _startTime;
+                      return _startTime ?? _defaultTime;
                     } else if (end) {
-                      return _endTime;
+                      return _endTime ?? _defaultTime;
                     } else {
                       return null;
                     }
@@ -198,15 +202,11 @@ class _TimeEditorState extends State<TimeEditor> {
                             ),
                             SizedBox(width: 10.0),
                             Text(
-                              () {
-                                if (start) {
-                                  return _startTimeStr ?? 'Start time';
-                                } else if (end) {
-                                  return _endTimeStr ?? 'End time';
-                                } else {
-                                  return 'Not set';
-                                }
-                              }(),
+                              start
+                                  ? (_startTimeStr ?? 'Start time')
+                                  : end
+                                      ? (_endTimeStr ?? 'End time')
+                                      : 'Not set',
                               style: () {
                                 if ((start && _startTimeStr != null) ||
                                     (end && _endTimeStr != null)) {
@@ -350,11 +350,15 @@ class _TimeEditorState extends State<TimeEditor> {
 
   @override
   void initState() {
+    _defaultTime = DateTime(DateTime.now().year);
+
     _dateRangeExpanded = true;
+    _timeRangeExpanded = true;
     SchedulerBinding.instance.addPostFrameCallback((_) {
       setTimeEditorSelectedHeight();
       setState(() {
         _dateRangeExpanded = false;
+        _timeRangeExpanded = false;
       });
     });
     super.initState();
@@ -401,6 +405,7 @@ class _TimeEditorState extends State<TimeEditor> {
                   child: Column(
                     key: _buttonsKey,
                     children: <Widget>[
+                      // Date Range
                       Theme(
                         data: Theme.of(context)
                             .copyWith(dividerColor: Colors.transparent),
@@ -445,29 +450,49 @@ class _TimeEditorState extends State<TimeEditor> {
                         ),
                       ),
 
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          // Button: Start Time
-                          generateTimePicker(start: true),
-
-                          SizedBox(width: _spacing),
-                          Container(
-                            alignment: Alignment.center,
-                            width: _centerWidth,
-                            child: Text(
-                              'to',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w400,
-                              ),
+                      // Time Range
+                      Theme(
+                        data: Theme.of(context)
+                            .copyWith(dividerColor: Colors.transparent),
+                        child: ExpansionTile(
+                          key: GlobalKey(),
+                          initiallyExpanded: _timeRangeExpanded,
+                          onExpansionChanged: (val) {
+                            _timeRangeExpanded = val;
+                          },
+                          title: Text(
+                            'Time range (optional)',
+                            style: textStyleBodyLight.copyWith(
+                              fontStyle: FontStyle.italic,
                             ),
                           ),
-                          SizedBox(width: _spacing),
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                // Button: Start Time
+                                generateTimePicker(start: true),
 
-                          // Button: End Time
-                          generateTimePicker(end: true),
-                        ],
+                                SizedBox(width: _spacing),
+                                Container(
+                                  alignment: Alignment.center,
+                                  width: _centerWidth,
+                                  child: Text(
+                                    'to',
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: _spacing),
+
+                                // Button: End Time
+                                generateTimePicker(end: true),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
 
                       SizedBox(height: _spacing),
@@ -487,39 +512,94 @@ class _TimeEditorState extends State<TimeEditor> {
                               borderRadius: BorderRadius.circular(30.0),
                             ),
                             elevation: 3.0,
-                            onPressed: _validTime && _validDate
+                            onPressed: (
+                                    // if date and time are set
+                                    _validDate && _validTime
+                                        ? true
+                                        // if date is set, and both times not set
+                                        : _validDate &&
+                                                _startTime == null &&
+                                                _endTime == null
+                                            ? true
+                                            // if time is set, and both dates not set
+                                            : _validTime &&
+                                                    _startDate == null &&
+                                                    _endDate == null
+                                                ? true
+                                                // if all not set
+                                                : _startDate == null &&
+                                                        _endDate == null &&
+                                                        _startTime == null &&
+                                                        _endTime == null
+                                                    ? true
+                                                    : false)
                                 ? () async {
-                                    widget.scaffoldKey.currentState
-                                        .showSnackBar(LoadingSnackBar(context,
-                                            'Updating available times . . .'));
+                                    bool validTimes = false;
 
-                                    List<Time> newTimes = generateTimes(
-                                      months: widget.valGetMonths(),
-                                      weekDays: widget.valGetWeekdays(),
-                                      time: Time(_startTime, _endTime),
-                                      startDate: _startDate ??
-                                          getFirstDayOfStartMonth(),
-                                      endDate:
-                                          _endDate ?? getLastDayOfLastMonth(),
-                                    );
-                                    if (groupStatus.me.alwaysAvailable) {
-                                      await dbService.updateGroupMemberTimes(
-                                        groupStatus.group.docId,
-                                        null,
-                                        newTimes,
-                                        true,
-                                      );
-                                    } else {
-                                      await dbService.updateGroupMemberTimes(
-                                        groupStatus.group.docId,
-                                        null,
-                                        newTimes,
-                                        false,
-                                      );
+                                    if (_validDate) {
+                                      List<Time> newTimes = [];
+
+                                      if (_validTime) {
+                                        validTimes = true;
+
+                                        newTimes = generateTimes(
+                                          months: widget.valGetMonths(),
+                                          weekDays: widget.valGetWeekdays(),
+                                          time: Time(_startTime ?? _defaultTime,
+                                              _endTime ?? _defaultTime),
+                                          startDate: _startDate ??
+                                              getFirstDayOfStartMonth(),
+                                          endDate: _endDate ??
+                                              getLastDayOfLastMonth(),
+                                        );
+                                      } else if (_startTime == _defaultTime &&
+                                          _endTime == _defaultTime) {
+                                        validTimes = true;
+
+                                        newTimes = generateTimes(
+                                          months: widget.valGetMonths(),
+                                          weekDays: widget.valGetWeekdays(),
+                                          time: Time(
+                                            DateTime(DateTime.now().year, 1, 1,
+                                                0, 0),
+                                            DateTime(DateTime.now().year, 1, 1,
+                                                23, 59),
+                                          ),
+                                          startDate: _startDate ??
+                                              getFirstDayOfStartMonth(),
+                                          endDate: _endDate ??
+                                              getLastDayOfLastMonth(),
+                                        );
+                                      }
+
+                                      if (validTimes) {
+                                        widget.scaffoldKey.currentState
+                                            .showSnackBar(LoadingSnackBar(
+                                                context,
+                                                'Updating available times . . .'));
+
+                                        if (groupStatus.me.alwaysAvailable) {
+                                          await dbService
+                                              .updateGroupMemberTimes(
+                                            groupStatus.group.docId,
+                                            null,
+                                            newTimes,
+                                            true,
+                                          );
+                                        } else {
+                                          await dbService
+                                              .updateGroupMemberTimes(
+                                            groupStatus.group.docId,
+                                            null,
+                                            newTimes,
+                                            false,
+                                          );
+                                        }
+
+                                        widget.scaffoldKey.currentState
+                                            .hideCurrentSnackBar();
+                                      } else {}
                                     }
-
-                                    widget.scaffoldKey.currentState
-                                        .hideCurrentSnackBar();
                                   }
                                 : null,
                             child: Text(
@@ -623,7 +703,9 @@ class _TimeEditorState extends State<TimeEditor> {
                                                   weekDays:
                                                       widget.valGetWeekdays(),
                                                   time: Time(
-                                                      _startTime, _endTime),
+                                                      _startTime ??
+                                                          _defaultTime,
+                                                      _endTime ?? _defaultTime),
                                                   startDate: _startDate ??
                                                       getFirstDayOfStartMonth(),
                                                   endDate: _endDate ??
@@ -657,7 +739,7 @@ class _TimeEditorState extends State<TimeEditor> {
                                   }
                                 : null,
                             child: Text(
-                              'REMOVE',
+                              'REMOVE DAYS',
                               style: TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w600,
@@ -684,9 +766,9 @@ class _TimeEditorState extends State<TimeEditor> {
                             ),
                             elevation: 3.0,
                             onPressed: () {
-                              _startTime = DateTime(DateTime.now().year);
+                              _startTime = null;
                               _startTimeStr = null;
-                              _endTime = DateTime(DateTime.now().year);
+                              _endTime = null;
                               _endTimeStr = null;
                               _startDate = null;
                               _startDateStr = null;
