@@ -557,8 +557,8 @@ class _TimeEditorState extends State<TimeEditor> {
                                           endDate: _endDate ??
                                               getLastDayOfLastMonth(),
                                         );
-                                      } else if (_startTime == _defaultTime &&
-                                          _endTime == _defaultTime) {
+                                      } else if (_startTime == null &&
+                                          _endTime == null) {
                                         validTimes = true;
 
                                         newTimes = generateTimes(
