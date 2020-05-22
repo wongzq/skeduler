@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
-import 'package:skeduler/models/auxiliary/option_enums.dart';
+import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/firestore/group.dart';
@@ -54,7 +54,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
               return [
                 PopupMenuItem(
                   value: TimetableEditorOption.switchAxis,
-                  child: Text('Switch axis'),
+                  child: Text('Swap axis'),
                 ),
                 PopupMenuItem(
                   value: TimetableEditorOption.addSubject,

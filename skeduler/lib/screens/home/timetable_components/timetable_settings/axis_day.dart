@@ -39,13 +39,14 @@ class _AxisDayState extends State<AxisDay> {
     List<Widget> weekdayOptionWidgets = [];
 
     _weekdays.forEach((weekdayOption) {
-      weekdayOptionWidgets.add(ListTile(
-        dense: true,
-
-        // Checkbox
-        leading: Checkbox(
-          activeColor: getFABIconBackgroundColor(context),
+      weekdayOptionWidgets.add(
+        CheckboxListTile(
+          dense: true,
+          // Weekday display
+          title: Text(getWeekdayStr(weekdayOption)),
+          controlAffinity: ListTileControlAffinity.leading,
           value: _weekdaysSelected.contains(weekdayOption),
+          activeColor: getFABIconBackgroundColor(context),
           onChanged: (selected) {
             setState(() {
               if (selected == true) {
@@ -63,10 +64,7 @@ class _AxisDayState extends State<AxisDay> {
             });
           },
         ),
-
-        // Weekday display
-        title: Text(getWeekdayStr(weekdayOption)),
-      ));
+      );
     });
 
     return weekdayOptionWidgets;

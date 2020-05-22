@@ -25,6 +25,8 @@ class DateRange extends StatefulWidget {
 
 class _DateRangeState extends State<DateRange> {
   // properties
+  DateTime _defaultDate;
+
   DateTime _startDate;
   DateTime _endDate;
   String _startDateStr;
@@ -39,8 +41,8 @@ class _DateRangeState extends State<DateRange> {
 
   // validate date
   void _validateDate() {
-    if (_startDate == null && _endDate == null) {
-      _validDate = true;
+    if (_startDate == null || _endDate == null) {
+      _validDate = false;
     } else if (_startDate != null && _endDate != null) {
       if (_endDate.isAfter(_startDate)) {
         _validDate = true;
@@ -79,12 +81,15 @@ class _DateRangeState extends State<DateRange> {
                   ),
                   initialDate: () {
                     if (start) {
-                      DateTime prevDateTime = DateTime(
-                        _startDate.year,
-                        _startDate.month,
-                        _startDate.day,
-                      );
-                      if (_startDate.weekday != 1) {
+                      DateTime prevDateTime = _startDate == null
+                          ? _defaultDate
+                          : DateTime(
+                              _startDate.year,
+                              _startDate.month,
+                              _startDate.day,
+                            );
+
+                      if (prevDateTime.weekday != 1) {
                         while (true) {
                           prevDateTime =
                               prevDateTime.subtract(Duration(days: 1));
@@ -95,12 +100,14 @@ class _DateRangeState extends State<DateRange> {
                       }
                       return prevDateTime;
                     } else if (end) {
-                      DateTime nextDateTime = DateTime(
-                        _endDate.year,
-                        _endDate.month,
-                        _endDate.day,
-                      );
-                      if (_endDate.weekday != 7) {
+                      DateTime nextDateTime = _endDate == null
+                          ? _defaultDate
+                          : DateTime(
+                              _endDate.year,
+                              _endDate.month,
+                              _endDate.day,
+                            );
+                      if (nextDateTime.weekday != 7) {
                         while (true) {
                           nextDateTime = nextDateTime.add(Duration(days: 1));
                           if (nextDateTime.weekday == 7) {
@@ -123,10 +130,14 @@ class _DateRangeState extends State<DateRange> {
                     }
                   });
 
-              if (start && date != null) {
+              if (start &&
+                  date != null &&
+                  (_endDate == null || date.isBefore(_endDate))) {
                 _startDateStr = DateFormat('yyyy/MM/dd').format(date);
                 _startDate = date;
-              } else if (end && date != null) {
+              } else if (end &&
+                  date != null &&
+                  (_startDate == null || date.isAfter(_startDate))) {
                 _endDateStr = DateFormat('yyyy/MM/dd').format(date);
                 _endDate = date;
               }
@@ -206,17 +217,16 @@ class _DateRangeState extends State<DateRange> {
 
   @override
   void initState() {
-    if (widget.initialStartDate != null) {
+    if (widget.initialStartDate != null && widget.initialEndDate != null) {
       _startDate = widget.initialStartDate;
       _endDate = widget.initialEndDate;
       _startDateStr = DateFormat('yyyy/MM/dd').format(_startDate);
       _endDateStr = DateFormat('yyyy/MM/dd').format(_endDate);
-    } else {
-      _startDate = DateTime(
-          DateTime.now().year, DateTime.now().month, DateTime.now().day);
-      _endDate = DateTime(
-          DateTime.now().year, DateTime.now().month, DateTime.now().day);
     }
+
+    _defaultDate =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
     super.initState();
   }
 

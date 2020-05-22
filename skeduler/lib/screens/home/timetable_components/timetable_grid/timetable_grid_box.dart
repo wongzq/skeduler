@@ -215,7 +215,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
               style: TextStyle(
                 color: widget.gridBoxType == GridBoxType.content
                     ? Colors.black
-                    : _editMode.isPlaceholder
+                    : _editMode != null && _editMode.isPlaceholder
                         ? Colors.white
                         : _originTheme.textColor,
                 fontSize: 10.0,

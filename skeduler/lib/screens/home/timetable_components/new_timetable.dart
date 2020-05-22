@@ -79,6 +79,7 @@ class _NewTimetableState extends State<NewTimetable> {
                       ),
                     ),
                   );
+
                   popupOptions.add(
                     PopupMenuItem<CopyTimetableData>(
                       value: CopyTimetableData(
@@ -236,11 +237,13 @@ class _NewTimetableState extends State<NewTimetable> {
                 ),
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
-                    _scaffoldKey.currentState.showSnackBar(
-                        LoadingSnackBar(context, 'Creating timetable . . .'));
-
                     if (ttbStatus.temp.startDate != null &&
-                        ttbStatus.temp.endDate != null) {
+                        ttbStatus.temp.endDate != null &&
+                        ttbStatus.temp.startDate
+                            .isBefore(ttbStatus.temp.endDate)) {
+                      _scaffoldKey.currentState.showSnackBar(
+                          LoadingSnackBar(context, 'Creating timetable . . .'));
+
                       List<TimetableMetadata> timetableMetadatas =
                           List.from(groupStatus.group.timetableMetadatas);
 
@@ -292,7 +295,7 @@ class _NewTimetableState extends State<NewTimetable> {
                       }
                     } else {
                       Fluttertoast.showToast(
-                        msg: 'Timetable dates cannot be empty',
+                        msg: 'Timetable dates are invalid',
                         toastLength: Toast.LENGTH_LONG,
                       );
                     }

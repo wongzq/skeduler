@@ -105,7 +105,7 @@ class _TimetableSwitchDialogState extends State<TimetableSwitchDialog> {
           ),
           SizedBox(height: 5),
           Text(
-            'Drag to switch axis around',
+            'Drag to switch axes around',
             style: textStyleBody,
           ),
         ],

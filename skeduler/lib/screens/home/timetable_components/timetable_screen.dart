@@ -211,7 +211,33 @@ class _TimetableScreenState extends State<TimetableScreen> {
                               if (value == 0) {
                                 if (groupStatus.me.role == MemberRole.owner ||
                                     groupStatus.me.role == MemberRole.admin) {
-                                  ttbStatus.temp = EditTimetable();
+                                  ttbStatus.temp = EditTimetable(
+                                    axisDay: List.generate(
+                                        5, (index) => Weekday.values[index]),
+                                    axisTime: [
+                                      Time(
+                                        DateTime(DateTime.now().year).add(
+                                          Duration(
+                                              hours: DateTime.now().hour + 0),
+                                        ),
+                                        DateTime(DateTime.now().year).add(
+                                          Duration(
+                                              hours: DateTime.now().hour + 1),
+                                        ),
+                                      ),
+                                      Time(
+                                        DateTime(DateTime.now().year).add(
+                                          Duration(
+                                              hours: DateTime.now().hour + 2),
+                                        ),
+                                        DateTime(DateTime.now().year).add(
+                                          Duration(
+                                              hours: DateTime.now().hour + 3),
+                                        ),
+                                      ),
+                                    ],
+                                    axisCustom: ['A', 'B'],
+                                  );
                                   Navigator.of(context).pushNamed(
                                     '/timetable/newTimetable',
                                     arguments: RouteArgs(),

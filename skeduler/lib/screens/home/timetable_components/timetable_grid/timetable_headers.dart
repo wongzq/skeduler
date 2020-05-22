@@ -39,7 +39,7 @@ class _TimetableHeaderXState extends State<TimetableHeaderX> {
         List<Widget> rows = [];
 
         // Add Switch button
-        String display = 'Axis';
+        String display = 'Swap Axis';
         rows.add(TimetableGridBox(
           gridBoxType: GridBoxType.switchBox,
           initialDisplay: display,
