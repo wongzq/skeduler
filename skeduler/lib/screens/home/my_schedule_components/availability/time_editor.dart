@@ -651,8 +651,10 @@ class _TimeEditorState extends State<TimeEditor> {
                                             text: TextSpan(
                                               children: <TextSpan>[
                                                 TextSpan(
-                                                  text:
-                                                      'Remove from your schedule?\n\n',
+                                                  text: groupStatus
+                                                          .me.alwaysAvailable
+                                                      ? 'Remove from your unavailable times?\n\n'
+                                                      : 'Remove from your available times?\n\n',
                                                   style: TextStyle(
                                                     color: Theme.of(context)
                                                                 .brightness ==
