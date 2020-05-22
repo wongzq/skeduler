@@ -115,7 +115,7 @@ class _EditGroupState extends State<EditGroup> {
             // Required fields
             // Name
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: LabelTextInput(
                 initialValue: _groupName,
                 hintText: widget.group.name,
@@ -138,7 +138,7 @@ class _EditGroupState extends State<EditGroup> {
 
             // Description
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: LabelTextInput(
                 initialValue: _groupDescription,
                 hintText: widget.group.description,

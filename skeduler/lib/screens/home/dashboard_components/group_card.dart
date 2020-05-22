@@ -136,7 +136,7 @@ class GroupCard extends StatelessWidget {
                   children: <Widget>[
                     // Group admin
                     Container(
-                      padding: const EdgeInsets.only(bottom: 3.0),
+                      padding: EdgeInsets.only(bottom: 3.0),
                       width: (_dimension - 2 * _padding) * 0.7,
                       alignment: Alignment.bottomLeft,
                       child: Text(

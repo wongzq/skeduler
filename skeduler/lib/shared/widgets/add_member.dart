@@ -121,7 +121,7 @@ class _AddMemberState extends State<AddMember> {
                   // Required fields
                   // ID
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
                     child: LabelTextInput(
                       initialValue: _newMemberEmail,
                       hintText: 'Required',

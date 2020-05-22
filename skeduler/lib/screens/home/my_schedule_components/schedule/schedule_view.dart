@@ -4,10 +4,8 @@ import 'package:skeduler/models/auxiliary/schedule.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/models/firestore/timetable.dart';
+import 'package:skeduler/screens/home/my_schedule_components/schedule/schedule_list_tile.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/ui_settings.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class ScheduleView extends StatelessWidget {
   @override
@@ -56,15 +54,22 @@ class ScheduleView extends StatelessWidget {
         schedules.sort((a, b) => a.date.compareTo(b.date));
 
         return schedules.length <= 0
-            ? Container(
-                padding: EdgeInsets.all(20.0),
-                child: Text(
-                  'You haven\'t been scheduled',
-                  style: textStyleBody.copyWith(
-                    color: Colors.grey,
-                    fontStyle: FontStyle.italic,
+            ? Column(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      'NO SCHEDULES FOUND',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16.0,
+                        // fontStyle: FontStyle.italic,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
                   ),
-                ),
+                  Divider(height: 1.0),
+                ],
               )
             : ListView.builder(
                 controller: ScrollController(),
@@ -77,147 +82,11 @@ class ScheduleView extends StatelessWidget {
                           schedules[index].date.month == DateTime.now().month &&
                           schedules[index].date.day == DateTime.now().day;
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      index == 0 ||
-                              (index > 0 &&
-                                  schedules[index].monthStr !=
-                                      schedules[index - 1].monthStr)
-                          ? Column(
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text(
-                                    schedules[index].monthStr.toUpperCase(),
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      letterSpacing: 2.0,
-                                    ),
-                                  ),
-                                ),
-                                Divider(height: 1.0),
-                              ],
-                            )
-                          : Container(),
-                      Container(
-                        color: scheduleIsToday
-                            ? getOriginThemeData(
-                                    ThemeProvider.themeOf(context).id)
-                                .primaryColorLight
-                            : null,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              padding:
-                                  EdgeInsets.fromLTRB(20.0, 15.0, 0.0, 15.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    schedules[index].custom +
-                                            ' : ' +
-                                            schedules[index].subject ??
-                                        '',
-                                    style: scheduleIsToday
-                                        ? textStyleBody.copyWith(
-                                            color: Colors.black,
-                                            fontSize: 15.0,
-                                          )
-                                        : textStyleBody.copyWith(
-                                            fontSize: 15.0,
-                                          ),
-                                    overflow: TextOverflow.fade,
-                                  ),
-                                  Text(
-                                    schedules[index].dayStr +
-                                        ', ' +
-                                        schedules[index].dateStr,
-                                    style: textStyleBodyLight.copyWith(
-                                      color: scheduleIsToday
-                                          ? Colors.grey.shade700
-                                          : Theme.of(context).brightness ==
-                                                  Brightness.light
-                                              ? Colors.grey.shade600
-                                              : Colors.grey,
-                                      fontSize: 13.0,
-                                    ),
-                                    overflow: TextOverflow.fade,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    color: scheduleIsToday
-                                        ? Theme.of(context)
-                                            .scaffoldBackgroundColor
-                                        : getOriginThemeData(
-                                                ThemeProvider.themeOf(context)
-                                                    .id)
-                                            .primaryColorLight,
-                                    borderRadius: BorderRadius.circular(50.0),
-                                  ),
-                                  child: Text(
-                                    schedules[index].startTimeStr,
-                                    style: TextStyle(
-                                      color: scheduleIsToday
-                                          ? Theme.of(context).brightness ==
-                                                  Brightness.light
-                                              ? Colors.black
-                                              : Colors.white
-                                          : Colors.black,
-                                      letterSpacing: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text(
-                                    'to',
-                                    style: TextStyle(
-                                      color:
-                                          scheduleIsToday ? Colors.black : null,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                    color: scheduleIsToday
-                                        ? Theme.of(context)
-                                            .scaffoldBackgroundColor
-                                        : getOriginThemeData(
-                                                ThemeProvider.themeOf(context)
-                                                    .id)
-                                            .primaryColorLight,
-                                    borderRadius: BorderRadius.circular(50.0),
-                                  ),
-                                  child: Text(
-                                    schedules[index].endTimeStr,
-                                    style: TextStyle(
-                                      color: scheduleIsToday
-                                          ? Theme.of(context).brightness ==
-                                                  Brightness.light
-                                              ? Colors.black
-                                              : Colors.white
-                                          : Colors.black,
-                                      letterSpacing: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 20.0),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(height: 1.0),
-                    ],
+                  return ScheduleListTile(
+                    scheduleIsToday: scheduleIsToday,
+                    index: index,
+                    schedule: schedules[index],
+                    prevSchedule: index > 0 ? schedules[index - 1] : null,
                   );
                 },
               );

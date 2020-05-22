@@ -99,7 +99,7 @@ class _CreateGroupState extends State<CreateGroup> {
             // Required fields
             // Name
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: LabelTextInput(
                 hintText: 'Required',
                 label: 'Name',
@@ -118,7 +118,7 @@ class _CreateGroupState extends State<CreateGroup> {
 
             // Description
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: LabelTextInput(
                 hintText: 'Optional',
                 label: 'Description',
