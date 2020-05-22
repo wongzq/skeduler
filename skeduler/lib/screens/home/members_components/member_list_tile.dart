@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/option_enums.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class MemberListTile extends StatelessWidget {
   final Member me;
@@ -88,6 +87,7 @@ class MemberListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -104,8 +104,7 @@ class MemberListTile extends StatelessWidget {
               children: <Widget>[
                 Container(
                   color: member.docId == me.docId
-                      ? getOriginThemeData(ThemeProvider.themeOf(context).id)
-                          .primaryColorLight
+                      ? originTheme.primaryColorLight
                       : null,
                   child: ListTile(
                     leading: Icon(
@@ -137,10 +136,8 @@ class MemberListTile extends StatelessWidget {
       return Column(
         children: <Widget>[
           Container(
-            color: member.docId == me.docId
-                ? getOriginThemeData(ThemeProvider.themeOf(context).id)
-                    .primaryColorLight
-                : null,
+            color:
+                member.docId == me.docId ? originTheme.primaryColorLight : null,
             child: ListTile(
               leading: Icon(
                 member.roleIcon,

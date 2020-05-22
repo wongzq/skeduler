@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/screens/home/my_schedule_components/availability/availability_list_tile.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class AvailabilityView extends StatefulWidget {
   @override
@@ -16,6 +15,7 @@ class AvailabilityView extends StatefulWidget {
 class _AvailabilityViewState extends State<AvailabilityView> {
   @override
   Widget build(BuildContext context) {
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
@@ -45,9 +45,7 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                             : textStyleBody.copyWith(color: Colors.grey),
                       ),
                       Switch(
-                        activeColor: getOriginThemeData(
-                                ThemeProvider.themeOf(context).id)
-                            .accentColor,
+                        activeColor: originTheme.accentColor,
                         value: alwaysAvailable,
                         onChanged: (value) async {
                           await dbService

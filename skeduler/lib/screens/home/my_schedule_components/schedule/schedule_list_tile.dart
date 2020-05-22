@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/schedule.dart';
-import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class ScheduleListTile extends StatelessWidget {
   final bool scheduleIsToday;
@@ -20,6 +20,8 @@ class ScheduleListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -47,10 +49,7 @@ class ScheduleListTile extends StatelessWidget {
 
         // Custom List Tile
         Container(
-          color: scheduleIsToday
-              ? getOriginThemeData(ThemeProvider.themeOf(context).id)
-                  .primaryColorLight
-              : null,
+          color: scheduleIsToday ? originTheme.primaryColorLight : null,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -99,9 +98,7 @@ class ScheduleListTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: scheduleIsToday
                           ? Theme.of(context).scaffoldBackgroundColor
-                          : getOriginThemeData(
-                                  ThemeProvider.themeOf(context).id)
-                              .primaryColorLight,
+                          : originTheme.primaryColorLight,
                       borderRadius: BorderRadius.circular(50.0),
                     ),
                     child: Text(
@@ -130,9 +127,7 @@ class ScheduleListTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: scheduleIsToday
                           ? Theme.of(context).scaffoldBackgroundColor
-                          : getOriginThemeData(
-                                  ThemeProvider.themeOf(context).id)
-                              .primaryColorLight,
+                          : originTheme.primaryColorLight,
                       borderRadius: BorderRadius.circular(50.0),
                     ),
                     child: Text(

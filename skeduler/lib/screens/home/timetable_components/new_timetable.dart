@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/firestore/group.dart';
@@ -16,7 +17,6 @@ import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/widgets/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 enum CopyTimetableType { copyTimetable, copyTimetableAxes }
 
@@ -38,6 +38,7 @@ class _NewTimetableState extends State<NewTimetable> {
 
   @override
   Widget build(BuildContext context) {
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
@@ -216,15 +217,9 @@ class _NewTimetableState extends State<NewTimetable> {
             Padding(
               padding: EdgeInsets.all(20.0),
               child: RaisedButton(
-                textColor: getOriginThemeData(ThemeProvider.themeOf(context).id)
-                    .primaryTextTheme
-                    .bodyText1
-                    .color,
-                color: getOriginThemeData(ThemeProvider.themeOf(context).id)
-                    .primaryColor,
-                highlightColor:
-                    getOriginThemeData(ThemeProvider.themeOf(context).id)
-                        .primaryColorDark,
+                textColor: originTheme.textColor,
+                color: originTheme.primaryColor,
+                highlightColor: originTheme.primaryColorDark,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),

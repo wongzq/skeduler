@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/option_enums.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/shared/widgets/edit_time_dialog.dart';
-import 'package:skeduler/shared/functions.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class AxisTime extends StatefulWidget {
   final ValueSetter<List<Time>> valSetTimes;
@@ -26,6 +26,8 @@ class AxisTime extends StatefulWidget {
 }
 
 class _AxisTimeState extends State<AxisTime> {
+  OriginTheme _originTheme;
+
   List<Time> _times;
 
   bool _expanded;
@@ -43,8 +45,7 @@ class _AxisTimeState extends State<AxisTime> {
               Container(
                 padding: EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
-                  color: getOriginThemeData(ThemeProvider.themeOf(context).id)
-                      .primaryColorLight,
+                  color: _originTheme.primaryColorLight,
                   borderRadius: BorderRadius.circular(50.0),
                 ),
                 child: Text(
@@ -66,8 +67,7 @@ class _AxisTimeState extends State<AxisTime> {
               Container(
                 padding: EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
-                  color: getOriginThemeData(ThemeProvider.themeOf(context).id)
-                      .primaryColorLight,
+                  color: _originTheme.primaryColorLight,
                   borderRadius: BorderRadius.circular(50.0),
                 ),
                 child: Text(
@@ -289,6 +289,8 @@ class _AxisTimeState extends State<AxisTime> {
 
   @override
   Widget build(BuildContext context) {
+    _originTheme = Provider.of<OriginTheme>(context);
+
     if (widget.valGetTimes != null) {
       _times = widget.valGetTimes();
     }

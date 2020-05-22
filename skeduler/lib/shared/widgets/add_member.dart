@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/widgets/label_text_input.dart';
 import 'package:skeduler/shared/widgets/loading.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class AddMember extends StatefulWidget {
   @override
@@ -21,6 +21,7 @@ class _AddMemberState extends State<AddMember> {
 
   @override
   Widget build(BuildContext context) {
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
@@ -71,9 +72,7 @@ class _AddMemberState extends State<AddMember> {
                             children: <Widget>[
                               CircularProgressIndicator(
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  getOriginThemeData(
-                                    ThemeProvider.themeOf(context).id,
-                                  ).accentColor,
+                                  originTheme.accentColor,
                                 ),
                               ),
                               SizedBox(width: 20.0),

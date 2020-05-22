@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/screens/home/dashboard_components/group_card.dart';
 import 'package:skeduler/services/database_service.dart';
@@ -8,7 +9,6 @@ import 'package:skeduler/shared/widgets/color_selector.dart';
 import 'package:skeduler/shared/widgets/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class EditGroup extends StatefulWidget {
   final Group group;
@@ -45,6 +45,7 @@ class _EditGroupState extends State<EditGroup> {
 
   @override
   Widget build(BuildContext context) {
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GlobalKey<FormState> _formKeyName = GlobalKey<FormState>();
     GlobalKey<FormState> _formKeyDesc = GlobalKey<FormState>();
@@ -96,7 +97,7 @@ class _EditGroupState extends State<EditGroup> {
 
                   _scaffoldKey.currentState.hideCurrentSnackBar();
                 }
-                
+
                 Navigator.of(context).maybePop();
               }
             },
@@ -199,9 +200,7 @@ class _EditGroupState extends State<EditGroup> {
                     ownerName: _groupOwnerName,
                     groupColor: () {
                       if (_groupColorShade.color == null) {
-                        _groupColorShade.color = getOriginThemeData(
-                                ThemeProvider.themeOf(context).id)
-                            .primaryColor;
+                        _groupColorShade.color = originTheme.primaryColor;
                       }
                       return _groupColorShade.color;
                     }(),

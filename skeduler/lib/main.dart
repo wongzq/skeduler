@@ -52,6 +52,8 @@ class MyApp extends StatelessWidget {
           originTheme.primaryColorDark =
               myAppThemes[themeIndex].data.primaryColorDark;
           originTheme.accentColor = myAppThemes[themeIndex].data.accentColor;
+          originTheme.textColor =
+              myAppThemes[themeIndex].data.primaryTextTheme.bodyText1.color;
         },
         child: ThemeConsumer(
           child: Builder(
@@ -79,6 +81,8 @@ class MyApp extends StatelessWidget {
                   myAppThemes[themeIndex].data.primaryColorDark;
               originTheme.accentColor =
                   myAppThemes[themeIndex].data.accentColor;
+              originTheme.textColor =
+                  myAppThemes[themeIndex].data.primaryTextTheme.bodyText1.color;
 
               // Provide User from Firebase
               return StreamProvider<AuthUser>.value(

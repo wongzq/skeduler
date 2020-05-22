@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/option_enums.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/services/database_service.dart';
-import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 import 'package:skeduler/shared/widgets/edit_time_dialog.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class AvailabilityListTile extends StatelessWidget {
   final bool alwaysAvailable;
@@ -26,6 +25,7 @@ class AvailabilityListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
@@ -93,9 +93,7 @@ class AvailabilityListTile extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
-                      color:
-                          getOriginThemeData(ThemeProvider.themeOf(context).id)
-                              .primaryColorLight,
+                      color: originTheme.primaryColorLight,
                       borderRadius: BorderRadius.circular(50.0),
                     ),
                     child: Text(
@@ -113,9 +111,7 @@ class AvailabilityListTile extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
-                      color:
-                          getOriginThemeData(ThemeProvider.themeOf(context).id)
-                              .primaryColorLight,
+                      color: originTheme.primaryColorLight,
                       borderRadius: BorderRadius.circular(50.0),
                     ),
                     child: Text(

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/user.dart';
 import 'package:skeduler/screens/home/dashboard_components/group_card.dart';
 import 'package:skeduler/services/database_service.dart';
@@ -10,7 +11,6 @@ import 'package:skeduler/shared/widgets/color_selector.dart';
 import 'package:skeduler/shared/widgets/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class CreateGroup extends StatefulWidget {
   @override
@@ -35,6 +35,7 @@ class _CreateGroupState extends State<CreateGroup> {
   Widget build(BuildContext context) {
     User owner = Provider.of<User>(context);
     DatabaseService dbService = Provider.of<DatabaseService>(context);
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
 
     if (owner != null) {
       _groupOwnerEmail = owner.email;
@@ -158,9 +159,7 @@ class _CreateGroupState extends State<CreateGroup> {
               ownerName: _groupOwnerName,
               groupColor: () {
                 if (_groupColorShade.color == null) {
-                  _groupColorShade.color =
-                      getOriginThemeData(ThemeProvider.themeOf(context).id)
-                          .primaryColor;
+                  _groupColorShade.color = originTheme.primaryColor;
                 }
                 return _groupColorShade.color;
               }(),

@@ -1,8 +1,9 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
-import 'package:skeduler/shared/functions.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 class ColorSelector extends StatefulWidget {
@@ -45,6 +46,8 @@ class _ColorSelectorState extends State<ColorSelector> {
 
   @override
   Widget build(BuildContext context) {
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
+
     _chipWidth =
         (MediaQuery.of(context).size.width - 2 * _bodyHoriPadding) / 5 -
             (2 * _chipLabelHoriPadding) -
@@ -93,9 +96,7 @@ class _ColorSelectorState extends State<ColorSelector> {
                   ),
                   backgroundColor: () {
                     if (_colorShade.color == null) {
-                      _colorShade.color =
-                          getOriginThemeData(ThemeProvider.themeOf(context).id)
-                              .primaryColor;
+                      _colorShade.color = originTheme.primaryColor;
                     }
                     return _colorShade.color;
                   }(),

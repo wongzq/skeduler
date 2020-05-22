@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/screens/home/timetable_components/member_selector.dart';
 import 'package:skeduler/screens/home/timetable_components/subject_selector.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_grid/timetable_grid.dart';
-import 'package:skeduler/shared/functions.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class TimetableDisplay extends StatefulWidget {
   final TimetableEditMode editMode;
@@ -26,6 +25,8 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
+
     return ChangeNotifierProvider<TimetableEditMode>.value(
       value: widget.editMode,
       child: LayoutBuilder(
@@ -59,11 +60,7 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
                                       height: 40.0,
                                       decoration: BoxDecoration(
                                         color: editMode.viewMe
-                                            ? getOriginThemeData(
-                                                    ThemeProvider.themeOf(
-                                                            context)
-                                                        .id)
-                                                .primaryColor
+                                            ? originTheme.primaryColor
                                             : Colors.grey,
                                         shape: BoxShape.circle,
                                       ),

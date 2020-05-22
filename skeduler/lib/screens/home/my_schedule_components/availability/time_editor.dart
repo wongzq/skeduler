@@ -53,6 +53,9 @@ class _TimeEditorState extends State<TimeEditor> {
 
   bool _dateRangeExpanded;
   bool _timeRangeExpanded;
+  bool _savePressed = false;
+  bool _removeDaysPressed = false;
+  bool _resetPressed = false;
 
   double _spacing = 5.0;
   double _bodyPadding = 10.0;
@@ -504,6 +507,8 @@ class _TimeEditorState extends State<TimeEditor> {
                           height: _buttonHeight,
                           width: MediaQuery.of(context).size.width - 2,
                           child: RaisedButton(
+                            onHighlightChanged: (val) =>
+                                setState(() => _savePressed = val),
                             color: originTheme.primaryColorLight,
                             disabledColor: Colors.grey.shade200,
                             disabledTextColor: Color(0xFFBBBBBB),
@@ -605,6 +610,9 @@ class _TimeEditorState extends State<TimeEditor> {
                             child: Text(
                               'SAVE',
                               style: TextStyle(
+                                color: _savePressed
+                                    ? originTheme.textColor
+                                    : Colors.black,
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1.5,
@@ -623,6 +631,8 @@ class _TimeEditorState extends State<TimeEditor> {
                           height: _buttonHeight,
                           width: MediaQuery.of(context).size.width - 2,
                           child: RaisedButton(
+                            onHighlightChanged: (val) =>
+                                setState(() => _removeDaysPressed = val),
                             color: Colors.red.shade300,
                             disabledColor: Colors.grey.shade200,
                             disabledTextColor: Color(0xFFBBBBBB),
@@ -741,6 +751,9 @@ class _TimeEditorState extends State<TimeEditor> {
                             child: Text(
                               'REMOVE DAYS',
                               style: TextStyle(
+                                color: _removeDaysPressed
+                                    ? Colors.white
+                                    : Colors.black,
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1.5,
@@ -759,8 +772,10 @@ class _TimeEditorState extends State<TimeEditor> {
                           height: _buttonHeight,
                           width: MediaQuery.of(context).size.width - 2,
                           child: RaisedButton(
-                            color: Theme.of(context).primaryColorLight,
-                            highlightColor: Theme.of(context).primaryColorDark,
+                            onHighlightChanged: (val) =>
+                                setState(() => _resetPressed = val),
+                            color: originTheme.primaryColorLight,
+                            highlightColor: originTheme.primaryColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0),
                             ),
@@ -781,6 +796,9 @@ class _TimeEditorState extends State<TimeEditor> {
                             child: Text(
                               'RESET',
                               style: TextStyle(
+                                color: _resetPressed
+                                    ? originTheme.textColor
+                                    : Colors.black,
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1.5,

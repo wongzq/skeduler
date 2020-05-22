@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:skeduler/shared/functions.dart';
-import 'package:theme_provider/theme_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 
 class GroupCard extends StatelessWidget {
   final String groupName;
@@ -22,6 +22,8 @@ class GroupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
+
     final double _dimension =
         (MediaQuery.of(context).size.width - 10) / 2 - 2 * _padding;
 
@@ -38,9 +40,7 @@ class GroupCard extends StatelessWidget {
               width: _dimension,
               decoration: BoxDecoration(
                 // color: Colors.white,
-                color: groupColor ??
-                    getOriginThemeData(ThemeProvider.themeOf(context).id)
-                        .primaryColor,
+                color: groupColor ?? originTheme.primaryColor,
                 borderRadius: BorderRadius.circular(_radius),
                 boxShadow: [
                   BoxShadow(

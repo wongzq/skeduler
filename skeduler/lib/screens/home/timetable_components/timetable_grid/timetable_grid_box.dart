@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/models/firestore/user.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_grid/timetable_switch_dialog.dart';
-import 'package:skeduler/shared/functions.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 enum GridBoxType { header, content, switchBox, axisBox, placeholderBox }
 
@@ -47,6 +46,8 @@ class TimetableGridBox extends StatefulWidget {
 
 class _TimetableGridBoxState extends State<TimetableGridBox> {
   // properties
+  OriginTheme _originTheme;
+
   User _user;
   GroupStatus _groupStatus;
   TimetableGridData _gridData;
@@ -83,20 +84,18 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5.0),
               color: () {
-                String themeId = ThemeProvider.themeOf(context).id;
                 Color color;
 
                 switch (widget.gridBoxType) {
                   case GridBoxType.header:
                     color = _editMode != null && _editMode.isPlaceholder
                         ? Colors.grey.shade600
-                        : getOriginThemeData(themeId).primaryColor;
+                        : _originTheme.primaryColor;
                     break;
 
                   case GridBoxType.content:
                     color = () {
-                      Color activatedColor =
-                          getOriginThemeData(themeId).primaryColorLight;
+                      Color activatedColor = _originTheme.primaryColorLight;
 
                       Color deactivatedColor = Colors.grey.shade400;
 
@@ -158,11 +157,11 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                   case GridBoxType.switchBox:
                     color = _editMode != null && _editMode.isPlaceholder
                         ? Colors.grey.shade600
-                        : getOriginThemeData(themeId).primaryColor;
+                        : _originTheme.primaryColor;
                     break;
 
                   case GridBoxType.axisBox:
-                    color = getOriginThemeData(themeId).primaryColor;
+                    color = _originTheme.primaryColor;
                     break;
 
                   case GridBoxType.placeholderBox:
@@ -218,10 +217,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     ? Colors.black
                     : _editMode.isPlaceholder
                         ? Colors.white
-                        : getOriginThemeData(ThemeProvider.themeOf(context).id)
-                            .primaryTextTheme
-                            .bodyText1
-                            .color,
+                        : _originTheme.textColor,
                 fontSize: 10.0,
                 fontStyle: _editMode != null && _editMode.isPlaceholder
                     ? FontStyle.italic
@@ -558,6 +554,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
   @override
   Widget build(BuildContext context) {
+    _originTheme = Provider.of<OriginTheme>(context);
+
     _user = widget.gridBoxType == GridBoxType.content
         ? Provider.of<User>(context)
         : null;
