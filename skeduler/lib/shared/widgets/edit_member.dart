@@ -113,10 +113,7 @@ class _EditMemberState extends State<EditMember> {
                       );
 
                       if (status.completed) {
-                        Fluttertoast.showToast(
-                          msg: status.message,
-                          toastLength: Toast.LENGTH_LONG,
-                        );
+                        Fluttertoast.showToast(msg: status.message);
                       }
 
                       if (status.success) {
@@ -141,10 +138,7 @@ class _EditMemberState extends State<EditMember> {
                       );
 
                       if (status.completed) {
-                        Fluttertoast.showToast(
-                          msg: status.message,
-                          toastLength: Toast.LENGTH_LONG,
-                        );
+                        Fluttertoast.showToast(msg: status.message);
                       }
 
                       if (status.success) {

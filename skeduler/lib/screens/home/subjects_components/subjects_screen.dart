@@ -145,10 +145,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                             );
 
                             if (status.completed) {
-                              Fluttertoast.showToast(
-                                msg: status.message,
-                                toastLength: Toast.LENGTH_LONG,
-                              );
+                              Fluttertoast.showToast(msg: status.message);
 
                               _scaffoldKey.currentState.hideCurrentSnackBar();
                             }

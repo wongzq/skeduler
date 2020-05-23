@@ -28,10 +28,7 @@ class DatabaseService {
     if (await checkInternetConnection()) {
       return true;
     } else {
-      Fluttertoast.showToast(
-        msg: 'Please check your internet connection',
-        toastLength: Toast.LENGTH_LONG,
-      );
+      Fluttertoast.showToast(msg: 'Please check your internet connection');
       return false;
     }
   }
@@ -1042,7 +1039,8 @@ class DatabaseService {
             nickname: snapshot.data['nickname'] ?? snapshot.data['name'],
             description: snapshot.data['description'],
             role: MemberRole.values[snapshot.data['role']],
-            timesAvailable: _timesFromDynamicList(snapshot.data['timesAvailable'] ?? []),
+            timesAvailable:
+                _timesFromDynamicList(snapshot.data['timesAvailable'] ?? []),
             timeUnavailable:
                 _timesFromDynamicList(snapshot.data['timesUnavailable'] ?? []),
             alwaysAvailable: snapshot.data['alwaysAvailable'] ?? false,

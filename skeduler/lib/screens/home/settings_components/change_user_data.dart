@@ -65,11 +65,7 @@ class _ChangeUserDataState extends State<ChangeUserData> {
                         controller.text = user.name;
                       } else {
                         Fluttertoast.showToast(
-                          msg: 'Please check your internet connection',
-                          toastLength: Toast.LENGTH_LONG,
-                          backgroundColor: Colors.white,
-                          textColor: Colors.black,
-                        );
+                            msg: 'Please check your internet connection');
                         controller.text = user.name;
                       }
                       unfocus();

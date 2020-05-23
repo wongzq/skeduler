@@ -98,10 +98,7 @@ class _AddMemberState extends State<AddMember> {
 
                       if (status.completed) {
                         _scaffoldKey.currentState.hideCurrentSnackBar();
-                        Fluttertoast.showToast(
-                          msg: status.message,
-                          toastLength: Toast.LENGTH_LONG,
-                        );
+                        Fluttertoast.showToast(msg: status.message);
                       }
 
                       if (status.success) {

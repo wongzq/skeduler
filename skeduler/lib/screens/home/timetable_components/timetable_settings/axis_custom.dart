@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
@@ -173,7 +174,9 @@ class _AxisCustomState extends State<AxisCustom> {
       );
     });
 
-    customValWidgets.add(_generateAddCustomButton());
+    if (_customVals.length < 100) {
+      customValWidgets.add(_generateAddCustomButton());
+    }
 
     return customValWidgets;
   }
@@ -207,7 +210,7 @@ class _AxisCustomState extends State<AxisCustom> {
                   validator: (value) {
                     if (value == null || value.trim() == '') {
                       return 'Value cannot be empty';
-                    } else if (_ttbStatus.temp.axisCustom.contains(value)) {
+                    } else if (_customVals.contains(value)) {
                       return 'Value already exists';
                     } else {
                       return null;
@@ -223,15 +226,19 @@ class _AxisCustomState extends State<AxisCustom> {
                 FlatButton(
                   child: Text('SAVE'),
                   onPressed: () {
-                    if (formKey.currentState.validate()) {
-                      setState(() => _customVals.add(newCustom));
+                    if (_customVals.length >= 100) {
+                      Fluttertoast.showToast(msg: 'Too many custom values');
+                    } else {
+                      if (formKey.currentState.validate()) {
+                        setState(() => _customVals.add(newCustom));
 
-                      // update through valueSetter
-                      if (widget.valSetCustoms != null) {
-                        widget.valSetCustoms(_customVals);
+                        // update through valueSetter
+                        if (widget.valSetCustoms != null) {
+                          widget.valSetCustoms(_customVals);
+                        }
+
+                        Navigator.of(context).maybePop();
                       }
-
-                      Navigator.of(context).maybePop();
                     }
                   },
                 ),
@@ -277,4 +284,3 @@ class _AxisCustomState extends State<AxisCustom> {
     );
   }
 }
-

@@ -45,11 +45,23 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                 itemBuilder: (context) {
                   return [
                     PopupMenuItem(
-                      child: Text('Edit'),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.edit),
+                          SizedBox(width: 10.0),
+                          Text('Edit'),
+                        ],
+                      ),
                       value: CustomOption.edit,
                     ),
                     PopupMenuItem(
-                      child: Text('Remove'),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.delete),
+                          SizedBox(width: 10.0),
+                          Text('Remove'),
+                        ],
+                      ),
                       value: CustomOption.remove,
                     ),
                   ];
@@ -103,7 +115,12 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                                     setState(() {
                                       int index = _customVals.indexOf(custom);
                                       _customVals.removeAt(index);
-                                      _customVals.insert(index, newCustom);
+
+                                      if (index >= _customVals.length) {
+                                        _customVals.add(newCustom);
+                                      } else {
+                                        _customVals.insert(index, newCustom);
+                                      }
                                     });
 
                                     // update through valueSetter
@@ -155,81 +172,84 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
       appBar: AppBar(
         title: AppBarTitle(title: 'Reorder'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () async {
-              await showDialog(
-                  context: context,
-                  builder: (context) {
-                    GlobalKey<FormState> formKey = GlobalKey<FormState>();
-                    String newCustom;
+          _customVals.length < 1
+              ? IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () async {
+                    await showDialog(
+                        context: context,
+                        builder: (context) {
+                          GlobalKey<FormState> formKey = GlobalKey<FormState>();
+                          String newCustom;
 
-                    return AlertDialog(
-                      title: Text(
-                        'Add custom value',
-                        style: TextStyle(fontSize: 15.0),
-                      ),
-                      content: Form(
-                        key: formKey,
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            hintText: 'Type something here',
-                            hintStyle: TextStyle(fontSize: 15.0),
-                          ),
-                          onChanged: (value) => newCustom = value,
-                          validator: (value) {
-                            if (value == null || value.trim() == '') {
-                              return 'Value cannot be empty';
-                            } else if (_ttbStatus.temp.axisCustom
-                                .contains(value)) {
-                              return 'Value already exists';
-                            } else {
-                              return null;
-                            }
-                          },
-                        ),
-                      ),
-                      actions: <Widget>[
-                        FlatButton(
-                          child: Text('CANCEL'),
-                          onPressed: () => Navigator.of(context).maybePop(),
-                        ),
-                        FlatButton(
-                          child: Text('SAVE'),
-                          onPressed: () {
-                            if (formKey.currentState.validate()) {
-                              setState(() => widget.axisCustom.add(newCustom));
-                              
-                              // update through valueSetter
-                              if (widget.valSetAxisCustom != null) {
-                                widget.valSetAxisCustom(widget.axisCustom);
-                              }
-                              
-                              Navigator.of(context).maybePop();
-                            }
-                          },
-                        ),
-                      ],
-                    );
-                  });
-            },
-          )
+                          return AlertDialog(
+                            title: Text(
+                              'Add custom value',
+                              style: TextStyle(fontSize: 15.0),
+                            ),
+                            content: Form(
+                              key: formKey,
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  hintText: 'Type something here',
+                                  hintStyle: TextStyle(fontSize: 15.0),
+                                ),
+                                onChanged: (value) => newCustom = value,
+                                validator: (value) {
+                                  if (value == null || value.trim() == '') {
+                                    return 'Value cannot be empty';
+                                  } else if (_ttbStatus.temp.axisCustom
+                                      .contains(value)) {
+                                    return 'Value already exists';
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                              ),
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('CANCEL'),
+                                onPressed: () =>
+                                    Navigator.of(context).maybePop(),
+                              ),
+                              FlatButton(
+                                child: Text('SAVE'),
+                                onPressed: () {
+                                  if (formKey.currentState.validate()) {
+                                    setState(() => _customVals.add(newCustom));
+
+                                    // update through valueSetter
+                                    if (widget.valSetAxisCustom != null) {
+                                      widget.valSetAxisCustom(_customVals);
+                                    }
+
+                                    Navigator.of(context).maybePop();
+                                  }
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                  },
+                )
+              : Container(),
         ],
       ),
       body: ReorderableListView(
         onReorder: (int oldIndex, int newIndex) {
           setState(() {
-            String customVal = widget.axisCustom[oldIndex];
-            widget.axisCustom.removeAt(oldIndex);
+            String customVal = _customVals[oldIndex];
+            _customVals.removeAt(oldIndex);
 
-            if (newIndex >= widget.axisCustom.length) {
-              widget.axisCustom.add(customVal);
+            if (newIndex >= _customVals.length) {
+              _customVals.add(customVal);
             } else {
-              widget.axisCustom.insert(newIndex, customVal);
+              _customVals.insert(newIndex, customVal);
             }
 
             if (widget.valSetAxisCustom != null) {
-              widget.valSetAxisCustom(widget.axisCustom);
+              widget.valSetAxisCustom(_customVals);
             }
           });
         },

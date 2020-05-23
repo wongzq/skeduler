@@ -103,10 +103,7 @@ class TimetableSettings extends StatelessWidget {
                     );
 
                     if (status.completed) {
-                      Fluttertoast.showToast(
-                        msg: status.message,
-                        toastLength: Toast.LENGTH_LONG,
-                      );
+                      Fluttertoast.showToast(msg: status.message);
                     }
 
                     if (status.success) {
@@ -253,9 +250,7 @@ class TimetableSettings extends StatelessWidget {
                             _scaffoldKey.currentState.hideCurrentSnackBar();
 
                             Fluttertoast.showToast(
-                              msg: 'Successfully deleted timetable',
-                              toastLength: Toast.LENGTH_LONG,
-                            );
+                                msg: 'Successfully deleted timetable');
                           });
                         },
                       );

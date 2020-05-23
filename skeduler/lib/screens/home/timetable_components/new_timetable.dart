@@ -116,9 +116,7 @@ class _NewTimetableState extends State<NewTimetable> {
                     });
 
                     Fluttertoast.showToast(
-                      msg: 'Successfully copied ' + value.ttbId,
-                      toastLength: Toast.LENGTH_LONG,
-                    );
+                        msg: 'Successfully copied ' + value.ttbId);
                   } else if (value.copyType ==
                       CopyTimetableType.copyTimetableAxes) {
                     setState(() {
@@ -126,9 +124,7 @@ class _NewTimetableState extends State<NewTimetable> {
                     });
 
                     Fluttertoast.showToast(
-                      msg: 'Successfully copied ' + value.ttbId + ' axes',
-                      toastLength: Toast.LENGTH_LONG,
-                    );
+                        msg: 'Successfully copied ' + value.ttbId + ' axes');
                   }
                 });
               },
@@ -267,9 +263,7 @@ class _NewTimetableState extends State<NewTimetable> {
 
                         if (nameFound) {
                           Fluttertoast.showToast(
-                            msg: 'Timetable ID already exists',
-                            toastLength: Toast.LENGTH_LONG,
-                          );
+                              msg: 'Timetable ID already exists');
                         } else {
                           dbService
                               .updateGroupTimetable(
@@ -288,16 +282,11 @@ class _NewTimetableState extends State<NewTimetable> {
                           });
                         }
                       } else {
-                        Fluttertoast.showToast(
-                          msg: 'Timetable dates clash',
-                          toastLength: Toast.LENGTH_LONG,
-                        );
+                        Fluttertoast.showToast(msg: 'Timetable dates clash');
                       }
                     } else {
                       Fluttertoast.showToast(
-                        msg: 'Timetable dates are invalid',
-                        toastLength: Toast.LENGTH_LONG,
-                      );
+                          msg: 'Timetable dates are invalid');
                     }
                   }
                 },

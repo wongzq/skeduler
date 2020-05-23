@@ -26,6 +26,11 @@ class TimetableStatus extends ChangeNotifier {
   // temporary
   EditTimetable _temp;
 
+  TimetableStatus() {
+    this._currScroll = TimetableScroll(horiLength: 100, vertLength: 100);
+    this._editScroll = TimetableScroll(horiLength: 100, vertLength: 100);
+  }
+
   // getter methods
   Timetable get curr => this._curr;
   TimetableAxes get currAxes => this._currAxes;
@@ -50,7 +55,6 @@ class TimetableStatus extends ChangeNotifier {
     // reset currAxes
     if (ttb == null) {
       this._currAxes = null;
-      this._currScroll = null;
       this._currAxesIsCustom = false;
     }
     // new currAxes
@@ -59,7 +63,6 @@ class TimetableStatus extends ChangeNotifier {
       this._currAxes = _newAxes(
         this._curr == null ? EditTimetable() : EditTimetable.fromTimetable(ttb),
       );
-      this._currScroll = TimetableScroll(horiLength: 100, vertLength: 100);
     }
     // update currAxes keep grid axis
     else if (this._currAxesIsCustom == false) {
@@ -80,12 +83,10 @@ class TimetableStatus extends ChangeNotifier {
     // reset editAxes
     if (editTtb == null) {
       this._editAxes = null;
-      this._editScroll = null;
     }
     // new editAxes
     else if (this._editAxes == null) {
       this._editAxes = _newAxes(editTtb);
-      this._editScroll = TimetableScroll(horiLength: 100, vertLength: 100);
     }
     // update editAxes keep grid axes
     else {

@@ -15,7 +15,6 @@ import 'package:skeduler/screens/home/timetable_components/timetable_grid/timeta
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
 
-
 class TimetableEditor extends StatefulWidget {
   @override
   _TimetableEditorState createState() => _TimetableEditorState();
@@ -162,15 +161,9 @@ class _TimetableEditorState extends State<TimetableEditor> {
                       .updateGroupTimetable(
                           groupStatus.group.docId, ttbStatus.edit)
                       .then((_) {
-                    Fluttertoast.showToast(
-                      msg: 'Successfully saved timetable',
-                      toastLength: Toast.LENGTH_LONG,
-                    );
+                    Fluttertoast.showToast(msg: 'Successfully saved timetable');
                   }).catchError((_) {
-                    Fluttertoast.showToast(
-                      msg: 'Failed to save timetable',
-                      toastLength: Toast.LENGTH_LONG,
-                    );
+                    Fluttertoast.showToast(msg: 'Failed to save timetable');
                   });
 
                   _scaffoldKey.currentState.hideCurrentSnackBar();
