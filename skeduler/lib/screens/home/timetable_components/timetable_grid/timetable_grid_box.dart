@@ -192,7 +192,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                           return getAxisTypeStr(_axes.zDataAxis);
                           break;
                         default:
-                          return widget.initialDisplay;
+                          return widget.initialDisplay ?? '';
                       }
                     }()
                   : widget.gridBoxType == GridBoxType.content &&

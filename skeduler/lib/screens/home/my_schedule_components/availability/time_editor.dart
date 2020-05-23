@@ -187,6 +187,11 @@ class _TimeEditorState extends State<TimeEditor> {
                   await showDialog(
                     context: context,
                     builder: (context) {
+                      DateTime tmpStartDate = _startDate ?? _defaultStartDate;
+                      DateTime tmpEndDate = _endDate ?? _defaultEndDate;
+                      DateTime tmpStartTime = _startTime ?? _defaultStartTime;
+                      DateTime tmpEndTime = _endTime ?? _defaultEndTime;
+
                       return AlertDialog(
                         content: RichText(
                           text: TextSpan(
@@ -205,13 +210,11 @@ class _TimeEditorState extends State<TimeEditor> {
                                 ),
                               ),
                               TextSpan(
-                                text: DateFormat('EEEE, d MMMM').format(
-                                      _startDate ?? _defaultStartDate,
-                                    ) +
+                                text: DateFormat('EEEE, d MMMM')
+                                        .format(tmpStartDate) +
                                     ' to ' +
-                                    DateFormat('EEEE, d MMMM').format(
-                                      _endDate ?? _defaultEndDate,
-                                    ),
+                                    DateFormat('EEEE, d MMMM')
+                                        .format(tmpEndDate),
                                 style: TextStyle(
                                   color: Theme.of(context).brightness ==
                                           Brightness.dark
@@ -235,6 +238,8 @@ class _TimeEditorState extends State<TimeEditor> {
                               ),
                             ),
                             onPressed: () async {
+                              Navigator.of(context).maybePop();
+
                               widget.scaffoldKey.currentState.showSnackBar(
                                   LoadingSnackBar(context,
                                       'Updating available times . . .'));
@@ -242,10 +247,9 @@ class _TimeEditorState extends State<TimeEditor> {
                               List<Time> removeTimes = generateTimes(
                                 months: widget.valGetMonths(),
                                 weekDays: widget.valGetWeekdays(),
-                                time: Time(_startTime ?? _defaultStartTime,
-                                    _endTime ?? _defaultEndTime),
-                                startDate: _startDate ?? _defaultStartDate,
-                                endDate: _endDate ?? _defaultEndDate,
+                                time: Time(tmpStartTime, tmpEndTime),
+                                startDate: tmpStartDate,
+                                endDate: tmpEndDate,
                               );
 
                               await _dbService
@@ -259,8 +263,6 @@ class _TimeEditorState extends State<TimeEditor> {
                                 (_) {
                                   widget.scaffoldKey.currentState
                                       .hideCurrentSnackBar();
-
-                                  Navigator.of(context).maybePop();
                                 },
                               );
                             },
@@ -348,8 +350,12 @@ class _TimeEditorState extends State<TimeEditor> {
     _groupStatus = Provider.of<GroupStatus>(context);
     _editorsStatus = Provider.of<EditorsStatus>(context);
 
-    _defaultStartDate = getFirstDayOfStartMonth(widget.valGetMonths());
-    _defaultEndDate = getLastDayOfLastMonth(widget.valGetMonths());
+    _defaultStartDate = getFirstDayOfStartMonth(widget.valGetMonths()) ??
+        _defaultStartDate ??
+        DateTime.now();
+    _defaultEndDate = getLastDayOfLastMonth(widget.valGetMonths()) ??
+        _defaultEndDate ??
+        DateTime.now();
 
     return AbsorbPointer(
       absorbing:
