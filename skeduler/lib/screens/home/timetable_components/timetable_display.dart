@@ -78,7 +78,14 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
                                       ),
                                     ),
                                     SizedBox(height: 10.0),
-                                    Text('View me'),
+                                    Text(
+                                      'View me',
+                                      style: TextStyle(
+                                        color: editMode.viewMe
+                                            ? null
+                                            : Colors.grey,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               )
