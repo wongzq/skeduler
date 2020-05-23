@@ -71,7 +71,10 @@ class TimetableSettings extends StatelessWidget {
                 color: Colors.white,
               ),
               onPressed: () async {
-                if (formKey.currentState.validate()) {
+                if (formKey.currentState.validate() &&
+                    ttbStatus.temp.startDate != null &&
+                    ttbStatus.temp.endDate != null &&
+                    ttbStatus.temp.startDate.isBefore(ttbStatus.temp.endDate)) {
                   // check if new timetable (docId is null)
                   // check if update same timetable (docId is same)
                   if (ttbStatus.edit.docId == ttbStatus.temp.docId) {
