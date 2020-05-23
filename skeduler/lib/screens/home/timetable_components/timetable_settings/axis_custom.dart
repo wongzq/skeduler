@@ -174,9 +174,7 @@ class _AxisCustomState extends State<AxisCustom> {
       );
     });
 
-    if (_customVals.length < 100) {
-      customValWidgets.add(_generateAddCustomButton());
-    }
+    customValWidgets.add(_generateAddCustomButton());
 
     return customValWidgets;
   }
@@ -226,19 +224,15 @@ class _AxisCustomState extends State<AxisCustom> {
                 FlatButton(
                   child: Text('SAVE'),
                   onPressed: () {
-                    if (_customVals.length >= 100) {
-                      Fluttertoast.showToast(msg: 'Too many custom values');
-                    } else {
-                      if (formKey.currentState.validate()) {
-                        setState(() => _customVals.add(newCustom));
+                    if (formKey.currentState.validate()) {
+                      setState(() => _customVals.add(newCustom));
 
-                        // update through valueSetter
-                        if (widget.valSetCustoms != null) {
-                          widget.valSetCustoms(_customVals);
-                        }
-
-                        Navigator.of(context).maybePop();
+                      // update through valueSetter
+                      if (widget.valSetCustoms != null) {
+                        widget.valSetCustoms(_customVals);
                       }
+
+                      Navigator.of(context).maybePop();
                     }
                   },
                 ),

@@ -60,7 +60,10 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
                                       height: 40.0,
                                       decoration: BoxDecoration(
                                         color: editMode.viewMe
-                                            ? originTheme.primaryColor
+                                            ? Theme.of(context).brightness ==
+                                                    Brightness.light
+                                                ? originTheme.primaryColor
+                                                : originTheme.primaryColorLight
                                             : Colors.grey,
                                         shape: BoxShape.circle,
                                       ),

@@ -26,10 +26,9 @@ class TimetableStatus extends ChangeNotifier {
   // temporary
   EditTimetable _temp;
 
-  TimetableStatus() {
-    this._currScroll = TimetableScroll(horiLength: 100, vertLength: 100);
-    this._editScroll = TimetableScroll(horiLength: 100, vertLength: 100);
-  }
+  TimetableStatus()
+      : _currScroll = TimetableScroll(),
+        _editScroll = TimetableScroll();
 
   // getter methods
   Timetable get curr => this._curr;
@@ -228,47 +227,11 @@ class TimetableScroll extends ChangeNotifier {
   // properties
   LinkedScrollControllerGroup hori;
   LinkedScrollControllerGroup vert;
-  List<ScrollController> _horiScroll;
-  List<ScrollController> _vertScroll;
-
-  bool changed;
 
   // constructor
-  TimetableScroll({
-    @required int horiLength,
-    @required int vertLength,
-  }) : changed = false {
-    hori = LinkedScrollControllerGroup();
-    vert = LinkedScrollControllerGroup();
-    _newTimetableScroll(
-      horiLength: horiLength,
-      vertLength: vertLength,
-    );
-  }
-
-  // methods
-  void _newTimetableScroll({
-    @required int horiLength,
-    @required int vertLength,
-  }) {
-    horiLength = horiLength == null || horiLength < 0 ? 0 : horiLength;
-    horiLength = vertLength == null || vertLength < 0 ? 0 : vertLength;
-
-    _horiScroll = [];
-    for (int i = 0; i < horiLength + 1; i++) {
-      this._horiScroll.add(this.hori.addAndGet());
-    }
-
-    _vertScroll = [];
-    for (int i = 0; i < vertLength + 1; i++) {
-      this._vertScroll.add(this.vert.addAndGet());
-    }
-
-    notifyListeners();
-  }
-
-  List<ScrollController> get horiScroll => List.unmodifiable(this._horiScroll);
-  List<ScrollController> get vertScroll => List.unmodifiable(this._vertScroll);
+  TimetableScroll()
+      : hori = LinkedScrollControllerGroup(),
+        vert = LinkedScrollControllerGroup();
 }
 
 // --------------------------------------------------------------------------------

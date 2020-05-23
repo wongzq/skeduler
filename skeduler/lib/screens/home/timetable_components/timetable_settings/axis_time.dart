@@ -226,9 +226,7 @@ class _AxisTimeState extends State<AxisTime> {
       );
     });
 
-    if (_times.length < 100) {
-      timeslotWidgets.add(_generateAddTimeButton());
-    }
+    timeslotWidgets.add(_generateAddTimeButton());
 
     return timeslotWidgets;
   }
@@ -250,31 +248,27 @@ class _AxisTimeState extends State<AxisTime> {
             valSetStartTime: (dateTime) => newStartTime = dateTime,
             valSetEndTime: (dateTime) => newEndTime = dateTime,
             onSave: () {
-              if (_times.length >= 100) {
-                Fluttertoast.showToast(msg: 'Too many times');
-              } else {
-                setState(() {
-                  if (newEndTime.isAfter(newStartTime)) {
-                    List<Time> tempTimes = List<Time>.from(_times);
-                    tempTimes.add(Time(newStartTime, newEndTime));
+              setState(() {
+                if (newEndTime.isAfter(newStartTime)) {
+                  List<Time> tempTimes = List<Time>.from(_times);
+                  tempTimes.add(Time(newStartTime, newEndTime));
 
-                    // If no conflict in temporary, then add to main
-                    if (isConsecutiveTimes(tempTimes)) {
-                      _times.add(Time(newStartTime, newEndTime));
+                  // If no conflict in temporary, then add to main
+                  if (isConsecutiveTimes(tempTimes)) {
+                    _times.add(Time(newStartTime, newEndTime));
 
-                      _times.sort((a, b) => a.startTime.millisecondsSinceEpoch
-                          .compareTo(b.startTime.millisecondsSinceEpoch));
-                    } else {
-                      Fluttertoast.showToast(
-                          msg: 'There was a conflict in the time');
-                    }
-
-                    if (widget.valSetTimes != null) {
-                      widget.valSetTimes(_times);
-                    }
+                    _times.sort((a, b) => a.startTime.millisecondsSinceEpoch
+                        .compareTo(b.startTime.millisecondsSinceEpoch));
+                  } else {
+                    Fluttertoast.showToast(
+                        msg: 'There was a conflict in the time');
                   }
-                });
-              }
+
+                  if (widget.valSetTimes != null) {
+                    widget.valSetTimes(_times);
+                  }
+                }
+              });
             },
           );
         },
