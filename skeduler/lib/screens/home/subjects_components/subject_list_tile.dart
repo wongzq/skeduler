@@ -6,7 +6,7 @@ import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/subject.dart';
 import 'package:skeduler/services/database_service.dart';
-
+import 'package:skeduler/shared/simple_widgets.dart';
 
 class SubjectListTile extends StatelessWidget {
   final Subject subject;
@@ -55,7 +55,7 @@ class SubjectListTile extends StatelessWidget {
                       ),
                     ];
                   },
-                  onSelected: (option) {
+                  onSelected: (option) async {
                     switch (option) {
                       case SubjectOption.edit:
                         Navigator.of(context).pushNamed(
@@ -65,8 +65,21 @@ class SubjectListTile extends StatelessWidget {
                         break;
 
                       case SubjectOption.remove:
-                        dbService.removeGroupSubject(
-                            groupStatus.group.docId, subject);
+                        await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return SimpleAlertDialog(
+                                context: context,
+                                contentDisplay:
+                                    'Remove ${subject.display} from the group?',
+                                confirmDisplay: 'REMOVE',
+                                confirmFunction: () async {
+                                  Navigator.of(context).maybePop();
+                                  await dbService.removeGroupSubject(
+                                      groupStatus.group.docId, subject);
+                                },
+                              );
+                            });
                         break;
                     }
                   },

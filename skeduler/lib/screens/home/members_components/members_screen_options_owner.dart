@@ -22,7 +22,7 @@ class MembersScreenOptionsOwner extends StatelessWidget {
 
             // Delete group
             children: <SpeedDialChild>[
-              // Add member
+              // Add dummy
               SpeedDialChild(
                 foregroundColor: getFABIconForegroundColor(context),
                 backgroundColor: getFABIconBackgroundColor(context),
