@@ -9,7 +9,7 @@ import 'package:skeduler/models/firestore/timetable.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_settings/axis_custom.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_settings/axis_day.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_settings/axis_time.dart';
-import 'package:skeduler/screens/home/timetable_components/timetable_settings/date_range.dart';
+import 'package:skeduler/screens/home/timetable_components/timetable_settings/timetable_date_range.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/widgets/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -156,7 +156,7 @@ class TimetableSettings extends StatelessWidget {
             SizedBox(height: 10.0),
 
             // Date range
-            DateRange(
+            TimetableDateRange(
               initialStartDate: ttbStatus.temp.startDate,
               initialEndDate: ttbStatus.temp.endDate,
               valSetStartDate: (startDate) {

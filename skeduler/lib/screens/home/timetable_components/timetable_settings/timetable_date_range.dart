@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class DateRange extends StatefulWidget {
-  final String contentText;
+class TimetableDateRange extends StatefulWidget {
   final DateTime initialStartDate;
   final DateTime initialEndDate;
   final ValueSetter<DateTime> valSetStartDate;
   final ValueSetter<DateTime> valSetEndDate;
   final void Function() onSave;
 
-  const DateRange({
+  const TimetableDateRange({
     Key key,
-    this.contentText = 'Edit Time',
     this.initialStartDate,
     this.initialEndDate,
     this.valSetStartDate,
@@ -20,10 +18,10 @@ class DateRange extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _DateRangeState createState() => _DateRangeState();
+  _TimetableDateRangeState createState() => _TimetableDateRangeState();
 }
 
-class _DateRangeState extends State<DateRange> {
+class _TimetableDateRangeState extends State<TimetableDateRange> {
   // properties
   DateTime _defaultDate;
 

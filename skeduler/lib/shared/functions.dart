@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:quiver/time.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
+import 'package:skeduler/models/firestore/time.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 void unfocus() {
@@ -97,4 +99,30 @@ Color getFABIconBackgroundColor(BuildContext context) {
   return Theme.of(context).brightness == Brightness.light
       ? getOriginThemeData(ThemeProvider.themeOf(context).id).primaryColor
       : getOriginThemeData(ThemeProvider.themeOf(context).id).primaryColorDark;
+}
+
+DateTime getFirstDayOfStartMonth(List<Month> months) {
+  if (months != null && months.isNotEmpty) {
+    return DateTime(
+      DateTime.now().year,
+      months.first.index + 1,
+    );
+  } else {
+    return null;
+  }
+}
+
+DateTime getLastDayOfLastMonth(List<Month> months) {
+  if (months != null && months.isNotEmpty) {
+    return DateTime(
+      DateTime.now().year,
+      months.last.index + 1,
+      daysInMonth(
+        DateTime.now().year,
+        months.last.index + 1,
+      ),
+    );
+  } else {
+    return null;
+  }
 }
