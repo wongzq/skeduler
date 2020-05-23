@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/main.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/user.dart';
 import 'package:skeduler/services/auth_service.dart';
-import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
-import 'package:theme_provider/theme_provider.dart';
 
 class HomeDrawer extends StatelessWidget {
   // properties
@@ -31,16 +30,9 @@ class HomeDrawer extends StatelessWidget {
   HomeDrawer(this._selected);
 
   // methods
-  Color _tileSelectedBackgroundColor(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.light ? null : null;
-
-  Color _tileSelectedForegroundColor(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.light
-          ? getOriginThemeData(ThemeProvider.themeOf(context).id).primaryColor
-          : getOriginThemeData(ThemeProvider.themeOf(context).id).accentColor;
-
   @override
   Widget build(BuildContext context) {
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     User user = Provider.of<User>(context);
@@ -48,7 +40,9 @@ class HomeDrawer extends StatelessWidget {
       width: MediaQuery.of(context).size.width * 0.75,
       child: Drawer(
         child: ListTileTheme(
-          selectedColor: _tileSelectedForegroundColor(context),
+          selectedColor: Theme.of(context).brightness == Brightness.light
+              ? originTheme.primaryColorDark
+              : originTheme.accentColor,
           child: Column(
             children: <Widget>[
               // User data display
@@ -68,9 +62,6 @@ class HomeDrawer extends StatelessWidget {
 
               // Dashboard
               Container(
-                color: _selected == DrawerEnum.dashboard
-                    ? _tileSelectedBackgroundColor(context)
-                    : null,
                 child: ListTile(
                   dense: true,
                   leading: Icon(Icons.dashboard),
@@ -89,9 +80,6 @@ class HomeDrawer extends StatelessWidget {
 
               // Group
               Container(
-                color: _selected == DrawerEnum.group
-                    ? _tileSelectedBackgroundColor(context)
-                    : null,
                 child: ListTile(
                   enabled: groupStatus.group != null ? true : false,
                   dense: true,
@@ -114,9 +102,6 @@ class HomeDrawer extends StatelessWidget {
 
               // Members
               Container(
-                color: _selected == DrawerEnum.members
-                    ? _tileSelectedBackgroundColor(context)
-                    : null,
                 child: ListTile(
                   enabled: groupStatus.group != null ? true : false,
                   dense: true,
@@ -134,9 +119,6 @@ class HomeDrawer extends StatelessWidget {
 
               // Subjects
               Container(
-                color: _selected == DrawerEnum.subjects
-                    ? _tileSelectedBackgroundColor(context)
-                    : null,
                 child: ListTile(
                   enabled: groupStatus.group != null ? true : false,
                   dense: true,
@@ -154,9 +136,6 @@ class HomeDrawer extends StatelessWidget {
 
               // Timetable
               Container(
-                color: _selected == DrawerEnum.timetable
-                    ? _tileSelectedBackgroundColor(context)
-                    : null,
                 child: ListTile(
                   enabled: groupStatus.group != null ? true : false,
                   dense: true,
@@ -174,9 +153,6 @@ class HomeDrawer extends StatelessWidget {
 
               // My Schedule
               Container(
-                color: _selected == DrawerEnum.mySchedule
-                    ? _tileSelectedBackgroundColor(context)
-                    : null,
                 child: ListTile(
                   enabled: groupStatus.group != null ? true : false,
                   dense: true,
@@ -195,9 +171,6 @@ class HomeDrawer extends StatelessWidget {
 
               // Settings
               Container(
-                color: _selected == DrawerEnum.settings
-                    ? _tileSelectedBackgroundColor(context)
-                    : null,
                 child: ListTile(
                   dense: true,
                   leading: Icon(Icons.settings),
@@ -214,9 +187,6 @@ class HomeDrawer extends StatelessWidget {
 
               // Logout
               Container(
-                color: _selected == DrawerEnum.logout
-                    ? _tileSelectedBackgroundColor(context)
-                    : null,
                 child: ListTile(
                   dense: true,
                   leading: Icon(Icons.exit_to_app),
