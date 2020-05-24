@@ -36,7 +36,9 @@ class AuthService {
   // returns User if successful
   // returns null if unsuccessful
   Future signUpWithEmailAndPassword(
-      String email, String password, String name) async {
+    String email,
+    String password,
+  ) async {
     try {
       AuthResult result = await _authService.createUserWithEmailAndPassword(
           email: email, password: password);

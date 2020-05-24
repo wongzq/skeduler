@@ -28,31 +28,7 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
   List<Widget> _generateSubjects({@required bool canReorder}) {
     List<Widget> widgets = [];
 
-    if (_groupStatus.subjects.length == 0) {
-      widgets.add(
-        ListTile(
-          key: UniqueKey(),
-          leading: Icon(
-            Icons.class_,
-            color: Colors.grey,
-          ),
-          title: Text(
-            'No subject',
-            style: TextStyle(
-              color: Colors.grey,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-          subtitle: Text(
-            'can be found in this group',
-            style: TextStyle(
-              color: Colors.grey,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ),
-      );
-    } else if (_orderChanged && canReorder) {
+    if (_orderChanged && canReorder) {
       GroupStatus.reorderSubjects(
         subjects: _groupStatus.subjects,
         subjectMetadatas: _tempSubjectMetadatas,
@@ -177,34 +153,41 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                 : null,
             body: _groupStatus.me.role == MemberRole.owner ||
                     _groupStatus.me.role == MemberRole.admin
-                ? ReorderableListView(
-                    onReorder: (int oldIndex, int newIndex) {
-                      setState(() {
-                        String subjectMetadata =
-                            _tempSubjectMetadatas[oldIndex];
+                ? _groupStatus.subjects.length == 0
+                    ? EmptyPlaceholder(
+                        iconData: Icons.class_,
+                        text: 'No subjects',
+                      )
+                    : ReorderableListView(
+                        onReorder: (int oldIndex, int newIndex) {
+                          setState(() {
+                            String subjectMetadata =
+                                _tempSubjectMetadatas[oldIndex];
 
-                        _tempSubjectMetadatas.removeAt(oldIndex);
+                            _tempSubjectMetadatas.removeAt(oldIndex);
 
-                        if (newIndex >= _tempSubjectMetadatas.length) {
-                          _tempSubjectMetadatas.add(subjectMetadata);
-                        } else {
-                          _tempSubjectMetadatas.insert(
-                              newIndex, subjectMetadata);
-                        }
+                            if (newIndex >= _tempSubjectMetadatas.length) {
+                              _tempSubjectMetadatas.add(subjectMetadata);
+                            } else {
+                              _tempSubjectMetadatas.insert(
+                                  newIndex, subjectMetadata);
+                            }
 
-                        bool sameOrder = true;
-                        for (int i = 0; i < _tempSubjectMetadatas.length; i++) {
-                          if (_tempSubjectMetadatas[i] !=
-                              _groupStatus.group.subjectMetadatas[i]) {
-                            sameOrder = false;
-                          }
-                        }
+                            bool sameOrder = true;
+                            for (int i = 0;
+                                i < _tempSubjectMetadatas.length;
+                                i++) {
+                              if (_tempSubjectMetadatas[i] !=
+                                  _groupStatus.group.subjectMetadatas[i]) {
+                                sameOrder = false;
+                              }
+                            }
 
-                        _orderChanged = !sameOrder;
-                      });
-                    },
-                    children: _generateSubjects(canReorder: true),
-                  )
+                            _orderChanged = !sameOrder;
+                          });
+                        },
+                        children: _generateSubjects(canReorder: true),
+                      )
                 : ListView(
                     children: _generateSubjects(canReorder: false),
                   ),

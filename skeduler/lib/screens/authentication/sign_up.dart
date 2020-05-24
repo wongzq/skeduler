@@ -6,6 +6,7 @@ import 'package:skeduler/screens/authentication/form_email.dart';
 import 'package:skeduler/screens/authentication/form_name.dart';
 import 'package:skeduler/screens/authentication/form_password.dart';
 import 'package:skeduler/services/auth_service.dart';
+import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 
 class SignUp extends StatefulWidget {
@@ -32,6 +33,7 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     // get Authentication Info using provider
     final AuthInfo authInfo = Provider.of<AuthInfo>(context);
+    DatabaseService dbService = Provider.of<DatabaseService>(context);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -91,14 +93,13 @@ class _SignUpState extends State<SignUp> {
 
                           // check internet connection
                           bool hasConn = await checkInternetConnection();
-                          
+
                           if (hasConn) {
                             // sign up with email and password
                             dynamic authResult =
                                 await _authService.signUpWithEmailAndPassword(
                               authInfo.email,
                               authInfo.password,
-                              authInfo.name,
                             );
 
                             if (authResult == null) {
@@ -107,7 +108,11 @@ class _SignUpState extends State<SignUp> {
                                 _error = 'Please provide a valid email';
                               });
                             } else {
-                              // log in account and go to dashboard
+                              // create user information
+                              await dbService.setUserData(
+                                authInfo.email,
+                                authInfo.name,
+                              );
                             }
                           } else {
                             _error = 'Please check your internet connection';

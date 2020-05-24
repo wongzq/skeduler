@@ -88,9 +88,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
                 switch (widget.gridBoxType) {
                   case GridBoxType.header:
-                    color = _editMode != null && _editMode.isPlaceholder
-                        ? Colors.grey.shade600
-                        : _originTheme.primaryColor;
+                    color = _originTheme.primaryColor;
                     break;
 
                   case GridBoxType.content:
@@ -99,65 +97,59 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
                       Color deactivatedColor = Colors.grey.shade400;
 
-                      return _editMode != null && _editMode.isPlaceholder
-                          ? Colors.grey.shade400
-                          : _editMode.editing
-                              // something is dragging
-                              ? _editMode.isDragging
-                                  // check validity
-                                  ? _editMode.isDraggingData.hasSubjectOnly ||
-                                          (_editMode
-                                                  .isDraggingData.hasSubject &&
-                                              _editMode.dragSubjectOnly) ||
-                                          (memberIsAvailable(
-                                                  _editMode.isDraggingData) &&
-                                              !memberIsAssigned(
-                                                  _editMode.isDraggingData))
-                                      ? activatedColor
-                                      : deactivatedColor
-                                  : _gridData.dragData == null ||
-                                          _gridData.dragData.isEmpty
-                                      ? deactivatedColor
-                                      : _editMode.dragSubjectAndMember &&
-                                              _gridData.dragData.isNotEmpty
-                                          ? activatedColor
-                                          : _editMode.dragSubjectOnly &&
-                                                  _gridData.dragData.subject
-                                                      .isNotEmpty
-                                              ? activatedColor
-                                              : _editMode.dragMemberOnly &&
-                                                      _gridData.dragData.member
-                                                          .isNotEmpty
-                                                  ? activatedColor
-                                                  : deactivatedColor
-                              // something is not dragging
+                      return _editMode != null && _editMode.editing
+                          // something is dragging
+                          ? _editMode.isDragging
+                              // check validity
+                              ? _editMode.isDraggingData.hasSubjectOnly ||
+                                      (_editMode.isDraggingData.hasSubject &&
+                                          _editMode.dragSubjectOnly) ||
+                                      (memberIsAvailable(
+                                              _editMode.isDraggingData) &&
+                                          !memberIsAssigned(
+                                              _editMode.isDraggingData))
+                                  ? activatedColor
+                                  : deactivatedColor
                               : _gridData.dragData == null ||
                                       _gridData.dragData.isEmpty
                                   ? deactivatedColor
-                                  // view me
-                                  : _editMode.viewMe
-                                      ? () {
-                                          Member member =
-                                              _groupStatus.members.firstWhere(
-                                            (member) =>
-                                                member.docId == _user.email,
-                                            orElse: () => null,
-                                          );
-
-                                          return _gridData
-                                                  .dragData.member.display ==
-                                              member.display;
-                                        }()
+                                  : _editMode.dragSubjectAndMember &&
+                                          _gridData.dragData.isNotEmpty
+                                      ? activatedColor
+                                      : _editMode.dragSubjectOnly &&
+                                              _gridData
+                                                  .dragData.subject.isNotEmpty
                                           ? activatedColor
-                                          : deactivatedColor
-                                      : activatedColor;
+                                          : _editMode.dragMemberOnly &&
+                                                  _gridData.dragData.member
+                                                      .isNotEmpty
+                                              ? activatedColor
+                                              : deactivatedColor
+                          // something is not dragging
+                          : _gridData.dragData == null ||
+                                  _gridData.dragData.isEmpty
+                              ? deactivatedColor
+                              // view me
+                              : _editMode.viewMe
+                                  ? () {
+                                      Member member =
+                                          _groupStatus.members.firstWhere(
+                                        (member) => member.docId == _user.email,
+                                        orElse: () => null,
+                                      );
+
+                                      return _gridData
+                                              .dragData.member.display ==
+                                          member.display;
+                                    }()
+                                      ? activatedColor
+                                      : deactivatedColor
+                                  : activatedColor;
                     }();
                     break;
 
                   case GridBoxType.switchBox:
-                    color = _editMode != null && _editMode.isPlaceholder
-                        ? Colors.grey.shade600
-                        : _originTheme.primaryColor;
+                    color = _originTheme.primaryColor;
                     break;
 
                   case GridBoxType.axisBox:
@@ -215,13 +207,9 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
               style: TextStyle(
                 color: widget.gridBoxType == GridBoxType.content
                     ? Colors.black
-                    : _editMode != null && _editMode.isPlaceholder
-                        ? Colors.white
-                        : _originTheme.textColor,
+                    : _originTheme.textColor,
                 fontSize: 10.0,
-                fontStyle: _editMode != null && _editMode.isPlaceholder
-                    ? FontStyle.italic
-                    : FontStyle.normal,
+                fontStyle: FontStyle.normal,
               ),
               maxLines: widget.textOverFlowFade ? 2 : null,
               overflow: widget.textOverFlowFade ? TextOverflow.fade : null,

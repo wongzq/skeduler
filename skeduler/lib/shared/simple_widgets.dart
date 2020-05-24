@@ -3,6 +3,46 @@ import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 import 'package:theme_provider/theme_provider.dart';
 
+class EmptyPlaceholder extends StatelessWidget {
+  final IconData iconData;
+  final String text;
+
+  const EmptyPlaceholder({
+    Key key,
+    this.iconData,
+    this.text,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          iconData != null
+              ? Icon(
+                iconData,
+                size: 80,
+                color: Colors.grey,
+              )
+              : Container(),
+          SizedBox(height: 10.0),
+          text != null
+              ? Text(
+                  text ?? '',
+                  textAlign: TextAlign.center,
+                  style: textStyleAppBarTitle.copyWith(
+                    color: Colors.grey,
+                  ),
+                )
+              : Container(),
+          SizedBox(height: 100.0),
+        ],
+      ),
+    );
+  }
+}
+
 class SimpleAlertDialog extends AlertDialog {
   SimpleAlertDialog({
     @required BuildContext context,

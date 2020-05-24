@@ -8,16 +8,19 @@ import 'package:skeduler/screens/home/my_schedule_components/availability/month_
 import 'package:skeduler/screens/home/my_schedule_components/availability/time_editor.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
 
-class AvailabilityEditor extends StatelessWidget {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+class AvailabilityEditor extends StatefulWidget {
+  @override
+  _AvailabilityEditorState createState() => _AvailabilityEditorState();
+}
+
+class _AvailabilityEditorState extends State<AvailabilityEditor> {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<Month> _monthsSelected = [];
+  List<Weekday> _weekdaysSelected = [];
 
   @override
   Widget build(BuildContext context) {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
-
-    List<Month> _monthsSelected = [];
-    List<Weekday> _weekdaysSelected = [];
-
     EditorsStatus editorsStatus =
         EditorsStatus(currentEditor: CurrentEditor.month);
 

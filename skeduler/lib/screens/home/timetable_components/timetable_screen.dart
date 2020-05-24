@@ -61,34 +61,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
             } else {
               isPlaceholder = true;
               ttbStatus.curr = null;
-              ttbStatus.curr = Timetable(
-                docId: null,
-                gridAxisOfDay: GridAxis.x,
-                gridAxisOfTime: GridAxis.y,
-                gridAxisOfCustom: GridAxis.z,
-                axisDay: [
-                  Weekday.mon,
-                  Weekday.tue,
-                  Weekday.wed,
-                  Weekday.thu,
-                  Weekday.fri,
-                ],
-                axisTime: [
-                  Time(
-                    DateTime(DateTime.now().year, 1, 1, DateTime.now().hour),
-                    DateTime(DateTime.now().year, 1, 1,
-                        DateTime.now().add(Duration(hours: 1)).hour),
-                  ),
-                  Time(
-                    DateTime(DateTime.now().year, 1, 1,
-                        DateTime.now().add(Duration(hours: 2)).hour),
-                    DateTime(DateTime.now().year, 1, 1,
-                        DateTime.now().add(Duration(hours: 3)).hour),
-                  ),
-                ],
-                axisCustom: ['Example\nA', 'Example\nB'],
-                gridDataList: TimetableGridDataList(),
-              );
             }
 
             return groupStatus.group == null
@@ -104,7 +76,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                 timetable == null ||
                                 !timetable.isValid ||
                                 ttbStatus.curr == null
-                            ? 'No timetable for today'
+                            ? 'Timetable'
                             : 'Timetable: ${ttbStatus.curr.docId}',
                       ),
                       actions: <Widget>[
@@ -284,12 +256,16 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     drawer: HomeDrawer(DrawerEnum.timetable),
                     body: groupStatus.me == null
                         ? Container()
-                        : TimetableDisplay(
-                            editMode: TimetableEditMode(
-                              isPlaceholder: isPlaceholder,
-                              editMode: false,
-                            ),
-                          ),
+                        : isPlaceholder
+                            ? EmptyPlaceholder(
+                                iconData: Icons.table_chart,
+                                text: 'No timetable for today',
+                              )
+                            : TimetableDisplay(
+                                editMode: TimetableEditMode(
+                                  editMode: false,
+                                ),
+                              ),
                   );
           },
         );

@@ -45,105 +45,114 @@ class DashboardScreen extends StatelessWidget {
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             List<Group> groups = snapshot.data;
 
-            return GridView.builder(
-              gridDelegate:
-                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-              itemCount: groups != null ? groups.length : 0,
-              itemBuilder: (BuildContext context, int index) {
-                if (groups[index] != null) {
-                  return StreamBuilder<Member>(
-                      stream:
-                          dbService.streamGroupMemberMe(groups[index].docId),
-                      builder: (context, meSnap) {
-                        Member me = meSnap != null ? meSnap.data : null;
+            return groups == null || groups.length == 0
+                ? EmptyPlaceholder(
+                    iconData: Icons.dashboard,
+                    text: 'No groups',
+                  )
+                : GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2),
+                    itemCount: groups != null ? groups.length : 0,
+                    itemBuilder: (BuildContext context, int index) {
+                      if (groups[index] != null) {
+                        return StreamBuilder<Member>(
+                            stream: dbService
+                                .streamGroupMemberMe(groups[index].docId),
+                            builder: (context, meSnap) {
+                              Member me = meSnap != null ? meSnap.data : null;
 
-                        return GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () async {
-                            if (me != null && me.role != null) {
-                              if (me.role == MemberRole.owner ||
-                                  me.role == MemberRole.admin ||
-                                  me.role == MemberRole.member) {
-                                ttbStatus.reset();
-                                groupStatus.reset();
-                                groupDocId.value = null;
-                                groupDocId.value = groups[index].docId;
+                              return GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () async {
+                                  if (me != null && me.role != null) {
+                                    if (me.role == MemberRole.owner ||
+                                        me.role == MemberRole.admin ||
+                                        me.role == MemberRole.member) {
+                                      ttbStatus.reset();
+                                      groupStatus.reset();
+                                      groupDocId.value = null;
+                                      groupDocId.value = groups[index].docId;
 
-                                Navigator.of(context).pushNamed(
-                                  '/group',
-                                  arguments: RouteArgs(),
-                                );
-                              } else if (me.role == MemberRole.pending) {
-                                await showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return StreamBuilder(
-                                      stream: dbService
-                                          .streamGroup(groups[index].docId),
-                                      builder: (context, snapshot) {
-                                        Group group = snapshot != null
-                                            ? snapshot.data
-                                            : null;
+                                      Navigator.of(context).pushNamed(
+                                        '/group',
+                                        arguments: RouteArgs(),
+                                      );
+                                    } else if (me.role == MemberRole.pending) {
+                                      await showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return StreamBuilder(
+                                            stream: dbService.streamGroup(
+                                                groups[index].docId),
+                                            builder: (context, snapshot) {
+                                              Group group = snapshot != null
+                                                  ? snapshot.data
+                                                  : null;
 
-                                        return group == null
-                                            ? Container()
-                                            : SimpleAlertDialog(
-                                                context: context,
-                                                contentDisplay:
-                                                    'You have been invited to join ' +
-                                                        group.name,
-                                                cancelDisplay: 'DECLINE',
-                                                cancelFunction: () async {
-                                                  await dbService
-                                                      .declineGroupInvitation(
-                                                          groups[index].docId);
+                                              return group == null
+                                                  ? Container()
+                                                  : SimpleAlertDialog(
+                                                      context: context,
+                                                      contentDisplay:
+                                                          'You have been invited to join ' +
+                                                              group.name,
+                                                      cancelDisplay: 'DECLINE',
+                                                      cancelFunction: () async {
+                                                        await dbService
+                                                            .declineGroupInvitation(
+                                                                groups[index]
+                                                                    .docId);
 
-                                                  Navigator.of(context)
-                                                      .maybePop();
-                                                },
-                                                confirmDisplay: 'ACCEPT',
-                                                confirmFunction: () async {
-                                                  await dbService
-                                                      .acceptGroupInvitation(
-                                                          groups[index].docId);
+                                                        Navigator.of(context)
+                                                            .maybePop();
+                                                      },
+                                                      confirmDisplay: 'ACCEPT',
+                                                      confirmFunction:
+                                                          () async {
+                                                        await dbService
+                                                            .acceptGroupInvitation(
+                                                                groups[index]
+                                                                    .docId);
 
-                                                  ttbStatus.reset();
-                                                  groupStatus.reset();
-                                                  groupDocId.value = null;
-                                                  groupDocId.value =
-                                                      groups[index].docId;
+                                                        ttbStatus.reset();
+                                                        groupStatus.reset();
+                                                        groupDocId.value = null;
+                                                        groupDocId.value =
+                                                            groups[index].docId;
 
-                                                  Navigator.of(context)
-                                                      .popAndPushNamed(
-                                                    '/group',
-                                                    arguments: RouteArgs(),
-                                                  );
-                                                },
-                                              );
-                                      },
-                                    );
-                                  },
-                                );
-                              }
-                            }
-                          },
-                          child: GroupCard(
-                            groupName: groups[index].name,
-                            groupColor: groups[index].colorShade.color,
-                            numOfMembers: groups[index].numOfMembers,
-                            ownerName: groups[index].ownerName,
-                          ),
-                        );
-                      });
-                } else {
-                  return Container();
-                }
-              },
-              physics: BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics(),
-              ),
-              scrollDirection: Axis.vertical,
-            );
+                                                        Navigator.of(context)
+                                                            .popAndPushNamed(
+                                                          '/group',
+                                                          arguments:
+                                                              RouteArgs(),
+                                                        );
+                                                      },
+                                                    );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    }
+                                  }
+                                },
+                                child: GroupCard(
+                                  groupName: groups[index].name,
+                                  groupColor: groups[index].colorShade.color,
+                                  numOfMembers: groups[index].numOfMembers,
+                                  ownerName: groups[index].ownerName,
+                                ),
+                              );
+                            });
+                      } else {
+                        return Container();
+                      }
+                    },
+                    physics: BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
+                    scrollDirection: Axis.vertical,
+                  );
           },
         ),
       ),

@@ -356,7 +356,6 @@ class TimetableDragSubjectMember extends TimetableDragData {
 
 class TimetableEditMode extends ChangeNotifier {
   // properties
-  bool _isPlaceholder;
 
   bool _editing;
   bool _viewMe;
@@ -368,10 +367,8 @@ class TimetableEditMode extends ChangeNotifier {
 
   // constructors
   TimetableEditMode({
-    bool isPlaceholder,
     @required bool editMode,
-  })  : this._isPlaceholder = isPlaceholder ?? false,
-        this._editing = editMode ?? false,
+  })  : this._editing = editMode ?? false,
         this._viewMe = false,
         this._dragSubject = editMode,
         this._dragMember = editMode,
@@ -379,7 +376,6 @@ class TimetableEditMode extends ChangeNotifier {
         this._binVisible = false;
 
   // getter methods
-  bool get isPlaceholder => this._isPlaceholder;
   bool get editing => this._editing;
   bool get viewMe => this._viewMe;
   bool get binVisible => this._binVisible;
