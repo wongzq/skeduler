@@ -13,7 +13,7 @@ class TimetableGrid extends StatelessWidget {
     TimetableAxes axes =
         editMode.editing ? ttbStatus.editAxes : ttbStatus.currAxes;
 
-    return axes == null || axes.isEmpty
+    return axes == null
         ? Container()
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,

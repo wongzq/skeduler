@@ -510,11 +510,8 @@ class TimetableAxes extends ChangeNotifier {
   TimetableAxis _time;
   TimetableAxis _custom;
 
-  bool _isEmpty;
 
   // constructors
-  TimetableAxes.empty() : this._isEmpty = true;
-
   TimetableAxes({
     TimetableAxis day,
     TimetableAxis time,
@@ -548,14 +545,10 @@ class TimetableAxes extends ChangeNotifier {
       );
     }
 
-    this._isEmpty = false;
-
     notifyListeners();
   }
 
   // getter methods
-  bool get isEmpty => this._isEmpty;
-
   DataAxis get xDataAxis => _axisFromGridAxis(GridAxis.x).dataAxis;
   DataAxis get yDataAxis => _axisFromGridAxis(GridAxis.y).dataAxis;
   DataAxis get zDataAxis => _axisFromGridAxis(GridAxis.z).dataAxis;
@@ -698,22 +691,11 @@ class TimetableAxes extends ChangeNotifier {
       this._time = y;
       this._custom = z;
 
-      this._isEmpty = false;
-
       notifyListeners();
       return true;
     } else {
       return false;
     }
-  }
-
-  void clearAxes() {
-    this._day = null;
-    this._time = null;
-    this._custom = null;
-
-    this._isEmpty = true;
-    notifyListeners();
   }
 
   @override
