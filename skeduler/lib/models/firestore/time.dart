@@ -12,12 +12,14 @@ class Time {
   DateTime startTime;
   DateTime endTime;
 
+  // constructors
   Time({this.startTime, this.endTime});
 
   Time.from(Time time)
       : this.startTime = time.startTime,
         this.endTime = time.endTime;
 
+  // getter methods
   DateTime get startDate => DateTime(
         startTime.year,
         startTime.month,
@@ -29,6 +31,7 @@ class Time {
         endTime.day,
       );
 
+  // auxiliary methods
   bool sameDateAs(Time time) {
     return this.startDate == time.startDate && this.endDate == time.endDate;
   }

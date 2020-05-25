@@ -77,8 +77,10 @@ class _EditMemberState extends State<EditMember> {
                     color: Colors.white,
                   ),
                   onPressed: () async {
-                    // if transfer ownership
+                    // if transfer owner
                     if (groupStatus.me.role == MemberRole.owner &&
+                        widget.member.role == MemberRole.owner &&
+                        groupStatus.me.docId != widget.member.docId &&
                         _editRole == MemberRole.owner) {
                       await dbService.updateGroupMemberRole(
                         groupDocId: groupStatus.group.docId,

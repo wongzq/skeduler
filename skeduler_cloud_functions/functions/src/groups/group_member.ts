@@ -49,14 +49,14 @@ export const updateGroupMember = functions.firestore
     const groupDocId: string = context.params.groupDocId;
     const memberDocId: string = context.params.memberDocId;
 
-    const before:
+    const beforeData:
       | FirebaseFirestore.DocumentData
       | undefined = change.before.data();
-    const after:
+    const afterData:
       | FirebaseFirestore.DocumentData
       | undefined = change.after.data();
 
-    if (before == null || after == null) {
+    if (beforeData == null || afterData == null) {
       return null;
     } else {
       const promises: Promise<any>[] = [];
@@ -66,58 +66,108 @@ export const updateGroupMember = functions.firestore
         .doc(groupDocId);
 
       // check role changed
-      if (before.role != after.role && after.role == 4) {
+      if (beforeData.role != afterData.role && afterData.role == 4) {
         promises.push(
           groupDocRef.update({
-            owner: { email: memberDocId, name: after.name },
+            owner: { email: memberDocId, name: afterData.name },
           })
         );
       }
 
       // check nickname changed
-      if (before.nickname != after.nickname) {
-        await groupDocRef
-          .collection("timetables")
-          .get()
-          .then(async (timetablesSnap) => {
-            timetablesSnap.forEach(async (timetableDocSnap) => {
-              const gridDataList: any[] = timetableDocSnap.data().gridDataList;
+      if (beforeData.nickname != afterData.nickname) {
+        promises.push(
+          groupDocRef
+            .collection("timetables")
+            .get()
+            .then(async (timetablesSnap) => {
+              const gridDataPromises: Promise<any>[] = [];
 
-              // find corresponding gridData
-              gridDataList.forEach((gridData) => {
-                if (gridData.member == before.nickname) {
-                  const newGridData = Object.assign(Object(), gridData);
-                  newGridData.member = after.nickname;
+              timetablesSnap.forEach(async (timetableDocSnap) => {
+                const gridDataList: any[] = timetableDocSnap.data()
+                  .gridDataList;
 
-                  // remove previous gridData
-                  promises.push(
-                    groupDocRef
-                      .collection("timetables")
-                      .doc(timetableDocSnap.id)
-                      .update({
-                        gridDataList: admin.firestore.FieldValue.arrayRemove(
-                          gridData
-                        ),
-                      })
-                  );
+                // find corresponding gridData
+                gridDataList.forEach((gridData) => {
+                  if (gridData.member.docId == change.before.id) {
+                    const tmpGridData = {
+                      available: gridData.available,
+                      coord: {
+                        day: gridData.coord.day,
+                        time: {
+                          startTime: gridData.coord.time.startTime,
+                          endTime: gridData.coord.time.endTime,
+                        },
+                        custom: gridData.coord.custom,
+                      },
+                      member: {
+                        docId: gridData.member.docId,
+                        display: gridData.member.display,
+                      },
+                      subject: {
+                        docId: gridData.subject.docId,
+                        display: gridData.subject.display,
+                      },
+                    };
 
-                  // add updated gridData
-                  promises.push(
-                    groupDocRef
-                      .collection("timetables")
-                      .doc(timetableDocSnap.id)
-                      .update({
-                        gridDataList: admin.firestore.FieldValue.arrayUnion(
-                          newGridData
-                        ),
-                      })
-                  );
-                }
+                    const newGridData = {
+                      available: gridData.available,
+                      coord: {
+                        day: gridData.coord.day,
+                        time: {
+                          startTime: gridData.coord.time.startTime,
+                          endTime: gridData.coord.time.endTime,
+                        },
+                        custom: gridData.coord.custom,
+                      },
+                      member: {
+                        docId: gridData.member.docId,
+                        display: afterData.nickname,
+                      },
+                      subject: {
+                        docId: gridData.subject.docId,
+                        display: gridData.subject.display,
+                      },
+                    };
+
+                    // remove previous gridData
+                    gridDataPromises.push(
+                      groupDocRef
+                        .collection("timetables")
+                        .doc(timetableDocSnap.id)
+                        .update({
+                          gridDataList: admin.firestore.FieldValue.arrayRemove(
+                            tmpGridData
+                          ),
+                        })
+                        .then(() => {
+                          console.log("remove index");
+                        })
+                    );
+
+                    // add updated gridData
+                    gridDataPromises.push(
+                      groupDocRef
+                        .collection("timetables")
+                        .doc(timetableDocSnap.id)
+                        .update({
+                          gridDataList: admin.firestore.FieldValue.arrayUnion(
+                            newGridData
+                          ),
+                        })
+                        .then(() => {
+                          console.log("add index");
+                        })
+                    );
+                  }
+                });
               });
-            });
-          });
+              return Promise.all(gridDataPromises);
+            })
+        );
+        return Promise.all(promises);
+      } else {
+        return null;
       }
-
-      return Promise.all(promises);
     }
   });
