@@ -34,6 +34,7 @@ class Time {
   }
 
   bool withinTimeOf(Time time) {
+    // only checks time, so changes the date to be the same
     Time tmpTime = Time(
       startTime: DateTime(
         this.startTime.year,
@@ -62,6 +63,7 @@ class Time {
   }
 
   bool notWithinTimeOf(Time time) {
+    // only checks time, so changes the date to be the same
     Time tmpTime = Time(
       startTime: DateTime(
         this.startTime.year,

@@ -249,10 +249,6 @@ class TimetableStatus extends ChangeNotifier {
                 // if newAxisTime is within unavailable times, result is false
                 if (member.alwaysAvailable &&
                     !newAxisTime.notWithinTimeOf(memberTime)) {
-                  print('not within');
-                  print(
-                    newAxisTime.toString() + ' ' + memberTime.toString() + '\n',
-                  );
                   allAvailable = false;
                   break;
                 }
@@ -261,24 +257,17 @@ class TimetableStatus extends ChangeNotifier {
                 // if newAxisTime is not within available times, result is false
                 if (!member.alwaysAvailable &&
                     !newAxisTime.withinTimeOf(memberTime)) {
-                  print('not within');
-                  print(
-                    newAxisTime.toString() + ' ' + memberTime.toString() + '\n',
-                  );
                   allAvailable = false;
                   break;
                 }
               }
             }
-            print('\n');
           }
 
           if (allAvailable) {
-            print(member.nickname);
-            print('all available');
+            tmpGridData.available = true;
           } else {
-            print(member.nickname);
-            print('not all available');
+            tmpGridData.available = false;
           }
 
           // replace grid data
