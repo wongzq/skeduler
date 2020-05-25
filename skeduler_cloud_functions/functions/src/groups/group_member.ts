@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { TimetableGridData } from "../classes/classes";
 
 export const createGroupMember = functions.firestore
   .document("/groups/{groupDocId}/members/{memberDocId}")
@@ -90,45 +91,29 @@ export const updateGroupMember = functions.firestore
                 // find corresponding gridData
                 gridDataList.forEach((gridData) => {
                   if (gridData.member.docId == change.before.id) {
-                    const tmpGridData = {
-                      available: gridData.available,
-                      coord: {
-                        day: gridData.coord.day,
-                        time: {
-                          startTime: gridData.coord.time.startTime,
-                          endTime: gridData.coord.time.endTime,
-                        },
-                        custom: gridData.coord.custom,
-                      },
-                      member: {
-                        docId: gridData.member.docId,
-                        display: gridData.member.display,
-                      },
-                      subject: {
-                        docId: gridData.subject.docId,
-                        display: gridData.subject.display,
-                      },
-                    };
+                    const tmpGridData: TimetableGridData = new TimetableGridData(
+                      gridData.available,
+                      gridData.coord.day,
+                      gridData.coord.time.startTime,
+                      gridData.coord.time.endTime,
+                      gridData.coord.custom,
+                      gridData.member.docId,
+                      gridData.member.display,
+                      gridData.subject.docId,
+                      gridData.subject.display
+                    );
 
-                    const newGridData = {
-                      available: gridData.available,
-                      coord: {
-                        day: gridData.coord.day,
-                        time: {
-                          startTime: gridData.coord.time.startTime,
-                          endTime: gridData.coord.time.endTime,
-                        },
-                        custom: gridData.coord.custom,
-                      },
-                      member: {
-                        docId: gridData.member.docId,
-                        display: afterData.nickname,
-                      },
-                      subject: {
-                        docId: gridData.subject.docId,
-                        display: gridData.subject.display,
-                      },
-                    };
+                    const newGridData: TimetableGridData = new TimetableGridData(
+                      gridData.available,
+                      gridData.coord.day,
+                      gridData.coord.time.startTime,
+                      gridData.coord.time.endTime,
+                      gridData.coord.custom,
+                      gridData.member.docId,
+                      afterData.nickname,
+                      gridData.subject.docId,
+                      gridData.subject.display
+                    );
 
                     // remove previous gridData
                     gridDataPromises.push(
@@ -137,11 +122,8 @@ export const updateGroupMember = functions.firestore
                         .doc(timetableDocSnap.id)
                         .update({
                           gridDataList: admin.firestore.FieldValue.arrayRemove(
-                            tmpGridData
+                            tmpGridData.asFirestoreMap()
                           ),
-                        })
-                        .then(() => {
-                          console.log("remove index");
                         })
                     );
 
@@ -152,11 +134,8 @@ export const updateGroupMember = functions.firestore
                         .doc(timetableDocSnap.id)
                         .update({
                           gridDataList: admin.firestore.FieldValue.arrayUnion(
-                            newGridData
+                            newGridData.asFirestoreMap()
                           ),
-                        })
-                        .then(() => {
-                          console.log("add index");
                         })
                     );
                   }

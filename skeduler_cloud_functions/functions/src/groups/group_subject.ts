@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { TimetableGridData } from "../classes/classes";
 
 export const createGroupSubject = functions.firestore
   .document("/groups/{groupDocId}/subjects/{subjectDocId}")
@@ -80,45 +81,29 @@ export const updateGroupSubject = functions.firestore
                 // find corresponding gridData
                 gridDataList.forEach((gridData) => {
                   if (gridData.subject.docId == change.before.id) {
-                    const tmpGridData = {
-                      available: gridData.available,
-                      coord: {
-                        day: gridData.coord.day,
-                        time: {
-                          startTime: gridData.coord.time.startTime,
-                          endTime: gridData.coord.time.endTime,
-                        },
-                        custom: gridData.coord.custom,
-                      },
-                      member: {
-                        docId: gridData.member.docId,
-                        display: gridData.member.display,
-                      },
-                      subject: {
-                        docId: gridData.subject.docId,
-                        display: gridData.subject.display,
-                      },
-                    };
+                    const tmpGridData: TimetableGridData = new TimetableGridData(
+                      gridData.available,
+                      gridData.coord.day,
+                      gridData.coord.time.startTime,
+                      gridData.coord.time.endTime,
+                      gridData.coord.custom,
+                      gridData.member.docId,
+                      gridData.member.display,
+                      gridData.subject.docId,
+                      gridData.subject.display
+                    );
 
-                    const newGridData = {
-                      available: gridData.available,
-                      coord: {
-                        day: gridData.coord.day,
-                        time: {
-                          startTime: gridData.coord.time.startTime,
-                          endTime: gridData.coord.time.endTime,
-                        },
-                        custom: gridData.coord.custom,
-                      },
-                      member: {
-                        docId: gridData.member.docId,
-                        display: gridData.member.display,
-                      },
-                      subject: {
-                        docId: gridData.subject.docId,
-                        display: afterData.nickname,
-                      },
-                    };
+                    const newGridData: TimetableGridData = new TimetableGridData(
+                      gridData.available,
+                      gridData.coord.day,
+                      gridData.coord.time.startTime,
+                      gridData.coord.time.endTime,
+                      gridData.coord.custom,
+                      gridData.member.docId,
+                      gridData.member.display,
+                      gridData.subject.docId,
+                      afterData.nickname
+                    );
 
                     // remove previous gridData
                     gridDataPromises.push(
@@ -127,7 +112,7 @@ export const updateGroupSubject = functions.firestore
                         .doc(timetableDocSnap.id)
                         .update({
                           gridDataList: admin.firestore.FieldValue.arrayRemove(
-                            tmpGridData
+                            tmpGridData.asFirestoreMap()
                           ),
                         })
                     );
@@ -139,7 +124,7 @@ export const updateGroupSubject = functions.firestore
                         .doc(timetableDocSnap.id)
                         .update({
                           gridDataList: admin.firestore.FieldValue.arrayUnion(
-                            newGridData
+                            newGridData.asFirestoreMap()
                           ),
                         })
                     );

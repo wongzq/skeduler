@@ -1,3 +1,66 @@
+export class TimetableGridData {
+  available: boolean;
+  coord: {
+    day: number;
+    time: {
+      startTime: Date;
+      endTime: Date;
+    };
+    custom: string;
+  };
+  member: {
+    docId: string;
+    display: string;
+  };
+  subject: {
+    docId: string;
+    display: string;
+  };
+
+  constructor(
+    available: boolean,
+    day: number,
+    timeStartTime: Date,
+    timeEndTime: Date,
+    custom: string,
+    memberDocId: string,
+    memberDisplay: string,
+    subjectDocId: string,
+    subjectDisplay: string
+  ) {
+    this.available = available;
+    this.coord = {
+      day: day,
+      time: { startTime: timeStartTime, endTime: timeEndTime },
+      custom: custom,
+    };
+    this.member = { docId: memberDocId, display: memberDisplay };
+    this.subject = { docId: subjectDocId, display: subjectDisplay };
+  }
+
+  asFirestoreMap(): any {
+    return {
+      available: this.available,
+      coord: {
+        day: this.coord.day,
+        time: {
+          startTime: this.coord.time.startTime,
+          endTime: this.coord.time.endTime,
+        },
+        custom: this.coord.custom,
+      },
+      member: {
+        docId: this.member.docId,
+        display: this.member.display,
+      },
+      subject: {
+        docId: this.subject.docId,
+        display: this.subject.display,
+      },
+    };
+  }
+}
+
 export class Group {
   docId: string;
   name: string;
