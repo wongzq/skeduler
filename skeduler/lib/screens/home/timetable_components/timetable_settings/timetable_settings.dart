@@ -28,7 +28,7 @@ class TimetableSettings extends StatelessWidget {
     ttbStatus.temp = ttbStatus.temp != null && ttbStatus.temp.isValid
         ? ttbStatus.temp
         : ttbStatus.edit != null && ttbStatus.edit.isValid
-            ? EditTimetable.copy(ttbStatus.edit)
+            ? EditTimetable.from(ttbStatus.edit)
             : EditTimetable();
 
     return GestureDetector(
@@ -85,6 +85,7 @@ class TimetableSettings extends StatelessWidget {
                       axisDay: ttbStatus.temp.axisDay,
                       axisTime: ttbStatus.temp.axisTime,
                       axisCustom: ttbStatus.temp.axisCustom,
+                      gridDataList: ttbStatus.temp.gridDataList,
                     );
                     ttbStatus.update();
                     Navigator.of(context).maybePop();

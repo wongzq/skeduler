@@ -98,8 +98,9 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                       Color deactivatedColor = Colors.grey.shade400;
 
                       return _editMode != null && _editMode.editing
-                          // something is dragging
+                          // is editing
                           ? _editMode.isDragging
+                              // something is dragging
                               // check validity
                               ? _editMode.isDraggingData.hasSubjectOnly ||
                                       (_editMode.isDraggingData.hasSubject &&
@@ -110,41 +111,52 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                                               _editMode.isDraggingData))
                                   ? activatedColor
                                   : deactivatedColor
+
+                              // something is not dragging
                               : _gridData.dragData == null ||
                                       _gridData.dragData.isEmpty
                                   ? deactivatedColor
-                                  : _editMode.dragSubjectAndMember &&
-                                          _gridData.dragData.isNotEmpty
-                                      ? activatedColor
-                                      : _editMode.dragSubjectOnly &&
-                                              _gridData
-                                                  .dragData.subject.isNotEmpty
+                                  : _gridData.available
+                                      // member is available
+                                      ? _editMode.dragSubjectAndMember &&
+                                              _gridData.dragData.isNotEmpty
                                           ? activatedColor
-                                          : _editMode.dragMemberOnly &&
-                                                  _gridData.dragData.member
+                                          : _editMode.dragSubjectOnly &&
+                                                  _gridData.dragData.subject
                                                       .isNotEmpty
                                               ? activatedColor
-                                              : deactivatedColor
-                          // something is not dragging
-                          : _gridData.dragData == null ||
-                                  _gridData.dragData.isEmpty
-                              ? deactivatedColor
-                              // view me
-                              : _editMode.viewMe
-                                  ? () {
-                                      Member member =
-                                          _groupStatus.members.firstWhere(
-                                        (member) => member.docId == _user.email,
-                                        orElse: () => null,
-                                      );
-
-                                      return _gridData
-                                              .dragData.member.display ==
-                                          member.display;
-                                    }()
-                                      ? activatedColor
+                                              : _editMode.dragMemberOnly &&
+                                                      _gridData.dragData.member
+                                                          .isNotEmpty
+                                                  ? activatedColor
+                                                  : deactivatedColor
+                                      // member is unavailable
                                       : deactivatedColor
-                                  : activatedColor;
+
+                          // not editing
+                          : _editMode.viewMe
+                              // view me
+                              ? () {
+                                  Member member =
+                                      _groupStatus.members.firstWhere(
+                                    (member) => member.docId == _user.email,
+                                    orElse: () => null,
+                                  );
+
+                                  return _gridData.dragData.member.docId ==
+                                      member.docId;
+                                }()
+                                  ? activatedColor
+                                  : deactivatedColor
+                              // default view
+                              : _gridData.dragData == null ||
+                                      _gridData.dragData.isEmpty
+                                  ? deactivatedColor
+                                  : _gridData.available
+                                      // member is available
+                                      ? activatedColor
+                                      // member is unavailable
+                                      : deactivatedColor;
                     }();
                     break;
 
@@ -239,7 +251,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   Widget _buildGridBoxContent(BoxConstraints constraints) {
     return DragTarget<TimetableDragData>(
       onWillAccept: (_) {
-        if (_editMode.editing == true) {
+        if (_editMode.editing) {
           _isHovered = true;
           return true;
         } else {
@@ -247,12 +259,12 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
         }
       },
       onLeave: (_) {
-        if (_editMode.editing == true) {
+        if (_editMode.editing) {
           _isHovered = false;
         }
       },
       onAccept: (newDragData) {
-        if (_editMode.editing == true) {
+        if (_editMode.editing) {
           _isHovered = false;
 
           bool _memberIsAvailable = false;
@@ -266,14 +278,14 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
           }
 
           if (newDragData is TimetableDragMember && _memberIsAvailable) {
-            _gridData.dragData.member.display = newDragData.display;
+            _gridData.dragData.member = newDragData;
           } else if (newDragData is TimetableDragSubject) {
-            _gridData.dragData.subject.display = newDragData.display;
+            _gridData.dragData.subject = newDragData;
           } else if (newDragData is TimetableDragSubjectMember) {
             if (newDragData.hasSubjectOnly) {
-              _gridData.dragData.subject.display = newDragData.subject.display;
+              _gridData.dragData.subject = newDragData.subject;
             } else if (newDragData.hasMemberOnly && _memberIsAvailable) {
-              _gridData.dragData.member.display = newDragData.member.display;
+              _gridData.dragData.member = newDragData.member;
             } else if (newDragData.hasSubjectAndMember && _memberIsAvailable) {
               _gridData.dragData = newDragData;
             }
@@ -300,17 +312,19 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     ? _gridData.dragData
                     : _editMode.dragSubjectOnly
                         ? TimetableDragSubject(
+                            docId: _gridData.dragData.subject.docId,
                             display: _gridData.dragData.subject.display,
                           )
                         : _editMode.dragMemberOnly
                             ? TimetableDragMember(
+                                docId: _gridData.dragData.member.docId,
                                 display: _gridData.dragData.member.display,
                               )
                             : null,
                 feedback: _buildGridBox(constraints, isFeedback: true),
                 child: _buildGridBox(constraints),
                 onDragStarted: () {
-                  if (_editMode.editing == true) {
+                  if (_editMode.editing) {
                     _showTrace = true;
                     _editMode.binVisible = true;
                     _editMode.isDragging = true;
@@ -326,6 +340,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                             dragData: TimetableDragSubjectMember(
                               member: _gridData.dragData.member,
                             ),
+                            available: true,
                           ),
                         );
                       } else if (_editMode.dragMemberOnly) {
@@ -335,6 +350,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                             dragData: TimetableDragSubjectMember(
                               subject: _gridData.dragData.subject,
                             ),
+                            available: true,
                           ),
                         );
                       }
@@ -356,7 +372,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                   }
                 },
                 onDragCompleted: () {
-                  if (_editMode.editing == true) {
+                  if (_editMode.editing) {
                     _showTrace = false;
                     _editMode.binVisible = false;
                     _editMode.isDragging = false;
@@ -364,7 +380,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                   }
                 },
                 onDraggableCanceled: (_, __) {
-                  if (_editMode.editing == true) {
+                  if (_editMode.editing) {
                     _showTrace = false;
                     _editMode.binVisible = false;
                     _editMode.isDragging = false;
@@ -445,7 +461,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
       isAvailable = true;
     } else if (dragData is TimetableDragSubjectMember) {
       _groupStatus.members.forEach((member) {
-        if (member.display == dragData.member.display) {
+        if (member.docId == dragData.member.docId) {
           memberFound = member;
         }
       });
@@ -516,17 +532,17 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
     TimetableDragData checkDragData,
   ) {
     bool isAssigned;
-    String memberDisplay;
+    String memberDocId;
 
     if (checkDragData is TimetableDragMember) {
-      memberDisplay = checkDragData.display;
+      memberDocId = checkDragData.docId;
     } else if (checkDragData is TimetableDragSubjectMember) {
-      memberDisplay = checkDragData.member.display;
+      memberDocId = checkDragData.member.docId;
     }
 
-    if (memberDisplay != null) {
+    if (memberDocId != null) {
       isAssigned = _ttbStatus.edit.gridDataList.value.firstWhere((gridData) {
-                return gridData.dragData.member.display == memberDisplay &&
+                return gridData.dragData.member.docId == memberDocId &&
                     gridData.coord.day == _gridData.coord.day &&
                     gridData.coord.time == _gridData.coord.time;
               }, orElse: () => null) !=
@@ -572,20 +588,24 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
             ? () {
                 TimetableGridData returnGridData;
 
-                if (_editMode.editing == true) {
+                if (_editMode.editing) {
                   _ttbStatus.edit.gridDataList.value.forEach((gridData) {
                     if (gridData.coord == widget.coord) {
-                      returnGridData = TimetableGridData.copy(gridData);
+                      returnGridData = TimetableGridData.from(gridData);
                     }
                   });
                 } else {
                   _ttbStatus.curr.gridDataList.value.forEach((gridData) {
                     if (gridData.coord == widget.coord) {
-                      returnGridData = TimetableGridData.copy(gridData);
+                      returnGridData = TimetableGridData.from(gridData);
                     }
                   });
                 }
-                return returnGridData ?? TimetableGridData(coord: widget.coord);
+                return returnGridData ??
+                    TimetableGridData(
+                      coord: widget.coord,
+                      available: true,
+                    );
               }()
             : TimetableGridData();
 
@@ -601,7 +621,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
               return _buildGridBoxHeader(constraints);
               break;
             case GridBoxType.content:
-              return _editMode.editing == true
+              return _editMode.editing
                   ? _buildGridBoxContent(constraints)
                   : _buildGridBox(constraints);
 

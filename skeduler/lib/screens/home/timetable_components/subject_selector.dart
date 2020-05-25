@@ -129,6 +129,7 @@ class _SubjectSelectorState extends State<SubjectSelector> {
                         children: [
                           LongPressDraggable<TimetableDragData>(
                             data: TimetableDragSubject(
+                              docId: groupStatus.subjects[index].docId,
                               display: groupStatus.subjects[index].display,
                             ),
                             feedback: _buildMaterialActionChip(
@@ -142,6 +143,7 @@ class _SubjectSelectorState extends State<SubjectSelector> {
                             onDragStarted: () {
                               editMode.isDragging = true;
                               editMode.isDraggingData = TimetableDragSubject(
+                                docId: groupStatus.subjects[index].docId,
                                 display: groupStatus.subjects[index].display,
                               );
                             },

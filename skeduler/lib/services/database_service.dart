@@ -1060,7 +1060,7 @@ class DatabaseService {
             name: snapshot.data['name'],
             nickname: snapshot.data['nickname'],
           )
-        : Subject();
+        : Subject(docId: null);
   }
 
   // convert snapshot to [Timetable]
@@ -1150,8 +1150,8 @@ class DatabaseService {
       Map map = elem as Map;
       times.add(
         Time(
-          map['startTime'].toDate(),
-          map['endTime'].toDate(),
+          startTime: map['startTime'].toDate(),
+          endTime: map['endTime'].toDate(),
         ),
       );
     });
@@ -1180,14 +1180,21 @@ class DatabaseService {
           coord: TimetableCoord(
               day: Weekday.values[map['coord']['day']],
               time: Time(
-                map['coord']['time']['startTime'].toDate(),
-                map['coord']['time']['endTime'].toDate(),
+                startTime: map['coord']['time']['startTime'].toDate(),
+                endTime: map['coord']['time']['endTime'].toDate(),
               ),
               custom: map['coord']['custom']),
           dragData: TimetableDragSubjectMember(
-            subject: TimetableDragSubject(display: map['subject']),
-            member: TimetableDragMember(display: map['member']),
+            subject: TimetableDragSubject(
+              docId: map['subject']['docId'],
+              display: map['subject']['display'],
+            ),
+            member: TimetableDragMember(
+              docId: map['member']['docId'],
+              display: map['member']['display'],
+            ),
           ),
+          available: map['available'],
         ),
       );
     });

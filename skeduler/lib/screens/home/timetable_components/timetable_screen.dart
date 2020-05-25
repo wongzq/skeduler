@@ -188,21 +188,25 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                         5, (index) => Weekday.values[index]),
                                     axisTime: [
                                       Time(
-                                        DateTime(DateTime.now().year).add(
+                                        startTime:
+                                            DateTime(DateTime.now().year).add(
                                           Duration(
                                               hours: DateTime.now().hour + 0),
                                         ),
-                                        DateTime(DateTime.now().year).add(
+                                        endTime:
+                                            DateTime(DateTime.now().year).add(
                                           Duration(
                                               hours: DateTime.now().hour + 1),
                                         ),
                                       ),
                                       Time(
-                                        DateTime(DateTime.now().year).add(
+                                        startTime:
+                                            DateTime(DateTime.now().year).add(
                                           Duration(
                                               hours: DateTime.now().hour + 2),
                                         ),
-                                        DateTime(DateTime.now().year).add(
+                                        endTime:
+                                            DateTime(DateTime.now().year).add(
                                           Duration(
                                               hours: DateTime.now().hour + 3),
                                         ),

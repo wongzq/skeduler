@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 
 class Subject {
@@ -7,7 +8,7 @@ class Subject {
   ColorShade _colorShade;
 
   Subject({
-    String docId,
+    @required String docId,
     String name,
     String nickname,
     ColorShade colorShade,

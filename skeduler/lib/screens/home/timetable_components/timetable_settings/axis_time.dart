@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
+import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/shared/widgets/edit_time_dialog.dart';
 
@@ -29,6 +30,7 @@ class AxisTime extends StatefulWidget {
 class _AxisTimeState extends State<AxisTime> {
   OriginTheme _originTheme;
   TimetableStatus _ttbStatus;
+  GroupStatus _groupStatus;
 
   List<Time> _times;
 
@@ -110,8 +112,8 @@ class _AxisTimeState extends State<AxisTime> {
                 ),
               ];
             },
-            onSelected: (val) async {
-              switch (val) {
+            onSelected: (value) async {
+              switch (value) {
                 case AvailabilityOption.edit:
                   await showDialog(
                     context: context,
@@ -132,7 +134,8 @@ class _AxisTimeState extends State<AxisTime> {
                               return test.startTime == time.startTime &&
                                   test.endTime == time.endTime;
                             });
-                            tempTimes.add(Time(newStartTime, newEndTime));
+                            tempTimes.add(Time(
+                                startTime: newStartTime, endTime: newEndTime));
 
                             // If no conflict in temporary, then edit in main
                             if (isConsecutiveTimes(tempTimes)) {
@@ -143,12 +146,16 @@ class _AxisTimeState extends State<AxisTime> {
                               });
 
                               // Add new time slot
-                              Time prev = Time(time.startTime, time.endTime);
-                              Time next = Time(newStartTime, newEndTime);
+                              Time prev = Time(
+                                  startTime: time.startTime,
+                                  endTime: time.endTime);
+                              Time next = Time(
+                                  startTime: newStartTime, endTime: newEndTime);
 
                               _ttbStatus.updateTempAxisTimeValue(
                                 prev: prev,
                                 next: next,
+                                members: _groupStatus.members,
                               );
 
                               _times.add(next);
@@ -260,11 +267,13 @@ class _AxisTimeState extends State<AxisTime> {
               setState(() {
                 if (newEndTime.isAfter(newStartTime)) {
                   List<Time> tempTimes = List<Time>.from(_times);
-                  tempTimes.add(Time(newStartTime, newEndTime));
+                  tempTimes
+                      .add(Time(startTime: newStartTime, endTime: newEndTime));
 
                   // If no conflict in temporary, then add to main
                   if (isConsecutiveTimes(tempTimes)) {
-                    _times.add(Time(newStartTime, newEndTime));
+                    _times.add(
+                        Time(startTime: newStartTime, endTime: newEndTime));
 
                     _times.sort((a, b) => a.startTime.millisecondsSinceEpoch
                         .compareTo(b.startTime.millisecondsSinceEpoch));
@@ -296,6 +305,7 @@ class _AxisTimeState extends State<AxisTime> {
   Widget build(BuildContext context) {
     _originTheme = Provider.of<OriginTheme>(context);
     _ttbStatus = Provider.of<TimetableStatus>(context);
+    _groupStatus = Provider.of<GroupStatus>(context);
 
     if (widget.valGetTimes != null) {
       _times = widget.valGetTimes();

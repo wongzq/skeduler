@@ -42,9 +42,9 @@ class _FormNameState extends State<FormName> {
                     color: Colors.grey,
                   ),
                 ),
-          onChanged: (val) {
-            authInfo.name = val;
-            if (val.isNotEmpty) {
+          onChanged: (value) {
+            authInfo.name = value;
+            if (value.isNotEmpty) {
               widget.formKeyName.currentState.validate();
             } else {
               authInfo.nameValid = false;
@@ -52,7 +52,7 @@ class _FormNameState extends State<FormName> {
               widget.refresh();
             }
           },
-          validator: (val) {
+          validator: (value) {
             RegExp regExp = RegExp(r"([a-zA-Z]+.*$)");
             if (regExp.hasMatch(authInfo.name)) {
               authInfo.nameValid = true;

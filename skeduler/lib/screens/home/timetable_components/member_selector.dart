@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
-import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/functions.dart';
 
 class MemberSelector extends StatelessWidget {
@@ -51,7 +50,6 @@ class MemberSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     TimetableEditMode editMode = Provider.of<TimetableEditMode>(context);
 
@@ -63,73 +61,67 @@ class MemberSelector extends StatelessWidget {
 
     ScrollController controller = ScrollController();
 
-    return StreamBuilder(
-        stream: dbService.streamGroupMembers(groupStatus.group.docId),
-        builder: (context, snapshot) {
-          List<Member> members =
-              snapshot != null && snapshot.data != null ? snapshot.data : [];
-
-          return Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: Container(
-              height: 70.0,
-              child: ListView.builder(
-                physics: BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics(),
-                ),
-                scrollDirection: Axis.horizontal,
-                controller: controller,
-                itemCount: members.length + 1,
-                itemBuilder: (BuildContext context, int index) {
-                  return index == members.length
-                      ? Container(
-                          height: 1,
-                          width: additionalSpacing,
-                        )
-                      : members[index].role == MemberRole.pending
-                          ? Container()
-                          : Padding(
-                              padding: EdgeInsets.all(
-                                  _chipPadding + _chipPaddingExtra),
-                              child: Center(
-                                child: Wrap(
-                                  children: [
-                                    LongPressDraggable<TimetableDragData>(
-                                      data: TimetableDragMember(
-                                        display: members[index].display,
-                                      ),
-                                      feedback: _buildMaterialActionChip(
-                                        members[index],
-                                        _chipWidth,
-                                      ),
-                                      child: _buildMaterialActionChip(
-                                        members[index],
-                                        _chipWidth,
-                                      ),
-                                      onDragStarted: () {
-                                        editMode.isDragging = true;
-                                        editMode.isDraggingData =
-                                            TimetableDragMember(
-                                          display: members[index].display,
-                                        );
-                                      },
-                                      onDragCompleted: () {
-                                        editMode.isDragging = false;
-                                        editMode.isDraggingData = null;
-                                      },
-                                      onDraggableCanceled: (_, __) {
-                                        editMode.isDragging = false;
-                                        editMode.isDraggingData = null;
-                                      },
-                                    ),
-                                  ],
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: Container(
+        height: 70.0,
+        child: ListView.builder(
+          physics: BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          scrollDirection: Axis.horizontal,
+          controller: controller,
+          itemCount: groupStatus.members.length + 1,
+          itemBuilder: (BuildContext context, int index) {
+            return index == groupStatus.members.length
+                ? Container(
+                    height: 1,
+                    width: additionalSpacing,
+                  )
+                : groupStatus.members[index].role == MemberRole.pending
+                    ? Container()
+                    : Padding(
+                        padding:
+                            EdgeInsets.all(_chipPadding + _chipPaddingExtra),
+                        child: Center(
+                          child: Wrap(
+                            children: [
+                              LongPressDraggable<TimetableDragData>(
+                                data: TimetableDragMember(
+                                  docId: groupStatus.members[index].docId,
+                                  display: groupStatus.members[index].display,
                                 ),
+                                feedback: _buildMaterialActionChip(
+                                  groupStatus.members[index],
+                                  _chipWidth,
+                                ),
+                                child: _buildMaterialActionChip(
+                                  groupStatus.members[index],
+                                  _chipWidth,
+                                ),
+                                onDragStarted: () {
+                                  editMode.isDragging = true;
+                                  editMode.isDraggingData = TimetableDragMember(
+                                    docId: groupStatus.members[index].docId,
+                                    display: groupStatus.members[index].display,
+                                  );
+                                },
+                                onDragCompleted: () {
+                                  editMode.isDragging = false;
+                                  editMode.isDraggingData = null;
+                                },
+                                onDraggableCanceled: (_, __) {
+                                  editMode.isDragging = false;
+                                  editMode.isDraggingData = null;
+                                },
                               ),
-                            );
-                },
-              ),
-            ),
-          );
-        });
+                            ],
+                          ),
+                        ),
+                      );
+          },
+        ),
+      ),
+    );
   }
 }

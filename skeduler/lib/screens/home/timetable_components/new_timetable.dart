@@ -272,7 +272,7 @@ class _NewTimetableState extends State<NewTimetable> {
                           )
                               .then((_) {
                             _scaffoldKey.currentState.hideCurrentSnackBar();
-                            ttbStatus.edit = EditTimetable.copy(ttbStatus.temp);
+                            ttbStatus.edit = EditTimetable.from(ttbStatus.temp);
                             ttbStatus.temp = null;
 
                             Navigator.of(context).popAndPushNamed(

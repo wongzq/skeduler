@@ -146,7 +146,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                   break;
 
                 case TimetableEditorOption.settings:
-                  ttbStatus.temp = EditTimetable.copy(ttbStatus.edit);
+                  ttbStatus.temp = EditTimetable.from(ttbStatus.edit);
                   Navigator.of(context).pushNamed(
                     '/timetable/editor/settings',
                     arguments: RouteArgs(),

@@ -38,9 +38,9 @@ class _FormPasswordState extends State<FormPassword> {
                     color: Colors.grey,
                   ),
                 ),
-          onChanged: (val) {
-            authInfo.password = val;
-            if (val.isNotEmpty) {
+          onChanged: (value) {
+            authInfo.password = value;
+            if (value.isNotEmpty) {
               widget.formKeyPassword.currentState.validate();
             } else {
               authInfo.passwordValid = false;
@@ -48,7 +48,7 @@ class _FormPasswordState extends State<FormPassword> {
               widget.refresh();
             }
           },
-          validator: (val) {
+          validator: (value) {
             if (authInfo.password.length >= 8) {
               RegExp regExp = RegExp(r'^(?=.*?[a-zA-Z])(?=.*?[0-9]).{8,128}$');
               if (regExp.hasMatch(authInfo.password)) {

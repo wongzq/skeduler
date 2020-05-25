@@ -68,10 +68,7 @@ class HomeDrawer extends StatelessWidget {
                   title: Text(_screens[DrawerEnum.dashboard]['title']),
                   selected: _selected == DrawerEnum.dashboard ? true : false,
                   onTap: () {
-                    Navigator.of(context).popAndPushNamed(
-                      '/dashboard',
-                      arguments: RouteArgs(),
-                    );
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   },
                 ),
               ),

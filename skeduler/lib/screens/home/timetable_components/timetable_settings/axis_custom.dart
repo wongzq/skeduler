@@ -75,8 +75,8 @@ class _AxisCustomState extends State<AxisCustom> {
                 ),
               ];
             },
-            onSelected: (val) async {
-              switch (val) {
+            onSelected: (value) async {
+              switch (value) {
                 case CustomOption.edit:
                   await showDialog(
                     context: context,
@@ -145,9 +145,9 @@ class _AxisCustomState extends State<AxisCustom> {
                     '/timetable/editor/settings/reorderAxisCustom',
                     arguments: RouteArgsReorderAxisCustom(
                       axisCustom: _customVals,
-                      valSetAxisCustom: (val) {
+                      valSetAxisCustom: (value) {
                         setState(() {
-                          _customVals = val;
+                          _customVals = value;
                         });
 
                         // Update through valueSetter

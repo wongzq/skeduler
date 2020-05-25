@@ -12,7 +12,82 @@ class Time {
   DateTime startTime;
   DateTime endTime;
 
-  Time(this.startTime, this.endTime);
+  Time({this.startTime, this.endTime});
+
+  Time.from(Time time)
+      : this.startTime = time.startTime,
+        this.endTime = time.endTime;
+
+  DateTime get startDate => DateTime(
+        startTime.year,
+        startTime.month,
+        startTime.day,
+      );
+  DateTime get endDate => DateTime(
+        endTime.year,
+        endTime.month,
+        endTime.day,
+      );
+
+  bool sameDateAs(Time time) {
+    return this.startDate == time.startDate && this.endDate == time.endDate;
+  }
+
+  bool withinTimeOf(Time time) {
+    Time tmpTime = Time(
+      startTime: DateTime(
+        this.startTime.year,
+        this.startTime.month,
+        this.startTime.day,
+        time.startTime.hour,
+        time.startTime.minute,
+      ),
+      endTime: DateTime(
+        this.endTime.year,
+        this.endTime.month,
+        this.endTime.day,
+        time.endTime.hour,
+        time.endTime.minute,
+      ),
+    );
+
+    if ((this.startTime.isAtSameMomentAs(tmpTime.startTime) ||
+            this.startTime.isAfter(tmpTime.startTime)) &&
+        (this.endTime.isBefore(tmpTime.endTime) ||
+            this.endTime.isAtSameMomentAs(tmpTime.endTime))) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool notWithinTimeOf(Time time) {
+    Time tmpTime = Time(
+      startTime: DateTime(
+        this.startTime.year,
+        this.startTime.month,
+        this.startTime.day,
+        time.startTime.hour,
+        time.startTime.minute,
+      ),
+      endTime: DateTime(
+        this.endTime.year,
+        this.endTime.month,
+        this.endTime.day,
+        time.endTime.hour,
+        time.endTime.minute,
+      ),
+    );
+
+    if (this.endTime.isBefore(tmpTime.startTime) ||
+        this.endTime.isAtSameMomentAs(tmpTime.startTime) ||
+        this.startTime.isAfter(tmpTime.endTime) ||
+        this.startTime.isAtSameMomentAs(tmpTime.endTime)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   @override
   bool operator ==(o) =>
@@ -185,7 +260,10 @@ List<Time> generateTimes({
               (newEndDateTime
                       .isAtSameMomentAs(endDate.add(Duration(days: 1))) ||
                   newEndDateTime.isBefore(endDate.add(Duration(days: 1))))) {
-            times.add(Time(newStartDateTime, newEndDateTime));
+            times.add(Time(
+              startTime: newStartDateTime,
+              endTime: newEndDateTime,
+            ));
           }
         }
       }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:quiver/core.dart';
+import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/models/firestore/timetable.dart';
 
@@ -192,9 +193,9 @@ class TimetableStatus extends ChangeNotifier {
         TimetableGridDataList.from(this._temp.gridDataList);
 
     tmpGridDataList._value.forEach((gridData) {
-      if (gridData._coord.custom == prev) {
-        TimetableGridData tmpGridData = TimetableGridData.copy(gridData);
-        tmpGridData._coord.custom = next;
+      if (gridData.coord.custom == prev) {
+        TimetableGridData tmpGridData = TimetableGridData.from(gridData);
+        tmpGridData.coord.custom = next;
 
         this._temp.gridDataList.pop(gridData);
         this._temp.gridDataList.push(tmpGridData);
@@ -206,17 +207,84 @@ class TimetableStatus extends ChangeNotifier {
   void updateTempAxisTimeValue({
     @required Time prev,
     @required Time next,
+    @required List<Member> members,
   }) {
     TimetableGridDataList tmpGridDataList =
-        TimetableGridDataList.from(this._temp.gridDataList);
+        TimetableGridDataList.from(this.temp.gridDataList);
 
-    tmpGridDataList._value.forEach((gridData) {
-      if (gridData._coord.time == prev) {
-        TimetableGridData tmpGridData = TimetableGridData.copy(gridData);
-        tmpGridData._coord.time = next;
+    // loop through gridDataList
+    tmpGridDataList.value.forEach((gridData) {
+      // find coord time to be replaced
+      if (gridData.coord.time == prev) {
+        TimetableGridData tmpGridData = TimetableGridData.from(gridData);
+        tmpGridData.coord.time = next;
 
-        this._temp.gridDataList.pop(gridData);
-        this._temp.gridDataList.push(tmpGridData);
+        // find member of this gridData
+        Member member = members.firstWhere(
+          (elem) => elem.docId == gridData.dragData.member.docId,
+          orElse: () => null,
+        );
+
+        if (member != null) {
+          List<Time> memberTimes = member.alwaysAvailable
+              ? member.timesUnavailable
+              : member.timesAvailable;
+
+          List<Time> newAxisTimes = generateTimes(
+            months: List.generate(
+              Month.values.length,
+              (index) => Month.values[index],
+            ),
+            weekDays: [gridData.coord.day],
+            time: next,
+            startDate: this.temp.startDate,
+            endDate: this.temp.endDate,
+          );
+
+          bool allAvailable = true;
+          for (Time memberTime in memberTimes) {
+            for (Time newAxisTime in newAxisTimes) {
+              if (newAxisTime.sameDateAs(memberTime)) {
+                // if member is always available, see unavailable times
+                // if newAxisTime is within unavailable times, result is false
+                if (member.alwaysAvailable &&
+                    !newAxisTime.notWithinTimeOf(memberTime)) {
+                  print('not within');
+                  print(
+                    newAxisTime.toString() + ' ' + memberTime.toString() + '\n',
+                  );
+                  allAvailable = false;
+                  break;
+                }
+
+                // if member is not always available, see available times
+                // if newAxisTime is not within available times, result is false
+                if (!member.alwaysAvailable &&
+                    !newAxisTime.withinTimeOf(memberTime)) {
+                  print('not within');
+                  print(
+                    newAxisTime.toString() + ' ' + memberTime.toString() + '\n',
+                  );
+                  allAvailable = false;
+                  break;
+                }
+              }
+            }
+            print('\n');
+          }
+
+          if (allAvailable) {
+            print(member.nickname);
+            print('all available');
+          } else {
+            print(member.nickname);
+            print('not all available');
+          }
+
+          // replace grid data
+          this.temp.gridDataList.pop(gridData);
+          this.temp.gridDataList.push(tmpGridData);
+        }
       }
     });
     notifyListeners();
@@ -276,13 +344,17 @@ abstract class TimetableDragData {
 
 // [TimetableDragDataSubject] class
 class TimetableDragSubject extends TimetableDragData {
+  // properties
+  String _docId;
+
   // constructors
-  TimetableDragSubject({String display}) {
-    super._display = display;
+  TimetableDragSubject({String docId, String display}) {
+    this._docId = docId ?? '';
+    super._display = display ?? '';
   }
 
   // getter methods
-  @override
+  String get docId => this._docId;
   String get display => super._display;
   bool get isEmpty => super.isEmpty;
   bool get isNotEmpty => super.isNotEmpty;
@@ -294,17 +366,23 @@ class TimetableDragSubject extends TimetableDragData {
   bool get hasSubjectAndMember => false;
 
   // setter methods
+  set docId(String value) => this._docId = value;
   set display(String value) => super._display = value;
 }
 
 // [TimetableDragDataMember] class
 class TimetableDragMember extends TimetableDragData {
+  // properties
+  String _docId;
+
   // constructors
-  TimetableDragMember({String display}) {
-    super._display = display;
+  TimetableDragMember({String docId, String display}) {
+    this._docId = docId ?? '';
+    super._display = display ?? '';
   }
 
   // getter methods
+  String get docId => this._docId;
   String get display => super._display;
   bool get isEmpty => super.isEmpty;
   bool get isNotEmpty => super.isNotEmpty;
@@ -316,6 +394,7 @@ class TimetableDragMember extends TimetableDragData {
   bool get hasSubjectAndMember => false;
 
   // setter methods
+  set docId(String value) => this._docId = value;
   set display(String value) => super._display = value;
 }
 
@@ -490,7 +569,7 @@ class TimetableAxis {
         this._list = list ?? [],
         this._listStr = listStr ?? [];
 
-  TimetableAxis.copy(TimetableAxis ttbAxis)
+  TimetableAxis.from(TimetableAxis ttbAxis)
       : this._gridAxis = ttbAxis.gridAxis,
         this._dataAxis = ttbAxis.dataAxis,
         this._list = ttbAxis.list == null ? [] : List.from(ttbAxis.list),
@@ -745,7 +824,7 @@ class TimetableCoord {
   // constructors
   TimetableCoord({this.day, this.time, this.custom});
 
-  TimetableCoord.copy(TimetableCoord coord)
+  TimetableCoord.from(TimetableCoord coord)
       : this.day = coord.day,
         this.time = coord.time,
         this.custom = coord.custom;
@@ -785,25 +864,34 @@ class TimetableGridData {
   // properties
   TimetableCoord _coord;
   TimetableDragSubjectMember _dragData;
+  bool _available;
 
   // constructors
   TimetableGridData({
     TimetableCoord coord,
     TimetableDragSubjectMember dragData,
+    bool available,
   })  : this._coord = coord ?? TimetableCoord(),
-        this._dragData = dragData ?? TimetableDragSubjectMember();
+        this._dragData = dragData ?? TimetableDragSubjectMember(),
+        this._available = available ?? false;
 
-  TimetableGridData.copy(TimetableGridData gridData)
-      : this._coord = gridData.coord,
-        this._dragData = gridData._dragData;
+  TimetableGridData.from(TimetableGridData gridData)
+      : this._coord = TimetableCoord.from(gridData.coord),
+        this._dragData = TimetableDragSubjectMember(
+          subject: gridData._dragData.subject,
+          member: gridData._dragData.member,
+        ),
+        this._available = gridData.available;
 
   // getter methods
   TimetableCoord get coord => this._coord;
   TimetableDragSubjectMember get dragData => this._dragData;
+  bool get available => this._available;
 
   // setter methods
-  set coord(TimetableCoord val) => this._coord = val;
-  set dragData(TimetableDragSubjectMember val) => this._dragData = val;
+  set coord(TimetableCoord value) => this._coord = value;
+  set dragData(TimetableDragSubjectMember value) => this._dragData = value;
+  set available(bool value) => this._available = value;
 
   @override
   String toString() {
@@ -836,7 +924,7 @@ class TimetableGridDataList extends ChangeNotifier {
       : this._value = value ?? [];
 
   TimetableGridDataList.from(TimetableGridDataList gridDataList)
-      : this._value = gridDataList._value ?? [];
+      : this._value = List.from(gridDataList._value ?? []);
 
   // getter methods
   List<TimetableGridData> get value => List.unmodifiable(this._value);

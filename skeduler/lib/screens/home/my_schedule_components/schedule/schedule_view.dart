@@ -23,7 +23,7 @@ class ScheduleView extends StatelessWidget {
 
         timetables.forEach((timetable) {
           timetable.gridDataList.value.forEach((gridData) {
-            if (gridData.dragData.member.display == groupStatus.me.display) {
+            if (gridData.dragData.member.docId == groupStatus.me.docId) {
               List<Time> scheduleTimes = generateTimes(
                 months: List.generate(
                   Month.values.length,

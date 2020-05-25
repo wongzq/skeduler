@@ -152,8 +152,8 @@ class AvailabilityListTile extends StatelessWidget {
                         ),
                       ];
                     },
-                    onSelected: (val) async {
-                      switch (val) {
+                    onSelected: (value) async {
+                      switch (value) {
                         case AvailabilityOption.edit:
                           await showDialog(
                             context: context,
@@ -175,8 +175,8 @@ class AvailabilityListTile extends StatelessWidget {
                                     null,
                                     [
                                       Time(
-                                        newStartTime,
-                                        newEndTime,
+                                        startTime: newStartTime,
+                                        endTime: newEndTime,
                                       ),
                                     ],
                                     groupStatus.me.alwaysAvailable,

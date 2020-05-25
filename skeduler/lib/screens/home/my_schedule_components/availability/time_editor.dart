@@ -101,7 +101,7 @@ class _TimeEditorState extends State<TimeEditor> {
         height: _buttonHeight,
         width: MediaQuery.of(context).size.width - 2,
         child: RaisedButton(
-          onHighlightChanged: (val) => setState(() => _savePressed = val),
+          onHighlightChanged: (value) => setState(() => _savePressed = value),
           color: _originTheme.primaryColorLight,
           disabledColor: Colors.grey.shade200,
           disabledTextColor: Color(0xFFBBBBBB),
@@ -118,8 +118,10 @@ class _TimeEditorState extends State<TimeEditor> {
                     months: widget.valGetMonths(),
                     weekDays: widget.valGetWeekdays(),
                     time: Time(
-                      _startTime ?? DateTime(DateTime.now().year, 1, 1, 0, 0),
-                      _endTime ?? DateTime(DateTime.now().year, 1, 1, 23, 59),
+                      startTime: _startTime ??
+                          DateTime(DateTime.now().year, 1, 1, 0, 0),
+                      endTime: _endTime ??
+                          DateTime(DateTime.now().year, 1, 1, 23, 59),
                     ),
                     startDate: _startDate ?? _defaultStartDate,
                     endDate: _endDate ?? _defaultEndDate,
@@ -173,7 +175,8 @@ class _TimeEditorState extends State<TimeEditor> {
         height: _buttonHeight,
         width: MediaQuery.of(context).size.width - 2,
         child: RaisedButton(
-          onHighlightChanged: (val) => setState(() => _removeDaysPressed = val),
+          onHighlightChanged: (value) =>
+              setState(() => _removeDaysPressed = value),
           color: Colors.red.shade300,
           disabledColor: Colors.grey.shade200,
           disabledTextColor: Color(0xFFBBBBBB),
@@ -247,7 +250,10 @@ class _TimeEditorState extends State<TimeEditor> {
                               List<Time> removeTimes = generateTimes(
                                 months: widget.valGetMonths(),
                                 weekDays: widget.valGetWeekdays(),
-                                time: Time(tmpStartTime, tmpEndTime),
+                                time: Time(
+                                  startTime: tmpStartTime,
+                                  endTime: tmpEndTime,
+                                ),
                                 startDate: tmpStartDate,
                                 endDate: tmpEndDate,
                               );
@@ -296,7 +302,7 @@ class _TimeEditorState extends State<TimeEditor> {
         height: _buttonHeight,
         width: MediaQuery.of(context).size.width - 2,
         child: RaisedButton(
-          onHighlightChanged: (val) => setState(() => _resetPressed = val),
+          onHighlightChanged: (value) => setState(() => _resetPressed = value),
           color: _originTheme.primaryColorLight,
           highlightColor: _originTheme.primaryColor,
           shape: RoundedRectangleBorder(
@@ -398,9 +404,9 @@ class _TimeEditorState extends State<TimeEditor> {
                         child: ExpansionTile(
                           key: GlobalKey(),
                           initiallyExpanded: _dateRangeExpanded,
-                          onExpansionChanged: (val) {
+                          onExpansionChanged: (value) {
                             setState(() {
-                              _dateRangeExpanded = val;
+                              _dateRangeExpanded = value;
                             });
                           },
                           title: Text(
@@ -423,12 +429,12 @@ class _TimeEditorState extends State<TimeEditor> {
                                 DateSelector(
                                   context: context,
                                   type: DateSelectorType.start,
-                                  valSetStartDate: (val) =>
-                                      setState(() => _startDate = val),
-                                  valSetEndDate: (val) =>
-                                      setState(() => _endDate = val),
-                                  valSetValidDate: (val) =>
-                                      setState(() => _validDate = val),
+                                  valSetStartDate: (value) =>
+                                      setState(() => _startDate = value),
+                                  valSetEndDate: (value) =>
+                                      setState(() => _endDate = value),
+                                  valSetValidDate: (value) =>
+                                      setState(() => _validDate = value),
                                   valGetStartDate: () => _startDate,
                                   valGetEndDate: () => _endDate,
                                   valGetMonths: () => widget.valGetMonths(),
@@ -452,12 +458,12 @@ class _TimeEditorState extends State<TimeEditor> {
                                 DateSelector(
                                   context: context,
                                   type: DateSelectorType.end,
-                                  valSetStartDate: (val) =>
-                                      setState(() => _startDate = val),
-                                  valSetEndDate: (val) =>
-                                      setState(() => _endDate = val),
-                                  valSetValidDate: (val) =>
-                                      setState(() => _validDate = val),
+                                  valSetStartDate: (value) =>
+                                      setState(() => _startDate = value),
+                                  valSetEndDate: (value) =>
+                                      setState(() => _endDate = value),
+                                  valSetValidDate: (value) =>
+                                      setState(() => _validDate = value),
                                   valGetStartDate: () => _startDate,
                                   valGetEndDate: () => _endDate,
                                   valGetMonths: () => widget.valGetMonths(),
@@ -475,9 +481,9 @@ class _TimeEditorState extends State<TimeEditor> {
                         child: ExpansionTile(
                           key: GlobalKey(),
                           initiallyExpanded: _timeRangeExpanded,
-                          onExpansionChanged: (val) {
+                          onExpansionChanged: (value) {
                             setState(() {
-                              _timeRangeExpanded = val;
+                              _timeRangeExpanded = value;
                             });
                           },
                           title: Text(
@@ -500,12 +506,12 @@ class _TimeEditorState extends State<TimeEditor> {
                                 TimeSelector(
                                   context: context,
                                   type: TimeSelectorType.start,
-                                  valSetStartTime: (val) =>
-                                      setState(() => _startTime = val),
-                                  valSetEndTime: (val) =>
-                                      setState(() => _endTime = val),
-                                  valSetValidTime: (val) =>
-                                      setState(() => _validTime = val),
+                                  valSetStartTime: (value) =>
+                                      setState(() => _startTime = value),
+                                  valSetEndTime: (value) =>
+                                      setState(() => _endTime = value),
+                                  valSetValidTime: (value) =>
+                                      setState(() => _validTime = value),
                                   valGetStartTime: () => _startTime,
                                   valGetEndTime: () => _endTime,
                                 ),
@@ -528,12 +534,12 @@ class _TimeEditorState extends State<TimeEditor> {
                                 TimeSelector(
                                   context: context,
                                   type: TimeSelectorType.end,
-                                  valSetStartTime: (val) =>
-                                      setState(() => _startTime = val),
-                                  valSetEndTime: (val) =>
-                                      setState(() => _endTime = val),
-                                  valSetValidTime: (val) =>
-                                      setState(() => _validTime = val),
+                                  valSetStartTime: (value) =>
+                                      setState(() => _startTime = value),
+                                  valSetEndTime: (value) =>
+                                      setState(() => _endTime = value),
+                                  valSetValidTime: (value) =>
+                                      setState(() => _validTime = value),
                                   valGetStartTime: () => _startTime,
                                   valGetEndTime: () => _endTime,
                                 ),

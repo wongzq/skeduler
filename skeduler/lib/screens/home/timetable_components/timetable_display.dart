@@ -213,7 +213,7 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
                                   ? timetableDisplayHeight
                                   : constraints.maxHeight,
                               child: DragTarget<TimetableDragData>(
-                                onWillAccept: (val) {
+                                onWillAccept: (value) {
                                   _containerColor = Colors.red;
                                   return true;
                                 },

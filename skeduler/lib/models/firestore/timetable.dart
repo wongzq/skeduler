@@ -180,7 +180,7 @@ class EditTimetable extends ChangeNotifier {
           gridDataList: ttb.gridDataList,
         );
 
-  EditTimetable.copy(EditTimetable editTtb)
+  EditTimetable.from(EditTimetable editTtb)
       : this(
           docId: editTtb.docId,
           startDate: editTtb.startDate,
@@ -188,10 +188,10 @@ class EditTimetable extends ChangeNotifier {
           gridAxisOfDay: editTtb.gridAxisOfDay,
           gridAxisOfTime: editTtb.gridAxisOfTime,
           gridAxisOfCustom: editTtb.gridAxisOfCustom,
-          axisDay: editTtb.axisDay,
-          axisTime: editTtb.axisTime,
-          axisCustom: editTtb.axisCustom,
-          gridDataList: editTtb.gridDataList,
+          axisDay: List.from(editTtb.axisDay),
+          axisTime: List.from(editTtb.axisTime),
+          axisCustom: List.from(editTtb.axisCustom),
+          gridDataList: TimetableGridDataList.from(editTtb.gridDataList),
         );
 
   // getter methods
@@ -294,6 +294,7 @@ class EditTimetable extends ChangeNotifier {
     this.axisDay = axisDay ?? this.axisDay;
     this.axisTime = axisTime ?? this.axisTime;
     this.axisCustom = axisCustom ?? this.axisCustom;
+    this.gridDataList = gridDataList ?? this.gridDataList;
     notifyListeners();
   }
 
@@ -443,16 +444,26 @@ Map<String, dynamic> firestoreMapFromEditTimetable(EditTimetable editTtb) {
         };
 
         // convert subject
-        String subject = gridData.dragData.subject.display;
+        Map subject = {
+          'docId': gridData.dragData.subject.docId,
+          'display': gridData.dragData.subject.display,
+        };
 
         // convert member
-        String member = gridData.dragData.member.display;
+        Map member = {
+          'docId': gridData.dragData.member.docId,
+          'display': gridData.dragData.member.display,
+        };
+
+        // convert available
+        bool available = gridData.available;
 
         // add to list
         gridDataList.add({
           'coord': coord,
           'subject': subject,
           'member': member,
+          'available': available,
         });
       }
     });

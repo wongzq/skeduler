@@ -37,9 +37,9 @@ class _FormEmailState extends State<FormEmail> {
                     color: Colors.grey,
                   ),
                 ),
-          onChanged: (val) {
-            authInfo.email = val;
-            if (val.isNotEmpty) {
+          onChanged: (value) {
+            authInfo.email = value;
+            if (value.isNotEmpty) {
               widget.formKeyEmail.currentState.validate();
             } else {
               authInfo.emailValid = false;
@@ -47,7 +47,7 @@ class _FormEmailState extends State<FormEmail> {
               widget.refresh();
             }
           },
-          validator: (val) {
+          validator: (value) {
             RegExp regExp =
                 RegExp(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)");
             if (regExp.hasMatch(authInfo.email)) {
