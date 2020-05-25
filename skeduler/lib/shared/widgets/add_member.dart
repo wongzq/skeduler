@@ -26,13 +26,25 @@ class _AddMemberState extends State<AddMember> {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     return groupStatus.group == null
-        ? Loading()
+        ? Stack(
+            children: <Widget>[
+              Scaffold(
+                appBar: AppBar(
+                  title: AppBarTitle(
+                    title: 'Group',
+                    subtitle: 'Add member',
+                  ),
+                ),
+              ),
+              Loading(),
+            ],
+          )
         : Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
               title: AppBarTitle(
                 title: groupStatus.group.name,
-                alternateTitle: 'Add member',
+                alternateTitle: 'Group',
                 subtitle: 'Add member',
               ),
             ),
@@ -63,6 +75,8 @@ class _AddMemberState extends State<AddMember> {
                     color: Colors.white,
                   ),
                   onPressed: () async {
+                    unfocus();
+
                     if (_formKeyEmail.currentState.validate()) {
                       _scaffoldKey.currentState.showSnackBar(
                         SnackBar(

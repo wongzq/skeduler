@@ -22,6 +22,7 @@ class EditMember extends StatefulWidget {
 }
 
 class _EditMemberState extends State<EditMember> {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _formKeyName = GlobalKey<FormState>();
   GlobalKey<FormState> _formKeyNickname = GlobalKey<FormState>();
 
@@ -43,8 +44,23 @@ class _EditMemberState extends State<EditMember> {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     return groupStatus.group == null
-        ? Loading()
+        ? Stack(
+            children: <Widget>[
+              Scaffold(
+                appBar: AppBar(
+                  title: AppBarTitle(
+                    title: 'Group',
+                    subtitle: widget.member.role == MemberRole.dummy
+                        ? 'Edit dummy'
+                        : 'Edit member',
+                  ),
+                ),
+              ),
+              Loading(),
+            ],
+          )
         : Scaffold(
+            key: _scaffoldKey,
             appBar: AppBar(
               title: AppBarTitle(
                 title: groupStatus.group.name,
@@ -77,6 +93,8 @@ class _EditMemberState extends State<EditMember> {
                     color: Colors.white,
                   ),
                   onPressed: () async {
+                    unfocus();
+
                     // if transfer owner
                     if (groupStatus.me.role == MemberRole.owner &&
                         widget.member.role == MemberRole.owner &&
@@ -103,6 +121,9 @@ class _EditMemberState extends State<EditMember> {
                             widget.member.role == MemberRole.admin ||
                             widget.member.role == MemberRole.member) &&
                         _formKeyNickname.currentState.validate()) {
+                      _scaffoldKey.currentState.showSnackBar(
+                          LoadingSnackBar(context, 'Saving member details'));
+
                       OperationStatus status =
                           await dbService.updateGroupMember(
                         groupDocId: groupStatus.group.docId,
@@ -115,6 +136,7 @@ class _EditMemberState extends State<EditMember> {
                       );
 
                       if (status.completed) {
+                        _scaffoldKey.currentState.hideCurrentSnackBar();
                         Fluttertoast.showToast(msg: status.message);
                       }
 
@@ -127,7 +149,9 @@ class _EditMemberState extends State<EditMember> {
                     else if (widget.member.role == MemberRole.dummy &&
                         _formKeyName.currentState.validate() &&
                         _formKeyNickname.currentState.validate()) {
-                      // if dummy id remains the same
+                      _scaffoldKey.currentState.showSnackBar(
+                          LoadingSnackBar(context, 'Saving member details'));
+
                       OperationStatus status =
                           await dbService.updateGroupMember(
                         groupDocId: groupStatus.group.docId,
@@ -140,6 +164,7 @@ class _EditMemberState extends State<EditMember> {
                       );
 
                       if (status.completed) {
+                        _scaffoldKey.currentState.hideCurrentSnackBar();
                         Fluttertoast.showToast(msg: status.message);
                       }
 

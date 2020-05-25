@@ -37,13 +37,25 @@ class _EditSubjectState extends State<EditSubject> {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     return groupStatus.group == null
-        ? Loading()
+        ? Stack(
+            children: <Widget>[
+              Scaffold(
+                appBar: AppBar(
+                  title: AppBarTitle(
+                    title: 'Group',
+                    subtitle: 'Edit subject',
+                  ),
+                ),
+              ),
+              Loading(),
+            ],
+          )
         : Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
               title: AppBarTitle(
                 title: groupStatus.group.name,
-                alternateTitle: 'Edit subject',
+                alternateTitle: 'Group',
                 subtitle: 'Edit subject',
               ),
             ),

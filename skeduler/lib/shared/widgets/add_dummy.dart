@@ -7,7 +7,6 @@ import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/widgets/label_text_input.dart';
 import 'package:skeduler/shared/widgets/loading.dart';
 import 'package:skeduler/shared/functions.dart';
-import 'package:skeduler/shared/ui_settings.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
 
 class AddDummy extends StatefulWidget {
@@ -29,22 +28,28 @@ class _AddDummyState extends State<AddDummy> {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     return groupStatus.group == null
-        ? Loading()
+        ? Stack(
+            children: <Widget>[
+              Scaffold(
+                appBar: AppBar(
+                  title: AppBarTitle(
+                    title: 'Group',
+                    subtitle: 'Add dummy',
+                  ),
+                ),
+              ),
+              Loading(),
+            ],
+          )
         : Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    groupStatus.group.name,
-                    style: textStyleAppBarTitle,
-                  ),
-                  Text(
-                    'Add dummy',
-                    style: textStyleBody,
-                  ),
-                ],
+              title: AppBarTitle(
+                title: groupStatus.group == null
+                    ? 'Group'
+                    : groupStatus.group.name,
+                alternateTitle: 'Group',
+                subtitle: 'Add dummy',
               ),
             ),
             floatingActionButton: Row(

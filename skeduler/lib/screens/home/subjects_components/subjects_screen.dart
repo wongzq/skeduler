@@ -86,13 +86,26 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
     }();
 
     return _groupStatus.group == null
-        ? Loading()
+        ? Stack(
+            children: <Widget>[
+              Scaffold(
+                appBar: AppBar(
+                  title: AppBarTitle(
+                    title: 'Group',
+                    subtitle: 'Subjects',
+                  ),
+                ),
+                drawer: HomeDrawer(DrawerEnum.subjects),
+              ),
+              Loading(),
+            ],
+          )
         : Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
               title: AppBarTitle(
                 title: _groupStatus.group.name,
-                alternateTitle: 'Subjects',
+                alternateTitle: 'Group',
                 subtitle: 'Subjects',
               ),
             ),
@@ -151,14 +164,14 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                     ],
                   )
                 : null,
-            body: _groupStatus.me.role == MemberRole.owner ||
-                    _groupStatus.me.role == MemberRole.admin
-                ? _groupStatus.subjects.length == 0
-                    ? EmptyPlaceholder(
-                        iconData: Icons.class_,
-                        text: 'No subjects',
-                      )
-                    : ReorderableListView(
+            body: _groupStatus.subjects.length == 0
+                ? EmptyPlaceholder(
+                    iconData: Icons.class_,
+                    text: 'No subjects',
+                  )
+                : _groupStatus.me.role == MemberRole.owner ||
+                        _groupStatus.me.role == MemberRole.admin
+                    ? ReorderableListView(
                         onReorder: (int oldIndex, int newIndex) {
                           setState(() {
                             String subjectMetadata =
@@ -188,9 +201,11 @@ class _SubjectsScreenState extends State<SubjectsScreen> {
                         },
                         children: _generateSubjects(canReorder: true),
                       )
-                : ListView(
-                    children: _generateSubjects(canReorder: false),
-                  ),
+                    : _groupStatus.me.role == MemberRole.member
+                        ? ListView(
+                            children: _generateSubjects(canReorder: false),
+                          )
+                        : Container(),
           );
   }
 }

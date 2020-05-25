@@ -43,13 +43,26 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     return groupStatus.group == null
-        ? Loading()
+        ? Stack(
+            children: <Widget>[
+              Scaffold(
+                appBar: AppBar(
+                  title: AppBarTitle(
+                    title: 'Group',
+                    subtitle: 'My schedule',
+                  ),
+                ),
+                drawer: HomeDrawer(DrawerEnum.mySchedule),
+              ),
+              Loading(),
+            ],
+          )
         : Scaffold(
             appBar: AppBar(
               elevation: 0.0,
               title: AppBarTitle(
                 title: groupStatus.group.name,
-                alternateTitle: 'My schedule',
+                alternateTitle: 'Group',
                 subtitle: 'My schedule',
               ),
               bottom: TabBar(

@@ -76,6 +76,8 @@ class _EditGroupState extends State<EditGroup> {
             heroTag: 'Edit Group Confirm',
             backgroundColor: Colors.green,
             onPressed: () async {
+              unfocus();
+              
               if (_formKeyName.currentState.validate() &&
                   _formKeyDesc.currentState.validate()) {
                 if (_groupName.trim() != widget.group.name ||

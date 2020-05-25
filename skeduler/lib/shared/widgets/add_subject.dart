@@ -28,13 +28,25 @@ class _AddSubjectState extends State<AddSubject> {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     return groupStatus.group == null
-        ? Loading()
+        ? Stack(
+            children: <Widget>[
+              Scaffold(
+                appBar: AppBar(
+                  title: AppBarTitle(
+                    title: 'Group',
+                    subtitle: 'Add subject',
+                  ),
+                ),
+              ),
+              Loading(),
+            ],
+          )
         : Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
               title: AppBarTitle(
                 title: groupStatus.group.name,
-                alternateTitle: 'Add subject',
+                alternateTitle: 'Group',
                 subtitle: 'Add subject',
               ),
             ),
