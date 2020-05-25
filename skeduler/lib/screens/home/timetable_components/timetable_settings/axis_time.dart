@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/shared/widgets/edit_time_dialog.dart';
 
@@ -27,6 +28,7 @@ class AxisTime extends StatefulWidget {
 
 class _AxisTimeState extends State<AxisTime> {
   OriginTheme _originTheme;
+  TimetableStatus _ttbStatus;
 
   List<Time> _times;
 
@@ -141,8 +143,15 @@ class _AxisTimeState extends State<AxisTime> {
                               });
 
                               // Add new time slot
-                              _times.add(Time(newStartTime, newEndTime));
+                              Time prev = Time(time.startTime, time.endTime);
+                              Time next = Time(newStartTime, newEndTime);
 
+                              _ttbStatus.updateTempAxisTimeValue(
+                                prev: prev,
+                                next: next,
+                              );
+
+                              _times.add(next);
                               _times.sort((a, b) =>
                                   a.startTime.millisecondsSinceEpoch.compareTo(
                                       b.startTime.millisecondsSinceEpoch));
@@ -286,6 +295,7 @@ class _AxisTimeState extends State<AxisTime> {
   @override
   Widget build(BuildContext context) {
     _originTheme = Provider.of<OriginTheme>(context);
+    _ttbStatus = Provider.of<TimetableStatus>(context);
 
     if (widget.valGetTimes != null) {
       _times = widget.valGetTimes();

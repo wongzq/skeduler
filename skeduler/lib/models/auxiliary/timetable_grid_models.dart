@@ -203,6 +203,25 @@ class TimetableStatus extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateTempAxisTimeValue({
+    @required Time prev,
+    @required Time next,
+  }) {
+    TimetableGridDataList tmpGridDataList =
+        TimetableGridDataList.from(this._temp.gridDataList);
+
+    tmpGridDataList._value.forEach((gridData) {
+      if (gridData._coord.time == prev) {
+        TimetableGridData tmpGridData = TimetableGridData.copy(gridData);
+        tmpGridData._coord.time = next;
+
+        this._temp.gridDataList.pop(gridData);
+        this._temp.gridDataList.push(tmpGridData);
+      }
+    });
+    notifyListeners();
+  }
+
   void update() {
     this.curr = this._curr;
     this.edit = this._edit;
@@ -509,7 +528,6 @@ class TimetableAxes extends ChangeNotifier {
   TimetableAxis _day;
   TimetableAxis _time;
   TimetableAxis _custom;
-
 
   // constructors
   TimetableAxes({
