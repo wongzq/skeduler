@@ -219,57 +219,65 @@ class TimetableStatus extends ChangeNotifier {
         TimetableGridData tmpGridData = TimetableGridData.from(gridData);
         tmpGridData.coord.time = next;
 
-        // find member of this gridData
-        Member member = members.firstWhere(
-          (elem) => elem.docId == gridData.dragData.member.docId,
-          orElse: () => null,
-        );
-
-        if (member != null) {
-          List<Time> memberTimes = member.alwaysAvailable
-              ? member.timesUnavailable
-              : member.timesAvailable;
-
-          List<Time> newAxisTimes = generateTimes(
-            months: List.generate(
-              Month.values.length,
-              (index) => Month.values[index],
-            ),
-            weekDays: [gridData.coord.day],
-            time: next,
-            startDate: this.temp.startDate,
-            endDate: this.temp.endDate,
+        // if gridData has member
+        if (gridData.dragData.member.docId != null &&
+            gridData.dragData.member.docId.trim() != '') {
+          // find member of this gridData
+          Member member = members.firstWhere(
+            (elem) => elem.docId == gridData.dragData.member.docId,
+            orElse: () => null,
           );
 
-          bool allAvailable = true;
-          for (Time memberTime in memberTimes) {
-            for (Time newAxisTime in newAxisTimes) {
-              if (newAxisTime.sameDateAs(memberTime)) {
-                // if member is always available, see unavailable times
-                // if newAxisTime is within unavailable times, result is false
-                if (member.alwaysAvailable &&
-                    !newAxisTime.notWithinTimeOf(memberTime)) {
-                  allAvailable = false;
-                  break;
-                }
+          if (member != null) {
+            List<Time> memberTimes = member.alwaysAvailable
+                ? member.timesUnavailable
+                : member.timesAvailable;
 
-                // if member is not always available, see available times
-                // if newAxisTime is not within available times, result is false
-                if (!member.alwaysAvailable &&
-                    !newAxisTime.withinTimeOf(memberTime)) {
-                  allAvailable = false;
-                  break;
+            List<Time> newAxisTimes = generateTimes(
+              months: List.generate(
+                Month.values.length,
+                (index) => Month.values[index],
+              ),
+              weekDays: [gridData.coord.day],
+              time: next,
+              startDate: this.temp.startDate,
+              endDate: this.temp.endDate,
+            );
+
+            bool allAvailable = true;
+            for (Time memberTime in memberTimes) {
+              for (Time newAxisTime in newAxisTimes) {
+                if (newAxisTime.sameDateAs(memberTime)) {
+                  // if member is always available, see unavailable times
+                  // if newAxisTime is within unavailable times, result is false
+                  if (member.alwaysAvailable &&
+                      !newAxisTime.notWithinTimeOf(memberTime)) {
+                    allAvailable = false;
+                    break;
+                  }
+
+                  // if member is not always available, see available times
+                  // if newAxisTime is not within available times, result is false
+                  if (!member.alwaysAvailable &&
+                      !newAxisTime.withinTimeOf(memberTime)) {
+                    allAvailable = false;
+                    break;
+                  }
                 }
               }
             }
-          }
 
-          if (allAvailable) {
-            tmpGridData.available = true;
-          } else {
-            tmpGridData.available = false;
-          }
+            if (allAvailable) {
+              tmpGridData.available = true;
+            } else {
+              tmpGridData.available = false;
+            }
 
+            // replace grid data
+            this.temp.gridDataList.pop(gridData);
+            this.temp.gridDataList.push(tmpGridData);
+          }
+        } else {
           // replace grid data
           this.temp.gridDataList.pop(gridData);
           this.temp.gridDataList.push(tmpGridData);
