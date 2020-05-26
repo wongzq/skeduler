@@ -90,7 +90,6 @@ class MemberListTile extends StatelessWidget {
     OriginTheme originTheme = Provider.of<OriginTheme>(context);
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
-    GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     if (me.role == MemberRole.pending) {
       return Container();
@@ -233,6 +232,7 @@ class MemberListTile extends StatelessWidget {
                       },
                       onSelected: (value) async {
                         if (value == MemberOption.makeOwner) {
+                          GlobalKey<FormState> formKey = GlobalKey<FormState>();
                           await showDialog(
                               context: context,
                               builder: (context) {
@@ -307,17 +307,47 @@ class MemberListTile extends StatelessWidget {
                                 );
                               });
                         } else if (value == MemberOption.makeAdmin) {
-                          await dbService.updateGroupMemberRole(
-                            groupDocId: groupStatus.group.docId,
-                            memberDocId: member.docId,
-                            role: MemberRole.admin,
-                          );
+                          await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return SimpleAlertDialog(
+                                  context: context,
+                                  contentDisplay: 'Make ' +
+                                      (member.name ?? '') +
+                                      ' an admin? ',
+                                  confirmDisplay: 'CONFIRM',
+                                  confirmFunction: () async {
+                                    Navigator.of(context).maybePop();
+                                    await dbService.updateGroupMemberRole(
+                                      groupDocId: groupStatus.group.docId,
+                                      memberDocId: member.docId,
+                                      role: MemberRole.admin,
+                                    );
+                                  },
+                                );
+                              });
                         } else if (value == MemberOption.makeMember) {
-                          await dbService.updateGroupMemberRole(
-                            groupDocId: groupStatus.group.docId,
-                            memberDocId: member.docId,
-                            role: MemberRole.member,
-                          );
+                          await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return SimpleAlertDialog(
+                                  context: context,
+                                  contentDisplay: 'Make ' +
+                                      (me.docId == member.docId
+                                          ? 'yourself'
+                                          : (member.name ?? '')) +
+                                      ' a member?',
+                                  confirmDisplay: 'CONFIRM',
+                                  confirmFunction: () async {
+                                    Navigator.of(context).maybePop();
+                                    await dbService.updateGroupMemberRole(
+                                      groupDocId: groupStatus.group.docId,
+                                      memberDocId: member.docId,
+                                      role: MemberRole.member,
+                                    );
+                                  },
+                                );
+                              });
                         } else if (value == MemberOption.edit) {
                           Navigator.of(context).pushNamed(
                             '/members/editMember',
