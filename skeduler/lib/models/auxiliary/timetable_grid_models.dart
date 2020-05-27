@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:quiver/core.dart';
-import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/models/firestore/timetable.dart';
 
@@ -185,107 +184,81 @@ class TimetableStatus extends ChangeNotifier {
     );
   }
 
-  void updateTempAxisCustomValue({
-    @required String prev,
-    @required String next,
-  }) {
-    TimetableGridDataList tmpGridDataList =
-        TimetableGridDataList.from(this._temp.gridDataList);
+  // // loop through gridDataList
+  // tmpGridDataList.value.forEach((gridData) {
+  //   // find coord time to be replaced
+  //   if (gridData.coord.time == prev) {
+  //     TimetableGridData tmpGridData = TimetableGridData.from(gridData);
+  //     tmpGridData.coord.time = next;
 
-    tmpGridDataList._value.forEach((gridData) {
-      if (gridData.coord.custom == prev) {
-        TimetableGridData tmpGridData = TimetableGridData.from(gridData);
-        tmpGridData.coord.custom = next;
+  //     // if gridData has member
+  //     if (gridData.dragData.member.docId != null &&
+  //         gridData.dragData.member.docId.trim() != '') {
+  //       // find member of this gridData
+  //       Member member = members.firstWhere(
+  //         (groupMember) =>
+  //             groupMember.docId == gridData.dragData.member.docId,
+  //         orElse: () => null,
+  //       );
 
-        this._temp.gridDataList.pop(gridData);
-        this._temp.gridDataList.push(tmpGridData);
-      }
-    });
-    notifyListeners();
-  }
+  //       if (member != null) {
+  //         List<Time> memberTimes = member.alwaysAvailable
+  //             ? member.timesUnavailable
+  //             : member.timesAvailable;
 
-  void updateTempAxisTimeValue({
-    @required Time prev,
-    @required Time next,
-    @required List<Member> members,
-  }) {
-    TimetableGridDataList tmpGridDataList =
-        TimetableGridDataList.from(this.temp.gridDataList);
+  //         List<Time> newAxisTimes = generateTimes(
+  //           months: List.generate(
+  //             Month.values.length,
+  //             (index) => Month.values[index],
+  //           ),
+  //           weekDays: [gridData.coord.day],
+  //           time: next,
+  //           startDate: this.temp.startDate,
+  //           endDate: this.temp.endDate,
+  //         );
 
-    // loop through gridDataList
-    tmpGridDataList.value.forEach((gridData) {
-      // find coord time to be replaced
-      if (gridData.coord.time == prev) {
-        TimetableGridData tmpGridData = TimetableGridData.from(gridData);
-        tmpGridData.coord.time = next;
+  //         bool allAvailable = true;
+  //         for (Time memberTime in memberTimes) {
+  //           for (Time newAxisTime in newAxisTimes) {
+  //             if (newAxisTime.sameDateAs(memberTime)) {
+  //               // if member is always available, see unavailable times
+  //               // if newAxisTime is within unavailable times, result is false
+  //               if (member.alwaysAvailable &&
+  //                   !newAxisTime.notWithinTimeOf(memberTime)) {
+  //                 allAvailable = false;
+  //                 break;
+  //               }
 
-        // if gridData has member
-        if (gridData.dragData.member.docId != null &&
-            gridData.dragData.member.docId.trim() != '') {
-          // find member of this gridData
-          Member member = members.firstWhere(
-            (elem) => elem.docId == gridData.dragData.member.docId,
-            orElse: () => null,
-          );
+  //               // if member is not always available, see available times
+  //               // if newAxisTime is not within available times, result is false
+  //               if (!member.alwaysAvailable &&
+  //                   !newAxisTime.withinTimeOf(memberTime)) {
+  //                 allAvailable = false;
+  //                 break;
+  //               }
+  //             }
+  //           }
+  //         }
 
-          if (member != null) {
-            List<Time> memberTimes = member.alwaysAvailable
-                ? member.timesUnavailable
-                : member.timesAvailable;
+  //         if (allAvailable) {
+  //           tmpGridData.available = true;
+  //         } else {
+  //           tmpGridData.available = false;
+  //         }
 
-            List<Time> newAxisTimes = generateTimes(
-              months: List.generate(
-                Month.values.length,
-                (index) => Month.values[index],
-              ),
-              weekDays: [gridData.coord.day],
-              time: next,
-              startDate: this.temp.startDate,
-              endDate: this.temp.endDate,
-            );
-
-            bool allAvailable = true;
-            for (Time memberTime in memberTimes) {
-              for (Time newAxisTime in newAxisTimes) {
-                if (newAxisTime.sameDateAs(memberTime)) {
-                  // if member is always available, see unavailable times
-                  // if newAxisTime is within unavailable times, result is false
-                  if (member.alwaysAvailable &&
-                      !newAxisTime.notWithinTimeOf(memberTime)) {
-                    allAvailable = false;
-                    break;
-                  }
-
-                  // if member is not always available, see available times
-                  // if newAxisTime is not within available times, result is false
-                  if (!member.alwaysAvailable &&
-                      !newAxisTime.withinTimeOf(memberTime)) {
-                    allAvailable = false;
-                    break;
-                  }
-                }
-              }
-            }
-
-            if (allAvailable) {
-              tmpGridData.available = true;
-            } else {
-              tmpGridData.available = false;
-            }
-
-            // replace grid data
-            this.temp.gridDataList.pop(gridData);
-            this.temp.gridDataList.push(tmpGridData);
-          }
-        } else {
-          // replace grid data
-          this.temp.gridDataList.pop(gridData);
-          this.temp.gridDataList.push(tmpGridData);
-        }
-      }
-    });
-    notifyListeners();
-  }
+  //         // replace grid data
+  //         this.temp.gridDataList.pop(gridData);
+  //         this.temp.gridDataList.push(tmpGridData);
+  //       }
+  //     }
+  //     // gridData has no member
+  //     else {
+  //       // replace grid data
+  //       this.temp.gridDataList.pop(gridData);
+  //       this.temp.gridDataList.push(tmpGridData);
+  //     }
+  //   }
+  // });
 
   void update() {
     this.curr = this._curr;

@@ -41,7 +41,6 @@ class TimetableSettings extends StatelessWidget {
                   Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
               onPressed: () {
                 ttbStatus.temp = EditTimetable();
-
                 Navigator.of(context).maybePop();
               }),
           title: AppBarTitle(
@@ -159,9 +158,15 @@ class TimetableSettings extends StatelessWidget {
               initialEndDate: ttbStatus.temp.endDate,
               valSetStartDate: (startDate) {
                 ttbStatus.temp.startDate = startDate;
+                ttbStatus.temp
+                    .validateGridDataList(members: groupStatus.members);
+                ttbStatus.update();
               },
               valSetEndDate: (endDate) {
                 ttbStatus.temp.endDate = endDate;
+                ttbStatus.temp
+                    .validateGridDataList(members: groupStatus.members);
+                ttbStatus.update();
               },
             ),
             SizedBox(height: 10.0),

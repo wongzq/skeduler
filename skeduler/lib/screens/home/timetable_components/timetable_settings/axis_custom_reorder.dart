@@ -93,10 +93,11 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                                       .contains(value)) {
                                     return 'Value already exists';
                                   } else {
-                                    _ttbStatus.updateTempAxisCustomValue(
+                                    _ttbStatus.temp.updateAxisCustomValue(
                                       prev: custom,
                                       next: value,
                                     );
+                                    _ttbStatus.update();
                                     return null;
                                   }
                                 },

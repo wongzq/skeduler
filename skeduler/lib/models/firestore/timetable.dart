@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
+import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/time.dart';
 
 // --------------------------------------------------------------------------------
@@ -318,6 +319,145 @@ class EditTimetable extends ChangeNotifier {
     this._axisCustom = ttb.axisCustom;
     this._gridDataList = TimetableGridDataList();
     notifyListeners();
+  }
+
+  void updateAxisTimeValue({
+    @required Time prev,
+    @required Time next,
+  }) {
+    TimetableGridDataList tmpGridDataList =
+        TimetableGridDataList.from(this.gridDataList);
+
+    for (TimetableGridData gridData in tmpGridDataList.value) {
+      // find coord to be replaced
+      if (gridData.coord.time == prev) {
+        TimetableGridData newGridData = TimetableGridData.from(gridData);
+        newGridData.coord.time = next;
+
+        this.gridDataList.pop(gridData);
+        this.gridDataList.push(newGridData);
+      }
+    }
+  }
+
+  void updateAxisCustomValue({
+    @required String prev,
+    @required String next,
+  }) {
+    TimetableGridDataList tmpGridDataList =
+        TimetableGridDataList.from(this.gridDataList);
+
+    for (TimetableGridData gridData in tmpGridDataList.value) {
+      if (gridData.coord.custom == prev) {
+        TimetableGridData tmpGridData = TimetableGridData.from(gridData);
+        tmpGridData.coord.custom = next;
+
+        this.gridDataList.pop(gridData);
+        this.gridDataList.push(tmpGridData);
+      }
+    }
+    notifyListeners();
+  }
+
+  void validateGridDataList({
+    @required List<Member> members,
+  }) {
+    TimetableGridDataList tmpGridDataList =
+        TimetableGridDataList.from(this.gridDataList);
+
+    // loop through each gridData
+    for (TimetableGridData gridData in tmpGridDataList.value) {
+      // variables
+      TimetableGridData newGridData = TimetableGridData.from(gridData);
+      List<Time> timetableTimes;
+      List<Time> memberTimes;
+      Member member;
+      bool memberIsAvailable;
+
+      // timetable times
+      timetableTimes = generateTimes(
+        months: List.generate(
+          Month.values.length,
+          (index) => Month.values[index],
+        ),
+        weekDays: [gridData.coord.day],
+        time: gridData.coord.time,
+        startDate: this.startDate,
+        endDate: this.endDate,
+      );
+
+      if (gridData.dragData.member.docId != null &&
+          gridData.dragData.member.docId.trim() != '') {
+        // find member of gridData
+        member = members.firstWhere(
+          (groupMember) => groupMember.docId == gridData.dragData.member.docId,
+          orElse: () => null,
+        );
+
+        if (member != null) {
+          // set default availability of member
+          memberIsAvailable = true;
+
+          // get corresponding times based on 'alwaysAvailable' property
+          memberTimes = member.alwaysAvailable
+              ? member.timesUnavailable
+              : member.timesAvailable;
+
+          // loop through each timetableTime
+          timetableTimesLoop:
+          for (Time timetableTime in timetableTimes) {
+            bool availableTimeOnSameDate = false;
+
+            // loop through each memberTime to find time on same date
+            for (Time memberTime in memberTimes) {
+              if (timetableTime.sameDateAs(memberTime)) {
+                availableTimeOnSameDate = true;
+
+                // if member is always available, see unavailable times
+                // if timetableTimes is within unavailable times, result is false
+                if (member.alwaysAvailable &&
+                    !timetableTime.notWithinTimeOf(memberTime)) {
+                  memberIsAvailable = false;
+                  break timetableTimesLoop;
+                }
+
+                // if member is not always available, see available times
+                // if timetableTime is not within available times, result is false
+                if (!member.alwaysAvailable &&
+                    !timetableTime.withinTimeOf(memberTime)) {
+                  memberIsAvailable = false;
+                  break timetableTimesLoop;
+                }
+              }
+            }
+
+            // if member is not always available and no matches on same date
+            if (!member.alwaysAvailable && !availableTimeOnSameDate) {
+              memberIsAvailable = false;
+              break timetableTimesLoop;
+            }
+          }
+
+          // update [available] in newGridData
+          if (memberIsAvailable) {
+            newGridData.available = true;
+          } else {
+            newGridData.available = false;
+          }
+
+          // update gridData in gridDataList
+          this.gridDataList.pop(gridData);
+          this.gridDataList.push(newGridData);
+        } else {
+          // if member not found, remove member from the gridData
+          // update gridData in gridDataList
+          newGridData.dragData.member.docId = '';
+          newGridData.dragData.member.display = '';
+          this.gridDataList.pop(gridData);
+          this.gridDataList.push(newGridData);
+        }
+      }
+    }
   }
 }
 
