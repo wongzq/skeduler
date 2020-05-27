@@ -29,7 +29,7 @@ class ScheduleView extends StatelessWidget {
                   Month.values.length,
                   (index) => Month.values[index],
                 ),
-                weekDays: [gridData.coord.day],
+                weekdays: [gridData.coord.day],
                 time: gridData.coord.time,
                 startDate: timetable.startDate,
                 endDate: timetable.endDate,

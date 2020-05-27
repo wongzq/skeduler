@@ -380,7 +380,7 @@ class EditTimetable extends ChangeNotifier {
           Month.values.length,
           (index) => Month.values[index],
         ),
-        weekDays: [gridData.coord.day],
+        weekdays: [gridData.coord.day],
         time: gridData.coord.time,
         startDate: this.startDate,
         endDate: this.endDate,

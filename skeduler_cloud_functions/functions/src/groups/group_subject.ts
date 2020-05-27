@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import { TimetableGridData } from "../classes/classes";
+import { TimetableGridData } from "../models/classes";
 
 export const createGroupSubject = functions.firestore
   .document("/groups/{groupDocId}/subjects/{subjectDocId}")
@@ -131,12 +131,12 @@ export const updateGroupSubject = functions.firestore
                   }
                 });
               });
+              
               return Promise.all(gridDataPromises);
             })
         );
-        return Promise.all(promises);
-      } else {
-        return null;
       }
+
+      return Promise.all(promises);
     }
   });

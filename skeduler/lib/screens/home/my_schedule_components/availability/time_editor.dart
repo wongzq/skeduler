@@ -116,7 +116,7 @@ class _TimeEditorState extends State<TimeEditor> {
 
                   newTimes = generateTimes(
                     months: widget.valGetMonths(),
-                    weekDays: widget.valGetWeekdays(),
+                    weekdays: widget.valGetWeekdays(),
                     time: Time(
                       startTime: _startTime ??
                           DateTime(DateTime.now().year, 1, 1, 0, 0),
@@ -249,7 +249,7 @@ class _TimeEditorState extends State<TimeEditor> {
 
                               List<Time> removeTimes = generateTimes(
                                 months: widget.valGetMonths(),
-                                weekDays: widget.valGetWeekdays(),
+                                weekdays: widget.valGetWeekdays(),
                                 time: Time(
                                   startTime: tmpStartTime,
                                   endTime: tmpEndTime,

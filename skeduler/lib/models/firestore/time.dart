@@ -222,7 +222,7 @@ String getWeekdayStr(Weekday weekday) {
 
 List<Time> generateTimes({
   @required List<Month> months,
-  @required List<Weekday> weekDays,
+  @required List<Weekday> weekdays,
   @required Time time,
   @required DateTime startDate,
   @required DateTime endDate,
@@ -239,9 +239,9 @@ List<Time> generateTimes({
           DateTime(DateTime.now().year, months[month].index + 1, day + 1);
 
       // iterate through each weekday
-      for (int weekDay = 0; weekDay < weekDays.length; weekDay++) {
+      for (int weekDay = 0; weekDay < weekdays.length; weekDay++) {
         // check if weekday matches
-        if (newTime.weekday == weekDays[weekDay].index + 1) {
+        if (newTime.weekday == weekdays[weekDay].index + 1) {
           // create startDateTime
           DateTime newStartDateTime = DateTime(
             newTime.year,

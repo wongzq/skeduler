@@ -1,6 +1,28 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 
+export const updateGroup = functions.firestore
+  .document("/groups/{groupDocId}")
+  .onUpdate(async (change, context) => {
+    const beforeData:
+      | FirebaseFirestore.DocumentData
+      | undefined = change.before.data();
+    const afterData:
+      | FirebaseFirestore.DocumentData
+      | undefined = change.after.data();
+
+    if (beforeData == null || afterData == null) {
+      console.log("is null");
+    } else {
+      console.log("timestamp");
+      for (let i = 0; i < beforeData.a.length; i++) {
+        console.log(beforeData.a[i].b);
+        console.log(afterData.a[i].b);
+        console.log(beforeData.a[i].b.isEqual(afterData.a[i].b));
+      }
+    }
+  });
+
 export const createGroup = functions.firestore
   .document("/groups/{groupDocId}")
   .onCreate(async (snapshot, context) => {
