@@ -1,3 +1,5 @@
+import * as admin from "firebase-admin";
+
 // used classes
 export class Member {
   docId: string;
@@ -7,6 +9,7 @@ export class Member {
   role: number;
   timesAvailable: Time[];
   timesUnavailable: Time[];
+
   constructor(
     docId: string,
     alwaysAvailable: boolean,
@@ -39,16 +42,79 @@ export class Time {
   startTime: FirebaseFirestore.Timestamp;
   endTime: FirebaseFirestore.Timestamp;
 
-  // constructor
-  constructor(startTime: any, endTime: any) {
+  // constructors
+  constructor(
+    startTime: FirebaseFirestore.Timestamp,
+    endTime: FirebaseFirestore.Timestamp
+  ) {
     this.startTime = startTime;
     this.endTime = endTime;
   }
 
+  static fromTime(time: Time): Time {
+    return new Time(time.startTime, time.endTime);
+  }
+
+  // getter methods
+  get startDate(): Date {
+    return this.startTime.toDate();
+  }
+  get endDate(): Date {
+    return this.endTime.toDate();
+  }
+
   // methods
   sameDateAs(time: Time): boolean {
-    return this.startTime == time.startTime && this.endTime == time.endTime;
+    return (
+      this.startDate.getFullYear() == time.startDate.getFullYear() &&
+      this.startDate.getMonth() == time.startDate.getMonth() &&
+      this.startDate.getDate() == time.startDate.getDate() &&
+      this.endDate.getFullYear() == time.endDate.getFullYear() &&
+      this.endDate.getMonth() == time.endDate.getMonth() &&
+      this.endDate.getDate() == time.endDate.getDate()
+    );
   }
+
+  withinTimeOf(time: Time): boolean {
+    const tmpStartDate = new Date(
+      this.startDate.getFullYear(),
+      this.startDate.getMonth(),
+      this.startDate.getDate(),
+      time.startDate.getHours(),
+      time.startDate.getMinutes()
+    );
+
+    const tmpEndDate = new Date(
+      this.endDate.getFullYear(),
+      this.endDate.getMonth(),
+      this.endDate.getDate(),
+      time.endDate.getHours(),
+      time.endDate.getMinutes()
+    );
+
+    return this.startDate >= tmpStartDate && this.endDate <= tmpEndDate;
+  }
+
+  notWithinTimeOf(time: Time): boolean {
+    const tmpStartDate = new Date(
+      this.startDate.getFullYear(),
+      this.startDate.getMonth(),
+      this.startDate.getDate(),
+      time.startDate.getHours(),
+      time.startDate.getMinutes()
+    );
+
+    const tmpEndDate = new Date(
+      this.endDate.getFullYear(),
+      this.endDate.getMonth(),
+      this.endDate.getDate(),
+      time.endDate.getHours(),
+      time.endDate.getMinutes()
+    );
+
+    return this.endDate <= tmpStartDate || this.startDate >= tmpEndDate;
+  }
+
   isEqual(time: Time): boolean {
     return (
       this.startTime.isEqual(time.startTime) &&
@@ -108,7 +174,12 @@ export class Time {
             );
 
             if (newStartTime >= startDate && newEndTime <= endDate) {
-              times.push(new Time(newStartTime, newEndTime));
+              times.push(
+                new Time(
+                  admin.firestore.Timestamp.fromDate(newStartTime),
+                  admin.firestore.Timestamp.fromDate(newEndTime)
+                )
+              );
             }
           }
         }

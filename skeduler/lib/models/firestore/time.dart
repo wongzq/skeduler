@@ -31,6 +31,10 @@ class Time {
         endTime.day,
       );
 
+  // getter methods
+  int get startTimeInt => startTime.millisecondsSinceEpoch;
+  int get endTimeInt => endTime.millisecondsSinceEpoch;
+
   // auxiliary methods
   bool sameDateAs(Time time) {
     return this.startDate == time.startDate && this.endDate == time.endDate;

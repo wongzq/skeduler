@@ -867,10 +867,22 @@ class DatabaseService {
             .document(memberDocId)
             .get()
             .then((member) async {
+            List<Future> futures = [];
+            
             if (member.exists) {
               List<Time> prevTimes;
               List<Map<String, Timestamp>> removeTimestamps = [];
               List<Map<String, Timestamp>> newTimestamps = [];
+
+              // convert [List<Time>] into [List<Map<String, Timestamp>]
+              newTimes.forEach((time) {
+                Timestamp startTimestamp = Timestamp.fromDate(time.startTime);
+                Timestamp endTimestamp = Timestamp.fromDate(time.endTime);
+                newTimestamps.add({
+                  'startTime': startTimestamp,
+                  'endTime': endTimestamp,
+                });
+              });
 
               // get previous times and remove times on the same day
               if (member.data[targetList] != null) {
@@ -892,32 +904,33 @@ class DatabaseService {
                   });
                 });
 
-                await groupsCollection
+                futures.add(groupsCollection
+                    .document(groupDocId)
+                    .collection('members')
+                    .document(memberDocId)
+                    .updateData({
+                  targetList: FieldValue.arrayRemove(removeTimestamps)
+                }).then((value) async {
+                  // add new times to Firestore
+                  return await groupsCollection
+                      .document(groupDocId)
+                      .collection('members')
+                      .document(memberDocId)
+                      .updateData(
+                          {targetList: FieldValue.arrayUnion(newTimestamps)});
+                }));
+              } else {
+                // add new times to Firestore
+                futures.add(groupsCollection
                     .document(groupDocId)
                     .collection('members')
                     .document(memberDocId)
                     .updateData(
-                        {targetList: FieldValue.arrayRemove(removeTimestamps)});
+                        {targetList: FieldValue.arrayUnion(newTimestamps)}));
               }
-
-              // convert [List<Time>] into [List<Map<String, Timestamp>]
-              newTimes.forEach((time) {
-                Timestamp startTimestamp = Timestamp.fromDate(time.startTime);
-                Timestamp endTimestamp = Timestamp.fromDate(time.endTime);
-                newTimestamps.add({
-                  'startTime': startTimestamp,
-                  'endTime': endTimestamp,
-                });
-              });
-
-              // add new times to Firestore
-              await groupsCollection
-                  .document(groupDocId)
-                  .collection('members')
-                  .document(memberDocId)
-                  .updateData(
-                      {targetList: FieldValue.arrayUnion(newTimestamps)});
             }
+
+            return Future.wait(futures);
           });
   }
 

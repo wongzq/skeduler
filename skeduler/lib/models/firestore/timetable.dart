@@ -414,7 +414,7 @@ class EditTimetable extends ChangeNotifier {
                 availableTimeOnSameDate = true;
 
                 // if member is always available, see unavailable times
-                // if timetableTimes is within unavailable times, result is false
+                // if timetableTime is within unavailable times, result is false
                 if (member.alwaysAvailable &&
                     !timetableTime.notWithinTimeOf(memberTime)) {
                   memberIsAvailable = false;
