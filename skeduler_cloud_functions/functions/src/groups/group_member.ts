@@ -148,17 +148,7 @@ export const updateGroupMember = functions.firestore
       }
 
       // times changed
-      const member: Member = new Member(
-        change.after.id,
-        afterData.alwaysAvailable,
-        afterData.name,
-        afterData.nickname,
-        afterData.role,
-        afterData.timesAvailable,
-        afterData.timesUnavailable
-      );
-
-      promises.push(validateTimetablesGridDataList(groupDocId, member));
+      promises.push(validateTimetablesGridDataList(groupDocId, memberDocId));
 
       return Promise.all(promises);
     }
@@ -166,147 +156,201 @@ export const updateGroupMember = functions.firestore
 
 async function validateTimetablesGridDataList(
   groupDocId: string,
-  member: Member
+  memberDocId: string
 ): Promise<any> {
-  if (groupDocId == null || member == null) {
+  if (groupDocId == null || memberDocId == null) {
     return null;
   } else {
     return await admin
       .firestore()
       .collection("groups")
       .doc(groupDocId)
-      .collection("timetables")
+      .collection("members")
+      .doc(memberDocId)
       .get()
-      .then((timetables) => {
-        const promises: Promise<any>[] = [];
+      .then(async (memberDoc) => {
+        const memberDocData = memberDoc.data();
 
-        // iterate through each timetable document
-        for (const timetableDoc of timetables.docs) {
-          let tmpGridDataList: TimetableGridData[] = [];
+        if (memberDocData == null) {
+          return null;
+        } else {
+          const member: Member = new Member(
+            memberDoc.id,
+            memberDocData.available,
+            memberDocData.name,
+            memberDocData.nickname,
+            memberDocData.role,
+            memberDocData.timesAvailable,
+            memberDocData.timesUnavailable
+          );
 
-          // populate tmpGridDataList
-          for (const gridData of timetableDoc.data().gridDataList) {
-            tmpGridDataList.push(
-              new TimetableGridData(
-                gridData.available,
-                gridData.coord.day,
-                gridData.coord.time.startTime.toDate(),
-                gridData.coord.time.endTime.toDate(),
-                gridData.coord.custom,
-                gridData.member.docId,
-                gridData.member.display,
-                gridData.subject.docId,
-                gridData.subject.display
-              )
-            );
-          }
+          return await admin
+            .firestore()
+            .collection("groups")
+            .doc(groupDocId)
+            .collection("timetables")
+            .get()
+            .then(async (timetables) => {
+              const promises: Promise<any>[] = [];
 
-          // iterate through tmpGridDataList
-          for (const tmpGridData of tmpGridDataList) {
-            // if gridData has member
-            if (
-              tmpGridData.member.docId != null &&
-              tmpGridData.member.docId.trim() != "" &&
-              tmpGridData.member.docId == member.docId
-            ) {
-              // new grid data
-              let newGridData: TimetableGridData = TimetableGridData.from(
-                tmpGridData
-              );
+              // iterate through each timetable document
+              for (const timetableDoc of timetables.docs) {
+                let tmpGridDataList: TimetableGridData[] = [];
 
-              // get memberTimes
-              const memberTimes: Time[] = member.alwaysAvailable
-                ? member.timesUnavailable
-                : member.timesAvailable;
-
-              // generate timetableTimes
-              const timetableTimes: Time[] = Time.generateTimes(
-                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-                [tmpGridData.coord.day],
-                new Time(
-                  admin.firestore.Timestamp.fromDate(
-                    tmpGridData.coord.time.startTime
-                  ),
-                  admin.firestore.Timestamp.fromDate(
-                    tmpGridData.coord.time.endTime
-                  )
-                ),
-                timetableDoc.data().startDate.toDate(),
-                timetableDoc.data().endDate.toDate()
-              );
-
-              // set default availability of member
-              let memberIsAvailable: boolean = true;
-
-              // loop through each timetableTime
-              timetableTimesLoop: for (const timetableTime of timetableTimes) {
-                let availableTimeFound: boolean = false;
-
-                memberTimesLoop: for (const memberTime of memberTimes) {
-                  // if member is always available
-                  if (member.alwaysAvailable) {
-                    // check unavailable times
-                    // if timetableTime is within unavailable times, member is not available
-                    if (!timetableTime.notWithinDateTimeOf(memberTime)) {
-                      memberIsAvailable = false;
-                      break timetableTimesLoop;
-                    }
-                  }
-                  // else if member is not always available
-                  else if (!member.alwaysAvailable) {
-                    // check available times
-                    // if timetableTime is within available times, member is available
-                    if (timetableTime.withinDateTimeOf(memberTime)) {
-                      availableTimeFound = true;
-                      break memberTimesLoop;
-                    }
-                  }
+                // populate tmpGridDataList
+                for (const gridData of timetableDoc.data().gridDataList) {
+                  tmpGridDataList.push(
+                    new TimetableGridData(
+                      gridData.available,
+                      gridData.coord.day,
+                      gridData.coord.time.startTime.toDate(),
+                      gridData.coord.time.endTime.toDate(),
+                      gridData.coord.custom,
+                      gridData.member.docId,
+                      gridData.member.display,
+                      gridData.subject.docId,
+                      gridData.subject.display
+                    )
+                  );
                 }
 
-                if (!member.alwaysAvailable && !availableTimeFound) {
-                  memberIsAvailable = false;
-                  break timetableTimesLoop;
-                }
-              }
+                // iterate through tmpGridDataList
+                for (const tmpGridData of tmpGridDataList) {
+                  // if gridData has member
+                  if (
+                    tmpGridData.member.docId != null &&
+                    tmpGridData.member.docId.trim() != "" &&
+                    tmpGridData.member.docId == member.docId
+                  ) {
+                    // new grid data
+                    let newGridData: TimetableGridData = TimetableGridData.from(
+                      tmpGridData
+                    );
 
-              // update [available] in newGridData
-              newGridData.available = memberIsAvailable;
+                    // get memberTimes
+                    const memberTimes: Time[] = member.alwaysAvailable
+                      ? member.timesUnavailable
+                      : member.timesAvailable;
 
-              if (tmpGridData.notEqual(newGridData)) {
-                // remove old gridData in gridDataList
-                promises.push(
-                  admin
-                    .firestore()
-                    .collection("groups")
-                    .doc(groupDocId)
-                    .collection("timetables")
-                    .doc(timetableDoc.id)
-                    .update({
-                      gridDataList: admin.firestore.FieldValue.arrayRemove(
-                        tmpGridData.asFirestoreMap()
+                    // generate timetableTimes
+                    const timetableTimes: Time[] = Time.generateTimes(
+                      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                      [tmpGridData.coord.day],
+                      new Time(
+                        admin.firestore.Timestamp.fromDate(
+                          tmpGridData.coord.time.startTime
+                        ),
+                        admin.firestore.Timestamp.fromDate(
+                          tmpGridData.coord.time.endTime
+                        )
                       ),
-                    })
-                    .then(async () => {
-                      // union new gridData in gridDataList
-                      return await admin
-                        .firestore()
-                        .collection("groups")
-                        .doc(groupDocId)
-                        .collection("timetables")
-                        .doc(timetableDoc.id)
-                        .update({
-                          gridDataList: admin.firestore.FieldValue.arrayUnion(
-                            newGridData.asFirestoreMap()
-                          ),
-                        });
-                    })
-                );
-              }
-            }
-          }
-        }
+                      timetableDoc.data().startDate.toDate(),
+                      timetableDoc.data().endDate.toDate()
+                    );
 
-        return Promise.all(promises);
+                    // set default availability of member
+                    let memberIsAvailable: boolean = true;
+
+                    // loop through each timetableTime
+                    timetableTimesLoop: for (const timetableTime of timetableTimes) {
+                      let availableTimeFound: boolean = false;
+
+                      memberTimesLoop: for (const memberTime of memberTimes) {
+                        // if member is always available
+                        if (member.alwaysAvailable) {
+                          // check unavailable times
+                          // if timetableTime is within unavailable times, member is not available
+                          if (!timetableTime.notWithinDateTimeOf(memberTime)) {
+                            console.log(
+                              timetableTime.startDate +
+                                " " +
+                                timetableTime.endDate +
+                                "\nunavailable at\n" +
+                                memberTime.startDate +
+                                " " +
+                                memberTime.endDate
+                            );
+                            memberIsAvailable = false;
+                            break timetableTimesLoop;
+                          }
+                        }
+                        // else if member is not always available
+                        else if (!member.alwaysAvailable) {
+                          // check available times
+                          // if timetableTime is within available times, member is available
+                          if (timetableTime.withinDateTimeOf(memberTime)) {
+                            console.log(
+                              timetableTime.startDate +
+                                " " +
+                                timetableTime.endDate +
+                                "\navailable at\n" +
+                                memberTime.startDate +
+                                " " +
+                                memberTime.endDate
+                            );
+                            availableTimeFound = true;
+                            break memberTimesLoop;
+                          }
+                        }
+                      }
+
+                      if (!member.alwaysAvailable && !availableTimeFound) {
+                        console.log(
+                          "could not find time for " +
+                            timetableTime.startDate +
+                            " " +
+                            timetableTime.endDate
+                        );
+
+                        memberIsAvailable = false;
+                        break timetableTimesLoop;
+                      }
+                    }
+
+                    // update [available] in newGridData
+                    newGridData.available = memberIsAvailable;
+
+                    if (tmpGridData.notEqual(newGridData)) {
+                      console.log("changed");
+                      console.log(tmpGridData);
+                      console.log(newGridData);
+
+                      // remove old gridData in gridDataList
+                      promises.push(
+                        admin
+                          .firestore()
+                          .collection("groups")
+                          .doc(groupDocId)
+                          .collection("timetables")
+                          .doc(timetableDoc.id)
+                          .update({
+                            gridDataList: admin.firestore.FieldValue.arrayRemove(
+                              tmpGridData.asFirestoreMap()
+                            ),
+                          })
+                          .then(async () => {
+                            // union new gridData in gridDataList
+                            return await admin
+                              .firestore()
+                              .collection("groups")
+                              .doc(groupDocId)
+                              .collection("timetables")
+                              .doc(timetableDoc.id)
+                              .update({
+                                gridDataList: admin.firestore.FieldValue.arrayUnion(
+                                  newGridData.asFirestoreMap()
+                                ),
+                              });
+                          })
+                      );
+                    }
+                  }
+                }
+              }
+
+              return Promise.all(promises);
+            });
+        }
       });
   }
 }

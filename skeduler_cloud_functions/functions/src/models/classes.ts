@@ -66,12 +66,8 @@ export class Time {
   // methods
   sameDateAs(time: Time): boolean {
     return (
-      this.startDate.getFullYear() == time.startDate.getFullYear() &&
-      this.startDate.getMonth() == time.startDate.getMonth() &&
-      this.startDate.getDate() == time.startDate.getDate() &&
-      this.endDate.getFullYear() == time.endDate.getFullYear() &&
-      this.endDate.getMonth() == time.endDate.getMonth() &&
-      this.endDate.getDate() == time.endDate.getDate()
+      this.startDate.valueOf() == time.startDate.valueOf() &&
+      this.endDate.valueOf() == time.endDate.valueOf()
     );
   }
 
@@ -85,19 +81,19 @@ export class Time {
 
   withinTimeOf(time: Time): boolean {
     const tmpStartDate = new Date(
-      this.startDate.getFullYear(),
-      this.startDate.getMonth(),
-      this.startDate.getDate(),
-      time.startDate.getHours(),
-      time.startDate.getMinutes()
+      this.startDate.getUTCFullYear(),
+      this.startDate.getUTCMonth(),
+      this.startDate.getUTCDate(),
+      time.startDate.getUTCHours(),
+      time.startDate.getUTCMinutes()
     );
 
     const tmpEndDate = new Date(
-      this.endDate.getFullYear(),
-      this.endDate.getMonth(),
-      this.endDate.getDate(),
-      time.endDate.getHours(),
-      time.endDate.getMinutes()
+      this.endDate.getUTCFullYear(),
+      this.endDate.getUTCMonth(),
+      this.endDate.getUTCDate(),
+      time.endDate.getUTCHours(),
+      time.endDate.getUTCMinutes()
     );
 
     return this.startDate >= tmpStartDate && this.endDate <= tmpEndDate;
@@ -105,19 +101,19 @@ export class Time {
 
   notWithinTimeOf(time: Time): boolean {
     const tmpStartDate = new Date(
-      this.startDate.getFullYear(),
-      this.startDate.getMonth(),
-      this.startDate.getDate(),
-      time.startDate.getHours(),
-      time.startDate.getMinutes()
+      this.startDate.getUTCFullYear(),
+      this.startDate.getUTCMonth(),
+      this.startDate.getUTCDate(),
+      time.startDate.getUTCHours(),
+      time.startDate.getUTCMinutes()
     );
 
     const tmpEndDate = new Date(
-      this.endDate.getFullYear(),
-      this.endDate.getMonth(),
-      this.endDate.getDate(),
-      time.endDate.getHours(),
-      time.endDate.getMinutes()
+      this.endDate.getUTCFullYear(),
+      this.endDate.getUTCMonth(),
+      this.endDate.getUTCDate(),
+      time.endDate.getUTCHours(),
+      time.endDate.getUTCMinutes()
     );
 
     return this.endDate <= tmpStartDate || this.startDate >= tmpEndDate;
@@ -157,7 +153,7 @@ export class Time {
     // iterate through each month
     for (const month of months) {
       // iterate through each day
-      const year: number = new Date(Date.now()).getFullYear();
+      const year: number = new Date(Date.now()).getUTCFullYear();
 
       for (let day = 0; day < Time.daysInMonth(year, month); day++) {
         let newTime: Date = new Date(year, month, day);
@@ -166,19 +162,19 @@ export class Time {
         for (const weekday of weekdays) {
           if (newTime.getDay() == weekday + 1) {
             const newStartTime: Date = new Date(
-              newTime.getFullYear(),
-              newTime.getMonth(),
-              newTime.getDate(),
-              time.startDate.getHours(),
-              time.startDate.getMinutes()
+              newTime.getUTCFullYear(),
+              newTime.getUTCMonth(),
+              newTime.getUTCDate(),
+              time.startDate.getUTCHours(),
+              time.startDate.getUTCMinutes()
             );
 
             const newEndTime: Date = new Date(
-              newTime.getFullYear(),
-              newTime.getMonth(),
-              newTime.getDate(),
-              time.endDate.getHours(),
-              time.endDate.getMinutes()
+              newTime.getUTCFullYear(),
+              newTime.getUTCMonth(),
+              newTime.getUTCDate(),
+              time.endDate.getUTCHours(),
+              time.endDate.getUTCMinutes()
             );
 
             if (newStartTime >= startDate && newEndTime <= endDate) {
