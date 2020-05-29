@@ -40,6 +40,20 @@ class Time {
     return this.startDate == time.startDate && this.endDate == time.endDate;
   }
 
+  bool withinDateTimeOf(Time time) {
+    return this.startTime.millisecondsSinceEpoch >=
+            time.startTime.millisecondsSinceEpoch &&
+        this.endTime.millisecondsSinceEpoch <=
+            time.endTime.millisecondsSinceEpoch;
+  }
+
+  bool notWithinDateTimeOf(Time time) {
+    return this.endTime.millisecondsSinceEpoch <=
+            time.startTime.millisecondsSinceEpoch ||
+        this.startTime.millisecondsSinceEpoch >=
+            time.endTime.millisecondsSinceEpoch;
+  }
+
   bool withinTimeOf(Time time) {
     // only checks time, so changes the date to be the same
     Time tmpTime = Time(

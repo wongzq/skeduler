@@ -372,19 +372,6 @@ class EditTimetable extends ChangeNotifier {
       List<Time> timetableTimes;
       List<Time> memberTimes;
       Member member;
-      bool memberIsAvailable;
-
-      // timetable times
-      timetableTimes = generateTimes(
-        months: List.generate(
-          Month.values.length,
-          (index) => Month.values[index],
-        ),
-        weekdays: [gridData.coord.day],
-        time: gridData.coord.time,
-        startDate: this.startDate,
-        endDate: this.endDate,
-      );
 
       if (gridData.dragData.member.docId != null &&
           gridData.dragData.member.docId.trim() != '') {
@@ -396,12 +383,24 @@ class EditTimetable extends ChangeNotifier {
 
         if (member != null) {
           // set default availability of member
-          memberIsAvailable = true;
+          bool memberIsAvailable = true;
 
           // get corresponding times based on 'alwaysAvailable' property
           memberTimes = member.alwaysAvailable
               ? member.timesUnavailable
               : member.timesAvailable;
+
+          // timetable times
+          timetableTimes = generateTimes(
+            months: List.generate(
+              Month.values.length,
+              (index) => Month.values[index],
+            ),
+            weekdays: [gridData.coord.day],
+            time: gridData.coord.time,
+            startDate: this.startDate,
+            endDate: this.endDate,
+          );
 
           // loop through each timetableTime
           timetableTimesLoop:
@@ -439,11 +438,7 @@ class EditTimetable extends ChangeNotifier {
           }
 
           // update [available] in newGridData
-          if (memberIsAvailable) {
-            newGridData.available = true;
-          } else {
-            newGridData.available = false;
-          }
+          newGridData.available = memberIsAvailable;
 
           // update gridData in gridDataList
           this.gridDataList.pop(gridData);
@@ -451,6 +446,7 @@ class EditTimetable extends ChangeNotifier {
         } else {
           // if member not found, remove member from the gridData
           // update gridData in gridDataList
+          newGridData.available = true;
           newGridData.dragData.member.docId = '';
           newGridData.dragData.member.display = '';
           this.gridDataList.pop(gridData);

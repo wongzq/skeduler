@@ -75,6 +75,14 @@ export class Time {
     );
   }
 
+  withinDateTimeOf(time: Time): boolean {
+    return this.startDate >= time.startDate && this.endDate <= time.endDate;
+  }
+
+  notWithinDateTimeOf(time: Time): boolean {
+    return this.endDate <= time.startDate || this.startDate >= time.endDate;
+  }
+
   withinTimeOf(time: Time): boolean {
     const tmpStartDate = new Date(
       this.startDate.getFullYear(),
@@ -161,16 +169,16 @@ export class Time {
               newTime.getFullYear(),
               newTime.getMonth(),
               newTime.getDate(),
-              time.startTime.toDate().getHours(),
-              time.startTime.toDate().getMinutes()
+              time.startDate.getHours(),
+              time.startDate.getMinutes()
             );
 
             const newEndTime: Date = new Date(
               newTime.getFullYear(),
               newTime.getMonth(),
               newTime.getDate(),
-              time.endTime.toDate().getHours(),
-              time.endTime.toDate().getMinutes()
+              time.endDate.getHours(),
+              time.endDate.getMinutes()
             );
 
             if (newStartTime >= startDate && newEndTime <= endDate) {
@@ -248,8 +256,10 @@ export class TimetableGridData {
     return (
       this.available == gridData.available &&
       this.coord.day == gridData.coord.day &&
-      this.coord.time.startTime == gridData.coord.time.startTime &&
-      this.coord.time.endTime == gridData.coord.time.endTime &&
+      this.coord.time.startTime.valueOf() ==
+        gridData.coord.time.startTime.valueOf() &&
+      this.coord.time.endTime.valueOf() ==
+        gridData.coord.time.endTime.valueOf() &&
       this.coord.custom == gridData.coord.custom &&
       this.member.docId == gridData.member.docId &&
       this.member.display == gridData.member.display &&

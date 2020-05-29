@@ -868,7 +868,7 @@ class DatabaseService {
             .get()
             .then((member) async {
             List<Future> futures = [];
-            
+
             if (member.exists) {
               List<Time> prevTimes;
               List<Map<String, Timestamp>> removeTimestamps = [];
@@ -904,21 +904,23 @@ class DatabaseService {
                   });
                 });
 
-                futures.add(groupsCollection
-                    .document(groupDocId)
-                    .collection('members')
-                    .document(memberDocId)
-                    .updateData({
-                  targetList: FieldValue.arrayRemove(removeTimestamps)
-                }).then((value) async {
-                  // add new times to Firestore
-                  return await groupsCollection
+                futures.add(
+                  groupsCollection
                       .document(groupDocId)
                       .collection('members')
                       .document(memberDocId)
-                      .updateData(
-                          {targetList: FieldValue.arrayUnion(newTimestamps)});
-                }));
+                      .updateData({
+                    targetList: FieldValue.arrayRemove(removeTimestamps)
+                  }).then((_) async {
+                    // add new times to Firestore
+                    return await groupsCollection
+                        .document(groupDocId)
+                        .collection('members')
+                        .document(memberDocId)
+                        .updateData(
+                            {targetList: FieldValue.arrayUnion(newTimestamps)});
+                  }),
+                );
               } else {
                 // add new times to Firestore
                 futures.add(groupsCollection

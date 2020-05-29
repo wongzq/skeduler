@@ -453,7 +453,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
     if (dragData is TimetableDragMember) {
       _groupStatus.members.forEach((member) {
-        if (member.display == dragData.display) {
+        if (member.docId == dragData.docId) {
           memberFound = member;
         }
       });
@@ -472,6 +472,9 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
         isAvailable = true;
       } else {
         // for each day within timetable range
+        isAvailable = true;
+
+        timetableRangeLoop:
         for (int i = 0;
             i <
                 _ttbStatus.edit.endDate
@@ -481,50 +484,52 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
             i++) {
           DateTime ttbDate = _ttbStatus.edit.startDate.add(Duration(days: i));
 
-          DateTime gridStartTime = DateTime(
-            ttbDate.year,
-            ttbDate.month,
-            ttbDate.day,
-            _gridData.coord.time.startTime.hour,
-            _gridData.coord.time.startTime.minute,
+          Time gridTime = Time(
+            startTime: DateTime(
+              ttbDate.year,
+              ttbDate.month,
+              ttbDate.day,
+              _gridData.coord.time.startTime.hour,
+              _gridData.coord.time.startTime.minute,
+            ),
+            endTime: DateTime(
+              ttbDate.year,
+              ttbDate.month,
+              ttbDate.day,
+              _gridData.coord.time.endTime.hour,
+              _gridData.coord.time.endTime.minute,
+            ),
           );
 
-          DateTime gridEndTime = DateTime(
-            ttbDate.year,
-            ttbDate.month,
-            ttbDate.day,
-            _gridData.coord.time.endTime.hour,
-            _gridData.coord.time.endTime.minute,
-          );
+          bool availableTimeFound = false;
 
-          // if day matches
           if (Weekday.values[ttbDate.weekday - 1] == _gridData.coord.day) {
             if (memberFound.alwaysAvailable) {
-              isAvailable = true;
-              // iterate through each unavailable time
-              memberFound.timesUnavailable.forEach((time) {
-                if ((time.startTime.isBefore(gridStartTime) ||
-                        time.startTime.isAtSameMomentAs(gridStartTime)) &&
-                    (time.endTime.isAtSameMomentAs(gridEndTime) ||
-                        time.endTime.isAfter(gridEndTime))) {
+              for (Time time in memberFound.timesUnavailable) {
+                if (!gridTime.notWithinDateTimeOf(time)) {
                   isAvailable = false;
+                  break timetableRangeLoop;
                 }
-              });
-            } else {
-              // iterate through each time
-              memberFound.timesAvailable.forEach((time) {
-                if ((time.startTime.isBefore(gridStartTime) ||
-                        time.startTime.isAtSameMomentAs(gridStartTime)) &&
-                    (time.endTime.isAtSameMomentAs(gridEndTime) ||
-                        time.endTime.isAfter(gridEndTime))) {
-                  isAvailable = true;
+              }
+            } else if (!memberFound.alwaysAvailable) {
+              memberTimesLoop:
+              for (Time time in memberFound.timesAvailable) {
+                if (gridTime.withinDateTimeOf(time)) {
+                  availableTimeFound = true;
+                  break memberTimesLoop;
                 }
-              });
+              }
+
+              if (!memberFound.alwaysAvailable && !availableTimeFound) {
+                isAvailable = false;
+                break timetableRangeLoop;
+              }
             }
           }
         }
       }
     }
+
     return isAvailable;
   }
 

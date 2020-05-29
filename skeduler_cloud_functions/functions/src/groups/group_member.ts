@@ -47,8 +47,6 @@ export const deleteGroupMember = functions.firestore
 export const updateGroupMember = functions.firestore
   .document("/groups/{groupDocId}/members/{memberDocId}")
   .onUpdate(async (change, context) => {
-    console.log("started");
-
     const groupDocId: string = context.params.groupDocId;
     const memberDocId: string = context.params.memberDocId;
 
@@ -149,303 +147,166 @@ export const updateGroupMember = functions.firestore
         );
       }
 
-      // alwaysAvailable changed
-
       // times changed
-      {
-        const beforeMember: Member = new Member(
-          change.before.id,
-          beforeData.alwaysAvailable,
-          beforeData.name,
-          beforeData.nickname,
-          beforeData.role,
-          beforeData.timesAvailable,
-          beforeData.timesUnavailable
-        );
+      const member: Member = new Member(
+        change.after.id,
+        afterData.alwaysAvailable,
+        afterData.name,
+        afterData.nickname,
+        afterData.role,
+        afterData.timesAvailable,
+        afterData.timesUnavailable
+      );
 
-        const afterMember: Member = new Member(
-          change.after.id,
-          afterData.alwaysAvailable,
-          afterData.name,
-          afterData.nickname,
-          afterData.role,
-          afterData.timesAvailable,
-          afterData.timesUnavailable
-        );
-
-        if (afterMember.alwaysAvailable) {
-          console.log("member always available");
-
-          // check for changes in unavailableTimes
-          // array remove operation
-          if (
-            beforeMember.timesUnavailable.length >
-            afterMember.timesUnavailable.length
-          ) {
-            console.log("unavailable remove");
-
-            for (let beforeTime of beforeMember.timesUnavailable) {
-              const afterTime:
-                | Time
-                | undefined = afterMember.timesUnavailable.find((time) => {
-                return time.isEqual(beforeTime);
-              });
-
-              if (afterTime == null) {
-                promises.push(
-                  validateTimetablesGridDataList(
-                    groupDocId,
-                    afterMember,
-                    beforeTime,
-                    FirestoreArrayOperation.remove
-                  )
-                );
-              }
-            }
-          }
-          // array union operation
-          else if (
-            beforeMember.timesUnavailable.length <
-            afterMember.timesUnavailable.length
-          ) {
-            console.log("unavailable union");
-
-            for (let afterTime of afterMember.timesUnavailable) {
-              const beforeTime:
-                | Time
-                | undefined = beforeMember.timesUnavailable.find((time) => {
-                return time.isEqual(afterTime);
-              });
-
-              if (beforeTime == null) {
-                promises.push(
-                  validateTimetablesGridDataList(
-                    groupDocId,
-                    afterMember,
-                    afterTime,
-                    FirestoreArrayOperation.union
-                  )
-                );
-              }
-            }
-          }
-        } else {
-          console.log("member not always available");
-
-          // check for changes in availableTimes
-          // array remove operation
-          if (
-            beforeMember.timesAvailable.length >
-            afterMember.timesAvailable.length
-          ) {
-            console.log("available remove");
-
-            for (let beforeTime of beforeMember.timesAvailable) {
-              const afterTime:
-                | Time
-                | undefined = afterMember.timesAvailable.find((time) => {
-                return time.isEqual(beforeTime);
-              });
-
-              if (afterTime == null) {
-                promises.push(
-                  validateTimetablesGridDataList(
-                    groupDocId,
-                    afterMember,
-                    beforeTime,
-                    FirestoreArrayOperation.remove
-                  )
-                );
-              }
-            }
-          }
-          // array union operation
-          else if (
-            beforeMember.timesAvailable.length <
-            afterMember.timesAvailable.length
-          ) {
-            console.log("available union");
-
-            for (let afterTime of afterMember.timesAvailable) {
-              const beforeTime:
-                | Time
-                | undefined = beforeMember.timesAvailable.find((time) => {
-                return time.isEqual(afterTime);
-              });
-
-              if (beforeTime == null) {
-                promises.push(
-                  validateTimetablesGridDataList(
-                    groupDocId,
-                    afterMember,
-                    afterTime,
-                    FirestoreArrayOperation.union
-                  )
-                );
-              }
-            }
-          }
-        }
-      }
+      promises.push(validateTimetablesGridDataList(groupDocId, member));
 
       return Promise.all(promises);
     }
   });
 
-enum FirestoreArrayOperation {
-  union,
-  remove,
-}
-
 async function validateTimetablesGridDataList(
   groupDocId: string,
-  member: Member,
-  time: Time,
-  operation: FirestoreArrayOperation
+  member: Member
 ): Promise<any> {
-  console.log("validate grid data list");
-
-  if (groupDocId == null || member == null || time == null) {
+  if (groupDocId == null || member == null) {
     return null;
   } else {
-    const groupDocRef: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData> = admin
+    return await admin
       .firestore()
       .collection("groups")
       .doc(groupDocId)
-      .collection("timetables");
+      .collection("timetables")
+      .get()
+      .then((timetables) => {
+        const promises: Promise<any>[] = [];
 
-    return await groupDocRef.get().then((timetables) => {
-      const promises: Promise<any>[] = [];
+        // iterate through each timetable document
+        for (const timetableDoc of timetables.docs) {
+          let tmpGridDataList: TimetableGridData[] = [];
 
-      // iterate through each timetable document
-      for (const timetableDoc of timetables.docs) {
-        let tmpGridDataList: TimetableGridData[] = [];
+          // populate tmpGridDataList
+          for (const gridData of timetableDoc.data().gridDataList) {
+            tmpGridDataList.push(
+              new TimetableGridData(
+                gridData.available,
+                gridData.coord.day,
+                gridData.coord.time.startTime.toDate(),
+                gridData.coord.time.endTime.toDate(),
+                gridData.coord.custom,
+                gridData.member.docId,
+                gridData.member.display,
+                gridData.subject.docId,
+                gridData.subject.display
+              )
+            );
+          }
 
-        // populate tmpGridDataList
-        for (const gridData of timetableDoc.data().gridDataList) {
-          tmpGridDataList.push(
-            new TimetableGridData(
-              gridData.available,
-              gridData.coord.day,
-              gridData.coord.time.startTime.toDate(),
-              gridData.coord.time.endTime.toDate(),
-              gridData.coord.custom,
-              gridData.member.docId,
-              gridData.member.display,
-              gridData.subject.docId,
-              gridData.subject.display
-            )
-          );
-        }
+          // iterate through tmpGridDataList
+          for (const tmpGridData of tmpGridDataList) {
+            // if gridData has member
+            if (
+              tmpGridData.member.docId != null &&
+              tmpGridData.member.docId.trim() != "" &&
+              tmpGridData.member.docId == member.docId
+            ) {
+              // new grid data
+              let newGridData: TimetableGridData = TimetableGridData.from(
+                tmpGridData
+              );
 
-        // iterate through tmpGridDataList
-        for (const tmpGridData of tmpGridDataList) {
-          let newGridData: TimetableGridData = TimetableGridData.from(
-            tmpGridData
-          );
+              // get memberTimes
+              const memberTimes: Time[] = member.alwaysAvailable
+                ? member.timesUnavailable
+                : member.timesAvailable;
 
-          let timetableTimes: Time[];
-          let memberIsAvailable: boolean;
+              // generate timetableTimes
+              const timetableTimes: Time[] = Time.generateTimes(
+                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                [tmpGridData.coord.day],
+                new Time(
+                  admin.firestore.Timestamp.fromDate(
+                    tmpGridData.coord.time.startTime
+                  ),
+                  admin.firestore.Timestamp.fromDate(
+                    tmpGridData.coord.time.endTime
+                  )
+                ),
+                timetableDoc.data().startDate.toDate(),
+                timetableDoc.data().endDate.toDate()
+              );
 
-          // generate timetableTimes
-          timetableTimes = Time.generateTimes(
-            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-            [tmpGridData.coord.day],
-            new Time(
-              admin.firestore.Timestamp.fromDate(
-                tmpGridData.coord.time.startTime
-              ),
-              admin.firestore.Timestamp.fromDate(tmpGridData.coord.time.endTime)
-            ),
-            timetableDoc.data().startDate.toDate(),
-            timetableDoc.data().endDate.toDate()
-          );
+              // set default availability of member
+              let memberIsAvailable: boolean = true;
 
-          // if gridData has member
-          if (
-            tmpGridData.member.docId != null &&
-            tmpGridData.member.docId.trim() != ""
-          ) {
-            // set default availability of member
-            memberIsAvailable = true;
+              // loop through each timetableTime
+              timetableTimesLoop: for (const timetableTime of timetableTimes) {
+                let availableTimeFound: boolean = false;
 
-            let availableTimeOnSameDay: boolean = false;
-
-            // loop through each timetableTime
-            timetableTimesLoop: for (const timetableTime of timetableTimes) {
-              // loop through each memberTime
-              // loop through each memberTime to find time on same date
-              if (timetableTime.sameDateAs(time)) {
-                availableTimeOnSameDay = true;
-
-                if (operation == FirestoreArrayOperation.union) {
-                  // if member is always available, see unavailable times
-                  // if timetableTime is within unavailable times, result is false
-                  if (
-                    member.alwaysAvailable &&
-                    !timetableTime.notWithinTimeOf(time)
-                  ) {
-                    memberIsAvailable = false;
-                    break timetableTimesLoop;
+                memberTimesLoop: for (const memberTime of memberTimes) {
+                  // if member is always available
+                  if (member.alwaysAvailable) {
+                    // check unavailable times
+                    // if timetableTime is within unavailable times, member is not available
+                    if (!timetableTime.notWithinDateTimeOf(memberTime)) {
+                      memberIsAvailable = false;
+                      break timetableTimesLoop;
+                    }
                   }
-
-                  // if member is not always available, see available times
-                  // if timetableTime is not within available times, result is false
-                  if (
-                    !member.alwaysAvailable &&
-                    !timetableTime.withinTimeOf(time)
-                  ) {
-                    memberIsAvailable = false;
-                    break timetableTimesLoop;
+                  // else if member is not always available
+                  else if (!member.alwaysAvailable) {
+                    // check available times
+                    // if timetableTime is within available times, member is available
+                    if (timetableTime.withinDateTimeOf(memberTime)) {
+                      availableTimeFound = true;
+                      break memberTimesLoop;
+                    }
                   }
-                } else if (operation == FirestoreArrayOperation.remove) {
+                }
+
+                if (!member.alwaysAvailable && !availableTimeFound) {
                   memberIsAvailable = false;
+                  break timetableTimesLoop;
                 }
               }
-            }
 
-            if (availableTimeOnSameDay) {
               // update [available] in newGridData
-              if (memberIsAvailable) {
-                newGridData.available = true;
-              } else {
-                newGridData.available = false;
-              }
+              newGridData.available = memberIsAvailable;
 
-              // remove old gridData in gridDataList
-              promises.push(
-                admin
-                  .firestore()
-                  .collection("groups")
-                  .doc(groupDocId)
-                  .collection("timetables")
-                  .doc(timetableDoc.id)
-                  .update({
-                    gridDataList: admin.firestore.FieldValue.arrayRemove(
-                      tmpGridData.asFirestoreMap()
-                    ),
-                  })
-                  .then(() => {
-                    // union new gridData in gridDataList
-                    return admin
-                      .firestore()
-                      .collection("groups")
-                      .doc(groupDocId)
-                      .collection("timetables")
-                      .doc(timetableDoc.id)
-                      .update({
-                        gridDataList: admin.firestore.FieldValue.arrayUnion(
-                          newGridData.asFirestoreMap()
-                        ),
-                      });
-                  })
-              );
+              if (tmpGridData.notEqual(newGridData)) {
+                // remove old gridData in gridDataList
+                promises.push(
+                  admin
+                    .firestore()
+                    .collection("groups")
+                    .doc(groupDocId)
+                    .collection("timetables")
+                    .doc(timetableDoc.id)
+                    .update({
+                      gridDataList: admin.firestore.FieldValue.arrayRemove(
+                        tmpGridData.asFirestoreMap()
+                      ),
+                    })
+                    .then(async () => {
+                      // union new gridData in gridDataList
+                      return await admin
+                        .firestore()
+                        .collection("groups")
+                        .doc(groupDocId)
+                        .collection("timetables")
+                        .doc(timetableDoc.id)
+                        .update({
+                          gridDataList: admin.firestore.FieldValue.arrayUnion(
+                            newGridData.asFirestoreMap()
+                          ),
+                        });
+                    })
+                );
+              }
             }
           }
         }
-      }
 
-      return Promise.all(promises);
-    });
+        return Promise.all(promises);
+      });
   }
 }
