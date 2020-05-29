@@ -2,6 +2,8 @@ import 'package:intl/intl.dart';
 import 'package:skeduler/models/firestore/time.dart';
 
 class Schedule {
+  bool _available;
+
   Weekday _day;
   DateTime _startTime;
   DateTime _endTime;
@@ -11,21 +13,24 @@ class Schedule {
   String _subject;
 
   Schedule({
+    bool available,
     Weekday day,
     DateTime startTime,
     DateTime endTime,
     String custom,
     String member,
     String subject,
-  })  : this._day = day,
+  })  : this._available = available,
+        this._day = day,
         this._startTime = startTime,
         this._endTime = endTime,
         this._custom = custom,
         this._member = member,
         this._subject = subject;
 
+  bool get available => this._available;
   DateTime get date => this._startTime;
-  String get dayStr => this._day == null ? '' : getWeekdayShortStr(this._day);
+  String get dayStr => this._day == null ? '' : getWeekdayStr(this._day);
   String get monthStr =>
       this._startTime == null ? '' : DateFormat('MMMM').format(this._startTime);
   String get dateStr => this._startTime == null

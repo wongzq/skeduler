@@ -38,6 +38,7 @@ class ScheduleView extends StatelessWidget {
               scheduleTimes.forEach((scheduleTime) {
                 schedules.add(
                   Schedule(
+                    available: gridData.available,
                     day: gridData.coord.day,
                     startTime: scheduleTime.startTime,
                     endTime: scheduleTime.endTime,
@@ -73,7 +74,8 @@ class ScheduleView extends StatelessWidget {
               )
             : ListView.builder(
                 controller: ScrollController(),
-                physics: AlwaysScrollableScrollPhysics(),
+                physics: BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics()),
                 scrollDirection: Axis.vertical,
                 itemCount: schedules.length,
                 itemBuilder: (context, index) {

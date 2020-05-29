@@ -105,7 +105,7 @@ class AvailabilityListTile extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(7.5),
                     child: Text('to'),
                   ),
                   Container(

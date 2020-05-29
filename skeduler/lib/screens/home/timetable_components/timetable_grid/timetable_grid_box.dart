@@ -8,6 +8,7 @@ import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/models/firestore/user.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_grid/timetable_switch_dialog.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 enum GridBoxType { header, content, switchBox, axisBox, placeholderBox }
 
@@ -297,96 +298,132 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
       builder: (context, _, __) {
         return _gridData.dragData == null || _gridData.dragData.isEmpty
             ? _buildGridBox(constraints)
-            : LongPressDraggable<TimetableDragData>(
-                maxSimultaneousDrags: _editMode.dragSubjectAndMember &&
-                        _gridData.dragData.isNotEmpty
-                    ? 1
-                    : _editMode.dragSubjectOnly &&
-                            _gridData.dragData.subject.isNotEmpty
-                        ? 1
-                        : _editMode.dragMemberOnly &&
-                                _gridData.dragData.member.isNotEmpty
+            : GestureDetector(
+                onTap: _gridData.available
+                    ? null
+                    : () async {
+                        await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return SimpleAlertDialog(
+                                context: context,
+                                contentDisplay:
+                                    '${_gridData.dragData.member.display} is not available at this time',
+                                cancelDisplay: 'REMOVE',
+                                cancelFunction: () {
+                                  Navigator.of(context).maybePop();
+                                  _ttbStatus.edit.gridDataList.push(
+                                    TimetableGridData(
+                                      coord: _gridData.coord,
+                                      dragData: TimetableDragSubjectMember(
+                                        subject: _gridData.dragData.subject,
+                                      ),
+                                      available: true,
+                                    ),
+                                  );
+                                  _ttbStatus.update();
+                                },
+                                confirmDisplay: 'KEEP',
+                                confirmFunction: () {
+                                  Navigator.of(context).maybePop();
+                                },
+                              );
+                            });
+                      },
+                child: !_gridData.available
+                    ? _buildGridBox(constraints)
+                    : LongPressDraggable<TimetableDragData>(
+                        maxSimultaneousDrags: _editMode.dragSubjectAndMember &&
+                                _gridData.dragData.isNotEmpty
                             ? 1
-                            : 0,
-                data: _editMode.dragSubjectAndMember
-                    ? _gridData.dragData
-                    : _editMode.dragSubjectOnly
-                        ? TimetableDragSubject(
-                            docId: _gridData.dragData.subject.docId,
-                            display: _gridData.dragData.subject.display,
-                          )
-                        : _editMode.dragMemberOnly
-                            ? TimetableDragMember(
-                                docId: _gridData.dragData.member.docId,
-                                display: _gridData.dragData.member.display,
-                              )
-                            : null,
-                feedback: _buildGridBox(constraints, isFeedback: true),
-                child: _buildGridBox(constraints),
-                onDragStarted: () {
-                  if (_editMode.editing) {
-                    _showTrace = true;
-                    _editMode.binVisible = true;
-                    _editMode.isDragging = true;
-                    _editMode.isDraggingData = _gridData.dragData;
+                            : _editMode.dragSubjectOnly &&
+                                    _gridData.dragData.subject.isNotEmpty
+                                ? 1
+                                : _editMode.dragMemberOnly &&
+                                        _gridData.dragData.member.isNotEmpty
+                                    ? 1
+                                    : 0,
+                        data: _editMode.dragSubjectAndMember
+                            ? _gridData.dragData
+                            : _editMode.dragSubjectOnly
+                                ? TimetableDragSubject(
+                                    docId: _gridData.dragData.subject.docId,
+                                    display: _gridData.dragData.subject.display,
+                                  )
+                                : _editMode.dragMemberOnly
+                                    ? TimetableDragMember(
+                                        docId: _gridData.dragData.member.docId,
+                                        display:
+                                            _gridData.dragData.member.display,
+                                      )
+                                    : null,
+                        feedback: _buildGridBox(constraints, isFeedback: true),
+                        child: _buildGridBox(constraints),
+                        onDragStarted: () {
+                          if (_editMode.editing) {
+                            _showTrace = true;
+                            _editMode.binVisible = true;
+                            _editMode.isDragging = true;
+                            _editMode.isDraggingData = _gridData.dragData;
 
-                    if (_gridData.dragData.hasSubjectAndMember) {
-                      if (_editMode.dragSubjectAndMember) {
-                        _ttbStatus.edit.gridDataList.pop(_gridData);
-                      } else if (_editMode.dragSubjectOnly) {
-                        _ttbStatus.edit.gridDataList.push(
-                          TimetableGridData(
-                            coord: _gridData.coord,
-                            dragData: TimetableDragSubjectMember(
-                              member: _gridData.dragData.member,
-                            ),
-                            available: true,
-                          ),
-                        );
-                      } else if (_editMode.dragMemberOnly) {
-                        _ttbStatus.edit.gridDataList.push(
-                          TimetableGridData(
-                            coord: _gridData.coord,
-                            dragData: TimetableDragSubjectMember(
-                              subject: _gridData.dragData.subject,
-                            ),
-                            available: true,
-                          ),
-                        );
-                      }
-                    } else if (_gridData.dragData.hasSubjectOnly) {
-                      if (_editMode.dragSubject) {
-                        _ttbStatus.edit.gridDataList.pop(_gridData);
-                      } else {
-                        Fluttertoast.showToast(
-                            msg: 'Dragging subject is disabled');
-                      }
-                    } else if (_gridData.dragData.hasMemberOnly) {
-                      if (_editMode.dragMember) {
-                        _ttbStatus.edit.gridDataList.pop(_gridData);
-                      } else {
-                        Fluttertoast.showToast(
-                            msg: 'Dragging member is disabled');
-                      }
-                    }
-                  }
-                },
-                onDragCompleted: () {
-                  if (_editMode.editing) {
-                    _showTrace = false;
-                    _editMode.binVisible = false;
-                    _editMode.isDragging = false;
-                    _editMode.isDraggingData = null;
-                  }
-                },
-                onDraggableCanceled: (_, __) {
-                  if (_editMode.editing) {
-                    _showTrace = false;
-                    _editMode.binVisible = false;
-                    _editMode.isDragging = false;
-                    _editMode.isDraggingData = null;
-                  }
-                },
+                            if (_gridData.dragData.hasSubjectAndMember) {
+                              if (_editMode.dragSubjectAndMember) {
+                                _ttbStatus.edit.gridDataList.pop(_gridData);
+                              } else if (_editMode.dragSubjectOnly) {
+                                _ttbStatus.edit.gridDataList.push(
+                                  TimetableGridData(
+                                    coord: _gridData.coord,
+                                    dragData: TimetableDragSubjectMember(
+                                      member: _gridData.dragData.member,
+                                    ),
+                                    available: true,
+                                  ),
+                                );
+                              } else if (_editMode.dragMemberOnly) {
+                                _ttbStatus.edit.gridDataList.push(
+                                  TimetableGridData(
+                                    coord: _gridData.coord,
+                                    dragData: TimetableDragSubjectMember(
+                                      subject: _gridData.dragData.subject,
+                                    ),
+                                    available: true,
+                                  ),
+                                );
+                              }
+                            } else if (_gridData.dragData.hasSubjectOnly) {
+                              if (_editMode.dragSubject) {
+                                _ttbStatus.edit.gridDataList.pop(_gridData);
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: 'Dragging subject is disabled');
+                              }
+                            } else if (_gridData.dragData.hasMemberOnly) {
+                              if (_editMode.dragMember) {
+                                _ttbStatus.edit.gridDataList.pop(_gridData);
+                              } else {
+                                Fluttertoast.showToast(
+                                    msg: 'Dragging member is disabled');
+                              }
+                            }
+                          }
+                        },
+                        onDragCompleted: () {
+                          if (_editMode.editing) {
+                            _showTrace = false;
+                            _editMode.binVisible = false;
+                            _editMode.isDragging = false;
+                            _editMode.isDraggingData = null;
+                          }
+                        },
+                        onDraggableCanceled: (_, __) {
+                          if (_editMode.editing) {
+                            _showTrace = false;
+                            _editMode.binVisible = false;
+                            _editMode.isDragging = false;
+                            _editMode.isDraggingData = null;
+                          }
+                        },
+                      ),
               );
       },
     );
@@ -606,6 +643,7 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     }
                   });
                 }
+
                 return returnGridData ??
                     TimetableGridData(
                       coord: widget.coord,
