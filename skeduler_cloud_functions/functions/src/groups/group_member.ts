@@ -261,15 +261,6 @@ async function validateTimetablesGridDataList(
                           // check unavailable times
                           // if timetableTime is within unavailable times, member is not available
                           if (!timetableTime.notWithinDateTimeOf(memberTime)) {
-                            console.log(
-                              timetableTime.startDate +
-                                " " +
-                                timetableTime.endDate +
-                                "\nunavailable at\n" +
-                                memberTime.startDate +
-                                " " +
-                                memberTime.endDate
-                            );
                             memberIsAvailable = false;
                             break timetableTimesLoop;
                           }
@@ -279,15 +270,6 @@ async function validateTimetablesGridDataList(
                           // check available times
                           // if timetableTime is within available times, member is available
                           if (timetableTime.withinDateTimeOf(memberTime)) {
-                            console.log(
-                              timetableTime.startDate +
-                                " " +
-                                timetableTime.endDate +
-                                "\navailable at\n" +
-                                memberTime.startDate +
-                                " " +
-                                memberTime.endDate
-                            );
                             availableTimeFound = true;
                             break memberTimesLoop;
                           }
@@ -295,13 +277,6 @@ async function validateTimetablesGridDataList(
                       }
 
                       if (!member.alwaysAvailable && !availableTimeFound) {
-                        console.log(
-                          "could not find time for " +
-                            timetableTime.startDate +
-                            " " +
-                            timetableTime.endDate
-                        );
-
                         memberIsAvailable = false;
                         break timetableTimesLoop;
                       }
@@ -311,10 +286,6 @@ async function validateTimetablesGridDataList(
                     newGridData.available = memberIsAvailable;
 
                     if (tmpGridData.notEqual(newGridData)) {
-                      console.log("changed");
-                      console.log(tmpGridData);
-                      console.log(newGridData);
-
                       // remove old gridData in gridDataList
                       promises.push(
                         admin
