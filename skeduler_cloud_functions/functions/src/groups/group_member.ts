@@ -75,80 +75,83 @@ export const updateGroupMember = functions.firestore
         );
       }
 
-      // check nickname changed
-      if (beforeData.nickname != afterData.nickname) {
-        promises.push(
-          groupDocRef
-            .collection("timetables")
-            .get()
-            .then(async (timetablesSnap) => {
-              const gridDataPromises: Promise<any>[] = [];
+      promises.push(
+        validateTimetablesGridDataList(groupDocId, memberDocId).then(
+          async () => {
+            // check nickname changed
+            if (beforeData.nickname == afterData.nickname) {
+              return null;
+            } else {
+              return await groupDocRef
+                .collection("timetables")
+                .get()
+                .then(async (timetablesSnap) => {
+                  const gridDataPromises: Promise<any>[] = [];
 
-              timetablesSnap.forEach(async (timetableDocSnap) => {
-                const gridDataList: any[] = timetableDocSnap.data()
-                  .gridDataList;
+                  timetablesSnap.forEach(async (timetableDocSnap) => {
+                    const gridDataList: any[] = timetableDocSnap.data()
+                      .gridDataList;
 
-                // find corresponding gridData
-                gridDataList.forEach((gridData) => {
-                  if (gridData.member.docId == change.before.id) {
-                    const tmpGridData: TimetableGridData = new TimetableGridData(
-                      gridData.available,
-                      gridData.coord.day,
-                      gridData.coord.time.startTime,
-                      gridData.coord.time.endTime,
-                      gridData.coord.custom,
-                      gridData.member.docId,
-                      gridData.member.display,
-                      gridData.subject.docId,
-                      gridData.subject.display
-                    );
+                    // find corresponding gridData
+                    gridDataList.forEach((gridData) => {
+                      if (gridData.member.docId == change.before.id) {
+                        const tmpGridData: TimetableGridData = new TimetableGridData(
+                          gridData.available,
+                          gridData.coord.day,
+                          gridData.coord.time.startTime,
+                          gridData.coord.time.endTime,
+                          gridData.coord.custom,
+                          gridData.member.docId,
+                          gridData.member.display,
+                          gridData.subject.docId,
+                          gridData.subject.display
+                        );
 
-                    const newGridData: TimetableGridData = new TimetableGridData(
-                      gridData.available,
-                      gridData.coord.day,
-                      gridData.coord.time.startTime,
-                      gridData.coord.time.endTime,
-                      gridData.coord.custom,
-                      gridData.member.docId,
-                      afterData.nickname,
-                      gridData.subject.docId,
-                      gridData.subject.display
-                    );
+                        const newGridData: TimetableGridData = new TimetableGridData(
+                          gridData.available,
+                          gridData.coord.day,
+                          gridData.coord.time.startTime,
+                          gridData.coord.time.endTime,
+                          gridData.coord.custom,
+                          gridData.member.docId,
+                          afterData.nickname,
+                          gridData.subject.docId,
+                          gridData.subject.display
+                        );
 
-                    // remove previous gridData
-                    gridDataPromises.push(
-                      groupDocRef
-                        .collection("timetables")
-                        .doc(timetableDocSnap.id)
-                        .update({
-                          gridDataList: admin.firestore.FieldValue.arrayRemove(
-                            tmpGridData.asFirestoreMap()
-                          ),
-                        })
-                    );
+                        // remove previous gridData
+                        gridDataPromises.push(
+                          groupDocRef
+                            .collection("timetables")
+                            .doc(timetableDocSnap.id)
+                            .update({
+                              gridDataList: admin.firestore.FieldValue.arrayRemove(
+                                tmpGridData.asFirestoreMap()
+                              ),
+                            })
+                        );
 
-                    // add updated gridData
-                    gridDataPromises.push(
-                      groupDocRef
-                        .collection("timetables")
-                        .doc(timetableDocSnap.id)
-                        .update({
-                          gridDataList: admin.firestore.FieldValue.arrayUnion(
-                            newGridData.asFirestoreMap()
-                          ),
-                        })
-                    );
-                  }
+                        // add updated gridData
+                        gridDataPromises.push(
+                          groupDocRef
+                            .collection("timetables")
+                            .doc(timetableDocSnap.id)
+                            .update({
+                              gridDataList: admin.firestore.FieldValue.arrayUnion(
+                                newGridData.asFirestoreMap()
+                              ),
+                            })
+                        );
+                      }
+                    });
+                  });
+
+                  return Promise.all(gridDataPromises);
                 });
-              });
-
-              return Promise.all(gridDataPromises);
-            })
-        );
-      }
-
-      // times changed
-      promises.push(validateTimetablesGridDataList(groupDocId, memberDocId));
+            }
+          }
+        )
+      );
 
       return Promise.all(promises);
     }
@@ -176,7 +179,7 @@ async function validateTimetablesGridDataList(
         } else {
           const member: Member = new Member(
             memberDoc.id,
-            memberDocData.available,
+            memberDocData.alwaysAvailable,
             memberDocData.name,
             memberDocData.nickname,
             memberDocData.role,
