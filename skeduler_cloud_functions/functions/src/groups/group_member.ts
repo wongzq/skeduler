@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import { TimetableGridData, Time, Member } from "../models/classes";
+import { TimetableGridData, Time, Member } from "../models/custom_classes";
 
 export const createGroupMember = functions.firestore
   .document("/groups/{groupDocId}/members/{memberDocId}")
