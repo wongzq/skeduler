@@ -16,16 +16,21 @@ class DateSelector extends StatefulWidget {
 
   final ValueGetter<List<Month>> valGetMonths;
 
+  final DateTime initialStartDate;
+  final DateTime initialEndDate;
+
   DateSelector({
     Key key,
     @required this.context,
     @required this.type,
-    @required this.valSetStartDate,
-    @required this.valSetEndDate,
-    @required this.valGetStartDate,
-    @required this.valGetEndDate,
-    @required this.valSetValidDate,
-    @required this.valGetMonths,
+    this.valSetStartDate,
+    this.valSetEndDate,
+    this.valGetStartDate,
+    this.valGetEndDate,
+    this.valSetValidDate,
+    this.valGetMonths,
+    this.initialStartDate,
+    this.initialEndDate,
   }) : super(key: key);
 
   @override
@@ -69,15 +74,21 @@ class _DateSelectorState extends State<DateSelector> {
 
   @override
   void initState() {
-    _defaultStartDate = getFirstDayOfStartMonth(widget.valGetMonths());
-    _defaultEndDate = getLastDayOfLastMonth(widget.valGetMonths());
+    _defaultStartDate = widget.valGetMonths == null
+        ? DateTime.now().add(Duration(days: -30))
+        : getFirstDayOfStartMonth(widget.valGetMonths());
+    _defaultEndDate = widget.valGetMonths == null
+        ? DateTime.now().add(Duration(days: 365))
+        : getLastDayOfLastMonth(widget.valGetMonths());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _startDate = widget.valGetStartDate();
-    _endDate = widget.valGetEndDate();
+    _startDate =
+        widget.valGetStartDate == null ? null : widget.valGetStartDate();
+    _endDate = widget.valGetEndDate == null ? null : widget.valGetEndDate();
+    
     if (_startDate != null) {
       _startDateStr = DateFormat('yyyy/MM/dd').format(_startDate);
     }
@@ -105,9 +116,9 @@ class _DateSelectorState extends State<DateSelector> {
               firstDate: _defaultStartDate,
               lastDate: _defaultEndDate,
               initialDate: widget.type == DateSelectorType.start
-                  ? _startDate ?? _defaultStartDate
+                  ? widget.initialStartDate ?? _startDate ?? _defaultStartDate
                   : widget.type == DateSelectorType.end
-                      ? _endDate ?? _defaultEndDate
+                      ? widget.initialEndDate ?? _endDate ?? _defaultEndDate
                       : DateTime.now(),
             ).then((date) {
               if (date != null) {
@@ -118,6 +129,7 @@ class _DateSelectorState extends State<DateSelector> {
                     _startDateStr = DateFormat('yyyy/MM/dd').format(date);
 
                     if (widget.valSetStartDate != null) {
+                      print('1');
                       widget.valSetStartDate(_startDate);
                     }
                   } else if (widget.type == DateSelectorType.end &&
@@ -126,6 +138,7 @@ class _DateSelectorState extends State<DateSelector> {
                     _endDateStr = DateFormat('yyyy/MM/dd').format(date);
 
                     if (widget.valSetEndDate != null) {
+                      print('2');
                       widget.valSetEndDate(_endDate);
                     }
                   }

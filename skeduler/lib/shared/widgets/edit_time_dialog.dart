@@ -13,7 +13,7 @@ class EditTimeDialog extends StatefulWidget {
 
   const EditTimeDialog({
     Key key,
-    this.contentText = 'Edit Time',
+    this.contentText = 'Time',
     this.initialStartTime,
     this.initialEndTime,
     this.valSetStartTime,

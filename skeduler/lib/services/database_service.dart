@@ -843,7 +843,51 @@ class DatabaseService {
             .updateData({'alwaysAvailable': alwaysAvailable});
   }
 
-  // update [Group][Member]'s available schedule times
+  // add new time in [Group][Member]'s available  or unavailable times
+  Future addGroupMemberTime(
+    String groupDocId,
+    String memberDocId,
+    Time newTime,
+    bool alwaysAvailable,
+  ) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
+    String targetList = alwaysAvailable ? 'timesUnavailable' : 'timesAvailable';
+
+    memberDocId =
+        memberDocId == null || memberDocId.trim() == '' ? userId : memberDocId;
+
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : await groupsCollection
+            .document(groupDocId)
+            .collection('members')
+            .document(memberDocId)
+            .get()
+            .then((member) async {
+            Map<String, Timestamp> timestamp = {
+              'startTime': Timestamp.fromDate(newTime.startTime),
+              'endTime': Timestamp.fromDate(newTime.endTime),
+            };
+
+            // add new times to Firestore
+            return member.exists
+                ? await groupsCollection
+                    .document(groupDocId)
+                    .collection('members')
+                    .document(memberDocId)
+                    .updateData(
+                    {
+                      targetList: FieldValue.arrayUnion([timestamp]),
+                    },
+                  )
+                : null;
+          });
+  }
+
+  // update [Group][Member]'s available or unavailable times
   Future updateGroupMemberTimes(
     String groupDocId,
     String memberDocId,
@@ -876,11 +920,9 @@ class DatabaseService {
 
               // convert [List<Time>] into [List<Map<String, Timestamp>]
               newTimes.forEach((time) {
-                Timestamp startTimestamp = Timestamp.fromDate(time.startTime);
-                Timestamp endTimestamp = Timestamp.fromDate(time.endTime);
                 newTimestamps.add({
-                  'startTime': startTimestamp,
-                  'endTime': endTimestamp,
+                  'startTime': Timestamp.fromDate(time.startTime),
+                  'endTime': Timestamp.fromDate(time.endTime),
                 });
               });
 

@@ -24,9 +24,8 @@ class GroupScreenOptionsAdmin extends StatelessWidget {
       overlayOpacity: 0.8,
       curve: Curves.easeOutCubic,
       animatedIcon: AnimatedIcons.menu_close,
-
-      // Delete group
       children: <SpeedDialChild>[
+        // Delete group
         SpeedDialChild(
           backgroundColor: Colors.red,
           foregroundColor: getFABIconForegroundColor(context),

@@ -14,6 +14,7 @@ import 'package:skeduler/screens/home/timetable_components/timetable_editor.dart
 import 'package:skeduler/screens/home/timetable_components/timetable_screen.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_settings/axis_custom_reorder.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_settings/timetable_settings.dart';
+import 'package:skeduler/shared/widgets/add_availability.dart';
 import 'package:skeduler/shared/widgets/add_subject.dart';
 import 'package:skeduler/shared/widgets/edit_member.dart';
 import 'package:skeduler/shared/widgets/edit_subject.dart';
@@ -160,7 +161,14 @@ class RouteGenerator {
         }
         break;
 
-      case '/mySchedule/scheduleEditor':
+      case '/mySchedule/addAvailability':
+        if (args is RouteArgs) {
+          return CustomTransitionRoute.fadeSlideRight(
+              page: wrapWidget(AddAvailability()));
+        }
+        break;
+
+      case '/mySchedule/availabilityEditor':
         if (args is RouteArgs) {
           return CustomTransitionRoute.fadeSlideRight(
               page: wrapWidget(AvailabilityEditor()));

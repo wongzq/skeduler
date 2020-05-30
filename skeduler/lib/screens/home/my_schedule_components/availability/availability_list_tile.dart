@@ -162,7 +162,7 @@ class AvailabilityListTile extends StatelessWidget {
                               DateTime newEndTime = time.endTime;
 
                               return EditTimeDialog(
-                                contentText: 'Edit schedule time',
+                                contentText: 'Edit time',
                                 initialStartTime: time.startTime,
                                 initialEndTime: time.endTime,
                                 valSetStartTime: (dateTime) =>

@@ -24,8 +24,10 @@ class ScheduleListTile extends StatelessWidget {
   bool _memberIsAvailableAtThisTime(BuildContext context) {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
-    Time scheduleTime =
-        Time(startTime: schedule.startTime, endTime: schedule.endTime);
+    Time scheduleTime = Time(
+      startTime: schedule.startTime,
+      endTime: schedule.endTime,
+    );
 
     List<Time> times = groupStatus.me.alwaysAvailable
         ? groupStatus.me.timesUnavailable
