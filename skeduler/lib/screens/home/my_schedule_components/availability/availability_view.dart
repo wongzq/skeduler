@@ -70,7 +70,7 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                           padding: EdgeInsets.all(10.0),
                           child: Text(
                             alwaysAvailable
-                                ? 'EXCEPT FOR'
+                                ? 'NO EXCEPTIONS'
                                 : 'NO AVAILABLE TIMES',
                             style: TextStyle(
                               color: Colors.grey,
