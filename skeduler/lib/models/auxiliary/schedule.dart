@@ -30,6 +30,8 @@ class Schedule {
 
   bool get available => this._available;
   DateTime get date => this._startTime;
+  DateTime get startTime => this._startTime;
+  DateTime get endTime => this._endTime;
   String get dayStr => this._day == null ? '' : getWeekdayStr(this._day);
   String get monthStr =>
       this._startTime == null ? '' : DateFormat('MMMM').format(this._startTime);
