@@ -59,28 +59,14 @@ class ScheduleListTile extends StatelessWidget {
                   ? Container()
                   : _memberIsAvailableAtThisTime(context)
                       ? Container()
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              schedule.available ? null : Icons.warning,
+                      : Container(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            'You are not available at this time',
+                            style: TextStyle(
                               color: scheduleIsToday ? Colors.red : Colors.red,
                             ),
-                            Container(
-                              padding: EdgeInsets.all(10.0),
-                              child: Text(
-                                'You are not available at this time',
-                                style: TextStyle(
-                                  color:
-                                      scheduleIsToday ? Colors.red : Colors.red,
-                                ),
-                              ),
-                            ),
-                            Icon(
-                              schedule.available ? null : Icons.warning,
-                              color: scheduleIsToday ? Colors.red : Colors.red,
-                            ),
-                          ],
+                          ),
                         ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
