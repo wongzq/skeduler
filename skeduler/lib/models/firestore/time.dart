@@ -181,6 +181,48 @@ String getMonthShortStr(Month month) {
       return '';
   }
 }
+String getMonthStr(Month month) {
+  switch (month) {
+    case Month.jan:
+      return 'January';
+      break;
+    case Month.feb:
+      return 'February';
+      break;
+    case Month.mar:
+      return 'March';
+      break;
+    case Month.apr:
+      return 'April';
+      break;
+    case Month.may:
+      return 'May';
+      break;
+    case Month.jun:
+      return 'June';
+      break;
+    case Month.jul:
+      return 'July';
+      break;
+    case Month.aug:
+      return 'August';
+      break;
+    case Month.sep:
+      return 'September';
+      break;
+    case Month.oct:
+      return 'October';
+      break;
+    case Month.nov:
+      return 'November';
+      break;
+    case Month.dec:
+      return 'December';
+      break;
+    default:
+      return '';
+  }
+}
 
 String getWeekdayShortStr(Weekday weekday) {
   switch (weekday) {

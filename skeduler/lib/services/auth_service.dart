@@ -22,30 +22,67 @@ class AuthService {
   // Function: log in with email & password
   // returns User if successful
   // returns null if unsuccessful
-  Future logInWithEmailAndPassword(String email, String password) async {
+  Future<String> logInWithEmailAndPassword(
+      String email, String password) async {
     try {
-      AuthResult result = await _authService.signInWithEmailAndPassword(
-          email: email, password: password);
-      return _userFromFirebaseUser(result.user);
-    } catch (e) {
+      await _authService.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
       return null;
+    } catch (e) {
+      switch (e.code) {
+        case 'ERROR_INVALID_EMAIL':
+          return 'Email address is invalid';
+          break;
+        case 'ERROR_WRONG_PASSWORD':
+          return 'Password is incorrect';
+          break;
+        case 'ERROR_USER_NOT_FOUND':
+          return 'Email address is invalid';
+          break;
+        case 'ERROR_USER_DISABLED':
+          return 'This account has been disabled';
+          break;
+        case 'ERROR_TOO_MANY_REQUESTS':
+          return 'Too many requests, please try again later';
+          break;
+        case 'ERROR_OPERATION_NOT_ALLOWED':
+          return 'Operation not allowed';
+          break;
+        default:
+          return 'Log in error';
+      }
     }
   }
 
   // Function: sign up with email & password
   // returns User if successful
   // returns null if unsuccessful
-  Future signUpWithEmailAndPassword(
+  Future<String> signUpWithEmailAndPassword(
     String email,
     String password,
   ) async {
     try {
-      AuthResult result = await _authService.createUserWithEmailAndPassword(
+      await _authService.createUserWithEmailAndPassword(
           email: email, password: password);
 
-      return _userFromFirebaseUser(result.user);
-    } catch (e) {
       return null;
+    } catch (e) {
+      switch (e.code) {
+        case 'ERROR_WEAK_PASSWORD':
+          return 'Password is not secure enough';
+          break;
+        case 'ERROR_INVALID_EMAIL':
+          return 'Email address is invalid';
+          break;
+        case 'ERROR_EMAIL_ALREADY_IN_USE':
+          return 'Email is already in use';
+          break;
+        default:
+          return 'Sign up error';
+      }
     }
   }
 

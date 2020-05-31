@@ -11,16 +11,12 @@ import 'package:skeduler/shared/widgets/edit_time_dialog.dart';
 
 class AvailabilityListTile extends StatelessWidget {
   final bool alwaysAvailable;
-  final int index;
   final Time time;
-  final Time prevTime;
 
   AvailabilityListTile({
     Key key,
     @required this.alwaysAvailable,
-    @required this.index,
     @required this.time,
-    @required this.prevTime,
   }) : super(key: key);
 
   @override
@@ -32,31 +28,7 @@ class AvailabilityListTile extends StatelessWidget {
     return Container(
       child: Column(
         children: <Widget>[
-          // Display Month
-          index == 0 ||
-                  (prevTime == null
-                      ? false
-                      : prevTime.startTime.month != time.startTime.month)
-              ? Column(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        (alwaysAvailable ? 'EXCEPT FOR ' : '') +
-                            DateFormat('MMMM')
-                                .format(time.startTime)
-                                .toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-                    ),
-                    Divider(height: 1.0),
-                  ],
-                )
-              : Container(),
-
+          Divider(height: 1.0),
           // Custom List Tile
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

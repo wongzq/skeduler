@@ -4,7 +4,7 @@ import 'package:skeduler/models/auxiliary/schedule.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/models/firestore/timetable.dart';
-import 'package:skeduler/screens/home/my_schedule_components/schedule/schedule_list_tile.dart';
+import 'package:skeduler/screens/home/my_schedule_components/schedule/schedule_month_expansion_tile.dart';
 import 'package:skeduler/services/database_service.dart';
 
 class ScheduleView extends StatelessWidget {
@@ -54,6 +54,17 @@ class ScheduleView extends StatelessWidget {
 
         schedules.sort((a, b) => a.date.compareTo(b.date));
 
+        Map<int, List<Schedule>> schedulesMonths = {};
+
+        for (Schedule schedule in schedules) {
+          if (schedulesMonths.containsKey(schedule.date.month)) {
+            schedulesMonths[schedule.date.month].add(schedule);
+          } else {
+            schedulesMonths[schedule.date.month] = [];
+            schedulesMonths[schedule.date.month].add(schedule);
+          }
+        }
+
         return schedules.length <= 0
             ? Column(
                 children: <Widget>[
@@ -75,21 +86,21 @@ class ScheduleView extends StatelessWidget {
             : ListView.builder(
                 controller: ScrollController(),
                 physics: BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics()),
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
                 scrollDirection: Axis.vertical,
-                itemCount: schedules.length,
+                itemCount: schedulesMonths.length + 1,
                 itemBuilder: (context, index) {
-                  bool scheduleIsToday =
-                      schedules[index].date.year == DateTime.now().year &&
-                          schedules[index].date.month == DateTime.now().month &&
-                          schedules[index].date.day == DateTime.now().day;
+                  int monthIndex = index >= schedulesMonths.length
+                      ? -1
+                      : schedulesMonths.keys.elementAt(index);
 
-                  return ScheduleListTile(
-                    scheduleIsToday: scheduleIsToday,
-                    index: index,
-                    schedule: schedules[index],
-                    prevSchedule: index > 0 ? schedules[index - 1] : null,
-                  );
+                  return index >= schedulesMonths.length
+                      ? SizedBox(height: 100.0)
+                      : ScheduleMonthExpansionTile(
+                          monthIndex: monthIndex,
+                          schedules: schedulesMonths[monthIndex],
+                        );
                 },
               );
       },

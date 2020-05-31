@@ -143,6 +143,8 @@ class EditTimetable extends ChangeNotifier {
 
   TimetableGridDataList _gridDataList;
 
+  bool _hasChanges;
+
   // constructors
   EditTimetable({
     String docId,
@@ -165,7 +167,8 @@ class EditTimetable extends ChangeNotifier {
         this._axisTime = List<Time>.from(axisTime ?? []),
         this._axisCustom = List<String>.from(axisCustom ?? []),
         this._gridDataList =
-            TimetableGridDataList.from(gridDataList ?? TimetableGridDataList());
+            TimetableGridDataList.from(gridDataList ?? TimetableGridDataList()),
+        this._hasChanges = false;
 
   EditTimetable.fromTimetable(Timetable ttb)
       : this(
@@ -218,6 +221,7 @@ class EditTimetable extends ChangeNotifier {
           this._endDate != null
       ? true
       : false;
+  bool get hasChanges => this._hasChanges || this._gridDataList.hasChanges;
 
   // get list as [List<String>]
   List<String> get axisDayStr =>
@@ -235,48 +239,63 @@ class EditTimetable extends ChangeNotifier {
 
   set startDate(DateTime startDate) {
     this._startDate = startDate;
+    this._hasChanges = true;
     notifyListeners();
   }
 
   set endDate(DateTime endDate) {
     this._endDate = endDate;
+    this._hasChanges = true;
     notifyListeners();
   }
 
   set gridAxisOfDay(GridAxis gridAxis) {
     this._gridAxisOfDay = gridAxis;
+    this._hasChanges = true;
     notifyListeners();
   }
 
   set gridAxisOfTime(GridAxis gridAxis) {
     this._gridAxisOfTime = gridAxis;
+    this._hasChanges = true;
     notifyListeners();
   }
 
   set gridAxisOfCustom(GridAxis gridAxis) {
     this._gridAxisOfCustom = gridAxis;
+    this._hasChanges = true;
     notifyListeners();
   }
 
   set axisDay(List<Weekday> axisDay) {
     this._axisDay = axisDay;
     this._axisDay.sort((a, b) => a.index.compareTo(b.index));
+    this._hasChanges = true;
     notifyListeners();
   }
 
   set axisTime(List<Time> axisTime) {
     this._axisTime = axisTime;
     this._axisTime.sort((a, b) => a.startTime.compareTo(b.startTime));
+    this._hasChanges = true;
     notifyListeners();
   }
 
   set axisCustom(List<String> axisCustom) {
     this._axisCustom = axisCustom;
+    this._hasChanges = true;
     notifyListeners();
   }
 
   set gridDataList(TimetableGridDataList gridDataList) {
     this._gridDataList = gridDataList;
+    this._hasChanges = true;
+    notifyListeners();
+  }
+
+  set hasChanges(bool value){
+    this._hasChanges = value;
+    this._gridDataList.hasChanges = value;
     notifyListeners();
   }
 
@@ -296,6 +315,7 @@ class EditTimetable extends ChangeNotifier {
     this.axisTime = axisTime ?? this.axisTime;
     this.axisCustom = axisCustom ?? this.axisCustom;
     this.gridDataList = gridDataList ?? this.gridDataList;
+    this._hasChanges = true;
     notifyListeners();
   }
 
@@ -338,6 +358,8 @@ class EditTimetable extends ChangeNotifier {
         this.gridDataList.push(newGridData);
       }
     }
+    this._hasChanges = true;
+    notifyListeners();
   }
 
   void updateAxisCustomValue({
@@ -356,6 +378,7 @@ class EditTimetable extends ChangeNotifier {
         this.gridDataList.push(tmpGridData);
       }
     }
+    this._hasChanges = true;
     notifyListeners();
   }
 
@@ -454,6 +477,7 @@ class EditTimetable extends ChangeNotifier {
         }
       }
     }
+    this._hasChanges = true;
   }
 }
 

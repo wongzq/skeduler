@@ -92,28 +92,24 @@ class _SignUpState extends State<SignUp> {
                           });
 
                           // check internet connection
-                          bool hasConn = await checkInternetConnection();
-
-                          if (hasConn) {
+                          if (await checkInternetConnection()) {
                             // sign up with email and password
-                            dynamic authResult =
+                            String authResult =
                                 await _authService.signUpWithEmailAndPassword(
                               authInfo.email,
                               authInfo.password,
                             );
 
                             if (authResult == null) {
-                              // display error message
-                              setState(() {
-                                _error = 'Please provide a valid email';
-                              });
-                            } else {
                               // create user information
                               await dbService.setUserData(
                                 authInfo.email,
                                 authInfo.name,
                               );
                             }
+
+                            // display error message
+                            setState(() => _error = authResult ?? '');
                           } else {
                             _error = 'Please check your internet connection';
                           }

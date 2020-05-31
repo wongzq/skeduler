@@ -650,7 +650,7 @@ class DatabaseService {
             .get()
             .then((timetable) async {
             // update timetable metadata to Group
-            await groupsCollection
+            return await groupsCollection
                 .document(groupDocId)
                 .get()
                 .then((group) async {
@@ -662,14 +662,14 @@ class DatabaseService {
               );
 
               if (timetableMetadatas != null) {
-                await groupsCollection.document(groupDocId).updateData(
+                return await groupsCollection.document(groupDocId).updateData(
                     {'timetables': timetableMetadatas}).then((_) async {
                   if (timetable.exists) {
-                    await timetablesRef
+                    return await timetablesRef
                         .document(editTtb.docId)
                         .updateData(firestoreMapFromEditTimetable(editTtb));
                   } else {
-                    await timetablesRef
+                    return await timetablesRef
                         .document(editTtb.docId)
                         .setData(firestoreMapFromEditTimetable(editTtb));
                   }

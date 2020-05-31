@@ -8,16 +8,12 @@ import 'package:skeduler/shared/ui_settings.dart';
 
 class ScheduleListTile extends StatelessWidget {
   final bool scheduleIsToday;
-  final int index;
   final Schedule schedule;
-  final Schedule prevSchedule;
 
   ScheduleListTile({
     Key key,
     @required this.scheduleIsToday,
-    @required this.index,
     @required this.schedule,
-    @required this.prevSchedule,
   }) : super(key: key);
 
   // methods
@@ -53,28 +49,7 @@ class ScheduleListTile extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        // Display Month
-        index == 0 ||
-                (prevSchedule == null
-                    ? false
-                    : index > 0 && schedule.monthStr != prevSchedule.monthStr)
-            ? Column(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      schedule.monthStr.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        letterSpacing: 2.0,
-                      ),
-                    ),
-                  ),
-                  Divider(height: 1.0),
-                ],
-              )
-            : Container(),
-
+        Divider(height: 1.0),
         // Custom List Tile
         Container(
           color: scheduleIsToday ? originTheme.primaryColorLight : null,
@@ -89,22 +64,21 @@ class ScheduleListTile extends StatelessWidget {
                           children: <Widget>[
                             Icon(
                               schedule.available ? null : Icons.warning,
-                              color: scheduleIsToday ? Colors.red : Colors.grey,
+                              color: scheduleIsToday ? Colors.red : Colors.red,
                             ),
                             Container(
                               padding: EdgeInsets.all(10.0),
                               child: Text(
                                 'You are not available at this time',
                                 style: TextStyle(
-                                  color: scheduleIsToday
-                                      ? Colors.red
-                                      : Colors.grey,
+                                  color:
+                                      scheduleIsToday ? Colors.red : Colors.red,
                                 ),
                               ),
                             ),
                             Icon(
                               schedule.available ? null : Icons.warning,
-                              color: scheduleIsToday ? Colors.red : Colors.grey,
+                              color: scheduleIsToday ? Colors.red : Colors.red,
                             ),
                           ],
                         ),
@@ -226,7 +200,6 @@ class ScheduleListTile extends StatelessWidget {
             ],
           ),
         ),
-        Divider(height: 1.0),
       ],
     );
   }

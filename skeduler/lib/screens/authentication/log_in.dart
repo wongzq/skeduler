@@ -78,20 +78,16 @@ class _LogInState extends State<LogIn> {
                           });
 
                           // check internet connection
-                          bool hasConn = await checkInternetConnection();
-                          
-                          if (hasConn) {
+                          if (await checkInternetConnection()) {
                             // log in with email and password
-                            dynamic authResult =
+                            String authResult =
                                 await _authService.logInWithEmailAndPassword(
-                                    authInfo.email, authInfo.password);
+                              authInfo.email,
+                              authInfo.password,
+                            );
 
-                            if (authResult == null) {
-                              // display error message
-                              setState(() {
-                                _error = 'Please check your email or password';
-                              });
-                            }
+                            // display error message
+                            setState(() => _error = authResult ?? '');
                           } else {
                             _error = 'Please check your internet connection';
                           }

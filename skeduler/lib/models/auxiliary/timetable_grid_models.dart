@@ -47,6 +47,11 @@ class TimetableStatus extends ChangeNotifier {
     notifyListeners();
   }
 
+  set editHasChanges(bool hasChanges) {
+    this._edit.hasChanges = hasChanges;
+    notifyListeners();
+  }
+
   // setter methods
   set curr(Timetable ttb) {
     this._curr = ttb;
@@ -184,86 +189,11 @@ class TimetableStatus extends ChangeNotifier {
     );
   }
 
-  // // loop through gridDataList
-  // tmpGridDataList.value.forEach((gridData) {
-  //   // find coord time to be replaced
-  //   if (gridData.coord.time == prev) {
-  //     TimetableGridData tmpGridData = TimetableGridData.from(gridData);
-  //     tmpGridData.coord.time = next;
-
-  //     // if gridData has member
-  //     if (gridData.dragData.member.docId != null &&
-  //         gridData.dragData.member.docId.trim() != '') {
-  //       // find member of this gridData
-  //       Member member = members.firstWhere(
-  //         (groupMember) =>
-  //             groupMember.docId == gridData.dragData.member.docId,
-  //         orElse: () => null,
-  //       );
-
-  //       if (member != null) {
-  //         List<Time> memberTimes = member.alwaysAvailable
-  //             ? member.timesUnavailable
-  //             : member.timesAvailable;
-
-  //         List<Time> newAxisTimes = generateTimes(
-  //           months: List.generate(
-  //             Month.values.length,
-  //             (index) => Month.values[index],
-  //           ),
-  //           weekDays: [gridData.coord.day],
-  //           time: next,
-  //           startDate: this.temp.startDate,
-  //           endDate: this.temp.endDate,
-  //         );
-
-  //         bool allAvailable = true;
-  //         for (Time memberTime in memberTimes) {
-  //           for (Time newAxisTime in newAxisTimes) {
-  //             if (newAxisTime.sameDateAs(memberTime)) {
-  //               // if member is always available, see unavailable times
-  //               // if newAxisTime is within unavailable times, result is false
-  //               if (member.alwaysAvailable &&
-  //                   !newAxisTime.notWithinTimeOf(memberTime)) {
-  //                 allAvailable = false;
-  //                 break;
-  //               }
-
-  //               // if member is not always available, see available times
-  //               // if newAxisTime is not within available times, result is false
-  //               if (!member.alwaysAvailable &&
-  //                   !newAxisTime.withinTimeOf(memberTime)) {
-  //                 allAvailable = false;
-  //                 break;
-  //               }
-  //             }
-  //           }
-  //         }
-
-  //         if (allAvailable) {
-  //           tmpGridData.available = true;
-  //         } else {
-  //           tmpGridData.available = false;
-  //         }
-
-  //         // replace grid data
-  //         this.temp.gridDataList.pop(gridData);
-  //         this.temp.gridDataList.push(tmpGridData);
-  //       }
-  //     }
-  //     // gridData has no member
-  //     else {
-  //       // replace grid data
-  //       this.temp.gridDataList.pop(gridData);
-  //       this.temp.gridDataList.push(tmpGridData);
-  //     }
-  //   }
-  // });
-
   void update() {
     this.curr = this._curr;
     this.edit = this._edit;
     this.temp = this._temp;
+    this.edit.hasChanges = true;
     notifyListeners();
   }
 
@@ -888,18 +818,27 @@ class TimetableGridData {
 class TimetableGridDataList extends ChangeNotifier {
   // properties
   List<TimetableGridData> _value;
+  bool _hasChanges;
 
   // constructors
   TimetableGridDataList({List<TimetableGridData> value})
-      : this._value = value ?? [];
+      : this._value = value ?? [],
+        this._hasChanges = false;
 
   TimetableGridDataList.from(TimetableGridDataList gridDataList)
-      : this._value = List.from(gridDataList._value ?? []);
+      : this._value = List.from(gridDataList._value ?? []),
+        this._hasChanges = false;
 
   // getter methods
   List<TimetableGridData> get value => List.unmodifiable(this._value);
+  bool get hasChanges => this._hasChanges;
 
   // methods
+  set hasChanges(bool value) {
+    this._hasChanges = value;
+    notifyListeners();
+  }
+
   bool push(TimetableGridData newGridData) {
     if (newGridData != null) {
       TimetableGridData toRemove;
@@ -916,6 +855,7 @@ class TimetableGridDataList extends ChangeNotifier {
       }
 
       this._value.add(newGridData);
+      this._hasChanges = true;
       notifyListeners();
       return true;
     } else {
@@ -935,6 +875,7 @@ class TimetableGridDataList extends ChangeNotifier {
 
     if (toRemove != null) {
       this._value.remove(toRemove);
+      this._hasChanges = true;
       notifyListeners();
       return true;
     } else {
@@ -945,6 +886,8 @@ class TimetableGridDataList extends ChangeNotifier {
 
   void popAll() {
     this._value = [];
+    this._hasChanges = true;
+    notifyListeners();
   }
 
   @override
