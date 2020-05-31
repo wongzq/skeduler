@@ -183,49 +183,57 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                     : color;
               }(),
             ),
-            child: Text(
-              widget.gridBoxType == GridBoxType.axisBox
-                  ? () {
-                      switch (widget.gridAxis) {
-                        case GridAxis.x:
-                          return getAxisTypeStr(_axes.xDataAxis);
-                          break;
-                        case GridAxis.y:
-                          return getAxisTypeStr(_axes.yDataAxis);
-                          break;
-                        case GridAxis.z:
-                          return getAxisTypeStr(_axes.zDataAxis);
-                          break;
-                        default:
-                          return widget.initialDisplay ?? '';
-                      }
-                    }()
-                  : widget.gridBoxType == GridBoxType.content &&
-                          _gridData.dragData != null &&
-                          _gridData.dragData.isNotEmpty
-                      ? isFeedback
-                          ? _editMode.dragSubjectAndMember
-                              ? _gridData.dragData.display ??
-                                  widget.initialDisplay
-                              : _editMode.dragSubjectOnly
-                                  ? _gridData.dragData.subject.display ??
-                                      widget.initialDisplay
-                                  : _editMode.dragMemberOnly
-                                      ? _gridData.dragData.member.display ??
-                                          widget.initialDisplay
-                                      : widget.initialDisplay
-                          : _gridData.dragData.display ?? widget.initialDisplay
-                      : widget.initialDisplay,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: widget.gridBoxType == GridBoxType.content
-                    ? Colors.black
-                    : _originTheme.textColor,
-                fontSize: 10.0,
-                fontStyle: FontStyle.normal,
+            child: RotatedBox(
+              quarterTurns: widget.gridBoxType == GridBoxType.axisBox &&
+                      (widget.gridAxis == GridAxis.y ||
+                          widget.gridAxis == GridAxis.z)
+                  ? -1
+                  : 0,
+              child: Text(
+                widget.gridBoxType == GridBoxType.axisBox
+                    ? () {
+                        switch (widget.gridAxis) {
+                          case GridAxis.x:
+                            return getAxisTypeStr(_axes.xDataAxis);
+                            break;
+                          case GridAxis.y:
+                            return getAxisTypeStr(_axes.yDataAxis);
+                            break;
+                          case GridAxis.z:
+                            return getAxisTypeStr(_axes.zDataAxis);
+                            break;
+                          default:
+                            return widget.initialDisplay ?? '';
+                        }
+                      }()
+                    : widget.gridBoxType == GridBoxType.content &&
+                            _gridData.dragData != null &&
+                            _gridData.dragData.isNotEmpty
+                        ? isFeedback
+                            ? _editMode.dragSubjectAndMember
+                                ? _gridData.dragData.display ??
+                                    widget.initialDisplay
+                                : _editMode.dragSubjectOnly
+                                    ? _gridData.dragData.subject.display ??
+                                        widget.initialDisplay
+                                    : _editMode.dragMemberOnly
+                                        ? _gridData.dragData.member.display ??
+                                            widget.initialDisplay
+                                        : widget.initialDisplay
+                            : _gridData.dragData.display ??
+                                widget.initialDisplay
+                        : widget.initialDisplay,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: widget.gridBoxType == GridBoxType.content
+                      ? Colors.black
+                      : _originTheme.textColor,
+                  fontSize: 10.0,
+                  fontStyle: FontStyle.normal,
+                ),
+                maxLines: widget.textOverFlowFade ? 2 : null,
+                overflow: widget.textOverFlowFade ? TextOverflow.fade : null,
               ),
-              maxLines: widget.textOverFlowFade ? 2 : null,
-              overflow: widget.textOverFlowFade ? TextOverflow.fade : null,
             ),
           ),
         ),
