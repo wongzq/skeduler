@@ -21,11 +21,11 @@ class OriginTheme extends ChangeNotifier {
     this._textColor = textColor;
   }
 
-  get primaryColor => this._primaryColor;
-  get primaryColorLight => this._primaryColorLight;
-  get primaryColorDark => this._primaryColorDark;
-  get accentColor => this._accentColor;
-  get textColor => this._textColor;
+  Color get primaryColor => this._primaryColor;
+  Color get primaryColorLight => this._primaryColorLight;
+  Color get primaryColorDark => this._primaryColorDark;
+  Color get accentColor => this._accentColor;
+  Color get textColor => this._textColor;
 
   set primaryColor(Color color) {
     this._primaryColor = color;

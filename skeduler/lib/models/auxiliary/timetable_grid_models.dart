@@ -753,7 +753,7 @@ class TimetableCoord {
   }
 
   @override
-  get hashCode => hash3(day, time, custom);
+  int get hashCode => hash3(day, time, custom);
 }
 
 // --------------------------------------------------------------------------------

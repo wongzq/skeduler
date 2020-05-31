@@ -52,13 +52,16 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        'Always available',
-                        style: alwaysAvailable
-                            ? textStyleBody
-                            : textStyleBody.copyWith(color: Colors.grey),
+                        alwaysAvailable
+                            ? 'Always available'
+                            : 'Only available on',
+                        style: textStyleBody,
                       ),
                       Switch(
                         activeColor: originTheme.accentColor,
+                        inactiveThumbColor: originTheme.accentColor,
+                        inactiveTrackColor:
+                            originTheme.accentColor.withOpacity(0.5),
                         value: alwaysAvailable,
                         onChanged: (value) async {
                           await dbService

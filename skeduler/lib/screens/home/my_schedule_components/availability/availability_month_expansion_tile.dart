@@ -45,6 +45,7 @@ class AvailabilityMonthExpansionTile extends StatelessWidget {
             accentColor: Theme.of(context).primaryTextTheme.bodyText1.color,
           ),
           child: ExpansionTile(
+            key: GlobalKey(),
             initiallyExpanded: DateTime.now().month == monthIndex,
             title: Container(
               padding: EdgeInsets.all(5.0),

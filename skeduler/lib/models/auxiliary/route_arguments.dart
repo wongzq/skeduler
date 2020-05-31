@@ -47,7 +47,7 @@ class RouteArgs extends _RouteArgsTemplate {
 class RouteArgsGroup extends _RouteArgsTemplate {
   RouteArgsGroup({@required Group group}) : super.group(group);
 
-  get group => this._group;
+  Group get group => this._group;
 }
 
 class RouteArgsEditMember extends _RouteArgsTemplate {
@@ -55,7 +55,7 @@ class RouteArgsEditMember extends _RouteArgsTemplate {
     @required Member member,
   }) : super.member(member);
 
-  get member => this._member;
+  Member get member => this._member;
 }
 
 class RouteArgsEditSubject extends _RouteArgsTemplate {
@@ -63,7 +63,7 @@ class RouteArgsEditSubject extends _RouteArgsTemplate {
     @required Subject subject,
   }) : super.subject(subject);
 
-  get subject => this._subject;
+  Subject get subject => this._subject;
 }
 
 class RouteArgsReorderAxisCustom extends _RouteArgsTemplate {
@@ -72,6 +72,6 @@ class RouteArgsReorderAxisCustom extends _RouteArgsTemplate {
     @required void Function(List<String>) valSetAxisCustom,
   }) : super.reorderAxisCustom(axisCustom, valSetAxisCustom);
 
-  get axisCustom => this._axisCustom;
-  get valSetAxisCustom => this._valSetAxisCustom;
+  List<String> get axisCustom => this._axisCustom;
+  void Function(List<String>) get valSetAxisCustom => this._valSetAxisCustom;
 }

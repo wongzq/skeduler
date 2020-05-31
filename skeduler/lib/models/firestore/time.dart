@@ -117,7 +117,7 @@ class Time {
       o is Time && this.startTime == o.startTime && this.endTime == o.endTime;
 
   @override
-  get hashCode => hash2(this.startTime, this.endTime);
+  int get hashCode => hash2(this.startTime, this.endTime);
 
   @override
   String toString() {
