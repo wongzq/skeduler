@@ -30,7 +30,7 @@ class GroupScreenOptionsOwner extends StatelessWidget {
       children: <SpeedDialChild>[
         SpeedDialChild(
           backgroundColor: Colors.red,
-          foregroundColor: getFABIconForegroundColor(context),
+          foregroundColor: Colors.white,
           child: Icon(
             Icons.delete,
             size: 30.0,
@@ -53,7 +53,7 @@ class GroupScreenOptionsOwner extends StatelessWidget {
             child: Text(
               'DELETE',
               style: TextStyle(
-                color: getFABTextColor(context),
+                color: Colors.white,
                 fontSize: 14.0,
                 fontWeight: FontWeight.w400,
                 letterSpacing: 1.5,

@@ -29,7 +29,7 @@ class MembersScreenOptionsAdmin extends StatelessWidget {
             children: <SpeedDialChild>[
               SpeedDialChild(
                 backgroundColor: Colors.red,
-                foregroundColor: getFABIconForegroundColor(context),
+                foregroundColor: Colors.white,
                 child: Icon(
                   Icons.exit_to_app,
                   size: 25.0,
@@ -52,7 +52,7 @@ class MembersScreenOptionsAdmin extends StatelessWidget {
                   child: Text(
                     'EXIT GROUP',
                     style: TextStyle(
-                      color: getFABTextColor(context),
+                      color: Colors.white,
                       fontSize: 14.0,
                       fontWeight: FontWeight.w400,
                       letterSpacing: 1.5,

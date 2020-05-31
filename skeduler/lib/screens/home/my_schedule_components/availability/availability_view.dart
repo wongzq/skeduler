@@ -55,13 +55,25 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                         'only available on',
                         overflow: TextOverflow.fade,
                         style: alwaysAvailable
-                            ? textStyleBody.copyWith(color: Colors.grey)
+                            ? textStyleBody.copyWith(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? Colors.grey.shade400
+                                    : Colors.grey.shade700,
+                              )
                             : textStyleBody,
                       ),
                       Switch(
                         activeColor: originTheme.accentColor,
-                        activeTrackColor: Colors.grey.withOpacity(0.5),
+                        activeTrackColor:
+                            Theme.of(context).brightness == Brightness.light
+                                ? Colors.grey.shade400.withOpacity(0.5)
+                                : Colors.grey.withOpacity(0.5),
                         inactiveThumbColor: originTheme.accentColor,
+                        inactiveTrackColor:
+                            Theme.of(context).brightness == Brightness.light
+                                ? Colors.grey.shade400.withOpacity(0.5)
+                                : Colors.grey.withOpacity(0.5),
                         value: alwaysAvailable,
                         onChanged: (value) async {
                           await dbService
@@ -74,11 +86,16 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                         },
                       ),
                       Text(
-                        'always available',
+                        ' always available',
                         overflow: TextOverflow.fade,
                         style: alwaysAvailable
                             ? textStyleBody
-                            : textStyleBody.copyWith(color: Colors.grey),
+                            : textStyleBody.copyWith(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? Colors.grey.shade400
+                                    : Colors.grey.shade700,
+                              ),
                       ),
                     ],
                   ),
