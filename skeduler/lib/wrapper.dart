@@ -34,15 +34,14 @@ class _WrapperState extends State<Wrapper> {
   //       false;
   // }
 
-  // Map of screens
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthUser>(context);
 
-    return WillPopScope(
-      // onWillPop: Navigator.of(context).canPop() ? null : _onWillPopApp,
-      onWillPop: null,
-      child: user == null ? Authentication() : widget.widget,
-    );
+    return user == null ? Authentication() : widget.widget;
+    // return WillPopScope(
+    //   onWillPop: Navigator.of(context).canPop() ? null : _onWillPopApp,
+    //   child: user == null ? Authentication() : widget.widget,
+    // );
   }
 }

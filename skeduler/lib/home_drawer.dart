@@ -68,7 +68,8 @@ class HomeDrawer extends StatelessWidget {
                   title: Text(_screens[DrawerEnum.dashboard]['title']),
                   selected: _selected == DrawerEnum.dashboard ? true : false,
                   onTap: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.of(context)
+                        .popUntil((route) => !route.navigator.canPop());
                   },
                 ),
               ),
@@ -89,7 +90,8 @@ class HomeDrawer extends StatelessWidget {
                         ),
                   selected: _selected == DrawerEnum.group ? true : false,
                   onTap: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.of(context)
+                        .popUntil((route) => !route.navigator.canPop());
                     Navigator.of(context).pushNamed(
                       '/group',
                       arguments: RouteArgs(),
@@ -107,7 +109,8 @@ class HomeDrawer extends StatelessWidget {
                   title: Text(_screens[DrawerEnum.members]['title']),
                   selected: _selected == DrawerEnum.members ? true : false,
                   onTap: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.of(context)
+                        .popUntil((route) => !route.navigator.canPop());
                     Navigator.of(context).pushNamed(
                       '/members',
                       arguments: RouteArgs(),
@@ -125,7 +128,8 @@ class HomeDrawer extends StatelessWidget {
                   title: Text(_screens[DrawerEnum.subjects]['title']),
                   selected: _selected == DrawerEnum.subjects ? true : false,
                   onTap: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.of(context)
+                        .popUntil((route) => !route.navigator.canPop());
                     Navigator.of(context).pushNamed(
                       '/subjects',
                       arguments: RouteArgs(),
@@ -143,7 +147,8 @@ class HomeDrawer extends StatelessWidget {
                   title: Text(_screens[DrawerEnum.timetable]['title']),
                   selected: _selected == DrawerEnum.timetable ? true : false,
                   onTap: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.of(context)
+                        .popUntil((route) => !route.navigator.canPop());
                     Navigator.of(context).pushNamed(
                       '/timetable',
                       arguments: RouteArgs(),
@@ -161,7 +166,8 @@ class HomeDrawer extends StatelessWidget {
                   title: Text(_screens[DrawerEnum.mySchedule]['title']),
                   selected: _selected == DrawerEnum.mySchedule ? true : false,
                   onTap: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.of(context)
+                        .popUntil((route) => !route.navigator.canPop());
                     Navigator.of(context).pushNamed(
                       '/mySchedule',
                       arguments: RouteArgs(),
@@ -180,7 +186,8 @@ class HomeDrawer extends StatelessWidget {
                   title: Text(_screens[DrawerEnum.settings]['title']),
                   selected: _selected == DrawerEnum.settings ? true : false,
                   onTap: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.of(context)
+                        .popUntil((route) => !route.navigator.canPop());
                     Navigator.of(context).pushNamed(
                       '/settings',
                       arguments: RouteArgs(),
