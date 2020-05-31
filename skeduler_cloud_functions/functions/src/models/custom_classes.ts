@@ -27,12 +27,16 @@ export class Member {
     this.timesAvailable = [];
     this.timesUnavailable = [];
 
-    for (let time of timesAvailable) {
-      this.timesAvailable.push(new Time(time.startTime, time.endTime));
+    if (timesAvailable != null) {
+      for (let time of timesAvailable) {
+        this.timesAvailable.push(new Time(time.startTime, time.endTime));
+      }
     }
 
-    for (let time of timesUnavailable) {
-      this.timesUnavailable.push(new Time(time.startTime, time.endTime));
+    if (timesUnavailable != null) {
+      for (let time of timesUnavailable) {
+        this.timesUnavailable.push(new Time(time.startTime, time.endTime));
+      }
     }
   }
 }

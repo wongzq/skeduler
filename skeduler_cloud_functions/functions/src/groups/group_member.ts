@@ -27,6 +27,7 @@ export const deleteGroupMember = functions.firestore
   .document("/groups/{groupDocId}/members/{memberDocId}")
   .onDelete(async (snapshot, context) => {
     const groupDocId: string = context.params.groupDocId;
+    const memberDocId: string = context.params.memberDocId;
     const memberSnap:
       | FirebaseFirestore.DocumentData
       | undefined = snapshot.data();
@@ -40,6 +41,9 @@ export const deleteGroupMember = functions.firestore
         .doc(groupDocId)
         .update({
           members: admin.firestore.FieldValue.arrayRemove(snapshot.id),
+        })
+        .then(() => {
+          return validateTimetablesGridDataList(groupDocId, memberDocId);
         });
     }
   });
@@ -172,10 +176,89 @@ async function validateTimetablesGridDataList(
       .doc(memberDocId)
       .get()
       .then(async (memberDoc) => {
-        const memberDocData = memberDoc.data();
+        const memberDocData:
+          | FirebaseFirestore.DocumentData
+          | undefined = memberDoc.data();
 
-        if (memberDocData == null) {
-          return null;
+        if (memberDoc.exists == false || memberDocData == null) {
+          return admin
+            .firestore()
+            .collection("groups")
+            .doc(groupDocId)
+            .collection("timetables")
+            .get()
+            .then(async (timetables) => {
+              const promises: Promise<any>[] = [];
+
+              for (const timetableDoc of timetables.docs) {
+                let tmpGridDataList: TimetableGridData[] = [];
+
+                // populate tmpGridDataList
+                for (const gridData of timetableDoc.data().gridDataList) {
+                  tmpGridDataList.push(
+                    new TimetableGridData(
+                      gridData.available,
+                      gridData.coord.day,
+                      gridData.coord.time.startTime.toDate(),
+                      gridData.coord.time.endTime.toDate(),
+                      gridData.coord.custom,
+                      gridData.member.docId,
+                      gridData.member.display,
+                      gridData.subject.docId,
+                      gridData.subject.display
+                    )
+                  );
+                }
+
+                // iterate through tmpGridDataList
+                for (const tmpGridData of tmpGridDataList) {
+                  if (
+                    tmpGridData.member.docId != null &&
+                    tmpGridData.member.docId.trim() != "" &&
+                    tmpGridData.member.docId == memberDocId
+                  ) {
+                    // new grid data
+                    let newGridData: TimetableGridData = TimetableGridData.from(
+                      tmpGridData
+                    );
+
+                    // update [available] in newGridData
+                    newGridData.available = false;
+
+                    if (tmpGridData.notEqual(newGridData)) {
+                      // remove old gridData in gridDataList
+                      promises.push(
+                        admin
+                          .firestore()
+                          .collection("groups")
+                          .doc(groupDocId)
+                          .collection("timetables")
+                          .doc(timetableDoc.id)
+                          .update({
+                            gridDataList: admin.firestore.FieldValue.arrayRemove(
+                              tmpGridData.asFirestoreMap()
+                            ),
+                          })
+                          .then(async () => {
+                            // union new gridData in gridDataList
+                            return await admin
+                              .firestore()
+                              .collection("groups")
+                              .doc(groupDocId)
+                              .collection("timetables")
+                              .doc(timetableDoc.id)
+                              .update({
+                                gridDataList: admin.firestore.FieldValue.arrayUnion(
+                                  newGridData.asFirestoreMap()
+                                ),
+                              });
+                          })
+                      );
+                    }
+                  }
+                }
+              }
+            });
         } else {
           const member: Member = new Member(
             memberDoc.id,
@@ -183,8 +266,8 @@ async function validateTimetablesGridDataList(
             memberDocData.name,
             memberDocData.nickname,
             memberDocData.role,
-            memberDocData.timesAvailable,
-            memberDocData.timesUnavailable
+            memberDocData.timesAvailable ?? [],
+            memberDocData.timesUnavailable ?? []
           );
 
           return await admin
