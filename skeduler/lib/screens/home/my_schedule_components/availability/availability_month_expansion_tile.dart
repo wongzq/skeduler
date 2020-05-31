@@ -42,7 +42,9 @@ class AvailabilityMonthExpansionTile extends StatelessWidget {
         Theme(
           data: Theme.of(context).copyWith(
             dividerColor: Colors.transparent,
-            accentColor: Theme.of(context).primaryTextTheme.bodyText1.color,
+            accentColor: Theme.of(context).brightness == Brightness.light
+                ? Colors.black
+                : Colors.white,
           ),
           child: ExpansionTile(
             key: GlobalKey(),
