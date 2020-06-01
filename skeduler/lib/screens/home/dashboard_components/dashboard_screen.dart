@@ -71,7 +71,7 @@ class DashboardScreen extends StatelessWidget {
                                         me.role == MemberRole.member) {
                                       ttbStatus.reset();
                                       groupStatus.reset();
-                                      groupDocId.value = null;
+                                      groupDocId.value = '';
                                       groupDocId.value = groups[index].docId;
 
                                       Navigator.of(context).pushNamed(

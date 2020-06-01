@@ -19,6 +19,8 @@ class CreateGroup extends StatefulWidget {
 
 class _CreateGroupState extends State<CreateGroup> {
   // properties
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   bool _nameValid = false;
   bool _descValid = true;
 
@@ -43,6 +45,7 @@ class _CreateGroupState extends State<CreateGroup> {
     }
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
@@ -75,16 +78,25 @@ class _CreateGroupState extends State<CreateGroup> {
               color: Colors.white,
             ),
             onPressed: _nameValid && _descValid
-                ? () {
-                    dbService.setGroupData(
+                ? () async {
+                    unfocus();
+
+                    _scaffoldKey.currentState.showSnackBar(
+                        LoadingSnackBar(context, 'Creating group . . .'));
+
+                    await dbService
+                        .createGroup(
                       _groupName,
                       _groupDescription,
                       _groupColorShade,
                       _groupOwnerEmail,
                       _groupOwnerName,
-                    );
-
-                    Navigator.of(context).maybePop();
+                    )
+                        .then((_) {
+                      _scaffoldKey.currentState.hideCurrentSnackBar();
+                      Navigator.of(context)
+                          .popUntil((route) => !route.navigator.canPop());
+                    });
                   }
                 : null,
           ),

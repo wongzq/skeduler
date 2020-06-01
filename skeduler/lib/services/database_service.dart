@@ -195,8 +195,8 @@ class DatabaseService {
   // Setter methods
   // --------------------------------------------------------------------------------
 
-  // set [User] data
-  Future setUserData(String email, String name) async {
+  // create [User]
+  Future createUser(String email, String name) async {
     if (!(await dbCheckInternetConnection())) {
       return null;
     }
@@ -206,8 +206,8 @@ class DatabaseService {
     });
   }
 
-  // set [Group] data
-  Future setGroupData(
+  // create [Group]
+  Future createGroup(
     String name,
     String description,
     ColorShade colorShade,
@@ -220,7 +220,7 @@ class DatabaseService {
 
     return await groupsCollection.document().setData({
       'name': name,
-      'description': description,
+      'description': description ?? '',
       'colorShade': {
         'themeId': colorShade.themeId,
         'shade': colorShade.shadeIndex,
@@ -488,20 +488,9 @@ class DatabaseService {
         ? null
         : await groupsCollection
             .document(groupDocId)
-            .get()
-            .then((groupData) async {
-            if (groupData.exists) {
-              await groupsCollection.document(groupDocId).updateData({
-                'members': FieldValue.arrayRemove([userId])
-              }).then((_) async {
-                await groupsCollection
-                    .document(groupDocId)
-                    .collection('members')
-                    .document(userId)
-                    .delete();
-              });
-            }
-          });
+            .collection('members')
+            .document(userId)
+            .delete();
   }
 
   // --------------------------------------------------------------------------------
@@ -663,7 +652,8 @@ class DatabaseService {
 
               if (timetableMetadatas != null) {
                 return await groupsCollection.document(groupDocId).updateData(
-                    {'timetables': timetableMetadatas}).then((_) async {
+                  {'timetables': timetableMetadatas},
+                ).then((_) async {
                   if (timetable.exists) {
                     return await timetablesRef
                         .document(editTtb.docId)

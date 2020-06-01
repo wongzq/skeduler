@@ -74,8 +74,9 @@ class GroupScreenOptionsOwner extends StatelessWidget {
                             child: TextFormField(
                               autofocus: true,
                               decoration: InputDecoration(
-                                  hintText:
-                                      'type \'${groupStatus.group.name}\' to delete'),
+                                  hintText: groupStatus.group == null
+                                      ? ''
+                                      : 'type \'${groupStatus.group.name}\' to delete'),
                               validator: (value) {
                                 if (value == groupStatus.group.name) {
                                   return null;
@@ -103,14 +104,19 @@ class GroupScreenOptionsOwner extends StatelessWidget {
                           ),
                         ),
                         onPressed: () async {
+                          unfocus();
+
                           if (formKey.currentState.validate()) {
                             await dbService
-                                .deleteGroup(groupStatus.group.docId);
-                            groupStatus.reset();
-                            ttbStatus.reset();
-                            groupDocId.value = null;
-                            Navigator.of(context)
-                                .popUntil((route) => route.isFirst);
+                                .deleteGroup(groupStatus.group.docId)
+                                .then((_) {
+                              Navigator.of(context)
+                                  .popUntil((route) => route.isFirst);
+                            }).then((_) {
+                              groupStatus.reset();
+                              ttbStatus.reset();
+                              groupDocId.value = null;
+                            });
                           }
                         },
                       ),

@@ -1,9 +1,181 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // users
+    match /users/{userID} {
+      allow read: if
+        authenticated();
 
-    match /{document=**} {
-      allow read, write;
+      allow create, update: if
+        authenticated() &&
+        userIsMe() &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() <= 30;
+
+      allow delete: if
+        authenticated() &&
+        userIsMe();
+
+      // user functions
+      function userIsMe() {
+        return userID == request.auth.token.email;
+      }
+    }
+
+    // groups
+    match /groups/{groupID} {
+      allow read: if
+        authenticated();
+
+      allow create: if
+        authenticated();
+
+      allow update: if
+        authenticated() &&
+        isOwnerOrAdmin() &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() <= 30 &&
+        request.resource.data.description is string &&
+        request.resource.data.description.size() <= 100 &&
+        request.resource.data.owner is map &&
+        request.resource.data.owner.name is string &&
+        request.resource.data.owner.email is string &&
+        request.resource.data.owner.name.size() <= 30;
+
+      allow delete: if
+        authenticated() &&
+        isOwner();
+
+      // group > members
+      match /members/{memberID} {
+        allow read: if
+          authenticated() &&
+          isOwnerOrAdminOrMember();
+
+        allow create: if
+          authenticated() &&
+          isOwnerOrAdmin() &&
+          request.resource.data.role is int &&
+          request.resource.data.role >= 0 &&
+          request.resource.data.role <= 4;
+
+        allow update: if
+          authenticated() &&
+          (
+            isOwnerOrAdmin() &&
+            request.resource.data.role is int &&
+            request.resource.data.role >= 0 &&
+            request.resource.data.role <= 4 &&
+            request.resource.data.name is string &&
+            request.resource.data.name.size() <= 30 &&
+            request.resource.data.nickname is string &&
+            request.resource.data.nickname.size() <= 30
+          ) ||
+          (
+            isMember() &&
+            request.resource.data.role == resource.data.role &&
+            request.resource.data.name == resource.data.name &&
+            request.resource.data.nickname == resource.data.nickname &&
+            request.resource.data.role is int &&
+            request.resource.data.role >= 0 &&
+            request.resource.data.role <= 4 &&
+            request.resource.data.name is string &&
+            request.resource.data.name.size() <= 30 &&
+            request.resource.data.nickname is string &&
+            request.resource.data.nickname.size() <= 30
+          );
+
+        allow delete: if
+          authenticated() &&
+          isOwnerOrAdminOrMember();
+      }
+
+      // group > subjects
+      match /subjects/{subjectID} {
+        allow read: if
+          authenticated() &&
+          isOwnerOrAdminOrMember();
+
+        allow create, update: if
+          authenticated() &&
+          isOwnerOrAdmin() &&
+          request.resource.data.name is string &&
+          request.resource.data.name.size() <= 30 &&
+          request.resource.data.nickname is string &&
+          request.resource.data.nickname.size() <= 30;
+
+        allow delete: if
+          authenticated() &&
+          isOwnerOrAdmin();
+      }
+      
+      // group > timetables
+      match /timetables/{timetableID} {
+        allow read: if
+          authenticated() &&
+          isOwnerOrAdminOrMember();
+      
+        allow create, update: if
+          authenticated() &&
+          isOwnerOrAdmin() &&
+          request.resource.data.startDate is timestamp &&
+          request.resource.data.endDate is timestamp &&
+          request.resource.data.axisDay is list &&
+          request.resource.data.axisTime is list &&
+          request.resource.data.axisCustom is list &&
+          request.resource.data.gridAxisOfDay is int &&
+          request.resource.data.gridAxisOfDay >= 0 &&
+          request.resource.data.gridAxisOfDay <= 2 &&
+          request.resource.data.gridAxisOfTime is int &&
+          request.resource.data.gridAxisOfTime >= 0 &&
+          request.resource.data.gridAxisOfTime <= 2 &&
+          request.resource.data.gridAxisOfCustom is int &&
+          request.resource.data.gridAxisOfCustom >= 0 &&
+          request.resource.data.gridAxisOfCustom <= 2;
+
+        allow delete: if
+          authenticated() &&
+          isOwnerOrAdmin();
+      }
+
+      // group functions
+      function isOwnerOrAdmin() {
+        return isOwner() || isAdmin();
+      }
+
+      function isOwnerOrAdminOrMember() {
+        return isOwner() || isAdmin() || isMember();
+      }
+
+      function isOwner() {
+        return
+          isInGroup() &&
+          (
+            resource.data.owner.email == request.auth.token.email ||
+            get(/databases/$(database)/documents/groups/$(groupID)/members/$(request.auth.token.email)).data.role == 4
+          );
+      }
+
+      function isAdmin() {
+        return
+          isInGroup() &&
+          get(/databases/$(database)/documents/groups/$(groupID)/members/$(request.auth.token.email)).data.role == 3;
+      }
+
+      function isMember() {
+        return
+          isInGroup() &&
+          get(/databases/$(database)/documents/groups/$(groupID)/members/$(request.auth.token.email)).data.role == 2;
+      }
+
+      function isInGroup() {
+        return exists(/databases/$(database)/documents/groups/$(groupID)/members/$(request.auth.token.email));
+      }
+    }
+
+    // functions
+    function authenticated() {
+      return request.auth != null;
     }
   }
 }

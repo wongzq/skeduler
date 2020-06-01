@@ -102,7 +102,7 @@ class _SignUpState extends State<SignUp> {
 
                             if (authResult == null) {
                               // create user information
-                              await dbService.setUserData(
+                              await dbService.createUser(
                                 authInfo.email,
                                 authInfo.name,
                               );

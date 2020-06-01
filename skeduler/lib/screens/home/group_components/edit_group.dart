@@ -151,7 +151,7 @@ class _EditGroupState extends State<EditGroup> {
                 },
                 formKey: _formKeyDesc,
                 validator: (value) {
-                  if (value.trim().length >= 100) {
+                  if (value.trim().length > 100) {
                     return 'Description must be 100 characters or less';
                   } else {
                     return null;

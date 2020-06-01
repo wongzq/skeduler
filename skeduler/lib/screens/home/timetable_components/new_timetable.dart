@@ -233,6 +233,8 @@ class _NewTimetableState extends State<NewTimetable> {
                 ),
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
+                    unfocus();
+                    
                     if (ttbStatus.temp.startDate != null &&
                         ttbStatus.temp.endDate != null &&
                         ttbStatus.temp.startDate

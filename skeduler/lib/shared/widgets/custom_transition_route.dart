@@ -19,7 +19,7 @@ class CustomTransitionRoute extends PageRouteBuilder {
           ) =>
               useFadeTransition(
             animation,
-            useScaleTransition(animation, child),
+            child,
           ),
         );
   CustomTransitionRoute.fadeSlideRight({this.page})
