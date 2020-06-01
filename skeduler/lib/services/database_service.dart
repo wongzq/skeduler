@@ -493,6 +493,19 @@ class DatabaseService {
             .delete();
   }
 
+  // get [Group][Member] data of me as stream
+  Future<Member> getGroupMemberMe(String groupDocId) {
+    return groupDocId == null || groupDocId.trim() == ''
+        ? null
+        : groupsCollection
+            .document(groupDocId)
+            .collection('members')
+            .document(userId)
+            .get()
+            .then((member) => _memberFromSnapshot(member))
+            .catchError((_) => null);
+  }
+
   // --------------------------------------------------------------------------------
   // Modifying methods for Subject
   // --------------------------------------------------------------------------------

@@ -21,10 +21,10 @@ class EmptyPlaceholder extends StatelessWidget {
         children: <Widget>[
           iconData != null
               ? Icon(
-                iconData,
-                size: 80,
-                color: Colors.grey,
-              )
+                  iconData,
+                  size: 80,
+                  color: Colors.grey,
+                )
               : Container(),
           SizedBox(height: 10.0),
           text != null
@@ -52,6 +52,7 @@ class SimpleAlertDialog extends AlertDialog {
     String cancelDisplay,
     Function confirmFunction,
     Function cancelFunction,
+    bool onlyConfirmButton = false,
   }) : super(
           title: titleDisplay == null
               ? null
@@ -76,12 +77,14 @@ class SimpleAlertDialog extends AlertDialog {
                 ),
           actions: <Widget>[
             // CANCEL button
-            FlatButton(
-              child: Text(cancelDisplay ?? 'CANCEL'),
-              onPressed: () => cancelFunction == null
-                  ? Navigator.of(context).maybePop()
-                  : cancelFunction(),
-            ),
+            (onlyConfirmButton ?? false)
+                ? Container()
+                : FlatButton(
+                    child: Text(cancelDisplay ?? 'CANCEL'),
+                    onPressed: () => cancelFunction == null
+                        ? Navigator.of(context).maybePop()
+                        : cancelFunction(),
+                  ),
 
             // CONFIRM button
             FlatButton(
