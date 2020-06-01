@@ -86,18 +86,31 @@ class ScheduleMonthExpansionTile extends StatelessWidget {
             title: Container(
               padding: EdgeInsets.all(5.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Icon(
-                    unavailableCount > 0 ? Icons.warning : null,
-                    color: Colors.red,
-                  ),
-                  SizedBox(width: 10.0),
                   Text(
                     getMonthStr(Month.values[monthIndex - 1]).toUpperCase(),
                     style: TextStyle(
                       fontSize: 16.0,
                       letterSpacing: 2.0,
                     ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        unavailableCount > 0 ? unavailableCount.toString() : '',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 16.0,
+                          letterSpacing: 2.0,
+                        ),
+                      ),
+                      SizedBox(width: 5.0),
+                      Icon(
+                        unavailableCount > 0 ? Icons.warning : null,
+                        color: Colors.red,
+                      ),
+                    ],
                   ),
                 ],
               ),

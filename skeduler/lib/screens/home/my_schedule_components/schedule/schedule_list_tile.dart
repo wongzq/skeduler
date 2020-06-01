@@ -53,6 +53,12 @@ class ScheduleListTile extends StatelessWidget {
         // Custom List Tile
         Container(
           color: scheduleIsToday ? originTheme.primaryColorLight : null,
+          padding: EdgeInsets.fromLTRB(
+            20.0,
+            _memberIsAvailableAtThisTime(context) ? 10.0 : 0.0,
+            0.0,
+            10.0,
+          ),
           child: Column(
             children: [
               schedule.available
@@ -75,52 +81,48 @@ class ScheduleListTile extends StatelessWidget {
                   // Left section
                   // Display Custom : Subjects
                   // Display Weekday, Day Month
-                  Container(
-                    padding: EdgeInsets.fromLTRB(
-                        20.0, schedule.available ? 15.0 : 5.0, 0.0, 15.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          schedule.custom + ' : ' + schedule.subject ?? '',
-                          style: scheduleIsToday
-                              ? textStyleBody.copyWith(
-                                  color: Colors.black,
-                                  fontSize: 15.0,
-                                )
-                              : textStyleBody.copyWith(
-                                  fontSize: 15.0,
-                                ),
-                          overflow: TextOverflow.fade,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        schedule.custom + ' : ' + schedule.subject ?? '',
+                        style: scheduleIsToday
+                            ? textStyleBody.copyWith(
+                                color: Colors.black,
+                                fontSize: 15.0,
+                              )
+                            : textStyleBody.copyWith(
+                                fontSize: 15.0,
+                              ),
+                        overflow: TextOverflow.fade,
+                      ),
+                      Text(
+                        schedule.dateStr,
+                        style: textStyleBodyLight.copyWith(
+                          color: scheduleIsToday
+                              ? Colors.grey.shade700
+                              : Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.grey.shade600
+                                  : Colors.grey,
+                          fontSize: 13.0,
                         ),
-                        Text(
-                          schedule.dayStr,
-                          style: textStyleBodyLight.copyWith(
-                            color: scheduleIsToday
-                                ? Colors.grey.shade700
-                                : Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? Colors.grey.shade600
-                                    : Colors.grey,
-                            fontSize: 13.0,
-                          ),
-                          overflow: TextOverflow.fade,
+                        overflow: TextOverflow.fade,
+                      ),
+                      Text(
+                        schedule.dayStr,
+                        style: textStyleBodyLight.copyWith(
+                          color: scheduleIsToday
+                              ? Colors.grey.shade700
+                              : Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.grey.shade600
+                                  : Colors.grey,
+                          fontSize: 13.0,
                         ),
-                        Text(
-                          schedule.dateStr,
-                          style: textStyleBodyLight.copyWith(
-                            color: scheduleIsToday
-                                ? Colors.grey.shade700
-                                : Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? Colors.grey.shade600
-                                    : Colors.grey,
-                            fontSize: 13.0,
-                          ),
-                          overflow: TextOverflow.fade,
-                        ),
-                      ],
-                    ),
+                        overflow: TextOverflow.fade,
+                      ),
+                    ],
                   ),
 
                   // Right section
