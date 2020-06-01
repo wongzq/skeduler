@@ -8,7 +8,7 @@ import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/subject.dart';
 import 'package:skeduler/models/firestore/user.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
-import 'package:skeduler/route_generator.dart';
+import 'package:skeduler/navigation/route_generator.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:theme_provider/theme_provider.dart';

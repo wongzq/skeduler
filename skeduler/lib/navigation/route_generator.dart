@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
+import 'package:skeduler/navigation/custom_transition_route.dart';
+import 'package:skeduler/navigation/wrapper.dart';
 import 'package:skeduler/screens/home/dashboard_components/create_group.dart';
 import 'package:skeduler/screens/home/dashboard_components/dashboard_screen.dart';
 import 'package:skeduler/screens/home/group_components/edit_group.dart';
@@ -18,10 +20,8 @@ import 'package:skeduler/shared/widgets/add_availability.dart';
 import 'package:skeduler/shared/widgets/add_subject.dart';
 import 'package:skeduler/shared/widgets/edit_member.dart';
 import 'package:skeduler/shared/widgets/edit_subject.dart';
-import 'package:skeduler/wrapper.dart';
 import 'package:skeduler/shared/widgets/add_dummy.dart';
 import 'package:skeduler/shared/widgets/add_member.dart';
-import 'package:skeduler/shared/widgets/custom_transition_route.dart';
 
 // --------------------------------------------------------------------------------
 // Route Generator class

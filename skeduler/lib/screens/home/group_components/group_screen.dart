@@ -6,7 +6,7 @@ import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/screens/home/group_components/group_screen_options_owner.dart';
 import 'package:skeduler/screens/home/group_components/group_screen_options_admin.dart';
 import 'package:skeduler/screens/home/group_components/group_screen_options_member.dart';
-import 'package:skeduler/home_drawer.dart';
+import 'package:skeduler/navigation/home_drawer.dart';
 import 'package:skeduler/shared/widgets/loading.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 import 'package:skeduler/shared/simple_widgets.dart';

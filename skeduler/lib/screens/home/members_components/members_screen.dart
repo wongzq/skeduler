@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/drawer_enum.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
-import 'package:skeduler/home_drawer.dart';
+import 'package:skeduler/navigation/home_drawer.dart';
 import 'package:skeduler/screens/home/members_components/member_list_tile.dart';
 import 'package:skeduler/screens/home/members_components/members_screen_options_admin.dart';
 import 'package:skeduler/screens/home/members_components/members_screen_options_member.dart';
