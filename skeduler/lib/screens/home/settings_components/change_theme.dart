@@ -17,12 +17,12 @@ class _ChangeThemeState extends State<ChangeTheme> {
   final double _chipInterPaddingExtra = 5;
   final double _chipIntraPadding = 3;
   double _chipWidth;
-  
+
   List<bool> _themePressed = List.generate(myAppThemes.length, (i) => false);
 
   @override
   Widget build(BuildContext context) {
-    ScrollController _controller = ScrollController();
+    ScrollController controller = ScrollController();
     OriginTheme originTheme = Provider.of<OriginTheme>(context);
 
     bool darkMode =
@@ -72,7 +72,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
 
         // Chip: Selected theme
         Padding(
-          padding: EdgeInsets.all(5.0),
+          padding: EdgeInsets.all(4.0),
           child: Theme(
             data: Theme.of(context).copyWith(
               accentColor: Theme.of(context).brightness == Brightness.light
@@ -83,7 +83,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
             child: ExpansionTile(
               onExpansionChanged: (val) {
                 setState(() {
-                  _controller = ScrollController();
+                  controller = ScrollController();
                 });
               },
               title: Text(
@@ -115,7 +115,7 @@ class _ChangeThemeState extends State<ChangeTheme> {
                       gradientFractionOnEnd: 0.05,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        controller: _controller,
+                        controller: controller,
                         itemCount: myAppThemes.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Visibility(

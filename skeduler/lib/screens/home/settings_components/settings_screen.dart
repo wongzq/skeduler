@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/navigation/home_drawer.dart';
-import 'package:skeduler/screens/home/settings_components/change_language.dart';
 import 'package:skeduler/screens/home/settings_components/change_size.dart';
 import 'package:skeduler/screens/home/settings_components/change_theme.dart';
 import 'package:skeduler/screens/home/settings_components/change_user_data.dart';
@@ -25,8 +24,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ChangeUserData(),
           Divider(),
           ChangeTheme(),
-          Divider(),
-          ChangeLanguage(),
           Divider(),
           ChangeSize(),
         ],

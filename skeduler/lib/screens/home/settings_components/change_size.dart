@@ -36,7 +36,7 @@ class _ChangeSizeState extends State<ChangeSize> {
               child: Text(
                 preferences == null
                     ? ''
-                    : displaySizeString(preferences.displaySize),
+                    : displaySizeString(preferences.displaySize, preferences),
                 style: TextStyle(
                   color: Colors.grey,
                   fontSize: 15.0,
@@ -62,7 +62,9 @@ class _ChangeSizeState extends State<ChangeSize> {
                         .map(
                           (displaySize) => RadioListTile<DisplaySize>(
                             activeColor: originTheme.accentColor,
-                            title: Text(displaySizeString(displaySize)),
+                            title: Text(
+                              displaySizeString(displaySize, preferences),
+                            ),
                             value: displaySize,
                             groupValue: _selected,
                             onChanged: (value) async {

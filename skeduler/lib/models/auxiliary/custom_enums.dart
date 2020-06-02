@@ -1,3 +1,5 @@
+import 'package:skeduler/models/auxiliary/preferences.dart';
+
 enum MemberOption {
   makeOwner,
   makeAdmin,
@@ -48,7 +50,7 @@ enum DisplaySize {
   large,
 }
 
-displaySizeString(DisplaySize displaySize) {
+displaySizeString(DisplaySize displaySize, Preferences preferences) {
   return displaySize == DisplaySize.small
       ? 'Small'
       : displaySize == DisplaySize.medium
@@ -64,5 +66,5 @@ enum Language {
 languageString(Language language) {
   return language == Language.eng
       ? 'English'
-      : language == Language.chi ? '华文' : null;
+      : language == Language.chi ? '中文' : null;
 }

@@ -26,7 +26,9 @@ class _ChangeUserDataState extends State<ChangeUserData> {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text('Name'),
+              title: Text(
+                'Name',
+              ),
               content: Form(
                 key: formKey,
                 child: TextFormField(
