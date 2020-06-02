@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
+import 'package:skeduler/models/auxiliary/preferences.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/subject.dart';
@@ -28,185 +30,218 @@ class MyApp extends StatelessWidget {
     OriginTheme originTheme = OriginTheme();
 
     return RestartWidget(
-      child: ThemeProvider(
-        themes: myAppThemes + myAppDarkThemes,
-        defaultThemeId: 'teal',
-        loadThemeOnInit: true,
-        saveThemesOnChange: true,
-        onThemeChanged: (AppTheme oldTheme, AppTheme newTheme) {
-          int themeIndex;
-          bool themeDarkMode =
-              newTheme.data.brightness == Brightness.dark ? true : false;
+      child: FutureBuilder<SharedPreferences>(
+          future: SharedPreferences.getInstance(),
+          builder: (context, preferencesSnap) {
+            return ThemeProvider(
+              themes: myAppThemes + myAppDarkThemes,
+              defaultThemeId: 'teal',
+              loadThemeOnInit: true,
+              saveThemesOnChange: true,
+              onThemeChanged: (AppTheme oldTheme, AppTheme newTheme) {
+                int themeIndex;
+                bool themeDarkMode =
+                    newTheme.data.brightness == Brightness.dark ? true : false;
 
-          if (themeDarkMode) {
-            themeIndex = myAppDarkThemes
-                .indexWhere((AppTheme theme) => theme.id == newTheme.id);
-          } else {
-            themeIndex = myAppThemes
-                .indexWhere((AppTheme theme) => theme.id == newTheme.id);
-          }
+                if (themeDarkMode) {
+                  themeIndex = myAppDarkThemes
+                      .indexWhere((AppTheme theme) => theme.id == newTheme.id);
+                } else {
+                  themeIndex = myAppThemes
+                      .indexWhere((AppTheme theme) => theme.id == newTheme.id);
+                }
 
-          originTheme.primaryColor = myAppThemes[themeIndex].data.primaryColor;
-          originTheme.primaryColorLight =
-              myAppThemes[themeIndex].data.primaryColorLight;
-          originTheme.primaryColorDark =
-              myAppThemes[themeIndex].data.primaryColorDark;
-          originTheme.accentColor = myAppThemes[themeIndex].data.accentColor;
-          originTheme.textColor =
-              myAppThemes[themeIndex].data.primaryTextTheme.bodyText1.color;
-        },
-        child: ThemeConsumer(
-          child: Builder(
-            builder: (themeContext) {
-              int themeIndex;
-              bool themeDarkMode =
-                  ThemeProvider.themeOf(themeContext).data.brightness ==
-                          Brightness.dark
-                      ? true
-                      : false;
+                originTheme.primaryColor =
+                    myAppThemes[themeIndex].data.primaryColor;
+                originTheme.primaryColorLight =
+                    myAppThemes[themeIndex].data.primaryColorLight;
+                originTheme.primaryColorDark =
+                    myAppThemes[themeIndex].data.primaryColorDark;
+                originTheme.accentColor =
+                    myAppThemes[themeIndex].data.accentColor;
+                originTheme.textColor = myAppThemes[themeIndex]
+                    .data
+                    .primaryTextTheme
+                    .bodyText1
+                    .color;
+              },
+              child: ThemeConsumer(
+                child: Builder(
+                  builder: (themeContext) {
+                    int themeIndex;
+                    bool themeDarkMode =
+                        ThemeProvider.themeOf(themeContext).data.brightness ==
+                                Brightness.dark
+                            ? true
+                            : false;
 
-              if (themeDarkMode) {
-                themeIndex = myAppDarkThemes.indexWhere((AppTheme theme) =>
-                    theme.id == ThemeProvider.themeOf(themeContext).id);
-              } else {
-                themeIndex = myAppThemes.indexWhere((AppTheme theme) =>
-                    theme.id == ThemeProvider.themeOf(themeContext).id);
-              }
+                    if (themeDarkMode) {
+                      themeIndex = myAppDarkThemes.indexWhere(
+                          (AppTheme theme) =>
+                              theme.id ==
+                              ThemeProvider.themeOf(themeContext).id);
+                    } else {
+                      themeIndex = myAppThemes.indexWhere((AppTheme theme) =>
+                          theme.id == ThemeProvider.themeOf(themeContext).id);
+                    }
 
-              originTheme.primaryColor =
-                  myAppThemes[themeIndex].data.primaryColor;
-              originTheme.primaryColorLight =
-                  myAppThemes[themeIndex].data.primaryColorLight;
-              originTheme.primaryColorDark =
-                  myAppThemes[themeIndex].data.primaryColorDark;
-              originTheme.accentColor =
-                  myAppThemes[themeIndex].data.accentColor;
-              originTheme.textColor =
-                  myAppThemes[themeIndex].data.primaryTextTheme.bodyText1.color;
+                    originTheme.primaryColor =
+                        myAppThemes[themeIndex].data.primaryColor;
+                    originTheme.primaryColorLight =
+                        myAppThemes[themeIndex].data.primaryColorLight;
+                    originTheme.primaryColorDark =
+                        myAppThemes[themeIndex].data.primaryColorDark;
+                    originTheme.accentColor =
+                        myAppThemes[themeIndex].data.accentColor;
+                    originTheme.textColor = myAppThemes[themeIndex]
+                        .data
+                        .primaryTextTheme
+                        .bodyText1
+                        .color;
 
-              // Provide User from Firebase
-              return StreamProvider<AuthUser>.value(
-                value: AuthService().user,
-                child: Consumer<AuthUser>(
-                  builder: (_, user, __) {
-                    dbService =
-                        DatabaseService(userId: user != null ? user.email : '');
+                    // Provide User from Firebase
+                    return StreamProvider<AuthUser>.value(
+                      value: AuthService().user,
+                      child: Consumer<AuthUser>(
+                        builder: (_, user, __) {
+                          dbService = DatabaseService(
+                              userId: user != null ? user.email : '');
 
-                    // Multiple Providers
-                    return MultiProvider(
-                      providers: [
-                        ChangeNotifierProvider<OriginTheme>.value(
-                          value: originTheme,
-                        ),
-                        Provider<DatabaseService>.value(
-                          value: dbService,
-                        ),
-                        StreamProvider<User>.value(
-                          value: dbService.user,
-                        ),
+                          // Multiple Providers
+                          return MultiProvider(
+                            providers: [
+                              ChangeNotifierProvider<Preferences>(
+                                create: (_) => Preferences(
+                                  preferencesSnap.data,
+                                ),
+                              ),
+                              ChangeNotifierProvider<OriginTheme>.value(
+                                value: originTheme,
+                              ),
+                              Provider<DatabaseService>.value(
+                                value: dbService,
+                              ),
+                              StreamProvider<User>.value(
+                                value: dbService.user,
+                              ),
 
-                        // Group Doc ID
-                        ChangeNotifierProvider<ValueNotifier<String>>(
-                          create: (_) => ValueNotifier<String>(''),
-                        ),
+                              // Group Doc ID
+                              ChangeNotifierProvider<ValueNotifier<String>>(
+                                create: (_) => ValueNotifier<String>(''),
+                              ),
 
-                        // TimetableStatus
-                        ChangeNotifierProvider<TimetableStatus>(
-                          create: (_) => TimetableStatus(),
-                        ),
-                      ],
-                      child: Consumer<DatabaseService>(
-                        builder: (_, dbService, __) {
-                          return Consumer<ValueNotifier<String>>(
-                            builder: (_, groupDocId, __) {
-                              // stream Group
-                              return StreamBuilder<Group>(
-                                stream: dbService.streamGroup(groupDocId.value),
-                                builder: (_, groupSnap) {
-                                  // stream Group Members
-                                  return StreamBuilder<List<Member>>(
-                                    stream: dbService
-                                        .streamGroupMembers(groupDocId.value),
-                                    builder: (_, membersSnap) {
-                                      // stream Group Subjects
-                                      return StreamBuilder<List<Subject>>(
-                                        stream: dbService.streamGroupSubjects(
-                                            groupDocId.value),
-                                        builder: (_, subjectsSnap) {
-                                          return StreamBuilder<Member>(
-                                            stream:
-                                                dbService.streamGroupMemberMe(
-                                                    groupDocId.value),
-                                            builder: (_, meSnap) {
-                                              // Provider for GroupStatus
-                                              return ChangeNotifierProvider<
-                                                  GroupStatus>.value(
-                                                value: GroupStatus(
-                                                  group:
-                                                      groupDocId.value != null
-                                                          ? groupSnap != null
-                                                              ? groupSnap.data
-                                                              : null
-                                                          : null,
-                                                  members:
-                                                      groupDocId.value != null
-                                                          ? membersSnap != null
-                                                              ? membersSnap.data
-                                                              : null
-                                                          : null,
-                                                  subjects: groupDocId.value !=
-                                                          null
-                                                      ? subjectsSnap != null
-                                                          ? subjectsSnap.data
-                                                          : null
-                                                      : null,
-                                                  me: groupDocId.value != null
-                                                      ? meSnap != null
-                                                          ? meSnap.data
-                                                          : null
-                                                      : null,
-                                                ),
-                                                child: MaterialApp(
-                                                  title: 'Skeduler',
-                                                  debugShowCheckedModeBanner:
-                                                      false,
-                                                  theme: ThemeProvider.themeOf(
-                                                          themeContext)
-                                                      .data
-                                                      .copyWith(
-                                                        splashColor:
-                                                            Colors.transparent,
-                                                        highlightColor:
-                                                            Colors.transparent,
-                                                        splashFactory: InkRipple
-                                                            .splashFactory,
+                              // TimetableStatus
+                              ChangeNotifierProvider<TimetableStatus>(
+                                create: (_) => TimetableStatus(),
+                              ),
+                            ],
+                            child: Consumer<DatabaseService>(
+                              builder: (_, dbService, __) {
+                                return Consumer<ValueNotifier<String>>(
+                                  builder: (_, groupDocId, __) {
+                                    // stream Group
+                                    return StreamBuilder<Group>(
+                                      stream: dbService
+                                          .streamGroup(groupDocId.value),
+                                      builder: (_, groupSnap) {
+                                        // stream Group Members
+                                        return StreamBuilder<List<Member>>(
+                                          stream: dbService.streamGroupMembers(
+                                              groupDocId.value),
+                                          builder: (_, membersSnap) {
+                                            // stream Group Subjects
+                                            return StreamBuilder<List<Subject>>(
+                                              stream:
+                                                  dbService.streamGroupSubjects(
+                                                      groupDocId.value),
+                                              builder: (_, subjectsSnap) {
+                                                return StreamBuilder<Member>(
+                                                  stream: dbService
+                                                      .streamGroupMemberMe(
+                                                          groupDocId.value),
+                                                  builder: (_, meSnap) {
+                                                    // Provider for GroupStatus
+                                                    return ChangeNotifierProvider<
+                                                        GroupStatus>.value(
+                                                      value: GroupStatus(
+                                                        group: groupDocId
+                                                                    .value !=
+                                                                null
+                                                            ? groupSnap != null
+                                                                ? groupSnap.data
+                                                                : null
+                                                            : null,
+                                                        members: groupDocId
+                                                                    .value !=
+                                                                null
+                                                            ? membersSnap !=
+                                                                    null
+                                                                ? membersSnap
+                                                                    .data
+                                                                : null
+                                                            : null,
+                                                        subjects: groupDocId
+                                                                    .value !=
+                                                                null
+                                                            ? subjectsSnap !=
+                                                                    null
+                                                                ? subjectsSnap
+                                                                    .data
+                                                                : null
+                                                            : null,
+                                                        me: groupDocId.value !=
+                                                                null
+                                                            ? meSnap != null
+                                                                ? meSnap.data
+                                                                : null
+                                                            : null,
                                                       ),
-                                                  initialRoute: '/dashboard',
-                                                  onGenerateRoute:
-                                                      RouteGenerator
-                                                          .generateRoute,
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                      );
-                                    },
-                                  );
-                                },
-                              );
-                            },
+                                                      child: MaterialApp(
+                                                        title: 'Skeduler',
+                                                        debugShowCheckedModeBanner:
+                                                            false,
+                                                        theme: ThemeProvider
+                                                                .themeOf(
+                                                                    themeContext)
+                                                            .data
+                                                            .copyWith(
+                                                              splashColor: Colors
+                                                                  .transparent,
+                                                              highlightColor:
+                                                                  Colors
+                                                                      .transparent,
+                                                              splashFactory:
+                                                                  InkRipple
+                                                                      .splashFactory,
+                                                            ),
+                                                        initialRoute:
+                                                            '/dashboard',
+                                                        onGenerateRoute:
+                                                            RouteGenerator
+                                                                .generateRoute,
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           );
                         },
                       ),
                     );
                   },
                 ),
-              );
-            },
-          ),
-        ),
-      ),
+              ),
+            );
+          }),
     );
   }
 }

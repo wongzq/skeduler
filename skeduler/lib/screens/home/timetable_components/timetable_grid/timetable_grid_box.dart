@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
+import 'package:skeduler/models/auxiliary/preferences.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
@@ -47,6 +49,7 @@ class TimetableGridBox extends StatefulWidget {
 
 class _TimetableGridBoxState extends State<TimetableGridBox> {
   // properties
+  Preferences _preferences;
   OriginTheme _originTheme;
 
   User _user;
@@ -228,7 +231,13 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                   color: widget.gridBoxType == GridBoxType.content
                       ? Colors.black
                       : _originTheme.textColor,
-                  fontSize: 10.0,
+                  fontSize: _preferences.displaySize == DisplaySize.small
+                      ? 9.0
+                      : _preferences.displaySize == DisplaySize.medium
+                          ? 10.0
+                          : _preferences.displaySize == DisplaySize.large
+                              ? 11.0
+                              : 10.0,
                   fontStyle: FontStyle.normal,
                 ),
                 maxLines: widget.textOverFlowFade ? 2 : null,
@@ -608,6 +617,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
   @override
   Widget build(BuildContext context) {
+    _preferences = Provider.of<Preferences>(context);
+
     _originTheme = Provider.of<OriginTheme>(context);
 
     _user = widget.gridBoxType == GridBoxType.content
@@ -660,7 +671,18 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
               }()
             : TimetableGridData();
 
-    double gridBoxSize = (MediaQuery.of(context).size.width - 20) / 6;
+    int gridBoxSegments;
+
+    if (_preferences != null) {
+      gridBoxSegments = _preferences.displaySize == DisplaySize.small
+          ? 7
+          : _preferences.displaySize == DisplaySize.medium
+              ? 6
+              : _preferences.displaySize == DisplaySize.large ? 5 : 6;
+    }
+
+    double gridBoxSize =
+        (MediaQuery.of(context).size.width - 20) / gridBoxSegments;
 
     return Container(
       height: widget.heightRatio * gridBoxSize,

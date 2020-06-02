@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/auxiliary/drawer_enum.dart';
+import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/navigation/home_drawer.dart';
 import 'package:skeduler/screens/home/my_schedule_components/availability/availability_tab.dart';

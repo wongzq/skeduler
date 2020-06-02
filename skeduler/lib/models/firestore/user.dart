@@ -18,6 +18,6 @@ class User {
   }
 
   // getter methods
-  String get email => this._email;
-  String get name => this._name;
+  String get email => this._email ?? '';
+  String get name => this._name ?? '';
 }
