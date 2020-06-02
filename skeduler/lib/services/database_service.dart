@@ -209,7 +209,6 @@ class DatabaseService {
   // create [Group]
   Future createGroup(
     String name,
-    String description,
     ColorShade colorShade,
     String ownerEmail,
     String ownerName,
@@ -220,7 +219,6 @@ class DatabaseService {
 
     return await groupsCollection.document().setData({
       'name': name,
-      'description': description ?? '',
       'colorShade': {
         'themeId': colorShade.themeId,
         'shade': colorShade.shadeIndex,
@@ -256,7 +254,6 @@ class DatabaseService {
   Future updateGroupData(
     String groupDocId, {
     String name,
-    String description,
     ColorShade colorShade,
     String ownerEmail,
     String ownerName,
@@ -270,7 +267,6 @@ class DatabaseService {
     } else {
       return await groupsCollection.document(groupDocId).updateData({
         'name': name,
-        'description': description,
         'colorShade': {
           'themeId': colorShade.themeId,
           'shade': colorShade.shadeIndex,
@@ -452,8 +448,8 @@ class DatabaseService {
 
               await groupMemberRef.updateData({
                 'role': MemberRole.member.index,
-                'name': userData.data['name'],
-                'nickname': userData.data['name'],
+                'name': userData.data['name'] ?? '',
+                'nickname': userData.data['name'] ?? '',
               });
             }
           });
@@ -494,7 +490,11 @@ class DatabaseService {
   }
 
   // get [Group][Member] data of me as stream
-  Future<Member> getGroupMemberMe(String groupDocId) {
+  Future<Member> getGroupMemberMe(String groupDocId) async {
+    if (!(await dbCheckInternetConnection())) {
+      return null;
+    }
+
     return groupDocId == null || groupDocId.trim() == ''
         ? null
         : groupsCollection
@@ -1072,7 +1072,6 @@ class DatabaseService {
         ? Group(
             docId: snapshot.documentID,
             name: snapshot.data['name'] ?? '',
-            description: snapshot.data['description'] ?? '',
             colorShade: ColorShade(
               themeId: snapshot.data['colorShade']['themeId'],
               shade: Shade.values[snapshot.data['colorShade']['shade']],

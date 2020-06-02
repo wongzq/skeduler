@@ -293,8 +293,6 @@ class MemberListTile extends StatelessWidget {
                                           await dbService.updateGroupData(
                                             groupStatus.group.docId,
                                             name: groupStatus.group.name,
-                                            description:
-                                                groupStatus.group.description,
                                             colorShade:
                                                 groupStatus.group.colorShade,
                                             ownerName: member.name,

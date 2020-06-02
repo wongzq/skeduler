@@ -74,7 +74,7 @@ class DashboardScreen extends StatelessWidget {
                                 groupDocId.value = groups[index].docId;
 
                                 Navigator.of(context).pushNamed(
-                                  '/group',
+                                  '/timetables',
                                   arguments: RouteArgs(),
                                 );
                               } else if (me.role == MemberRole.pending) {

@@ -35,8 +35,6 @@ service cloud.firestore {
         isOwnerOrAdmin() &&
         request.resource.data.name is string &&
         request.resource.data.name.size() <= 30 &&
-        request.resource.data.description is string &&
-        request.resource.data.description.size() <= 100 &&
         request.resource.data.owner is map &&
         request.resource.data.owner.name is string &&
         request.resource.data.owner.email is string &&
@@ -50,7 +48,7 @@ service cloud.firestore {
       match /members/{memberID} {
         allow read: if
           authenticated() &&
-          isOwnerOrAdminOrMember();
+          isInGroup();
 
         allow create: if
           authenticated() &&
@@ -79,6 +77,15 @@ service cloud.firestore {
             request.resource.data.role is int &&
             request.resource.data.role >= 0 &&
             request.resource.data.role <= 4 &&
+            request.resource.data.name is string &&
+            request.resource.data.name.size() <= 30 &&
+            request.resource.data.nickname is string &&
+            request.resource.data.nickname.size() <= 30
+          ) ||
+          (
+            isPending() &&
+            request.resource.data.role is int &&
+            request.resource.data.role == 2 &&
             request.resource.data.name is string &&
             request.resource.data.name.size() <= 30 &&
             request.resource.data.nickname is string &&
@@ -166,6 +173,12 @@ service cloud.firestore {
         return
           isInGroup() &&
           get(/databases/$(database)/documents/groups/$(groupID)/members/$(request.auth.token.email)).data.role == 2;
+      }
+
+      function isPending() {
+        return
+          isInGroup() &&
+          get(/databases/$(database)/documents/groups/$(groupID)/members/$(request.auth.token.email)).data.role == 0;
       }
 
       function isInGroup() {

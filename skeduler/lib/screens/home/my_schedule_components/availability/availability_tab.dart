@@ -37,7 +37,7 @@ class _AvailabilityTabState extends State<AvailabilityTab> {
                       onTap: () {
                         setState(() {
                           Navigator.of(context).pushNamed(
-                            '/mySchedule/availabilityEditor',
+                            '/schedules/availabilityEditor',
                             arguments: RouteArgs(),
                           );
                         });
@@ -76,7 +76,7 @@ class _AvailabilityTabState extends State<AvailabilityTab> {
                       backgroundColor: getFABIconBackgroundColor(context),
                       onTap: () async {
                         Navigator.of(context).pushNamed(
-                          '/mySchedule/addAvailability',
+                          '/schedules/addAvailability',
                           arguments: RouteArgs(),
                         );
                       },

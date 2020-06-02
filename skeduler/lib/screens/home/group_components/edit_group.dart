@@ -23,7 +23,6 @@ class _EditGroupState extends State<EditGroup> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String _groupName;
-  String _groupDescription;
   ColorShade _groupColorShade;
   String _groupOwnerName;
   String _groupOwnerEmail;
@@ -33,7 +32,6 @@ class _EditGroupState extends State<EditGroup> {
   @override
   void initState() {
     _groupName = widget.group.name;
-    _groupDescription = widget.group.description;
     _groupColorShade = ColorShade(color: widget.group.colorShade.color);
     _groupOwnerName = widget.group.ownerName;
     _groupOwnerEmail = widget.group.ownerEmail;
@@ -81,7 +79,6 @@ class _EditGroupState extends State<EditGroup> {
               if (_formKeyName.currentState.validate() &&
                   _formKeyDesc.currentState.validate()) {
                 if (_groupName.trim() != widget.group.name ||
-                    _groupDescription.trim() != widget.group.description ||
                     _groupColorShade.themeId !=
                         widget.group.colorShade.themeId ||
                     _groupColorShade.shade != widget.group.colorShade.shade) {
@@ -91,7 +88,6 @@ class _EditGroupState extends State<EditGroup> {
                   await dbService.updateGroupData(
                     widget.group.docId,
                     name: _groupName.trim(),
-                    description: _groupDescription.trim(),
                     colorShade: _groupColorShade,
                     ownerName: _groupOwnerName.trim(),
                     ownerEmail: _groupOwnerEmail.trim(),
@@ -139,27 +135,6 @@ class _EditGroupState extends State<EditGroup> {
               ),
             ),
 
-            // Description
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: LabelTextInput(
-                initialValue: _groupDescription,
-                hintText: widget.group.description,
-                label: 'Description',
-                valSetText: (value) {
-                  _groupDescription = value;
-                },
-                formKey: _formKeyDesc,
-                validator: (value) {
-                  if (value.trim().length > 100) {
-                    return 'Description must be 100 characters or less';
-                  } else {
-                    return null;
-                  }
-                },
-              ),
-            ),
-
             // Color
             Provider<bool>.value(
               value: _expanded.value,
@@ -198,6 +173,7 @@ class _EditGroupState extends State<EditGroup> {
 
                   // Preview
                   GroupCard(
+                    numOfMembers: widget.group.numOfMembers,
                     groupName: _groupName,
                     ownerName: _groupOwnerName,
                     groupColor: () {

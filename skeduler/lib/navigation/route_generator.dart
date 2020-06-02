@@ -113,35 +113,35 @@ class RouteGenerator {
         }
         break;
 
-      case '/timetable':
+      case '/timetables':
         if (args is RouteArgs) {
           return CustomTransitionRoute.fadeScale(
               page: wrapWidget(TimetableScreen()));
         }
         break;
 
-      case '/timetable/newTimetable':
+      case '/timetables/newTimetable':
         if (args is RouteArgs) {
           return CustomTransitionRoute.fadeSlideRight(
               page: wrapWidget(NewTimetable()));
         }
         break;
 
-      case '/timetable/editor':
+      case '/timetables/editor':
         if (args is RouteArgs) {
           return CustomTransitionRoute.fadeSlideRight(
               page: wrapWidget(TimetableEditor()));
         }
         break;
 
-      case '/timetable/editor/settings':
+      case '/timetables/editor/settings':
         if (args is RouteArgs) {
           return CustomTransitionRoute.fadeSlideRight(
               page: wrapWidget(TimetableSettings()));
         }
         break;
 
-      case '/timetable/editor/settings/reorderAxisCustom':
+      case '/timetables/editor/settings/reorderAxisCustom':
         if (args is RouteArgsReorderAxisCustom) {
           return CustomTransitionRoute.fadeSlideRight(
             page: wrapWidget(
@@ -154,21 +154,21 @@ class RouteGenerator {
         }
         break;
 
-      case '/mySchedule':
+      case '/schedules':
         if (args is RouteArgs) {
           return CustomTransitionRoute.fadeScale(
               page: wrapWidget(MyScheduleScreen()));
         }
         break;
 
-      case '/mySchedule/addAvailability':
+      case '/schedules/addAvailability':
         if (args is RouteArgs) {
           return CustomTransitionRoute.fadeSlideRight(
               page: wrapWidget(AddAvailability()));
         }
         break;
 
-      case '/mySchedule/availabilityEditor':
+      case '/schedules/availabilityEditor':
         if (args is RouteArgs) {
           return CustomTransitionRoute.fadeSlideRight(
               page: wrapWidget(AvailabilityEditor()));

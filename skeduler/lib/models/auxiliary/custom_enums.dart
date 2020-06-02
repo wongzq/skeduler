@@ -38,8 +38,8 @@ enum DrawerEnum {
   group,
   members,
   subjects,
-  timetable,
-  mySchedule,
+  timetables,
+  schedules,
   settings,
   logout,
 }

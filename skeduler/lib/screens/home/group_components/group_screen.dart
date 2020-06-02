@@ -8,7 +8,6 @@ import 'package:skeduler/screens/home/group_components/group_screen_options_owne
 import 'package:skeduler/screens/home/group_components/group_screen_options_admin.dart';
 import 'package:skeduler/screens/home/group_components/group_screen_options_member.dart';
 import 'package:skeduler/shared/widgets/loading.dart';
-import 'package:skeduler/shared/ui_settings.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
 
 class GroupScreen extends StatefulWidget {
@@ -41,8 +40,8 @@ class _GroupScreenState extends State<GroupScreen> {
             appBar: AppBar(
               title: AppBarTitle(
                 title: groupStatus.group.name,
-                alternateTitle: 'Group',
-                subtitle: 'Group',
+                alternateTitle: 'Admin Panel',
+                subtitle: 'Admin Panel',
               ),
             ),
             drawer: HomeDrawer(DrawerEnum.group),
@@ -58,26 +57,7 @@ class _GroupScreenState extends State<GroupScreen> {
                       return Container();
                   }()
                 : Container(),
-            body: groupStatus.me != null &&
-                    groupStatus.me.role == MemberRole.pending
-                ? Container()
-                : Container(
-                    padding: EdgeInsets.all(20.0),
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      groupStatus.group.description == null ||
-                              groupStatus.group.description.trim() == ''
-                          ? 'No group description'
-                          : groupStatus.group.description,
-                      style: groupStatus.group.description == null ||
-                              groupStatus.group.description.trim() == ''
-                          ? textStyleBody.copyWith(
-                              color: Colors.grey,
-                              fontStyle: FontStyle.italic,
-                            )
-                          : textStyleBody,
-                    ),
-                  ),
+            body: Container(),
           );
   }
 }

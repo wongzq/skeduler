@@ -25,7 +25,6 @@ class _CreateGroupState extends State<CreateGroup> {
   bool _descValid = true;
 
   String _groupName;
-  String _groupDescription;
 
   ColorShade _groupColorShade = ColorShade();
 
@@ -87,7 +86,6 @@ class _CreateGroupState extends State<CreateGroup> {
                     await dbService
                         .createGroup(
                       _groupName,
-                      _groupDescription,
                       _groupColorShade,
                       _groupOwnerEmail,
                       _groupOwnerName,
@@ -123,23 +121,6 @@ class _CreateGroupState extends State<CreateGroup> {
                             value.trim().length == 0 ||
                             value.trim().length > 30
                         ? false
-                        : true;
-                  });
-                },
-              ),
-            ),
-
-            // Description
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: LabelTextInput(
-                hintText: 'Optional',
-                label: 'Description',
-                valSetText: (value) {
-                  setState(() {
-                    _groupDescription = value;
-                    _descValid = value == null || value.trim().length == 0
-                        ? value.trim().length >= 100 ? false : true
                         : true;
                   });
                 },

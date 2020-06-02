@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/main.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/models/firestore/group.dart';
+import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/user.dart';
 import 'package:skeduler/services/auth_service.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
@@ -16,14 +16,38 @@ class HomeDrawer extends StatelessWidget {
   final DrawerEnum _selected;
 
   final Map<DrawerEnum, Map<String, dynamic>> _screens = {
-    DrawerEnum.dashboard: {'title': 'Dashboard', 'icon': null},
-    DrawerEnum.group: {'title': 'No group selected', 'icon': null},
-    DrawerEnum.timetable: {'title': 'Timetable', 'icon': null},
-    DrawerEnum.subjects: {'title': 'Subjects', 'icon': null},
-    DrawerEnum.members: {'title': 'Members', 'icon': null},
-    DrawerEnum.mySchedule: {'title': 'My Schedule', 'icon': null},
-    DrawerEnum.settings: {'title': 'Settings', 'icon': null},
-    DrawerEnum.logout: {'title': 'Logout', 'icon': null},
+    DrawerEnum.dashboard: {
+      'title': 'Dashboard',
+      'icon': Icon(Icons.dashboard),
+    },
+    DrawerEnum.group: {
+      'title': 'No group selected',
+      'icon': Icon(Icons.settings),
+    },
+    DrawerEnum.timetables: {
+      'title': 'Timetables',
+      'icon': Icon(Icons.table_chart),
+    },
+    DrawerEnum.subjects: {
+      'title': 'Subjects',
+      'icon': Icon(Icons.class_),
+    },
+    DrawerEnum.members: {
+      'title': 'Members',
+      'icon': Icon(Icons.people),
+    },
+    DrawerEnum.schedules: {
+      'title': 'Schedules',
+      'icon': Icon(Icons.schedule),
+    },
+    DrawerEnum.settings: {
+      'title': 'Settings',
+      'icon': Icon(Icons.settings),
+    },
+    DrawerEnum.logout: {
+      'title': 'Logout',
+      'icon': Icon(Icons.exit_to_app),
+    },
   };
 
   // constructors
@@ -64,7 +88,7 @@ class HomeDrawer extends StatelessWidget {
               Container(
                 child: ListTile(
                   dense: true,
-                  leading: Icon(Icons.dashboard),
+                  leading: _screens[DrawerEnum.dashboard]['icon'],
                   title: Text(_screens[DrawerEnum.dashboard]['title']),
                   selected: _selected == DrawerEnum.dashboard ? true : false,
                   onTap: () {
@@ -76,24 +100,53 @@ class HomeDrawer extends StatelessWidget {
 
               Divider(thickness: 1.0),
 
-              // Group
+              // Group - Admin Panel
               Container(
                 child: ListTile(
                   enabled: groupStatus.group != null ? true : false,
                   dense: true,
-                  leading: Icon(FontAwesomeIcons.users),
-                  title: groupStatus.group != null
-                      ? Text(groupStatus.group.name ??
-                          _screens[DrawerEnum.group]['title'])
-                      : Text(
-                          _screens[DrawerEnum.group]['title'],
-                        ),
+                  trailing: groupStatus.me != null &&
+                          (groupStatus.me.role == MemberRole.owner ||
+                              groupStatus.me.role == MemberRole.admin)
+                      ? _screens[DrawerEnum.group]['icon']
+                      : null,
+                  title: Text(
+                    groupStatus.group != null
+                        ? groupStatus.group.name ??
+                            _screens[DrawerEnum.group]['title']
+                        : _screens[DrawerEnum.group]['title'],
+                    style: TextStyle(fontSize: 14.0),
+                    overflow: TextOverflow.fade,
+                  ),
                   selected: _selected == DrawerEnum.group ? true : false,
+                  onTap: groupStatus.me != null &&
+                          (groupStatus.me.role == MemberRole.owner ||
+                              groupStatus.me.role == MemberRole.admin)
+                      ? () {
+                          Navigator.of(context)
+                              .popUntil((route) => !route.navigator.canPop());
+                          Navigator.of(context).pushNamed(
+                            '/group',
+                            arguments: RouteArgs(),
+                          );
+                        }
+                      : null,
+                ),
+              ),
+
+              // Timetable
+              Container(
+                child: ListTile(
+                  enabled: groupStatus.group != null ? true : false,
+                  dense: true,
+                  leading: _screens[DrawerEnum.timetables]['icon'],
+                  title: Text(_screens[DrawerEnum.timetables]['title']),
+                  selected: _selected == DrawerEnum.timetables ? true : false,
                   onTap: () {
                     Navigator.of(context)
                         .popUntil((route) => !route.navigator.canPop());
                     Navigator.of(context).pushNamed(
-                      '/group',
+                      '/timetables',
                       arguments: RouteArgs(),
                     );
                   },
@@ -105,7 +158,7 @@ class HomeDrawer extends StatelessWidget {
                 child: ListTile(
                   enabled: groupStatus.group != null ? true : false,
                   dense: true,
-                  leading: Icon(Icons.people),
+                  leading: _screens[DrawerEnum.members]['icon'],
                   title: Text(_screens[DrawerEnum.members]['title']),
                   selected: _selected == DrawerEnum.members ? true : false,
                   onTap: () {
@@ -124,7 +177,7 @@ class HomeDrawer extends StatelessWidget {
                 child: ListTile(
                   enabled: groupStatus.group != null ? true : false,
                   dense: true,
-                  leading: Icon(Icons.class_),
+                  leading: _screens[DrawerEnum.subjects]['icon'],
                   title: Text(_screens[DrawerEnum.subjects]['title']),
                   selected: _selected == DrawerEnum.subjects ? true : false,
                   onTap: () {
@@ -138,38 +191,19 @@ class HomeDrawer extends StatelessWidget {
                 ),
               ),
 
-              // Timetable
+              // Schedules
               Container(
                 child: ListTile(
                   enabled: groupStatus.group != null ? true : false,
                   dense: true,
-                  leading: Icon(Icons.table_chart),
-                  title: Text(_screens[DrawerEnum.timetable]['title']),
-                  selected: _selected == DrawerEnum.timetable ? true : false,
+                  leading: _screens[DrawerEnum.schedules]['icon'],
+                  title: Text(_screens[DrawerEnum.schedules]['title']),
+                  selected: _selected == DrawerEnum.schedules ? true : false,
                   onTap: () {
                     Navigator.of(context)
                         .popUntil((route) => !route.navigator.canPop());
                     Navigator.of(context).pushNamed(
-                      '/timetable',
-                      arguments: RouteArgs(),
-                    );
-                  },
-                ),
-              ),
-
-              // My Schedule
-              Container(
-                child: ListTile(
-                  enabled: groupStatus.group != null ? true : false,
-                  dense: true,
-                  leading: Icon(Icons.schedule),
-                  title: Text(_screens[DrawerEnum.mySchedule]['title']),
-                  selected: _selected == DrawerEnum.mySchedule ? true : false,
-                  onTap: () {
-                    Navigator.of(context)
-                        .popUntil((route) => !route.navigator.canPop());
-                    Navigator.of(context).pushNamed(
-                      '/mySchedule',
+                      '/schedules',
                       arguments: RouteArgs(),
                     );
                   },
@@ -182,7 +216,7 @@ class HomeDrawer extends StatelessWidget {
               Container(
                 child: ListTile(
                   dense: true,
-                  leading: Icon(Icons.settings),
+                  leading: _screens[DrawerEnum.settings]['icon'],
                   title: Text(_screens[DrawerEnum.settings]['title']),
                   selected: _selected == DrawerEnum.settings ? true : false,
                   onTap: () {
@@ -200,7 +234,7 @@ class HomeDrawer extends StatelessWidget {
               Container(
                 child: ListTile(
                   dense: true,
-                  leading: Icon(Icons.exit_to_app),
+                  leading: _screens[DrawerEnum.logout]['icon'],
                   title: Text(_screens[DrawerEnum.logout]['title']),
                   selected: _selected == DrawerEnum.logout ? true : false,
                   onTap: () async {

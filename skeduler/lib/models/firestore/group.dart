@@ -13,7 +13,6 @@ class Group {
   String _docId;
 
   String _name;
-  String _description;
   ColorShade _colorShade;
   String _ownerEmail;
   String _ownerName;
@@ -26,7 +25,6 @@ class Group {
   Group({
     @required String docId,
     String name = '',
-    String description = '',
     ColorShade colorShade,
     String ownerEmail = '',
     String ownerName = '',
@@ -37,7 +35,6 @@ class Group {
     this._docId = docId;
 
     this._name = name;
-    this._description = description;
     this._colorShade = colorShade;
     this._ownerEmail = ownerEmail;
     this._ownerName = ownerName;
@@ -51,7 +48,6 @@ class Group {
   String get docId => this._docId;
 
   String get name => this._name;
-  String get description => this._description;
   ColorShade get colorShade => this._colorShade ?? ColorShade();
   String get ownerEmail => this._ownerEmail;
   String get ownerName => this._ownerName;

@@ -52,7 +52,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                     subtitle: 'My schedule',
                   ),
                 ),
-                drawer: HomeDrawer(DrawerEnum.mySchedule),
+                drawer: HomeDrawer(DrawerEnum.schedules),
               ),
               Loading(),
             ],
@@ -109,7 +109,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                 ],
               ),
             ),
-            drawer: HomeDrawer(DrawerEnum.mySchedule),
+            drawer: HomeDrawer(DrawerEnum.schedules),
             body: TabBarView(
               controller: _tabController,
               children: <Widget>[

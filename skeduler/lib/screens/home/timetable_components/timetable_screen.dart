@@ -215,7 +215,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                     axisCustom: ['A', 'B'],
                                   );
                                   Navigator.of(context).pushNamed(
-                                    '/timetable/newTimetable',
+                                    '/timetables/newTimetable',
                                     arguments: RouteArgs(),
                                   );
                                 } else if (groupStatus.me.role ==
@@ -235,7 +235,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                     ),
                                   );
                                   Navigator.of(context).pushNamed(
-                                    '/timetable/editor',
+                                    '/timetables/editor',
                                     arguments: RouteArgs(),
                                   );
                                 } else if (groupStatus.me.role ==
@@ -257,7 +257,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                         ),
                       ],
                     ),
-                    drawer: HomeDrawer(DrawerEnum.timetable),
+                    drawer: HomeDrawer(DrawerEnum.timetables),
                     body: groupStatus.me == null
                         ? Container()
                         : isPlaceholder

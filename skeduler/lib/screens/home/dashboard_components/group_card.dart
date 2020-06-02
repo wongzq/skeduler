@@ -162,7 +162,7 @@ class GroupCard extends StatelessWidget {
                             Text(
                               numOfMembers != null
                                   ? numOfMembers.toString()
-                                  : 35.toString(),
+                                  : 20.toString(),
                               style: TextStyle(
                                 fontSize: 10.0,
                                 color: Colors.black45,

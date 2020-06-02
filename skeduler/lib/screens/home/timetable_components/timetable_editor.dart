@@ -197,7 +197,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
                   case TimetableEditorOption.settings:
                     ttbStatus.temp = EditTimetable.from(ttbStatus.edit);
                     Navigator.of(context).pushNamed(
-                      '/timetable/editor/settings',
+                      '/timetables/editor/settings',
                       arguments: RouteArgs(),
                     );
                     break;
@@ -227,7 +227,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
             ),
           ],
         ),
-        drawer: HomeDrawer(DrawerEnum.timetable),
+        drawer: HomeDrawer(DrawerEnum.timetables),
         body: ttbStatus.edit == null || !ttbStatus.edit.isValid
             ? Container()
             : SafeArea(

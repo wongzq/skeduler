@@ -109,7 +109,6 @@ class _EditMemberState extends State<EditMember> {
                       await dbService.updateGroupData(
                         groupStatus.group.docId,
                         name: groupStatus.group.name,
-                        description: groupStatus.group.description,
                         colorShade: groupStatus.group.colorShade,
                         ownerName: _editName,
                         ownerEmail: widget.member.docId,

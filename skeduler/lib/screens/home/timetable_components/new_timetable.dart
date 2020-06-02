@@ -278,7 +278,7 @@ class _NewTimetableState extends State<NewTimetable> {
                             ttbStatus.temp = null;
 
                             Navigator.of(context).popAndPushNamed(
-                              '/timetable/editor',
+                              '/timetables/editor',
                               arguments: RouteArgs(),
                             );
                           });

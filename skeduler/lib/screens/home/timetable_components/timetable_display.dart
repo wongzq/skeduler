@@ -70,7 +70,9 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
                                       child: Center(
                                         child: IconButton(
                                           icon: Icon(
-                                            Icons.remove_red_eye,
+                                            editMode.viewMe
+                                                ? Icons.visibility
+                                                : Icons.visibility_off,
                                             color: Theme.of(context)
                                                 .scaffoldBackgroundColor,
                                           ),

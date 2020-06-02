@@ -143,7 +143,7 @@ class _AxisCustomState extends State<AxisCustom> {
                   break;
                 case CustomOption.reorder:
                   Navigator.of(context).pushNamed(
-                    '/timetable/editor/settings/reorderAxisCustom',
+                    '/timetables/editor/settings/reorderAxisCustom',
                     arguments: RouteArgsReorderAxisCustom(
                       axisCustom: _customVals,
                       valSetAxisCustom: (value) {
