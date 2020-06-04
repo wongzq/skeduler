@@ -343,22 +343,24 @@ async function validateTimetablesGridDataList(
 
                       memberTimesLoop: for (const memberTime of memberTimes) {
                         // if member is always available
-                        if (member.alwaysAvailable) {
-                          // check unavailable times
-                          // if timetableTime is within unavailable times, member is not available
-                          if (!timetableTime.notWithinDateTimeOf(memberTime)) {
-                            memberIsAvailable = false;
-                            break timetableTimesLoop;
-                          }
+                        // check unavailable times
+                        // if timetableTime is within unavailable times, member is not available
+                        if (
+                          member.alwaysAvailable &&
+                          !timetableTime.notWithinDateTimeOf(memberTime)
+                        ) {
+                          memberIsAvailable = false;
+                          break timetableTimesLoop;
                         }
                         // else if member is not always available
-                        else if (!member.alwaysAvailable) {
-                          // check available times
-                          // if timetableTime is within available times, member is available
-                          if (timetableTime.withinDateTimeOf(memberTime)) {
-                            availableTimeFound = true;
-                            break memberTimesLoop;
-                          }
+                        // check available times
+                        // if timetableTime is not within available times, member is available
+                        else if (
+                          !member.alwaysAvailable &&
+                          timetableTime.withinDateTimeOf(memberTime)
+                        ) {
+                          availableTimeFound = true;
+                          break memberTimesLoop;
                         }
                       }
 

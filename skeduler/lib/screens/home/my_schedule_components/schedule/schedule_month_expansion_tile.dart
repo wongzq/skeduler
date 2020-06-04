@@ -44,15 +44,10 @@ class ScheduleMonthExpansionTile extends StatelessWidget {
     List<Widget> scheduleWidgets = [];
 
     for (Schedule schedule in schedules) {
-      bool scheduleIsToday = schedule.date.year == DateTime.now().year &&
-          schedule.date.month == DateTime.now().month &&
-          schedule.date.day == DateTime.now().day;
-
       scheduleWidgets.add(
         Theme(
           data: Theme.of(context),
           child: ScheduleListTile(
-            scheduleIsToday: scheduleIsToday,
             schedule: schedule,
           ),
         ),

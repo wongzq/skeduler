@@ -33,6 +33,12 @@ enum AvailabilityOption {
   remove,
 }
 
+enum ConflictOption {
+  keep,
+  remove,
+  editTimetable,
+}
+
 enum DrawerEnum {
   dashboard,
   group,

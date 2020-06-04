@@ -34,6 +34,8 @@ class Time {
   // getter methods
   int get startTimeInt => startTime.millisecondsSinceEpoch;
   int get endTimeInt => endTime.millisecondsSinceEpoch;
+  String get startTimeStr => DateFormat('hh:mm aa').format(startTime);
+  String get endTimeStr => DateFormat('hh:mm aa').format(endTime);
 
   // auxiliary methods
   bool sameDateAs(Time time) {
@@ -73,14 +75,10 @@ class Time {
       ),
     );
 
-    if ((this.startTime.isAtSameMomentAs(tmpTime.startTime) ||
-            this.startTime.isAfter(tmpTime.startTime)) &&
-        (this.endTime.isBefore(tmpTime.endTime) ||
-            this.endTime.isAtSameMomentAs(tmpTime.endTime))) {
-      return true;
-    } else {
-      return false;
-    }
+    return this.startTime.millisecondsSinceEpoch >=
+            tmpTime.startTime.millisecondsSinceEpoch &&
+        this.endTime.millisecondsSinceEpoch <=
+            tmpTime.endTime.millisecondsSinceEpoch;
   }
 
   bool notWithinTimeOf(Time time) {
@@ -181,6 +179,7 @@ String getMonthShortStr(Month month) {
       return '';
   }
 }
+
 String getMonthStr(Month month) {
   switch (month) {
     case Month.jan:

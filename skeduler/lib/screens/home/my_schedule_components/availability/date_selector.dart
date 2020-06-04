@@ -129,7 +129,6 @@ class _DateSelectorState extends State<DateSelector> {
                     _startDateStr = DateFormat('yyyy/MM/dd').format(date);
 
                     if (widget.valSetStartDate != null) {
-                      print('1');
                       widget.valSetStartDate(_startDate);
                     }
                   } else if (widget.type == DateSelectorType.end &&
@@ -138,7 +137,6 @@ class _DateSelectorState extends State<DateSelector> {
                     _endDateStr = DateFormat('yyyy/MM/dd').format(date);
 
                     if (widget.valSetEndDate != null) {
-                      print('2');
                       widget.valSetEndDate(_endDate);
                     }
                   }

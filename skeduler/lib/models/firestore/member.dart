@@ -4,6 +4,27 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/firestore/time.dart';
 
+class MemberMetadata {
+  // properties
+  String _docId;
+  String _name;
+  String _nickname;
+
+  // constructor
+  MemberMetadata({
+    String docId,
+    String name,
+    String nickname,
+  })  : this._docId = docId,
+        this._name = name,
+        this._nickname = nickname;
+
+  // getter methods
+  String get docId => this._docId;
+  String get name => this._name;
+  String get nickname => this._nickname;
+}
+
 class Member {
   // properties
   String _docId;

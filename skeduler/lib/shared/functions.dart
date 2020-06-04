@@ -91,8 +91,8 @@ Color getFABTextColor(BuildContext context) {
 
 Color getFABIconForegroundColor(BuildContext context) {
   return Theme.of(context).brightness == Brightness.light
-      ? Theme.of(context).floatingActionButtonTheme.foregroundColor
-      : Theme.of(context).floatingActionButtonTheme.foregroundColor;
+      ? getOriginThemeData(ThemeProvider.themeOf(context).id).primaryIconTheme.color
+      : getOriginThemeData(ThemeProvider.themeOf(context).id).primaryIconTheme.color;
 }
 
 Color getFABIconBackgroundColor(BuildContext context) {

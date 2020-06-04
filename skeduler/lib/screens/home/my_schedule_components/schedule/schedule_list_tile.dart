@@ -7,12 +7,10 @@ import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class ScheduleListTile extends StatelessWidget {
-  final bool scheduleIsToday;
   final Schedule schedule;
 
   ScheduleListTile({
     Key key,
-    @required this.scheduleIsToday,
     @required this.schedule,
   }) : super(key: key);
 
@@ -45,6 +43,10 @@ class ScheduleListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     OriginTheme originTheme = Provider.of<OriginTheme>(context);
+
+    bool scheduleIsToday = schedule.date.year == DateTime.now().year &&
+        schedule.date.month == DateTime.now().month &&
+        schedule.date.day == DateTime.now().day;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,8 +103,7 @@ class ScheduleListTile extends StatelessWidget {
                         style: textStyleBodyLight.copyWith(
                           color: scheduleIsToday
                               ? Colors.grey.shade700
-                              : Theme.of(context).brightness ==
-                                      Brightness.light
+                              : Theme.of(context).brightness == Brightness.light
                                   ? Colors.grey.shade600
                                   : Colors.grey,
                           fontSize: 13.0,
@@ -114,8 +115,7 @@ class ScheduleListTile extends StatelessWidget {
                         style: textStyleBodyLight.copyWith(
                           color: scheduleIsToday
                               ? Colors.grey.shade700
-                              : Theme.of(context).brightness ==
-                                      Brightness.light
+                              : Theme.of(context).brightness == Brightness.light
                                   ? Colors.grey.shade600
                                   : Colors.grey,
                           fontSize: 13.0,
@@ -136,6 +136,16 @@ class ScheduleListTile extends StatelessWidget {
                               ? Theme.of(context).scaffoldBackgroundColor
                               : originTheme.primaryColorLight,
                           borderRadius: BorderRadius.circular(50.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.grey
+                                  : Colors.transparent,
+                              blurRadius: 1.0,
+                              offset: Offset(0.0, 2.0),
+                            ),
+                          ],
                         ),
                         child: Text(
                           schedule.startTimeStr,
@@ -166,6 +176,16 @@ class ScheduleListTile extends StatelessWidget {
                               ? Theme.of(context).scaffoldBackgroundColor
                               : originTheme.primaryColorLight,
                           borderRadius: BorderRadius.circular(50.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.grey
+                                  : Colors.transparent,
+                              blurRadius: 1.0,
+                              offset: Offset(0.0, 2.0),
+                            ),
+                          ],
                         ),
                         child: Text(
                           schedule.endTimeStr,

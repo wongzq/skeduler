@@ -67,6 +67,16 @@ class AvailabilityListTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: originTheme.primaryColorLight,
                       borderRadius: BorderRadius.circular(50.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? Colors.grey
+                                  : Colors.transparent,
+                          blurRadius: 1.0,
+                          offset: Offset(0.0, 2.0),
+                        ),
+                      ],
                     ),
                     child: Text(
                       DateFormat('hh:mm aa').format(time.startTime),
@@ -85,6 +95,16 @@ class AvailabilityListTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: originTheme.primaryColorLight,
                       borderRadius: BorderRadius.circular(50.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? Colors.grey
+                                  : Colors.transparent,
+                          blurRadius: 1.0,
+                          offset: Offset(0.0, 2.0),
+                        ),
+                      ],
                     ),
                     child: Text(
                       DateFormat('hh:mm aa').format(time.endTime),

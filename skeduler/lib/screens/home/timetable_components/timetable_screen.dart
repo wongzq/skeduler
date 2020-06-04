@@ -12,6 +12,7 @@ import 'package:skeduler/navigation/home_drawer.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_display.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
+import 'package:skeduler/shared/widgets/loading.dart';
 
 class TimetableScreen extends StatefulWidget {
   @override
@@ -33,39 +34,51 @@ class _TimetableScreenState extends State<TimetableScreen> {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
 
-    return FutureBuilder(
-      future: dbService.getGroupTimetableIdForToday(groupStatus.group.docId),
-      builder: (context, snapshotTtbId) {
-        return StreamBuilder(
-          stream: dbService.streamGroupTimetableForToday(
-            groupStatus.group.docId,
-            snapshotTtbId.data,
-          ),
-          builder: (context, snapshotTtb) {
-            Timetable timetable = snapshotTtb != null ? snapshotTtb.data : null;
-            bool isPlaceholder;
+    return groupStatus.group == null
+        ? Stack(
+            children: <Widget>[
+              Scaffold(
+                appBar: AppBar(
+                  title: AppBarTitle(title: 'Timetable'),
+                ),
+                drawer: HomeDrawer(DrawerEnum.timetables),
+              ),
+              Loading(),
+            ],
+          )
+        : FutureBuilder(
+            future:
+                dbService.getGroupTimetableIdForToday(groupStatus.group.docId),
+            builder: (context, snapshotTtbId) {
+              return StreamBuilder(
+                stream: dbService.streamGroupTimetableForToday(
+                  groupStatus.group.docId,
+                  snapshotTtbId.data,
+                ),
+                builder: (context, snapshotTtb) {
+                  Timetable timetable =
+                      snapshotTtb != null ? snapshotTtb.data : null;
+                  bool isPlaceholder;
 
-            if (timetable != null && timetable.isValid) {
-              isPlaceholder = false;
+                  if (timetable != null && timetable.isValid) {
+                    isPlaceholder = false;
 
-              if (_viewTodayTtb) {
-                if (ttbStatus.curr == null) {
-                  ttbStatus.curr = timetable;
-                } else if (ttbStatus.curr.docId == timetable.docId) {
-                  ttbStatus.curr = timetable;
-                } else {
-                  ttbStatus.curr = null;
-                  ttbStatus.curr = timetable;
-                }
-              }
-            } else {
-              isPlaceholder = true;
-              ttbStatus.curr = null;
-            }
+                    if (_viewTodayTtb) {
+                      if (ttbStatus.curr == null) {
+                        ttbStatus.curr = timetable;
+                      } else if (ttbStatus.curr.docId == timetable.docId) {
+                        ttbStatus.curr = timetable;
+                      } else {
+                        ttbStatus.curr = null;
+                        ttbStatus.curr = timetable;
+                      }
+                    }
+                  } else {
+                    isPlaceholder = true;
+                    ttbStatus.curr = null;
+                  }
 
-            return groupStatus.group == null
-                ? Scaffold()
-                : Scaffold(
+                  return Scaffold(
                     appBar: AppBar(
                       title: AppBarTitle(
                         title: groupStatus.group.name == null
@@ -271,9 +284,9 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                 ),
                               ),
                   );
-          },
-        );
-      },
-    );
+                },
+              );
+            },
+          );
   }
 }
