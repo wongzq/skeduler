@@ -4,7 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/conflict.dart';
 import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
+import 'package:skeduler/models/auxiliary/route_arguments.dart';
+import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
+import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/firestore/timetable.dart';
+import 'package:skeduler/services/database_service.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class ConflictListTile extends StatelessWidget {
@@ -30,6 +36,9 @@ class ConflictListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     OriginTheme originTheme = Provider.of<OriginTheme>(context);
+    GroupStatus groupStatus = Provider.of<GroupStatus>(context);
+    TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
+    DatabaseService dbService = Provider.of<DatabaseService>(context);
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
@@ -84,7 +93,7 @@ class ConflictListTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                PopupMenuButton(
+                PopupMenuButton<ConflictOption>(
                   child: Icon(
                     Icons.more_vert,
                     color: Theme.of(context).brightness == Brightness.light
@@ -124,6 +133,74 @@ class ConflictListTile extends StatelessWidget {
                         ),
                       ),
                     ];
+                  },
+                  onSelected: (value) async {
+                    switch (value) {
+                      case ConflictOption.keep:
+                        break;
+
+                      case ConflictOption.remove:
+                        await showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SimpleAlertDialog(
+                              context: context,
+                              contentDisplay: 'Remove this schedule from ' +
+                                  conflict.timetable.docId +
+                                  ' timetable?',
+                              confirmDisplay: 'REMOVE',
+                              confirmFunction: () async {
+                                // get timetable
+                                EditTimetable timetable =
+                                    EditTimetable.fromTimetable(
+                                  await dbService.getGroupTimetable(
+                                    groupStatus.group.docId,
+                                    conflict.timetable.docId,
+                                  ),
+                                );
+
+                                // get gridData to remove
+                                TimetableGridData gridDataToRemove =
+                                    timetable.gridDataList.value.firstWhere(
+                                  (gridData) =>
+                                      gridData.coord == conflict.gridData.coord,
+                                  orElse: () => null,
+                                );
+
+                                // remove gridData
+                                print(gridDataToRemove);
+
+                                if (gridDataToRemove != null) {
+                                  bool result = timetable.gridDataList
+                                      .pop(gridDataToRemove);
+                                  print(result);
+                                }
+
+                                // update in firestore
+                                await dbService.updateGroupTimetable(
+                                  groupStatus.group.docId,
+                                  timetable,
+                                );
+                              },
+                            );
+                          },
+                        );
+
+                        break;
+
+                      case ConflictOption.editTimetable:
+                        ttbStatus.edit = EditTimetable.fromTimetable(
+                          await dbService.getGroupTimetable(
+                            groupStatus.group.docId,
+                            conflict.timetable.docId,
+                          ),
+                        );
+                        Navigator.of(context).pushNamed(
+                          '/timetables/editor',
+                          arguments: RouteArgs(),
+                        );
+                        break;
+                    }
                   },
                 ),
               ],
