@@ -293,7 +293,7 @@ class EditTimetable extends ChangeNotifier {
     notifyListeners();
   }
 
-  set hasChanges(bool value){
+  set hasChanges(bool value) {
     this._hasChanges = value;
     this._gridDataList.hasChanges = value;
     notifyListeners();
@@ -589,7 +589,7 @@ Map<String, dynamic> firestoreMapFromEditTimetable(EditTimetable editTtb) {
   if (editTtb.gridDataList != null) {
     List<Map<String, dynamic>> gridDataList = [];
 
-    editTtb.gridDataList.value.forEach((gridData) {
+    for (TimetableGridData gridData in editTtb.gridDataList.value) {
       if (editTtb.axisDay.contains(gridData.coord.day) &&
           editTtb.axisTime.contains(gridData.coord.time) &&
           editTtb.axisCustom.contains(gridData.coord.custom)) {
@@ -617,6 +617,7 @@ Map<String, dynamic> firestoreMapFromEditTimetable(EditTimetable editTtb) {
 
         // convert available
         bool available = gridData.available;
+        bool ignore = gridData.ignore;
 
         // add to list
         gridDataList.add({
@@ -624,9 +625,10 @@ Map<String, dynamic> firestoreMapFromEditTimetable(EditTimetable editTtb) {
           'subject': subject,
           'member': member,
           'available': available,
+          'ignore': ignore,
         });
       }
-    });
+    }
 
     firestoreMap['gridDataList'] = gridDataList;
   }

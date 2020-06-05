@@ -93,115 +93,179 @@ class ConflictListTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                PopupMenuButton<ConflictOption>(
-                  child: Icon(
-                    Icons.more_vert,
-                    color: Theme.of(context).brightness == Brightness.light
-                        ? Colors.grey.shade600
-                        : Colors.grey,
-                  ),
-                  itemBuilder: (context) {
-                    return [
-                      PopupMenuItem(
-                        value: ConflictOption.keep,
-                        child: Row(
-                          children: <Widget>[
-                            Icon(Icons.check),
-                            SizedBox(width: 10.0),
-                            Text('Keep'),
-                          ],
-                        ),
+                Row(
+                  children: <Widget>[
+                    Icon(
+                      conflict.gridData.ignore ? Icons.visibility_off : null,
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.grey.shade600
+                          : Colors.grey,
+                    ),
+                    SizedBox(width: 5.0),
+                    PopupMenuButton<ConflictOption>(
+                      child: Icon(
+                        Icons.more_vert,
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Colors.grey.shade600
+                            : Colors.grey,
                       ),
-                      PopupMenuItem(
-                        value: ConflictOption.remove,
-                        child: Row(
-                          children: <Widget>[
-                            Icon(Icons.delete),
-                            SizedBox(width: 10.0),
-                            Text('Remove'),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: ConflictOption.editTimetable,
-                        child: Row(
-                          children: <Widget>[
-                            Icon(Icons.table_chart),
-                            SizedBox(width: 10.0),
-                            Text('Edit Timetable'),
-                          ],
-                        ),
-                      ),
-                    ];
-                  },
-                  onSelected: (value) async {
-                    switch (value) {
-                      case ConflictOption.keep:
-                        break;
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                              value: conflict.gridData.ignore
+                                  ? ConflictOption.unkeep
+                                  : ConflictOption.keep,
+                              child: Row(children: <Widget>[
+                                Icon(conflict.gridData.ignore
+                                    ? Icons.visibility
+                                    : Icons.visibility_off),
+                                SizedBox(width: 10.0),
+                                Text(conflict.gridData.ignore
+                                    ? 'Unignore'
+                                    : 'Ignore')
+                              ])),
+                          PopupMenuItem(
+                              value: ConflictOption.remove,
+                              child: Row(children: <Widget>[
+                                Icon(Icons.delete),
+                                SizedBox(width: 10.0),
+                                Text('Remove')
+                              ])),
+                          PopupMenuItem(
+                              value: ConflictOption.editTimetable,
+                              child: Row(children: <Widget>[
+                                Icon(Icons.table_chart),
+                                SizedBox(width: 10.0),
+                                Text('Edit Timetable')
+                              ]))
+                        ];
+                      },
+                      onSelected: (value) async {
+                        switch (value) {
+                          case ConflictOption.keep:
+                            // get timetable
+                            EditTimetable timetable =
+                                EditTimetable.fromTimetable(
+                              await dbService.getGroupTimetable(
+                                groupStatus.group.docId,
+                                conflict.timetable.docId,
+                              ),
+                            );
 
-                      case ConflictOption.remove:
-                        await showDialog(
-                          context: context,
-                          builder: (context) {
-                            return SimpleAlertDialog(
+                            // get gridData to remove
+                            TimetableGridData gridDataToUpdate =
+                                timetable.gridDataList.value.firstWhere(
+                              (gridData) =>
+                                  gridData.coord == conflict.gridData.coord,
+                              orElse: () => null,
+                            );
+
+                            // remove gridData
+                            if (gridDataToUpdate != null) {
+                              gridDataToUpdate.ignore = true;
+                              timetable.gridDataList.push(gridDataToUpdate);
+                            }
+
+                            // update in firestore
+                            await dbService.updateGroupTimetable(
+                              groupStatus.group.docId,
+                              timetable,
+                            );
+                            break;
+
+                          case ConflictOption.unkeep: // get timetable
+                            EditTimetable timetable =
+                                EditTimetable.fromTimetable(
+                              await dbService.getGroupTimetable(
+                                groupStatus.group.docId,
+                                conflict.timetable.docId,
+                              ),
+                            );
+
+                            // get gridData to remove
+                            TimetableGridData gridDataToUpdate =
+                                timetable.gridDataList.value.firstWhere(
+                              (gridData) =>
+                                  gridData.coord == conflict.gridData.coord,
+                              orElse: () => null,
+                            );
+
+                            // remove gridData
+                            if (gridDataToUpdate != null) {
+                              gridDataToUpdate.ignore = false;
+                              timetable.gridDataList.push(gridDataToUpdate);
+                            }
+
+                            // update in firestore
+                            await dbService.updateGroupTimetable(
+                              groupStatus.group.docId,
+                              timetable,
+                            );
+                            break;
+
+                          case ConflictOption.remove:
+                            await showDialog(
                               context: context,
-                              contentDisplay: 'Remove this schedule from ' +
-                                  conflict.timetable.docId +
-                                  ' timetable?',
-                              confirmDisplay: 'REMOVE',
-                              confirmFunction: () async {
-                                // get timetable
-                                EditTimetable timetable =
-                                    EditTimetable.fromTimetable(
-                                  await dbService.getGroupTimetable(
-                                    groupStatus.group.docId,
-                                    conflict.timetable.docId,
-                                  ),
-                                );
+                              builder: (context) {
+                                return SimpleAlertDialog(
+                                  context: context,
+                                  contentDisplay: 'Remove this schedule from ' +
+                                      conflict.timetable.docId +
+                                      ' timetable?',
+                                  confirmDisplay: 'REMOVE',
+                                  confirmFunction: () async {
+                                    // get timetable
+                                    EditTimetable timetable =
+                                        EditTimetable.fromTimetable(
+                                      await dbService.getGroupTimetable(
+                                        groupStatus.group.docId,
+                                        conflict.timetable.docId,
+                                      ),
+                                    );
 
-                                // get gridData to remove
-                                TimetableGridData gridDataToRemove =
-                                    timetable.gridDataList.value.firstWhere(
-                                  (gridData) =>
-                                      gridData.coord == conflict.gridData.coord,
-                                  orElse: () => null,
-                                );
+                                    // get gridData to remove
+                                    TimetableGridData gridDataToRemove =
+                                        timetable.gridDataList.value.firstWhere(
+                                      (gridData) =>
+                                          gridData.coord ==
+                                          conflict.gridData.coord,
+                                      orElse: () => null,
+                                    );
 
-                                // remove gridData
-                                print(gridDataToRemove);
+                                    // remove gridData
+                                    if (gridDataToRemove != null) {
+                                      timetable.gridDataList
+                                          .pop(gridDataToRemove);
+                                    }
 
-                                if (gridDataToRemove != null) {
-                                  bool result = timetable.gridDataList
-                                      .pop(gridDataToRemove);
-                                  print(result);
-                                }
-
-                                // update in firestore
-                                await dbService.updateGroupTimetable(
-                                  groupStatus.group.docId,
-                                  timetable,
+                                    // update in firestore
+                                    await dbService.updateGroupTimetable(
+                                      groupStatus.group.docId,
+                                      timetable,
+                                    );
+                                  },
                                 );
                               },
                             );
-                          },
-                        );
 
-                        break;
+                            break;
 
-                      case ConflictOption.editTimetable:
-                        ttbStatus.edit = EditTimetable.fromTimetable(
-                          await dbService.getGroupTimetable(
-                            groupStatus.group.docId,
-                            conflict.timetable.docId,
-                          ),
-                        );
-                        Navigator.of(context).pushNamed(
-                          '/timetables/editor',
-                          arguments: RouteArgs(),
-                        );
-                        break;
-                    }
-                  },
+                          case ConflictOption.editTimetable:
+                            ttbStatus.edit = EditTimetable.fromTimetable(
+                              await dbService.getGroupTimetable(
+                                groupStatus.group.docId,
+                                conflict.timetable.docId,
+                              ),
+                            );
+                            Navigator.of(context).pushNamed(
+                              '/timetables/editor',
+                              arguments: RouteArgs(),
+                            );
+                            break;
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

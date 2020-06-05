@@ -100,6 +100,7 @@ export const updateGroupMember = functions.firestore
                     gridDataList.forEach((gridData) => {
                       if (gridData.member.docId == change.before.id) {
                         const tmpGridData: TimetableGridData = new TimetableGridData(
+                          gridData.ignore,
                           gridData.available,
                           gridData.coord.day,
                           gridData.coord.time.startTime,
@@ -112,6 +113,7 @@ export const updateGroupMember = functions.firestore
                         );
 
                         const newGridData: TimetableGridData = new TimetableGridData(
+                          gridData.ignore,
                           gridData.available,
                           gridData.coord.day,
                           gridData.coord.time.startTime,
@@ -197,6 +199,7 @@ async function validateTimetablesGridDataList(
                 for (const gridData of timetableDoc.data().gridDataList) {
                   tmpGridDataList.push(
                     new TimetableGridData(
+                      gridData.ignore,
                       gridData.available,
                       gridData.coord.day,
                       gridData.coord.time.startTime.toDate(),
@@ -287,6 +290,7 @@ async function validateTimetablesGridDataList(
                 for (const gridData of timetableDoc.data().gridDataList) {
                   tmpGridDataList.push(
                     new TimetableGridData(
+                      gridData.ignore,
                       gridData.available,
                       gridData.coord.day,
                       gridData.coord.time.startTime.toDate(),

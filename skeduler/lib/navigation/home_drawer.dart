@@ -22,7 +22,7 @@ class HomeDrawer extends StatelessWidget {
     },
     DrawerEnum.group: {
       'title': 'No group selected',
-      'icon': Icon(Icons.settings),
+      'icon': Icon(Icons.developer_board),
     },
     DrawerEnum.timetables: {
       'title': 'Timetables',

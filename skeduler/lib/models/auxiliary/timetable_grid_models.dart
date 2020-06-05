@@ -765,15 +765,18 @@ class TimetableGridData {
   TimetableCoord _coord;
   TimetableDragSubjectMember _dragData;
   bool _available;
+  bool _ignore;
 
   // constructors
   TimetableGridData({
     TimetableCoord coord,
     TimetableDragSubjectMember dragData,
     bool available,
+    bool ignore,
   })  : this._coord = coord ?? TimetableCoord(),
         this._dragData = dragData ?? TimetableDragSubjectMember(),
-        this._available = available ?? false;
+        this._available = available ?? false,
+        this._ignore = ignore ?? false;
 
   TimetableGridData.from(TimetableGridData gridData)
       : this._coord = TimetableCoord.from(gridData.coord),
@@ -781,17 +784,20 @@ class TimetableGridData {
           subject: gridData._dragData.subject,
           member: gridData._dragData.member,
         ),
-        this._available = gridData.available;
+        this._available = gridData.available,
+        this._ignore = gridData.ignore;
 
   // getter methods
   TimetableCoord get coord => this._coord;
   TimetableDragSubjectMember get dragData => this._dragData;
   bool get available => this._available;
+  bool get ignore => this._ignore;
 
   // setter methods
   set coord(TimetableCoord value) => this._coord = value;
   set dragData(TimetableDragSubjectMember value) => this._dragData = value;
   set available(bool value) => this._available = value;
+  set ignore(bool value) => this._ignore = value;
 
   @override
   String toString() {
@@ -863,25 +869,10 @@ class TimetableGridDataList extends ChangeNotifier {
     }
   }
 
-  bool pop(TimetableGridData newGridData) {
-    TimetableGridData toRemove;
-
-    for (TimetableGridData gridData in this._value) {
-      if (gridData.coord == newGridData.coord) {
-        toRemove = gridData;
-        break;
-      }
-    }
-
-    if (toRemove != null) {
-      this._value.remove(toRemove);
-      this._hasChanges = true;
-      notifyListeners();
-      return true;
-    } else {
-      notifyListeners();
-      return false;
-    }
+  void pop(TimetableGridData newGridData) {
+    this._value.removeWhere((gridData) => newGridData.coord == gridData.coord);
+    this._hasChanges = true;
+    notifyListeners();
   }
 
   void popAll() {

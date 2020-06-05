@@ -35,8 +35,14 @@ enum AvailabilityOption {
 
 enum ConflictOption {
   keep,
+  unkeep,
   remove,
   editTimetable,
+}
+
+enum ConflictSort {
+  date,
+  member,
 }
 
 enum DrawerEnum {

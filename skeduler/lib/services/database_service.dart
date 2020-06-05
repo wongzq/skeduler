@@ -1254,6 +1254,7 @@ class DatabaseService {
             ),
           ),
           available: map['available'],
+          ignore: map['ignore'],
         ),
       );
     });
