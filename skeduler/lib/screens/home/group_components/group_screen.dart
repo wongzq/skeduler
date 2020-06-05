@@ -248,12 +248,16 @@ class _GroupScreenState extends State<GroupScreen> {
                       members: groupStatus.members,
                       timetables: snapshot != null ? snapshot.data ?? [] : []);
 
-                  return ListView.builder(
-                      physics: BouncingScrollPhysics(
-                          parent: AlwaysScrollableScrollPhysics()),
-                      itemCount: conflicts.length,
-                      itemBuilder: (context, index) =>
-                          ConflictListTile(conflict: conflicts[index]));
+                  return conflicts.length == 0
+                      ? EmptyPlaceholder(
+                          iconData: Icons.schedule,
+                          text: 'No schedule conflicts')
+                      : ListView.builder(
+                          physics: BouncingScrollPhysics(
+                              parent: AlwaysScrollableScrollPhysics()),
+                          itemCount: conflicts.length,
+                          itemBuilder: (context, index) =>
+                              ConflictListTile(conflict: conflicts[index]));
                 }),
           );
   }
