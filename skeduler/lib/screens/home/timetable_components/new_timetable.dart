@@ -111,13 +111,22 @@ class _NewTimetableState extends State<NewTimetable> {
                 )
                     .then((timetable) {
                   if (value.copyType == CopyTimetableType.copyTimetable) {
-                    setState(() {
-                      ttbStatus.temp.updateTimetableFromCopy(
-                          timetable, groupStatus.members);
-                    });
-
-                    Fluttertoast.showToast(
-                        msg: 'Successfully copied ' + value.ttbId);
+                    print(ttbStatus.temp.startDate);
+                    print(ttbStatus.temp.endDate);
+                    if (ttbStatus.temp.startDate != null &&
+                        ttbStatus.temp.endDate != null &&
+                        ttbStatus.temp.startDate
+                            .isBefore(ttbStatus.temp.endDate)) {
+                      setState(() {
+                        ttbStatus.temp.updateTimetableFromCopy(
+                            timetable, groupStatus.members);
+                      });
+                      Fluttertoast.showToast(
+                          msg: 'Successfully copied ' + value.ttbId);
+                    } else {
+                      Fluttertoast.showToast(
+                          msg: 'Please provide dates before copying');
+                    }
                   } else if (value.copyType ==
                       CopyTimetableType.copyTimetableAxes) {
                     setState(() {
