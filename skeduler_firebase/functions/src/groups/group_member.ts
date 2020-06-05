@@ -229,6 +229,7 @@ async function validateTimetablesGridDataList(
                     newGridData.available = false;
 
                     if (tmpGridData.notEqual(newGridData)) {
+                      newGridData.ignore = false;
                       // remove old gridData in gridDataList
                       promises.push(
                         admin
@@ -378,6 +379,8 @@ async function validateTimetablesGridDataList(
                     newGridData.available = memberIsAvailable;
 
                     if (tmpGridData.notEqual(newGridData)) {
+                      newGridData.ignore = false;
+
                       // remove old gridData in gridDataList
                       promises.push(
                         admin

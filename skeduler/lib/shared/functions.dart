@@ -91,8 +91,14 @@ Color getFABTextColor(BuildContext context) {
 
 Color getFABIconForegroundColor(BuildContext context) {
   return Theme.of(context).brightness == Brightness.light
-      ? getOriginThemeData(ThemeProvider.themeOf(context).id).primaryIconTheme.color
-      : getOriginThemeData(ThemeProvider.themeOf(context).id).primaryIconTheme.color;
+      ? getOriginThemeData(ThemeProvider.themeOf(context).id)
+          .primaryTextTheme
+          .bodyText1
+          .color
+      : getOriginThemeData(ThemeProvider.themeOf(context).id)
+          .primaryTextTheme
+          .bodyText1
+          .color;
 }
 
 Color getFABIconBackgroundColor(BuildContext context) {

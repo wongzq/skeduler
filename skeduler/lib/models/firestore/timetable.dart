@@ -319,7 +319,7 @@ class EditTimetable extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateTimetableFromCopy(Timetable ttb) {
+  void updateTimetableFromCopy(Timetable ttb, List<Member> members) {
     this._gridAxisOfDay = ttb.gridAxisOfDay;
     this._gridAxisOfTime = ttb.gridAxisOfTime;
     this._gridAxisOfCustom = ttb.gridAxisOfCustom;
@@ -327,6 +327,7 @@ class EditTimetable extends ChangeNotifier {
     this._axisTime = ttb.axisTime;
     this._axisCustom = ttb.axisCustom;
     this._gridDataList = ttb.gridDataList;
+    this.validateGridDataList(members: members);
     notifyListeners();
   }
 

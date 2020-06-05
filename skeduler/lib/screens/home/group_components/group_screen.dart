@@ -30,7 +30,7 @@ class GroupScreen extends StatefulWidget {
 class _GroupScreenState extends State<GroupScreen> {
   OriginTheme _originTheme;
 
-  bool _showIgnored = true;
+  bool _showIgnored = false;
   ConflictSort _sortBy = ConflictSort.date;
 
   List<Widget> _generateActions() {
@@ -178,7 +178,13 @@ class _GroupScreenState extends State<GroupScreen> {
         if (result != 0)
           return result;
         else
-          return a.conflictDates.first.compareTo(b.conflictDates.first);
+          return a.conflictDates.length == 0 && b.conflictDates.length == 0
+              ? 0
+              : a.conflictDates.length == 0 && b.conflictDates.length > 0
+                  ? -1
+                  : a.conflictDates.length > 0 && b.conflictDates.length == 0
+                      ? 1
+                      : a.conflictDates.first.compareTo(b.conflictDates.first);
       });
     } else if (_sortBy == ConflictSort.member) {
       conflicts.sort((a, b) {

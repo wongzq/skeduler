@@ -112,7 +112,8 @@ class _NewTimetableState extends State<NewTimetable> {
                     .then((timetable) {
                   if (value.copyType == CopyTimetableType.copyTimetable) {
                     setState(() {
-                      ttbStatus.temp.updateTimetableFromCopy(timetable);
+                      ttbStatus.temp.updateTimetableFromCopy(
+                          timetable, groupStatus.members);
                     });
 
                     Fluttertoast.showToast(
@@ -234,7 +235,7 @@ class _NewTimetableState extends State<NewTimetable> {
                 onPressed: () {
                   if (_formKey.currentState.validate()) {
                     unfocus();
-                    
+
                     if (ttbStatus.temp.startDate != null &&
                         ttbStatus.temp.endDate != null &&
                         ttbStatus.temp.startDate
