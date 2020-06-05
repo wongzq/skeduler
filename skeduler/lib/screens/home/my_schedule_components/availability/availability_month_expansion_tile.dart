@@ -4,7 +4,7 @@ import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/screens/home/my_schedule_components/availability/availability_list_tile.dart';
 
-class AvailabilityMonthExpansionTile extends StatelessWidget {
+class AvailabilityMonthExpansionTile extends StatefulWidget {
   final int monthIndex;
   final List<Time> times;
 
@@ -14,11 +14,20 @@ class AvailabilityMonthExpansionTile extends StatelessWidget {
     @required this.times,
   }) : super(key: key);
 
+  @override
+  _AvailabilityMonthExpansionTileState createState() =>
+      _AvailabilityMonthExpansionTileState();
+}
+
+class _AvailabilityMonthExpansionTileState
+    extends State<AvailabilityMonthExpansionTile> {
+  bool _expanded;
+
   List<Widget> _generateAvailabilityListTiles(BuildContext context) {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     List<Widget> availabilityWidgets = [];
 
-    for (Time time in times) {
+    for (Time time in widget.times) {
       availabilityWidgets.add(
         Theme(
           data: Theme.of(context),
@@ -48,14 +57,18 @@ class AvailabilityMonthExpansionTile extends StatelessWidget {
           ),
           child: ExpansionTile(
             key: GlobalKey(),
-            initiallyExpanded: DateTime.now().month == monthIndex,
+            onExpansionChanged: (value) => _expanded = value,
+            initiallyExpanded:
+                _expanded ?? DateTime.now().month == widget.monthIndex,
             title: Container(
               padding: EdgeInsets.all(5.0),
               child: Text(
                 groupStatus.me.alwaysAvailable
                     ? 'EXCEPT FOR ' +
-                        getMonthStr(Month.values[monthIndex - 1]).toUpperCase()
-                    : getMonthStr(Month.values[monthIndex - 1]).toUpperCase(),
+                        getMonthStr(Month.values[widget.monthIndex - 1])
+                            .toUpperCase()
+                    : getMonthStr(Month.values[widget.monthIndex - 1])
+                        .toUpperCase(),
                 style: TextStyle(
                   fontSize: 16.0,
                   letterSpacing: 2.0,

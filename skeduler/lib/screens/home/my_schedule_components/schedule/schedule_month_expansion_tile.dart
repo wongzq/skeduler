@@ -5,7 +5,7 @@ import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/screens/home/my_schedule_components/schedule/schedule_list_tile.dart';
 
-class ScheduleMonthExpansionTile extends StatelessWidget {
+class ScheduleMonthExpansionTile extends StatefulWidget {
   final int monthIndex;
   final List<Schedule> schedules;
 
@@ -14,6 +14,15 @@ class ScheduleMonthExpansionTile extends StatelessWidget {
     @required this.monthIndex,
     @required this.schedules,
   }) : super(key: key);
+
+  @override
+  _ScheduleMonthExpansionTileState createState() =>
+      _ScheduleMonthExpansionTileState();
+}
+
+class _ScheduleMonthExpansionTileState
+    extends State<ScheduleMonthExpansionTile> {
+  bool _expanded;
 
   bool _memberIsAvailableAtThisTime(BuildContext context, Schedule schedule) {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
@@ -43,7 +52,7 @@ class ScheduleMonthExpansionTile extends StatelessWidget {
   List<Widget> _generateScheduleListTiles(BuildContext context) {
     List<Widget> scheduleWidgets = [];
 
-    for (Schedule schedule in schedules) {
+    for (Schedule schedule in widget.schedules) {
       scheduleWidgets.add(
         Theme(
           data: Theme.of(context),
@@ -61,7 +70,7 @@ class ScheduleMonthExpansionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     int unavailableCount = 0;
 
-    for (Schedule schedule in schedules) {
+    for (Schedule schedule in widget.schedules) {
       unavailableCount = _memberIsAvailableAtThisTime(context, schedule)
           ? unavailableCount
           : unavailableCount + 1;
@@ -77,14 +86,17 @@ class ScheduleMonthExpansionTile extends StatelessWidget {
                 : Colors.white,
           ),
           child: ExpansionTile(
-            initiallyExpanded: DateTime.now().month == monthIndex,
+            onExpansionChanged: (value) => _expanded = value,
+            initiallyExpanded:
+                _expanded ?? DateTime.now().month == widget.monthIndex,
             title: Container(
               padding: EdgeInsets.all(5.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    getMonthStr(Month.values[monthIndex - 1]).toUpperCase(),
+                    getMonthStr(Month.values[widget.monthIndex - 1])
+                        .toUpperCase(),
                     style: TextStyle(
                       fontSize: 16.0,
                       letterSpacing: 2.0,
