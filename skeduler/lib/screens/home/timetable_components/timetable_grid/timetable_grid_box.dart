@@ -113,7 +113,9 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                                               _editMode.isDraggingData) &&
                                           !memberIsAssigned(
                                               _editMode.isDraggingData))
-                                  ? activatedColor
+                                  ? _gridData.available
+                                      ? activatedColor
+                                      : deactivatedColor
                                   : deactivatedColor
 
                               // something is not dragging
@@ -271,7 +273,11 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
       onWillAccept: (_) {
         if (_editMode.editing) {
           _isHovered = true;
-          return true;
+          if (_gridData.available) {
+            return true;
+          } else {
+            return false;
+          }
         } else {
           return false;
         }
