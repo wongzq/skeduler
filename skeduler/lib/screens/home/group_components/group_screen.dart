@@ -13,7 +13,6 @@ import 'package:skeduler/navigation/home_drawer.dart';
 import 'package:skeduler/screens/home/group_components/conflicts/conflict_list_tile.dart';
 import 'package:skeduler/screens/home/group_components/group_screen_options_owner.dart';
 import 'package:skeduler/screens/home/group_components/group_screen_options_admin.dart';
-import 'package:skeduler/screens/home/group_components/group_screen_options_member.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/widgets/loading.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
@@ -236,9 +235,7 @@ class _GroupScreenState extends State<GroupScreen> {
                     ? GroupScreenOptionsOwner()
                     : groupStatus.me.role == MemberRole.admin
                         ? GroupScreenOptionsAdmin()
-                        : groupStatus.me.role == MemberRole.member
-                            ? GroupScreenOptionsMember()
-                            : null
+                        : null
                 : null,
             body: StreamBuilder<List<Timetable>>(
                 stream:

@@ -3,14 +3,14 @@ import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/timetable.dart';
 
 class Conflict {
-  TimetableGridData gridData;
   TimetableMetadata timetable;
+  TimetableGridData gridData;
   MemberMetadata member;
   List<DateTime> conflictDates;
 
   Conflict({
-    this.gridData,
     this.timetable,
+    this.gridData,
     this.member,
     this.conflictDates,
   });
