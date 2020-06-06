@@ -15,9 +15,9 @@ class MemberMetadata {
     String docId,
     String name,
     String nickname,
-  })  : this._docId = docId,
-        this._name = name,
-        this._nickname = nickname;
+  })  : this._docId = docId ?? '',
+        this._name = name ?? '',
+        this._nickname = nickname ?? '';
 
   // getter methods
   String get docId => this._docId;

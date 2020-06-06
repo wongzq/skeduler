@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
+import 'package:skeduler/models/auxiliary/conflict.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
@@ -1085,6 +1086,8 @@ class DatabaseService {
             timetableMetadatas: _timetableMetadatasFromDynamicList(
               snapshot.data['timetables'] ?? [],
             ),
+            conflicts:
+                _conflictsFromDynamicList(snapshot.data['conflicts'] ?? []),
           )
         : null;
   }
@@ -1173,6 +1176,41 @@ class DatabaseService {
     return query.documents.map(_timetableFromSnapshot).toList();
   }
 
+  // convert [List<dynamic>] into [List<Conflict>]
+  List<Conflict> _conflictsFromDynamicList(List<dynamic> list) {
+    List<Conflict> conflicts = [];
+
+    for (dynamic item in list) {
+      Map map = item as Map;
+      conflicts.add(
+        Conflict(
+          timetable: map['timetable'] ?? '',
+          member: MemberMetadata(
+            docId: map['member']['docId'],
+            name: map['member']['name'],
+            nickname: map['member']['nickname'],
+          ),
+          gridData: _gridDataFromMap(map['gridData'] as Map),
+          conflictDates:
+              _datesFromDynamicList(map['conflictDates'] as List<dynamic>),
+        ),
+      );
+    }
+
+    return conflicts;
+  }
+
+  // convert [List<dynamic>] into [List<DateTime>]
+  List<DateTime> _datesFromDynamicList(List<dynamic> list) {
+    List<DateTime> dates = [];
+
+    for (dynamic timestamp in list) {
+      dates.add(timestamp.toDate());
+    }
+
+    return dates;
+  }
+
   // convert [List<dynamic>] into [List<TimetableMetadata]
   List<TimetableMetadata> _timetableMetadatasFromDynamicList(
       List<dynamic> timetables) {
@@ -1227,6 +1265,31 @@ class DatabaseService {
     return listStr;
   }
 
+  // convert [Map] into [TimetableGridData]
+  TimetableGridData _gridDataFromMap(Map gridData) {
+    return TimetableGridData(
+      coord: TimetableCoord(
+          day: Weekday.values[gridData['coord']['day']],
+          time: Time(
+            startTime: gridData['coord']['time']['startTime'].toDate(),
+            endTime: gridData['coord']['time']['endTime'].toDate(),
+          ),
+          custom: gridData['coord']['custom']),
+      dragData: TimetableDragSubjectMember(
+        subject: TimetableDragSubject(
+          docId: gridData['subject']['docId'],
+          display: gridData['subject']['display'],
+        ),
+        member: TimetableDragMember(
+          docId: gridData['member']['docId'],
+          display: gridData['member']['display'],
+        ),
+      ),
+      available: gridData['available'],
+      ignore: gridData['ignore'],
+    );
+  }
+
   // convert [List<dynamic>] into [List<TimetableGridData]
   TimetableGridDataList _gridDataListFromDynamicList(List<dynamic> list) {
     List<TimetableGridData> gridDataList = [];
@@ -1234,29 +1297,7 @@ class DatabaseService {
     list.forEach((elem) {
       Map map = elem as Map;
 
-      gridDataList.add(
-        TimetableGridData(
-          coord: TimetableCoord(
-              day: Weekday.values[map['coord']['day']],
-              time: Time(
-                startTime: map['coord']['time']['startTime'].toDate(),
-                endTime: map['coord']['time']['endTime'].toDate(),
-              ),
-              custom: map['coord']['custom']),
-          dragData: TimetableDragSubjectMember(
-            subject: TimetableDragSubject(
-              docId: map['subject']['docId'],
-              display: map['subject']['display'],
-            ),
-            member: TimetableDragMember(
-              docId: map['member']['docId'],
-              display: map['member']['display'],
-            ),
-          ),
-          available: map['available'],
-          ignore: map['ignore'],
-        ),
-      );
+      gridDataList.add(_gridDataFromMap(map));
     });
 
     return TimetableGridDataList(value: gridDataList);

@@ -148,7 +148,7 @@ class ConflictListTile extends StatelessWidget {
                                 EditTimetable.fromTimetable(
                               await dbService.getGroupTimetable(
                                 groupStatus.group.docId,
-                                conflict.timetable.docId,
+                                conflict.timetable,
                               ),
                             );
 
@@ -178,7 +178,7 @@ class ConflictListTile extends StatelessWidget {
                                 EditTimetable.fromTimetable(
                               await dbService.getGroupTimetable(
                                 groupStatus.group.docId,
-                                conflict.timetable.docId,
+                                conflict.timetable,
                               ),
                             );
 
@@ -210,7 +210,7 @@ class ConflictListTile extends StatelessWidget {
                                 return SimpleAlertDialog(
                                   context: context,
                                   contentDisplay: 'Remove this schedule from ' +
-                                      conflict.timetable.docId +
+                                      conflict.timetable +
                                       ' timetable?',
                                   confirmDisplay: 'REMOVE',
                                   confirmFunction: () async {
@@ -219,7 +219,7 @@ class ConflictListTile extends StatelessWidget {
                                         EditTimetable.fromTimetable(
                                       await dbService.getGroupTimetable(
                                         groupStatus.group.docId,
-                                        conflict.timetable.docId,
+                                        conflict.timetable,
                                       ),
                                     );
 
@@ -254,7 +254,7 @@ class ConflictListTile extends StatelessWidget {
                             ttbStatus.edit = EditTimetable.fromTimetable(
                               await dbService.getGroupTimetable(
                                 groupStatus.group.docId,
-                                conflict.timetable.docId,
+                                conflict.timetable,
                               ),
                             );
                             Navigator.of(context).pushNamed(
