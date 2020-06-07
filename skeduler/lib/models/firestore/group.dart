@@ -61,6 +61,9 @@ class Group {
   List<String> get memberMetadatas => this._memberMetadatas;
   List<String> get subjectMetadatas => this._subjectMetadatas;
   List<Conflict> get conflicts => this._conflicts;
+
+  int get pendingConflicts =>
+      this._conflicts.where((element) => !element.gridData.ignore).length;
 }
 
 // --------------------------------------------------------------------------------

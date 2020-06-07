@@ -7,7 +7,7 @@ class GroupCard extends StatelessWidget {
   final String ownerName;
   final Color groupColor;
   final int numOfMembers;
-  final bool hasNotification;
+  final int notifications;
 
   final _radius = 10.0;
   final _padding = 10.0;
@@ -17,7 +17,7 @@ class GroupCard extends StatelessWidget {
     this.ownerName,
     this.groupColor,
     this.numOfMembers,
-    this.hasNotification = true,
+    this.notifications = 0,
   });
 
   @override
@@ -87,7 +87,7 @@ class GroupCard extends StatelessWidget {
 
                   // Container: Notifications
                   Visibility(
-                    visible: hasNotification,
+                    visible: (notifications ?? 0) > 0,
                     child: Align(
                       alignment: Alignment.topRight,
                       child: Padding(
@@ -106,6 +106,12 @@ class GroupCard extends StatelessWidget {
                                 blurRadius: 5.0,
                               ),
                             ],
+                          ),
+                          child: Center(
+                            child: Text(
+                              notifications.toString(),
+                              style: TextStyle(color: originTheme.textColor),
+                            ),
                           ),
                         ),
                       ),

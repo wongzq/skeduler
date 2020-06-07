@@ -1,5 +1,36 @@
 import * as admin from "firebase-admin";
+import * as functions from "firebase-functions";
 import { TimetableGridData, Time, Member } from "../models/custom_classes";
+import { validateConflicts } from "./group";
+
+export const updateGroupTimetable = functions.firestore
+  .document("/groups/{groupDocId}/timetables/{timetableDocId}")
+  .onUpdate(async (change, context) => {
+    const groupDocId: string = context.params.groupDocId;
+    const timetableDocId: string = context.params.timetableDocId;
+
+    const beforeData:
+      | FirebaseFirestore.DocumentData
+      | undefined = change.before.data();
+    const afterData:
+      | FirebaseFirestore.DocumentData
+      | undefined = change.after.data();
+
+    if (beforeData == null || afterData == null) {
+      return null;
+    } else {
+      const promises: Promise<any>[] = [];
+
+      promises.push(
+        validateConflicts({
+          groupDocId: groupDocId,
+          timetableDocId: timetableDocId,
+        })
+      );
+
+      return Promise.all(promises);
+    }
+  });
 
 export async function validateTimetablesGridDataList(
   groupDocId: string,

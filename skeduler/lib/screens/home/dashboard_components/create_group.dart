@@ -156,7 +156,7 @@ class _CreateGroupState extends State<CreateGroup> {
                 }
                 return _groupColorShade.color;
               }(),
-              hasNotification: false,
+              notifications: 3,
             ),
           ],
         ),

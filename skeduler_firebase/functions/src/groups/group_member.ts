@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { TimetableGridData } from "../models/custom_classes";
 import { validateTimetablesGridDataList } from "./group_timetable";
-import { calculateScheduleConflicts } from "..";
+import { validateConflicts } from "..";
 
 export const createGroupMember = functions.firestore
   .document("/groups/{groupDocId}/members/{memberDocId}")
@@ -159,7 +159,10 @@ export const updateGroupMember = functions.firestore
             }
           })
           .then(() => {
-            return calculateScheduleConflicts(groupDocId, memberDocId);
+            return validateConflicts({
+              groupDocId: groupDocId,
+              memberDocId: memberDocId,
+            });
           })
       );
 

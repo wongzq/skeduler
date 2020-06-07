@@ -6,7 +6,7 @@ import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/navigation/home_drawer.dart';
-import 'package:skeduler/screens/home/group_components/conflicts/conflict_list_tile.dart';
+import 'package:skeduler/screens/home/group_components/conflict_list_tile.dart';
 import 'package:skeduler/screens/home/group_components/group_screen_options_owner.dart';
 import 'package:skeduler/screens/home/group_components/group_screen_options_admin.dart';
 import 'package:skeduler/shared/widgets/loading.dart';
