@@ -138,7 +138,7 @@ class _NewTimetableState extends State<NewTimetable> {
                   }
                 });
               },
-            )
+            ),
           ],
         ),
         body: ListView(

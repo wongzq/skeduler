@@ -193,7 +193,7 @@ class TimetableStatus extends ChangeNotifier {
     this.curr = this._curr;
     this.edit = this._edit;
     this.temp = this._temp;
-    this.edit.hasChanges = true;
+    if (this.edit != null) this.edit.hasChanges = true;
     notifyListeners();
   }
 

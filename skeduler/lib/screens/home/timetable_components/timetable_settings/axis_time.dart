@@ -161,8 +161,6 @@ class _AxisTimeState extends State<AxisTime> {
                                 members: _groupStatus.members,
                               );
 
-                              _ttbStatus.update();
-
                               _times.add(next);
                               _times.sort((a, b) =>
                                   a.startTime.millisecondsSinceEpoch.compareTo(
@@ -317,7 +315,7 @@ class _AxisTimeState extends State<AxisTime> {
     }
 
     return ExpansionTile(
-      onExpansionChanged: (expanded) => setState(() => _expanded = !_expanded),
+      onExpansionChanged: (_) => setState(() => _expanded = !_expanded),
       initiallyExpanded: widget.initiallyExpanded,
       title: Text(
         'Axis 2 : Time',
