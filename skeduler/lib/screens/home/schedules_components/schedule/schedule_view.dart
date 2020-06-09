@@ -5,7 +5,7 @@ import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/schedule.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/models/firestore/timetable.dart';
-import 'package:skeduler/screens/home/my_schedule_components/schedule/schedule_month_expansion_tile.dart';
+import 'package:skeduler/screens/home/schedules_components/schedule/schedule_month_expansion_tile.dart';
 import 'package:skeduler/services/database_service.dart';
 
 class ScheduleView extends StatelessWidget {

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/schedule.dart';
 import 'package:skeduler/models/firestore/time.dart';
-import 'package:skeduler/screens/home/my_schedule_components/schedule/schedule_list_tile.dart';
+import 'package:skeduler/screens/home/schedules_components/schedule/schedule_list_tile.dart';
 
 class ScheduleMonthExpansionTile extends StatefulWidget {
   final int monthIndex;

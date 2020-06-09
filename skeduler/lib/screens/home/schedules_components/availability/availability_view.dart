@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/time.dart';
-import 'package:skeduler/screens/home/my_schedule_components/availability/availability_month_expansion_tile.dart';
+import 'package:skeduler/screens/home/schedules_components/availability/availability_month_expansion_tile.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 

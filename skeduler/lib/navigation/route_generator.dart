@@ -7,8 +7,8 @@ import 'package:skeduler/screens/home/dashboard_components/dashboard_screen.dart
 import 'package:skeduler/screens/home/group_components/edit_group.dart';
 import 'package:skeduler/screens/home/group_components/group_screen.dart';
 import 'package:skeduler/screens/home/members_components/members_screen.dart';
-import 'package:skeduler/screens/home/my_schedule_components/availability/availability_editor.dart';
-import 'package:skeduler/screens/home/my_schedule_components/my_schedule_screen.dart';
+import 'package:skeduler/screens/home/schedules_components/availability/availability_editor.dart';
+import 'package:skeduler/screens/home/schedules_components/schedules_screen.dart';
 import 'package:skeduler/screens/home/settings_components/settings_screen.dart';
 import 'package:skeduler/screens/home/subjects_components/subjects_screen.dart';
 import 'package:skeduler/screens/home/timetable_components/new_timetable.dart';

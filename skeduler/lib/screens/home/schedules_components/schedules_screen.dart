@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/navigation/home_drawer.dart';
-import 'package:skeduler/screens/home/my_schedule_components/availability/availability_fab.dart';
-import 'package:skeduler/screens/home/my_schedule_components/availability/availability_view.dart';
-import 'package:skeduler/screens/home/my_schedule_components/schedule/schedule_view.dart';
+import 'package:skeduler/screens/home/schedules_components/availability/availability_fab.dart';
+import 'package:skeduler/screens/home/schedules_components/availability/availability_view.dart';
+import 'package:skeduler/screens/home/schedules_components/schedule/schedule_view.dart';
 import 'package:skeduler/shared/widgets/loading.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
 
