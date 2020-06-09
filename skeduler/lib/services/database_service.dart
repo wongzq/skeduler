@@ -325,6 +325,7 @@ class DatabaseService {
                       'role': MemberRole.dummy.index,
                       'name': dummy.name,
                       'nickname': dummy.display,
+                      'alwaysAvailable': true,
                     })
                     .then((_) => OperationStatus(OperationResult.success,
                         'Successfully added ${dummy.display}'))

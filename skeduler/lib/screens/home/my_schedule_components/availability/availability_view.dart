@@ -76,7 +76,6 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                 : Colors.grey.withOpacity(0.5),
                         value: alwaysAvailable,
                         onChanged: (value) async {
-                          print(groupStatus.member.docId);
                           await dbService
                               .updateGroupMemberAlwaysAvailable(
                                 groupStatus.group.docId,

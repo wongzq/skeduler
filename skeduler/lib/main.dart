@@ -18,6 +18,9 @@ import 'package:theme_provider/theme_provider.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  final OriginTheme originTheme = OriginTheme();
+  final GroupStatus groupStatus = GroupStatus();
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,6 @@ class MyApp extends StatelessWidget {
     ]);
 
     DatabaseService dbService;
-    OriginTheme originTheme = OriginTheme();
 
     return RestartWidget(
       child: FutureBuilder<SharedPreferences>(
@@ -160,42 +162,41 @@ class MyApp extends StatelessWidget {
                                                       .streamGroupMemberMe(
                                                           groupDocId.value),
                                                   builder: (_, meSnap) {
+                                                    groupStatus.update(
+                                                      newGroup: groupDocId
+                                                                  .value !=
+                                                              null
+                                                          ? groupSnap != null
+                                                              ? groupSnap.data
+                                                              : null
+                                                          : null,
+                                                      newMembers: groupDocId
+                                                                  .value !=
+                                                              null
+                                                          ? membersSnap != null
+                                                              ? membersSnap.data
+                                                              : null
+                                                          : null,
+                                                      newSubjects: groupDocId
+                                                                  .value !=
+                                                              null
+                                                          ? subjectsSnap != null
+                                                              ? subjectsSnap
+                                                                  .data
+                                                              : null
+                                                          : null,
+                                                      newMe: groupDocId.value !=
+                                                              null
+                                                          ? meSnap != null
+                                                              ? meSnap.data
+                                                              : null
+                                                          : null,
+                                                    );
+
                                                     // Provider for GroupStatus
                                                     return ChangeNotifierProvider<
                                                         GroupStatus>.value(
-                                                      value: GroupStatus(
-                                                        group: groupDocId
-                                                                    .value !=
-                                                                null
-                                                            ? groupSnap != null
-                                                                ? groupSnap.data
-                                                                : null
-                                                            : null,
-                                                        members: groupDocId
-                                                                    .value !=
-                                                                null
-                                                            ? membersSnap !=
-                                                                    null
-                                                                ? membersSnap
-                                                                    .data
-                                                                : null
-                                                            : null,
-                                                        subjects: groupDocId
-                                                                    .value !=
-                                                                null
-                                                            ? subjectsSnap !=
-                                                                    null
-                                                                ? subjectsSnap
-                                                                    .data
-                                                                : null
-                                                            : null,
-                                                        me: groupDocId.value !=
-                                                                null
-                                                            ? meSnap != null
-                                                                ? meSnap.data
-                                                                : null
-                                                            : null,
-                                                      ),
+                                                      value: groupStatus,
                                                       child: MaterialApp(
                                                         title: 'Skeduler',
                                                         debugShowCheckedModeBanner:

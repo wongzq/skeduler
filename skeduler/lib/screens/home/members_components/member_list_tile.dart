@@ -72,6 +72,19 @@ class MemberListTile extends StatelessWidget {
     );
   }
 
+  PopupMenuItem _optionSchedules() {
+    return PopupMenuItem(
+      child: Row(
+        children: <Widget>[
+          Icon(Icons.schedule),
+          SizedBox(width: 10.0),
+          Text('Schedules'),
+        ],
+      ),
+      value: MemberOption.schedules,
+    );
+  }
+
   PopupMenuItem _optionRemove() {
     return PopupMenuItem(
       child: Row(
@@ -222,10 +235,17 @@ class MemberListTile extends StatelessWidget {
 
                         // If member is Dummy
                         else if (member.role == MemberRole.dummy) {
-                          return [
-                            _optionEdit(),
-                            _optionRemove(),
-                          ];
+                          return groupStatus.me.role == MemberRole.owner ||
+                                  groupStatus.me.role == MemberRole.admin
+                              ? [
+                                  _optionEdit(),
+                                  _optionSchedules(),
+                                  _optionRemove(),
+                                ]
+                              : [
+                                  _optionEdit(),
+                                  _optionRemove(),
+                                ];
                         } else {
                           return [];
                         }
@@ -352,6 +372,12 @@ class MemberListTile extends StatelessWidget {
                             arguments: RouteArgsEditMember(
                               member: member,
                             ),
+                          );
+                        } else if (value == MemberOption.schedules) {
+                          groupStatus.memberDocId = member.docId;
+                          Navigator.of(context).pushNamed(
+                            '/schedules',
+                            arguments: RouteArgs(),
                           );
                         } else if (value == MemberOption.remove) {
                           await showDialog(

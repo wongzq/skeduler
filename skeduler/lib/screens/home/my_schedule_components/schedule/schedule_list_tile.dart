@@ -23,21 +23,21 @@ class ScheduleListTile extends StatelessWidget {
       endTime: schedule.endTime,
     );
 
-    List<Time> times = groupStatus.me.alwaysAvailable
-        ? groupStatus.me.timesUnavailable
-        : groupStatus.me.timesAvailable;
+    List<Time> times = groupStatus.member.alwaysAvailable
+        ? groupStatus.member.timesUnavailable
+        : groupStatus.member.timesAvailable;
 
     for (Time time in times) {
-      if (groupStatus.me.alwaysAvailable &&
+      if (groupStatus.member.alwaysAvailable &&
           !scheduleTime.notWithinDateTimeOf(time)) {
         return false;
-      } else if (!groupStatus.me.alwaysAvailable &&
+      } else if (!groupStatus.member.alwaysAvailable &&
           scheduleTime.withinDateTimeOf(time)) {
         return true;
       }
     }
 
-    return groupStatus.me.alwaysAvailable;
+    return groupStatus.member.alwaysAvailable;
   }
 
   @override
@@ -63,19 +63,17 @@ class ScheduleListTile extends StatelessWidget {
           ),
           child: Column(
             children: [
-              schedule.available
+              _memberIsAvailableAtThisTime(context)
                   ? Container()
-                  : _memberIsAvailableAtThisTime(context)
-                      ? Container()
-                      : Container(
-                          padding: EdgeInsets.all(10.0),
-                          child: Text(
-                            'You are not available at this time',
-                            style: TextStyle(
-                              color: scheduleIsToday ? Colors.red : Colors.red,
-                            ),
-                          ),
+                  : Container(
+                      padding: EdgeInsets.all(10.0),
+                      child: Text(
+                        'You are not available at this time',
+                        style: TextStyle(
+                          color: scheduleIsToday ? Colors.red : Colors.red,
                         ),
+                      ),
+                    ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -111,7 +111,11 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                 ],
               ),
             ),
-            drawer: HomeDrawer(DrawerEnum.schedules),
+            drawer: HomeDrawer(
+              groupStatus.me.docId == groupStatus.member.docId
+                  ? DrawerEnum.schedules
+                  : DrawerEnum.members,
+            ),
             body: TabBarView(
               controller: _tabController,
               children: <Widget>[

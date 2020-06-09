@@ -5,6 +5,7 @@ enum MemberOption {
   makeAdmin,
   makeMember,
   edit,
+  schedules,
   remove,
 }
 

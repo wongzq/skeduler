@@ -528,62 +528,58 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
     }
 
     if (memberFound != null) {
-      if (memberFound.role == MemberRole.dummy) {
-        isAvailable = true;
-      } else {
-        // for each day within timetable range
-        isAvailable = true;
+      // for each day within timetable range
+      isAvailable = true;
 
-        timetableRangeLoop:
-        for (int i = 0;
-            i <
-                _ttbStatus.edit.endDate
-                    .add(Duration(days: 1))
-                    .difference(_ttbStatus.edit.startDate)
-                    .inDays;
-            i++) {
-          DateTime ttbDate = _ttbStatus.edit.startDate.add(Duration(days: i));
+      timetableRangeLoop:
+      for (int i = 0;
+          i <
+              _ttbStatus.edit.endDate
+                  .add(Duration(days: 1))
+                  .difference(_ttbStatus.edit.startDate)
+                  .inDays;
+          i++) {
+        DateTime ttbDate = _ttbStatus.edit.startDate.add(Duration(days: i));
 
-          Time gridTime = Time(
-            startTime: DateTime(
-              ttbDate.year,
-              ttbDate.month,
-              ttbDate.day,
-              _gridData.coord.time.startTime.hour,
-              _gridData.coord.time.startTime.minute,
-            ),
-            endTime: DateTime(
-              ttbDate.year,
-              ttbDate.month,
-              ttbDate.day,
-              _gridData.coord.time.endTime.hour,
-              _gridData.coord.time.endTime.minute,
-            ),
-          );
+        Time gridTime = Time(
+          startTime: DateTime(
+            ttbDate.year,
+            ttbDate.month,
+            ttbDate.day,
+            _gridData.coord.time.startTime.hour,
+            _gridData.coord.time.startTime.minute,
+          ),
+          endTime: DateTime(
+            ttbDate.year,
+            ttbDate.month,
+            ttbDate.day,
+            _gridData.coord.time.endTime.hour,
+            _gridData.coord.time.endTime.minute,
+          ),
+        );
 
-          bool availableTimeFound = false;
+        bool availableTimeFound = false;
 
-          if (Weekday.values[ttbDate.weekday - 1] == _gridData.coord.day) {
-            if (memberFound.alwaysAvailable) {
-              for (Time time in memberFound.timesUnavailable) {
-                if (!gridTime.notWithinDateTimeOf(time)) {
-                  isAvailable = false;
-                  break timetableRangeLoop;
-                }
-              }
-            } else if (!memberFound.alwaysAvailable) {
-              memberTimesLoop:
-              for (Time time in memberFound.timesAvailable) {
-                if (gridTime.withinDateTimeOf(time)) {
-                  availableTimeFound = true;
-                  break memberTimesLoop;
-                }
-              }
-
-              if (!memberFound.alwaysAvailable && !availableTimeFound) {
+        if (Weekday.values[ttbDate.weekday - 1] == _gridData.coord.day) {
+          if (memberFound.alwaysAvailable) {
+            for (Time time in memberFound.timesUnavailable) {
+              if (!gridTime.notWithinDateTimeOf(time)) {
                 isAvailable = false;
                 break timetableRangeLoop;
               }
+            }
+          } else if (!memberFound.alwaysAvailable) {
+            memberTimesLoop:
+            for (Time time in memberFound.timesAvailable) {
+              if (gridTime.withinDateTimeOf(time)) {
+                availableTimeFound = true;
+                break memberTimesLoop;
+              }
+            }
+
+            if (!memberFound.alwaysAvailable && !availableTimeFound) {
+              isAvailable = false;
+              break timetableRangeLoop;
             }
           }
         }

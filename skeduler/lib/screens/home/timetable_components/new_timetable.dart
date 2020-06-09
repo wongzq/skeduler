@@ -111,8 +111,6 @@ class _NewTimetableState extends State<NewTimetable> {
                 )
                     .then((timetable) {
                   if (value.copyType == CopyTimetableType.copyTimetable) {
-                    print(ttbStatus.temp.startDate);
-                    print(ttbStatus.temp.endDate);
                     if (ttbStatus.temp.startDate != null &&
                         ttbStatus.temp.endDate != null &&
                         ttbStatus.temp.startDate
