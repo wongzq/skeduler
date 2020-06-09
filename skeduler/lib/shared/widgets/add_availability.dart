@@ -35,11 +35,10 @@ class _AddAvailabilityState extends State<AddAvailability> {
       key: _scaffoldKey,
       appBar: AppBar(
         title: AppBarTitle(
-          title: groupStatus.group.name,
-          subtitle: groupStatus.me.alwaysAvailable
-              ? 'Add availability exception'
-              : 'Add availability',
-        ),
+            title: groupStatus.group.name,
+            subtitle: groupStatus.member.alwaysAvailable
+                ? 'Add availability exception'
+                : 'Add availability'),
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -91,9 +90,9 @@ class _AddAvailabilityState extends State<AddAvailability> {
                 await dbService
                     .addGroupMemberTime(
                   groupStatus.group.docId,
-                  null,
+                  groupStatus.member.docId,
                   newTime,
-                  groupStatus.me.alwaysAvailable,
+                  groupStatus.member.alwaysAvailable,
                 )
                     .then((_) {
                   _scaffoldKey.currentState.hideCurrentSnackBar();

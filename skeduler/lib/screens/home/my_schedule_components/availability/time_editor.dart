@@ -130,17 +130,17 @@ class _TimeEditorState extends State<TimeEditor> {
                   widget.scaffoldKey.currentState.showSnackBar(LoadingSnackBar(
                       context, 'Updating available times . . .'));
 
-                  if (_groupStatus.me.alwaysAvailable) {
+                  if (_groupStatus.member.alwaysAvailable) {
                     await _dbService.updateGroupMemberTimes(
                       _groupStatus.group.docId,
-                      null,
+                      _groupStatus.member.docId,
                       newTimes,
                       true,
                     );
                   } else {
                     await _dbService.updateGroupMemberTimes(
                       _groupStatus.group.docId,
-                      null,
+                      _groupStatus.member.docId,
                       newTimes,
                       false,
                     );
@@ -195,85 +195,48 @@ class _TimeEditorState extends State<TimeEditor> {
                       DateTime tmpStartTime = _startTime ?? _defaultStartTime;
                       DateTime tmpEndTime = _endTime ?? _defaultEndTime;
 
-                      return AlertDialog(
-                        content: RichText(
-                          text: TextSpan(
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: _groupStatus.me.alwaysAvailable
-                                    ? 'Remove from your unavailable times?\n\n'
-                                    : 'Remove from your available times?\n\n',
-                                style: TextStyle(
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              TextSpan(
-                                text: DateFormat('EEEE, d MMMM')
-                                        .format(tmpStartDate) +
-                                    ' to ' +
-                                    DateFormat('EEEE, d MMMM')
-                                        .format(tmpEndDate),
-                                style: TextStyle(
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('CANCEL'),
-                            onPressed: () => Navigator.of(context).maybePop(),
-                          ),
-                          FlatButton(
-                            child: Text(
-                              'REMOVE',
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),
+                      return SimpleAlertDialog(
+                        context: context,
+                        titleDisplay: _groupStatus.member.alwaysAvailable
+                            ? 'Remove from your unavailable times?'
+                            : 'Remove from your available times?',
+                        contentDisplay:
+                            DateFormat('EEEE, d MMMM').format(tmpStartDate) +
+                                ' to ' +
+                                DateFormat('EEEE, d MMMM').format(tmpEndDate),
+                        confirmDisplay: 'REMOVE',
+                        confirmFunction: () async {
+                          Navigator.of(context).maybePop();
+
+                          widget.scaffoldKey.currentState.showSnackBar(
+                              LoadingSnackBar(
+                                  context, 'Updating available times . . .'));
+
+                          List<Time> removeTimes = generateTimes(
+                            months: widget.valGetMonths(),
+                            weekdays: widget.valGetWeekdays(),
+                            time: Time(
+                              startTime: tmpStartTime,
+                              endTime: tmpEndTime,
                             ),
-                            onPressed: () async {
-                              Navigator.of(context).maybePop();
+                            startDate: tmpStartDate,
+                            endDate: tmpEndDate,
+                          );
 
-                              widget.scaffoldKey.currentState.showSnackBar(
-                                  LoadingSnackBar(context,
-                                      'Updating available times . . .'));
-
-                              List<Time> removeTimes = generateTimes(
-                                months: widget.valGetMonths(),
-                                weekdays: widget.valGetWeekdays(),
-                                time: Time(
-                                  startTime: tmpStartTime,
-                                  endTime: tmpEndTime,
-                                ),
-                                startDate: tmpStartDate,
-                                endDate: tmpEndDate,
-                              );
-
-                              await _dbService
-                                  .removeGroupMemberTimes(
-                                _groupStatus.group.docId,
-                                null,
-                                removeTimes,
-                                _groupStatus.me.alwaysAvailable,
-                              )
-                                  .then(
-                                (_) {
-                                  widget.scaffoldKey.currentState
-                                      .hideCurrentSnackBar();
-                                },
-                              );
+                          await _dbService
+                              .removeGroupMemberTimes(
+                            _groupStatus.group.docId,
+                            _groupStatus.member.docId,
+                            removeTimes,
+                            _groupStatus.member.alwaysAvailable,
+                          )
+                              .then(
+                            (_) {
+                              widget.scaffoldKey.currentState
+                                  .hideCurrentSnackBar();
                             },
-                          ),
-                        ],
+                          );
+                        },
                       );
                     },
                   );

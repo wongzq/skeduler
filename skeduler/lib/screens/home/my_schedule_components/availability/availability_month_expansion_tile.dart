@@ -63,7 +63,7 @@ class _AvailabilityMonthExpansionTileState
             title: Container(
               padding: EdgeInsets.all(5.0),
               child: Text(
-                groupStatus.me.alwaysAvailable
+                groupStatus.member.alwaysAvailable
                     ? 'EXCEPT FOR ' +
                         getMonthStr(Month.values[widget.monthIndex - 1])
                             .toUpperCase()

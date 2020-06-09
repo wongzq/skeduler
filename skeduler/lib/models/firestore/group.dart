@@ -105,6 +105,7 @@ class GroupStatus extends ChangeNotifier {
   List<Subject> _subjects;
 
   Member _me;
+  String _memberDocId;
 
   /// constructors
   GroupStatus({
@@ -112,6 +113,7 @@ class GroupStatus extends ChangeNotifier {
     List<Member> members,
     List<Subject> subjects,
     Member me,
+    Member viewMember,
   })  : this._group = group,
         this._members = members ?? [],
         this._subjects = subjects ?? [],
@@ -125,12 +127,22 @@ class GroupStatus extends ChangeNotifier {
         subjectMetadatas: this._group._subjectMetadatas,
       );
   Member get me => this._me;
+  Member get member => this._members.firstWhere(
+        (member) => member.docId == this._memberDocId,
+        orElse: () => this._me,
+      );
+
+  set memberDocId(String value) {
+    this._memberDocId = value;
+    notifyListeners();
+  }
 
   void reset() {
     this._group = null;
     this._members = null;
     this._subjects = null;
     this._me = null;
+    this._memberDocId = null;
     notifyListeners();
   }
 

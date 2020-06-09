@@ -7,6 +7,7 @@ import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 import 'package:skeduler/shared/widgets/edit_time_dialog.dart';
 
 class AxisTime extends StatefulWidget {
@@ -185,55 +186,30 @@ class _AxisTimeState extends State<AxisTime> {
                   await showDialog(
                     context: context,
                     builder: (context) {
-                      return AlertDialog(
-                        content: RichText(
-                          text: TextSpan(
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: 'Remove this time slot?\n\n',
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              TextSpan(
-                                text: DateFormat('hh:mm aa')
-                                        .format(time.startTime) +
-                                    ' to ' +
-                                    DateFormat('hh:mm aa').format(time.endTime),
-                              ),
-                            ],
-                          ),
-                        ),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('CANCEL'),
-                            onPressed: () => Navigator.of(context).maybePop(),
-                          ),
-                          FlatButton(
-                              child: Text(
-                                'REMOVE',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                ),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  // Remove time slot
-                                  _times.removeWhere((test) {
-                                    return test.startTime == time.startTime &&
-                                        test.endTime == time.endTime;
-                                  });
+                      return SimpleAlertDialog(
+                        context: context,
+                        titleDisplay: 'Remove this time slot?',
+                        contentDisplay:
+                            DateFormat('hh:mm aa').format(time.startTime) +
+                                ' to ' +
+                                DateFormat('hh:mm aa').format(time.endTime),
+                        confirmDisplay: 'REMOVE',
+                        confirmFunction: () {
+                          setState(() {
+                            // Remove time slot
+                            _times.removeWhere((test) {
+                              return test.startTime == time.startTime &&
+                                  test.endTime == time.endTime;
+                            });
 
-                                  // Update through valueSetter
-                                  if (widget.valSetTimes != null) {
-                                    widget.valSetTimes(_times);
-                                  }
-                                });
+                            // Update through valueSetter
+                            if (widget.valSetTimes != null) {
+                              widget.valSetTimes(_times);
+                            }
+                          });
 
-                                Navigator.of(context).maybePop();
-                              }),
-                        ],
+                          Navigator.of(context).maybePop();
+                        },
                       );
                     },
                   );

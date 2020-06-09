@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/main.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/custom_enums.dart';
-import 'package:skeduler/models/auxiliary/route_arguments.dart';
+import 'package:skeduler/navigation/route_arguments.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/user.dart';
@@ -202,6 +202,7 @@ class HomeDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context)
                         .popUntil((route) => !route.navigator.canPop());
+                    groupStatus.memberDocId = groupStatus.me.docId;
                     Navigator.of(context).pushNamed(
                       '/schedules',
                       arguments: RouteArgs(),

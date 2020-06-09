@@ -62,7 +62,7 @@ class SimpleAlertDialog extends AlertDialog {
                     color: Theme.of(context).brightness == Brightness.light
                         ? Colors.black
                         : Colors.white,
-                    fontSize: 16.0,
+                    fontSize: 15.0,
                   ),
                 ),
           content: contentDisplay == null
@@ -70,6 +70,7 @@ class SimpleAlertDialog extends AlertDialog {
               : Text(
                   contentDisplay,
                   style: TextStyle(
+                    fontSize: 15.0,
                     color: Theme.of(context).brightness == Brightness.light
                         ? Colors.black
                         : Colors.white,

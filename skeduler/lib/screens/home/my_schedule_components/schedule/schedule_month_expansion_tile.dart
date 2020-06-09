@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skeduler/models/auxiliary/schedule.dart';
 import 'package:skeduler/models/firestore/group.dart';
+import 'package:skeduler/models/firestore/schedule.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/screens/home/my_schedule_components/schedule/schedule_list_tile.dart';
 
@@ -32,21 +32,21 @@ class _ScheduleMonthExpansionTileState
       endTime: schedule.endTime,
     );
 
-    List<Time> times = groupStatus.me.alwaysAvailable
-        ? groupStatus.me.timesUnavailable
-        : groupStatus.me.timesAvailable;
+    List<Time> times = groupStatus.member.alwaysAvailable
+        ? groupStatus.member.timesUnavailable
+        : groupStatus.member.timesAvailable;
 
     for (Time time in times) {
-      if (groupStatus.me.alwaysAvailable &&
+      if (groupStatus.member.alwaysAvailable &&
           !scheduleTime.notWithinDateTimeOf(time)) {
         return false;
-      } else if (!groupStatus.me.alwaysAvailable &&
+      } else if (!groupStatus.member.alwaysAvailable &&
           scheduleTime.withinDateTimeOf(time)) {
         return true;
       }
     }
 
-    return groupStatus.me.alwaysAvailable;
+    return groupStatus.member.alwaysAvailable;
   }
 
   List<Widget> _generateScheduleListTiles(BuildContext context) {

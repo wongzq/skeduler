@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:skeduler/models/auxiliary/route_arguments.dart';
 import 'package:skeduler/navigation/custom_transition_route.dart';
+import 'package:skeduler/navigation/route_arguments.dart';
 import 'package:skeduler/navigation/wrapper.dart';
 import 'package:skeduler/screens/home/dashboard_components/create_group.dart';
 import 'package:skeduler/screens/home/dashboard_components/dashboard_screen.dart';

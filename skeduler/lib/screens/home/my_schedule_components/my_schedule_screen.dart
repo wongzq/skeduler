@@ -3,8 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/navigation/home_drawer.dart';
-import 'package:skeduler/screens/home/my_schedule_components/availability/availability_tab.dart';
-import 'package:skeduler/screens/home/my_schedule_components/schedule/schedule_tab.dart';
+import 'package:skeduler/screens/home/my_schedule_components/availability/availability_fab.dart';
+import 'package:skeduler/screens/home/my_schedule_components/availability/availability_view.dart';
+import 'package:skeduler/screens/home/my_schedule_components/schedule/schedule_view.dart';
 import 'package:skeduler/shared/widgets/loading.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
 
@@ -16,7 +17,6 @@ class MyScheduleScreen extends StatefulWidget {
 class _MyScheduleScreenState extends State<MyScheduleScreen>
     with TickerProviderStateMixin {
   // properties
-
   int _tabs = 2;
   TabController _tabController;
 
@@ -63,7 +63,9 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
               title: AppBarTitle(
                 title: groupStatus.group.name,
                 alternateTitle: 'Group',
-                subtitle: 'My schedule',
+                subtitle: groupStatus.member.docId == groupStatus.me.docId
+                    ? 'My schedule'
+                    : groupStatus.member.name + '\'s schedule',
               ),
               bottom: TabBar(
                 onTap: (tab) {
@@ -113,8 +115,11 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
             body: TabBarView(
               controller: _tabController,
               children: <Widget>[
-                ScheduleTab(),
-                AvailabilityTab(),
+                ScheduleView(),
+                Stack(children: <Widget>[
+                  AvailabilityView(),
+                  AvailabilityFAB(),
+                ])
               ],
             ),
           );

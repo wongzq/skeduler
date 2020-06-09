@@ -19,10 +19,10 @@ class _AvailabilityViewState extends State<AvailabilityView> {
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
-    bool alwaysAvailable = groupStatus.me.alwaysAvailable;
+    bool alwaysAvailable = groupStatus.member.alwaysAvailable;
     List<Time> times = alwaysAvailable
-        ? groupStatus.me.timesUnavailable
-        : groupStatus.me.timesAvailable;
+        ? groupStatus.member.timesUnavailable
+        : groupStatus.member.timesAvailable;
 
     times.sort((a, b) => a.startTimeInt.compareTo(b.startTimeInt));
 
@@ -37,7 +37,7 @@ class _AvailabilityViewState extends State<AvailabilityView> {
       }
     }
 
-    return groupStatus.me == null
+    return groupStatus.member == null
         ? Container()
         : Column(
             children: <Widget>[
@@ -76,10 +76,11 @@ class _AvailabilityViewState extends State<AvailabilityView> {
                                 : Colors.grey.withOpacity(0.5),
                         value: alwaysAvailable,
                         onChanged: (value) async {
+                          print(groupStatus.member.docId);
                           await dbService
                               .updateGroupMemberAlwaysAvailable(
                                 groupStatus.group.docId,
-                                null,
+                                groupStatus.member.docId,
                                 value,
                               )
                               .then((_) => setState(() {}));

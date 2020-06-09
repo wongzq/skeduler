@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/conflict.dart';
 import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
-import 'package:skeduler/models/auxiliary/route_arguments.dart';
+import 'package:skeduler/navigation/route_arguments.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/time.dart';

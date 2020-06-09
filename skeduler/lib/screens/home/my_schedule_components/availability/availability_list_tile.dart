@@ -8,6 +8,7 @@ import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 import 'package:skeduler/shared/widgets/edit_time_dialog.dart';
+import 'package:skeduler/shared/simple_widgets.dart';
 
 class AvailabilityListTile extends StatelessWidget {
   final bool alwaysAvailable;
@@ -164,14 +165,14 @@ class AvailabilityListTile extends StatelessWidget {
                                 onSave: () async {
                                   await dbService.updateGroupMemberTimes(
                                     groupStatus.group.docId,
-                                    null,
+                                    groupStatus.member.docId,
                                     [
                                       Time(
                                         startTime: newStartTime,
                                         endTime: newEndTime,
                                       ),
                                     ],
-                                    groupStatus.me.alwaysAvailable,
+                                    groupStatus.member.alwaysAvailable,
                                   );
                                 },
                               );
@@ -183,49 +184,21 @@ class AvailabilityListTile extends StatelessWidget {
                           await showDialog(
                             context: context,
                             builder: (context) {
-                              return AlertDialog(
-                                content: RichText(
-                                  text: TextSpan(
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                        text:
-                                            'Remove this from your schedule?\n\n',
-                                        style: TextStyle(
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: DateFormat('EEEE, d MMMM')
-                                            .format(time.startTime),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    child: Text('CANCEL'),
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                  ),
-                                  FlatButton(
-                                    child: Text(
-                                      'REMOVE',
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      await dbService.removeGroupMemberTimes(
-                                        groupStatus.group.docId,
-                                        null,
-                                        [time],
-                                        alwaysAvailable,
-                                      );
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
+                              return SimpleAlertDialog(
+                                context: context,
+                                titleDisplay: 'Remove this from your schedule?',
+                                contentDisplay: DateFormat('EEEE, d MMMM')
+                                    .format(time.startTime),
+                                confirmDisplay: 'REMOVE',
+                                confirmFunction: () async {
+                                  await dbService.removeGroupMemberTimes(
+                                    groupStatus.group.docId,
+                                    groupStatus.member.docId,
+                                    [time],
+                                    alwaysAvailable,
+                                  );
+                                  Navigator.of(context).pop();
+                                },
                               );
                             },
                           );
