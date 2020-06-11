@@ -44,7 +44,6 @@ class _TimetableDisplayState extends State<TimetableDisplay> {
                     child: Column(
                       children: <Widget>[
                         Container(
-                          padding: EdgeInsets.all(10.0),
                           height: editMode.editing
                               ? timetableDisplayHeight
                               : timetableDisplayHeight + selectorHeight,

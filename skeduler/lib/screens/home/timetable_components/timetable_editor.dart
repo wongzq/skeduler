@@ -80,6 +80,7 @@ class _TimetableEditorState extends State<TimetableEditor> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
+          elevation: 0.0,
           leading: IconButton(
             icon: Icon(
               Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,

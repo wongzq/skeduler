@@ -80,6 +80,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
 
                   return Scaffold(
                     appBar: AppBar(
+                      elevation: 0.0,
                       title: AppBarTitle(
                         title: groupStatus.group.name == null
                             ? null
