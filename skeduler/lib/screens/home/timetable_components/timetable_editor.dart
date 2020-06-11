@@ -186,8 +186,8 @@ class _TimetableEditorState extends State<TimetableEditor> {
                           contentDisplay: 'Clear all data from the timetable?',
                           confirmDisplay: 'CLEAR DATA',
                           confirmFunction: () {
-                            setState(
-                                () => ttbStatus.edit.gridDataList.popAll());
+                            setState(() => ttbStatus.edit.groups.forEach(
+                                (group) => group.gridDataList.popAll()));
                             Navigator.of(context).maybePop();
                           },
                         );

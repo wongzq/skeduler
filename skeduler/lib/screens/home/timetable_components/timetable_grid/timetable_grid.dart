@@ -16,7 +16,7 @@ class _TimetableGridState extends State<TimetableGrid> {
   int _groupSelected = 0;
 
   Widget _generateTimetableGroups(BuildContext context) {
-    TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
+    // TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
     OriginTheme originTheme = Provider.of<OriginTheme>(context);
 
     List<Widget> widgets = [];

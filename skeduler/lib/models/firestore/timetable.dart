@@ -32,79 +32,33 @@ class TimetableMetadata {
 }
 
 // --------------------------------------------------------------------------------
-// Timetable class
+// TimetableGroup class
 // --------------------------------------------------------------------------------
 
-class Timetable {
+class TimetableGroup {
   // properties
-  String _docId;
-  DateTime _startDate;
-  DateTime _endDate;
+  List<Weekday> _axisDay;
+  List<Time> _axisTime;
+  List<String> _axisCustom;
 
-  GridAxis _gridAxisOfDay;
-  GridAxis _gridAxisOfTime;
-  GridAxis _gridAxisOfCustom;
+  TimetableGridDataList _gridDataList;
 
-  List<Weekday> _axisDay = [];
-  List<Time> _axisTime = [];
-  List<String> _axisCustom = [];
-
-  TimetableGridDataList _gridDataList = TimetableGridDataList();
-
-  // constructors
-  Timetable({
-    @required String docId,
-    Timestamp startDate,
-    Timestamp endDate,
-    GridAxis gridAxisOfDay,
-    GridAxis gridAxisOfTime,
-    GridAxis gridAxisOfCustom,
+  // constructor
+  TimetableGroup({
     List<Weekday> axisDay,
     List<Time> axisTime,
     List<String> axisCustom,
     TimetableGridDataList gridDataList,
-  }) {
-    // documentID
-    this._docId = docId;
-
-    // timetable start date
-    if (startDate != null)
-      this._startDate =
-          DateTime.fromMillisecondsSinceEpoch(startDate.millisecondsSinceEpoch);
-
-    // timetable end date
-    if (endDate != null)
-      this._endDate =
-          DateTime.fromMillisecondsSinceEpoch(endDate.millisecondsSinceEpoch);
-
-    // timetable days axis
-    if (gridAxisOfDay != null) this._gridAxisOfDay = gridAxisOfDay;
-    if (axisDay != null) this._axisDay = List<Weekday>.from(axisDay ?? []);
-
-    // timetable times axis
-    if (gridAxisOfTime != null) this._gridAxisOfTime = gridAxisOfTime;
-    if (axisTime != null) this._axisTime = List<Time>.from(axisTime ?? []);
-
-    // timetable custom axis
-    if (gridAxisOfCustom != null) this._gridAxisOfCustom = gridAxisOfCustom;
-    if (axisCustom != null)
-      this._axisCustom = List<String>.from(axisCustom ?? []);
-
-    if (gridDataList != null)
-      this._gridDataList =
-          TimetableGridDataList.from(gridDataList ?? TimetableGridDataList());
-  }
+  })  : this._axisDay = List<Weekday>.from(axisDay ?? []),
+        this._axisTime = List<Time>.from(axisTime ?? []),
+        this._axisCustom = List<String>.from(axisCustom ?? []),
+        this._gridDataList =
+            TimetableGridDataList.from(gridDataList ?? TimetableGridDataList());
 
   // getter methods
-  String get docId => this._docId;
-  DateTime get startDate => this._startDate;
-  DateTime get endDate => this._endDate;
-  GridAxis get gridAxisOfDay => this._gridAxisOfDay;
-  GridAxis get gridAxisOfTime => this._gridAxisOfTime;
-  GridAxis get gridAxisOfCustom => this._gridAxisOfCustom;
-  List<Weekday> get axisDay => this._axisDay;
-  List<Time> get axisTime => this._axisTime;
-  List<String> get axisCustom => this._axisCustom;
+  List<Weekday> get axisDay => List.unmodifiable(this._axisDay);
+  List<Time> get axisTime => List.unmodifiable(this._axisTime);
+  List<String> get axisCustom => List.unmodifiable(this._axisCustom);
   TimetableGridDataList get gridDataList => this._gridDataList;
 
   // get list as [List<String>]
@@ -115,275 +69,24 @@ class Timetable {
   List<String> get axisTimeStr => List.generate(
       this._axisTime.length, (index) => getTimeStr(this._axisTime[index]));
 
-  bool get isValid => this._docId != null &&
-          this._docId.trim() != '' &&
-          this._startDate != null &&
-          this._endDate != null
-      ? true
-      : false;
-}
-
-// --------------------------------------------------------------------------------
-// EditTimetable class
-// --------------------------------------------------------------------------------
-
-class EditTimetable extends ChangeNotifier {
-  // properties
-  String _docId;
-  DateTime _startDate;
-  DateTime _endDate;
-
-  GridAxis _gridAxisOfDay;
-  GridAxis _gridAxisOfTime;
-  GridAxis _gridAxisOfCustom;
-
-  List<Weekday> _axisDay;
-  List<Time> _axisTime;
-  List<String> _axisCustom;
-
-  TimetableGridDataList _gridDataList;
-
-  bool _hasChanges;
-
-  // constructors
-  EditTimetable({
-    String docId,
-    DateTime startDate,
-    DateTime endDate,
-    GridAxis gridAxisOfDay,
-    GridAxis gridAxisOfTime,
-    GridAxis gridAxisOfCustom,
-    List<Weekday> axisDay,
-    List<Time> axisTime,
-    List<String> axisCustom,
-    TimetableGridDataList gridDataList,
-  })  : this._docId = docId,
-        this._startDate = startDate,
-        this._endDate = endDate,
-        this._gridAxisOfDay = gridAxisOfDay ?? GridAxis.x,
-        this._gridAxisOfTime = gridAxisOfTime ?? GridAxis.y,
-        this._gridAxisOfCustom = gridAxisOfCustom ?? GridAxis.z,
-        this._axisDay = List<Weekday>.from(axisDay ?? []),
-        this._axisTime = List<Time>.from(axisTime ?? []),
-        this._axisCustom = List<String>.from(axisCustom ?? []),
-        this._gridDataList =
-            TimetableGridDataList.from(gridDataList ?? TimetableGridDataList()),
-        this._hasChanges = false;
-
-  EditTimetable.fromTimetable(Timetable ttb)
-      : this(
-          docId: ttb.docId,
-          startDate: ttb.startDate,
-          endDate: ttb.endDate,
-          gridAxisOfDay: ttb.gridAxisOfDay,
-          gridAxisOfTime: ttb.gridAxisOfTime,
-          gridAxisOfCustom: ttb.gridAxisOfCustom,
-          axisDay: ttb.axisDay,
-          axisTime: ttb.axisTime,
-          axisCustom: ttb.axisCustom,
-          gridDataList: ttb.gridDataList,
-        );
-
-  EditTimetable.from(EditTimetable editTtb)
-      : this(
-          docId: editTtb.docId,
-          startDate: editTtb.startDate,
-          endDate: editTtb.endDate,
-          gridAxisOfDay: editTtb.gridAxisOfDay,
-          gridAxisOfTime: editTtb.gridAxisOfTime,
-          gridAxisOfCustom: editTtb.gridAxisOfCustom,
-          axisDay: List.from(editTtb.axisDay),
-          axisTime: List.from(editTtb.axisTime),
-          axisCustom: List.from(editTtb.axisCustom),
-          gridDataList: TimetableGridDataList.from(editTtb.gridDataList),
-        );
-
-  // getter methods
-  String get docId => this._docId;
-  DateTime get startDate => this._startDate;
-  DateTime get endDate => this._endDate;
-  GridAxis get gridAxisOfDay => this._gridAxisOfDay;
-  GridAxis get gridAxisOfTime => this._gridAxisOfTime;
-  GridAxis get gridAxisOfCustom => this._gridAxisOfCustom;
-  List<Weekday> get axisDay => this._axisDay;
-  List<Time> get axisTime => this._axisTime;
-  List<String> get axisCustom => this._axisCustom;
-  TimetableGridDataList get gridDataList => this._gridDataList;
-  TimetableMetadata get metadata => TimetableMetadata(
-        docId: this._docId,
-        startDate: Timestamp.fromDate(this._startDate),
-        endDate: Timestamp.fromDate(this._endDate),
-      );
-
-  bool get isValid => this._docId != null &&
-          this._docId.trim() != '' &&
-          this._startDate != null &&
-          this._endDate != null
-      ? true
-      : false;
-  bool get hasChanges => this._hasChanges || this._gridDataList.hasChanges;
-
-  // get list as [List<String>]
-  List<String> get axisDayStr =>
-      List.generate(_axisDay.length, (index) => getWeekdayStr(_axisDay[index]));
-  List<String> get axisDayShortStr => List.generate(
-      _axisDay.length, (index) => getWeekdayShortStr(_axisDay[index]));
-  List<String> get axisTimeStr =>
-      List.generate(_axisTime.length, (index) => getTimeStr(_axisTime[index]));
-
-  // setter methods
-  set docId(String docId) {
-    this._docId = docId;
-    notifyListeners();
-  }
-
-  set startDate(DateTime startDate) {
-    this._startDate = startDate;
-    this._hasChanges = true;
-    notifyListeners();
-  }
-
-  set endDate(DateTime endDate) {
-    this._endDate = endDate;
-    this._hasChanges = true;
-    notifyListeners();
-  }
-
-  set gridAxisOfDay(GridAxis gridAxis) {
-    this._gridAxisOfDay = gridAxis;
-    this._hasChanges = true;
-    notifyListeners();
-  }
-
-  set gridAxisOfTime(GridAxis gridAxis) {
-    this._gridAxisOfTime = gridAxis;
-    this._hasChanges = true;
-    notifyListeners();
-  }
-
-  set gridAxisOfCustom(GridAxis gridAxis) {
-    this._gridAxisOfCustom = gridAxis;
-    this._hasChanges = true;
-    notifyListeners();
-  }
-
-  set axisDay(List<Weekday> axisDay) {
+  // custom setter methods
+  void _setAxisDay(List<Weekday> axisDay) {
     this._axisDay = axisDay;
     this._axisDay.sort((a, b) => a.index.compareTo(b.index));
-    this._hasChanges = true;
-    notifyListeners();
   }
 
-  set axisTime(List<Time> axisTime) {
+  void _setAxisTime(List<Time> axisTime) {
     this._axisTime = axisTime;
     this._axisTime.sort((a, b) => a.startTime.compareTo(b.startTime));
-    this._hasChanges = true;
-    notifyListeners();
   }
 
-  set axisCustom(List<String> axisCustom) {
+  void _setAxisCustom(List<String> axisCustom) {
     this._axisCustom = axisCustom;
-    this._hasChanges = true;
-    notifyListeners();
-  }
-
-  set gridDataList(TimetableGridDataList gridDataList) {
-    this._gridDataList = gridDataList;
-    this._hasChanges = true;
-    notifyListeners();
-  }
-
-  set hasChanges(bool value) {
-    this._hasChanges = value;
-    this._gridDataList.hasChanges = value;
-    notifyListeners();
-  }
-
-  void updateTimetableSettings({
-    String docId,
-    DateTime startDate,
-    DateTime endDate,
-    List<Weekday> axisDay,
-    List<Time> axisTime,
-    List<String> axisCustom,
-    TimetableGridDataList gridDataList,
-  }) {
-    this.docId = docId ?? this.docId;
-    this.startDate = startDate ?? this.startDate;
-    this.endDate = endDate ?? this.endDate;
-    this.axisDay = axisDay ?? this.axisDay;
-    this.axisTime = axisTime ?? this.axisTime;
-    this.axisCustom = axisCustom ?? this.axisCustom;
-    this.gridDataList = gridDataList ?? this.gridDataList;
-    this._hasChanges = true;
-    notifyListeners();
-  }
-
-  void updateTimetableFromCopy(Timetable ttb, List<Member> members) {
-    this._gridAxisOfDay = ttb.gridAxisOfDay;
-    this._gridAxisOfTime = ttb.gridAxisOfTime;
-    this._gridAxisOfCustom = ttb.gridAxisOfCustom;
-    this._axisDay = ttb.axisDay;
-    this._axisTime = ttb.axisTime;
-    this._axisCustom = ttb.axisCustom;
-    this._gridDataList = ttb.gridDataList;
-    this.validateGridDataList(members: members);
-    notifyListeners();
-  }
-
-  void updateTimetableFromCopyAxes(Timetable ttb) {
-    this._gridAxisOfDay = ttb.gridAxisOfDay;
-    this._gridAxisOfTime = ttb.gridAxisOfTime;
-    this._gridAxisOfCustom = ttb.gridAxisOfCustom;
-    this._axisDay = ttb.axisDay;
-    this._axisTime = ttb.axisTime;
-    this._axisCustom = ttb.axisCustom;
-    this._gridDataList = TimetableGridDataList();
-    notifyListeners();
-  }
-
-  void updateAxisTimeValue({
-    @required Time prev,
-    @required Time next,
-  }) {
-    TimetableGridDataList tmpGridDataList =
-        TimetableGridDataList.from(this.gridDataList);
-
-    for (TimetableGridData gridData in tmpGridDataList.value) {
-      // find coord to be replaced
-      if (gridData.coord.time == prev) {
-        TimetableGridData newGridData = TimetableGridData.from(gridData);
-        newGridData.coord.time = next;
-
-        this.gridDataList.pop(gridData);
-        this.gridDataList.push(newGridData);
-      }
-    }
-    this._hasChanges = true;
-    notifyListeners();
-  }
-
-  void updateAxisCustomValue({
-    @required String prev,
-    @required String next,
-  }) {
-    TimetableGridDataList tmpGridDataList =
-        TimetableGridDataList.from(this.gridDataList);
-
-    for (TimetableGridData gridData in tmpGridDataList.value) {
-      if (gridData.coord.custom == prev) {
-        TimetableGridData tmpGridData = TimetableGridData.from(gridData);
-        tmpGridData.coord.custom = next;
-
-        this.gridDataList.pop(gridData);
-        this.gridDataList.push(tmpGridData);
-      }
-    }
-    this._hasChanges = true;
-    notifyListeners();
   }
 
   void validateGridDataList({
+    @required DateTime startDate,
+    @required DateTime endDate,
     @required List<Member> members,
   }) {
     TimetableGridDataList tmpGridDataList =
@@ -422,8 +125,8 @@ class EditTimetable extends ChangeNotifier {
             ),
             weekdays: [gridData.coord.day],
             time: gridData.coord.time,
-            startDate: this.startDate,
-            endDate: this.endDate,
+            startDate: startDate,
+            endDate: endDate,
           );
 
           // loop through each timetableTime
@@ -478,7 +181,300 @@ class EditTimetable extends ChangeNotifier {
         }
       }
     }
+  }
+}
+
+// --------------------------------------------------------------------------------
+// Timetable class
+// --------------------------------------------------------------------------------
+
+class Timetable {
+  // properties
+  String _docId;
+  DateTime _startDate;
+  DateTime _endDate;
+
+  GridAxis _gridAxisOfDay;
+  GridAxis _gridAxisOfTime;
+  GridAxis _gridAxisOfCustom;
+
+  List<TimetableGroup> _groups;
+
+  // constructors
+  Timetable({
+    @required String docId,
+    Timestamp startDate,
+    Timestamp endDate,
+    GridAxis gridAxisOfDay,
+    GridAxis gridAxisOfTime,
+    GridAxis gridAxisOfCustom,
+    List<TimetableGroup> groups,
+  })  : this._docId = docId,
+        this._startDate = startDate == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(
+                startDate.millisecondsSinceEpoch),
+        this._endDate = endDate == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(
+                endDate.millisecondsSinceEpoch),
+        this._gridAxisOfDay = gridAxisOfDay,
+        this._gridAxisOfTime = gridAxisOfTime,
+        this._gridAxisOfCustom = gridAxisOfCustom,
+        this._groups = groups ?? [];
+
+  // getter methods
+  String get docId => this._docId;
+  DateTime get startDate => this._startDate;
+  DateTime get endDate => this._endDate;
+  GridAxis get gridAxisOfDay => this._gridAxisOfDay;
+  GridAxis get gridAxisOfTime => this._gridAxisOfTime;
+  GridAxis get gridAxisOfCustom => this._gridAxisOfCustom;
+  List<TimetableGroup> get groups => List.unmodifiable(this._groups);
+
+  bool get isValid => this._docId != null &&
+          this._docId.trim() != '' &&
+          this._startDate != null &&
+          this._endDate != null
+      ? true
+      : false;
+}
+
+// --------------------------------------------------------------------------------
+// EditTimetable class
+// --------------------------------------------------------------------------------
+
+class EditTimetable extends ChangeNotifier {
+  // properties
+  String _docId;
+  DateTime _startDate;
+  DateTime _endDate;
+
+  GridAxis _gridAxisOfDay;
+  GridAxis _gridAxisOfTime;
+  GridAxis _gridAxisOfCustom;
+
+  List<TimetableGroup> _groups;
+
+  bool _hasChanges;
+
+  // constructors
+  EditTimetable({
+    String docId,
+    DateTime startDate,
+    DateTime endDate,
+    GridAxis gridAxisOfDay,
+    GridAxis gridAxisOfTime,
+    GridAxis gridAxisOfCustom,
+    List<TimetableGroup> groups,
+  })  : this._docId = docId,
+        this._startDate = startDate,
+        this._endDate = endDate,
+        this._gridAxisOfDay = gridAxisOfDay ?? GridAxis.x,
+        this._gridAxisOfTime = gridAxisOfTime ?? GridAxis.y,
+        this._gridAxisOfCustom = gridAxisOfCustom ?? GridAxis.z,
+        this._groups = List.from(groups ?? []),
+        this._hasChanges = false;
+
+  EditTimetable.fromTimetable(Timetable ttb)
+      : this(
+          docId: ttb.docId,
+          startDate: ttb.startDate,
+          endDate: ttb.endDate,
+          gridAxisOfDay: ttb.gridAxisOfDay,
+          gridAxisOfTime: ttb.gridAxisOfTime,
+          gridAxisOfCustom: ttb.gridAxisOfCustom,
+          groups: ttb.groups,
+        );
+
+  EditTimetable.from(EditTimetable editTtb)
+      : this(
+          docId: editTtb.docId,
+          startDate: editTtb.startDate,
+          endDate: editTtb.endDate,
+          gridAxisOfDay: editTtb.gridAxisOfDay,
+          gridAxisOfTime: editTtb.gridAxisOfTime,
+          gridAxisOfCustom: editTtb.gridAxisOfCustom,
+          groups: editTtb.groups,
+        );
+
+  // getter methods
+  String get docId => this._docId;
+  DateTime get startDate => this._startDate;
+  DateTime get endDate => this._endDate;
+  GridAxis get gridAxisOfDay => this._gridAxisOfDay;
+  GridAxis get gridAxisOfTime => this._gridAxisOfTime;
+  GridAxis get gridAxisOfCustom => this._gridAxisOfCustom;
+  List<TimetableGroup> get groups => List.unmodifiable(this._groups);
+
+  TimetableMetadata get metadata => TimetableMetadata(
+        docId: this._docId,
+        startDate: Timestamp.fromDate(this._startDate),
+        endDate: Timestamp.fromDate(this._endDate),
+      );
+
+  bool get isValid => this._docId != null &&
+          this._docId.trim() != '' &&
+          this._startDate != null &&
+          this._endDate != null
+      ? true
+      : false;
+
+  bool get hasChanges =>
+      this._hasChanges ||
+      this
+          ._groups
+          .contains((TimetableGroup group) => group.gridDataList.hasChanges);
+
+  // setter methods
+  set docId(String docId) {
+    this._docId = docId;
+    notifyListeners();
+  }
+
+  set startDate(DateTime startDate) {
+    this._startDate = startDate;
     this._hasChanges = true;
+    notifyListeners();
+  }
+
+  set endDate(DateTime endDate) {
+    this._endDate = endDate;
+    this._hasChanges = true;
+    notifyListeners();
+  }
+
+  set gridAxisOfDay(GridAxis gridAxis) {
+    this._gridAxisOfDay = gridAxis;
+    this._hasChanges = true;
+    notifyListeners();
+  }
+
+  set gridAxisOfTime(GridAxis gridAxis) {
+    this._gridAxisOfTime = gridAxis;
+    this._hasChanges = true;
+    notifyListeners();
+  }
+
+  set gridAxisOfCustom(GridAxis gridAxis) {
+    this._gridAxisOfCustom = gridAxis;
+    this._hasChanges = true;
+    notifyListeners();
+  }
+
+  void setGroupAxisDay(int groupIndex, List<Weekday> axisDay) {
+    this._groups[groupIndex]._setAxisDay(axisDay);
+    this._hasChanges = true;
+    notifyListeners();
+  }
+
+  void setGroupAxisTime(int groupIndex, List<Time> axisTime) {
+    this._groups[groupIndex]._setAxisTime(axisTime);
+    this._hasChanges = true;
+    notifyListeners();
+  }
+
+  void setGroupAxisCustom(int groupIndex, List<String> axisCustom) {
+    this._groups[groupIndex]._setAxisCustom(axisCustom);
+    this._hasChanges = true;
+    notifyListeners();
+  }
+
+  // unsure
+  set hasChanges(bool value) {
+    this._hasChanges = value;
+    notifyListeners();
+  }
+
+  void updateTimetableSettings({
+    String docId,
+    DateTime startDate,
+    DateTime endDate,
+    List<TimetableGroup> groups,
+    List<Member> members,
+  }) {
+    this.docId = docId ?? this.docId;
+    this.startDate = startDate ?? this.startDate;
+    this.endDate = endDate ?? this.endDate;
+
+    for (int i = 0; i < groups.length; i++) {
+      this._groups[i]._setAxisDay(groups[i].axisDay);
+      this._groups[i]._setAxisTime(groups[i].axisTime);
+      this._groups[i]._setAxisCustom(groups[i].axisCustom);
+      this._groups[i].validateGridDataList(
+          startDate: this.startDate, endDate: this.endDate, members: members);
+    }
+
+    this._hasChanges = true;
+    notifyListeners();
+  }
+
+  void updateTimetableFromCopy(Timetable ttb, List<Member> members) {
+    this._gridAxisOfDay = ttb.gridAxisOfDay;
+    this._gridAxisOfTime = ttb.gridAxisOfTime;
+    this._gridAxisOfCustom = ttb.gridAxisOfCustom;
+    this._groups = List.from(ttb.groups);
+
+    for (TimetableGroup group in this._groups) {
+      group.validateGridDataList(
+          startDate: this.startDate, endDate: this.endDate, members: members);
+    }
+    notifyListeners();
+  }
+
+  void updateTimetableFromCopyAxes(Timetable ttb) {
+    this._gridAxisOfDay = ttb.gridAxisOfDay;
+    this._gridAxisOfTime = ttb.gridAxisOfTime;
+    this._gridAxisOfCustom = ttb.gridAxisOfCustom;
+    this._groups = List.from(ttb.groups);
+
+    for (TimetableGroup group in this._groups) {
+      group._gridDataList = TimetableGridDataList();
+    }
+    notifyListeners();
+  }
+
+  void updateAxisTimeValue({
+    @required int groupIndex,
+    @required Time prev,
+    @required Time next,
+  }) {
+    TimetableGridDataList tmpGridDataList =
+        TimetableGridDataList.from(this.groups[groupIndex].gridDataList);
+
+    for (TimetableGridData gridData in tmpGridDataList.value) {
+      // find coord to be replaced
+      if (gridData.coord.time == prev) {
+        TimetableGridData newGridData = TimetableGridData.from(gridData);
+        newGridData.coord.time = next;
+
+        this.groups[groupIndex].gridDataList.pop(gridData);
+        this.groups[groupIndex].gridDataList.push(newGridData);
+      }
+    }
+    this._hasChanges = true;
+    notifyListeners();
+  }
+
+  void updateAxisCustomValue({
+    @required int groupIndex,
+    @required String prev,
+    @required String next,
+  }) {
+    TimetableGridDataList tmpGridDataList =
+        TimetableGridDataList.from(this.groups[groupIndex].gridDataList);
+
+    for (TimetableGridData gridData in tmpGridDataList.value) {
+      if (gridData.coord.custom == prev) {
+        TimetableGridData tmpGridData = TimetableGridData.from(gridData);
+        tmpGridData.coord.custom = next;
+
+        this.groups[groupIndex].gridDataList.pop(gridData);
+        this.groups[groupIndex].gridDataList.push(tmpGridData);
+      }
+    }
+    this._hasChanges = true;
+    notifyListeners();
   }
 }
 
@@ -559,80 +555,89 @@ Map<String, dynamic> firestoreMapFromEditTimetable(EditTimetable editTtb) {
     }
   }
 
-  // convert axisDay
-  if (editTtb.axisDay != null) {
-    List<int> axisDaysInt = [];
-    editTtb.axisDay.forEach((weekday) => axisDaysInt.add(weekday.index));
-    axisDaysInt.sort((a, b) => a.compareTo(b));
-    firestoreMap['axisDay'] = axisDaysInt;
-  }
+  // convert TimetableGroups and TimetableGridDataList
+  List<Map<String, dynamic>> groups = [];
 
-  // convert axisTime
-  if (editTtb.axisTime != null) {
-    List<Map<String, Timestamp>> axisTimesTimestamps = [];
-    editTtb.axisTime.forEach((time) {
-      axisTimesTimestamps.add({
-        'startTime': Timestamp.fromDate(time.startTime),
-        'endTime': Timestamp.fromDate(time.endTime),
-      });
-    });
-    axisTimesTimestamps
-        .sort((a, b) => a['startTime'].compareTo(b['startTime']));
-    firestoreMap['axisTime'] = axisTimesTimestamps;
-  }
+  for (TimetableGroup group in editTtb.groups) {
+    Map<String, dynamic> groupMap = {};
 
-  // convert axisCustom
-  if (editTtb.axisCustom != null) {
-    firestoreMap['axisCustom'] = editTtb.axisCustom;
-  }
-
-  // convert gridDataList
-  if (editTtb.gridDataList != null) {
-    List<Map<String, dynamic>> gridDataList = [];
-
-    for (TimetableGridData gridData in editTtb.gridDataList.value) {
-      if (editTtb.axisDay.contains(gridData.coord.day) &&
-          editTtb.axisTime.contains(gridData.coord.time) &&
-          editTtb.axisCustom.contains(gridData.coord.custom)) {
-        // convert coords
-        Map<String, dynamic> coord = {
-          'day': gridData.coord.day.index,
-          'time': {
-            'startTime': Timestamp.fromDate(gridData.coord.time.startTime),
-            'endTime': Timestamp.fromDate(gridData.coord.time.endTime),
-          },
-          'custom': gridData.coord.custom,
-        };
-
-        // convert subject
-        Map subject = {
-          'docId': gridData.dragData.subject.docId,
-          'display': gridData.dragData.subject.display,
-        };
-
-        // convert member
-        Map member = {
-          'docId': gridData.dragData.member.docId,
-          'display': gridData.dragData.member.display,
-        };
-
-        // convert available
-        bool available = gridData.available;
-        bool ignore = gridData.ignore;
-
-        // add to list
-        gridDataList.add({
-          'coord': coord,
-          'subject': subject,
-          'member': member,
-          'available': available,
-          'ignore': ignore,
-        });
-      }
+    // convert axisDay
+    if (group.axisDay != null) {
+      List<int> axisDaysInt = [];
+      group.axisDay.forEach((weekday) => axisDaysInt.add(weekday.index));
+      axisDaysInt.sort((a, b) => a.compareTo(b));
+      groupMap['axisDay'] = axisDaysInt;
     }
 
-    firestoreMap['gridDataList'] = gridDataList;
+    // convert axisTime
+    if (group.axisTime != null) {
+      List<Map<String, Timestamp>> axisTimesTimestamps = [];
+      group.axisTime.forEach((time) {
+        axisTimesTimestamps.add({
+          'startTime': Timestamp.fromDate(time.startTime),
+          'endTime': Timestamp.fromDate(time.endTime),
+        });
+      });
+      axisTimesTimestamps
+          .sort((a, b) => a['startTime'].compareTo(b['startTime']));
+      groupMap['axisTime'] = axisTimesTimestamps;
+    }
+
+    // convert axisCustom
+    if (group.axisCustom != null) {
+      groupMap['axisCustom'] = group.axisCustom;
+    }
+
+    // convert gridDataList
+    if (group.gridDataList != null) {
+      List<Map<String, dynamic>> gridDataList = [];
+
+      for (TimetableGridData gridData in group.gridDataList.value) {
+        if (group.axisDay.contains(gridData.coord.day) &&
+            group.axisTime.contains(gridData.coord.time) &&
+            group.axisCustom.contains(gridData.coord.custom)) {
+          // convert coords
+          Map<String, dynamic> coord = {
+            'day': gridData.coord.day.index,
+            'time': {
+              'startTime': Timestamp.fromDate(gridData.coord.time.startTime),
+              'endTime': Timestamp.fromDate(gridData.coord.time.endTime),
+            },
+            'custom': gridData.coord.custom,
+          };
+
+          // convert subject
+          Map subject = {
+            'docId': gridData.dragData.subject.docId,
+            'display': gridData.dragData.subject.display,
+          };
+
+          // convert member
+          Map member = {
+            'docId': gridData.dragData.member.docId,
+            'display': gridData.dragData.member.display,
+          };
+
+          // convert available
+          bool available = gridData.available;
+          bool ignore = gridData.ignore;
+
+          // add to list
+          gridDataList.add({
+            'coord': coord,
+            'subject': subject,
+            'member': member,
+            'available': available,
+            'ignore': ignore,
+          });
+        }
+      }
+      groupMap['gridDataList'] = gridDataList;
+    }
+    groups.add(groupMap);
   }
+
+  firestoreMap['groups'] = groups;
 
   // return final map in firestore format
   return firestoreMap;

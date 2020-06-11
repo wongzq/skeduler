@@ -142,49 +142,51 @@ class TimetableStatus extends ChangeNotifier {
   }
 
   // auxiliary methods
+  // unsure
   TimetableAxes _newAxes(EditTimetable editTtb) {
     return TimetableAxes(
       day: TimetableAxis(
         gridAxis: editTtb.gridAxisOfDay,
         dataAxis: DataAxis.day,
-        list: editTtb.axisDay,
-        listStr: editTtb.axisDayShortStr,
+        list: editTtb.groups[0].axisDay,
+        listStr: editTtb.groups[0].axisDayShortStr,
       ),
       time: TimetableAxis(
         gridAxis: editTtb.gridAxisOfTime,
         dataAxis: DataAxis.time,
-        list: editTtb.axisTime,
-        listStr: editTtb.axisTimeStr,
+        list: editTtb.groups[0].axisTime,
+        listStr: editTtb.groups[0].axisTimeStr,
       ),
       custom: TimetableAxis(
         gridAxis: editTtb.gridAxisOfCustom,
         dataAxis: DataAxis.custom,
-        list: editTtb.axisCustom,
-        listStr: editTtb.axisCustom,
+        list: editTtb.groups[0].axisCustom,
+        listStr: editTtb.groups[0].axisCustom,
       ),
     );
   }
 
+  // unsure
   TimetableAxes _updateAxesKeepGridAxis(
       EditTimetable editTtb, TimetableAxes keepGridAxis) {
     return TimetableAxes(
       day: TimetableAxis(
         gridAxis: keepGridAxis.dayGridAxis,
         dataAxis: DataAxis.day,
-        list: editTtb.axisDay,
-        listStr: editTtb.axisDayShortStr,
+        list: editTtb.groups[0].axisDay,
+        listStr: editTtb.groups[0].axisDayShortStr,
       ),
       time: TimetableAxis(
         gridAxis: keepGridAxis.timeGridAxis,
         dataAxis: DataAxis.time,
-        list: editTtb.axisTime,
-        listStr: editTtb.axisTimeStr,
+        list: editTtb.groups[0].axisTime,
+        listStr: editTtb.groups[0].axisTimeStr,
       ),
       custom: TimetableAxis(
         gridAxis: keepGridAxis.customGridAxis,
         dataAxis: DataAxis.custom,
-        list: editTtb.axisCustom,
-        listStr: editTtb.axisCustom,
+        list: editTtb.groups[0].axisCustom,
+        listStr: editTtb.groups[0].axisCustom,
       ),
     );
   }
