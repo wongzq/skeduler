@@ -89,13 +89,15 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                                 validator: (value) {
                                   if (value == null || value.trim() == '') {
                                     return 'Value cannot be empty';
-                                  } else if (_ttbStatus.temp.axisCustom
-                                      .contains(value)) {
-                                    return 'Value already exists';
+                                    // } else if (_ttbStatus.temp.axisCustom
+                                    //     .contains(value)) {
+                                    //   return 'Value already exists';
                                   } else {
+                                    // unsure
                                     _ttbStatus.temp.updateAxisCustomValue(
                                       prev: custom,
                                       next: value,
+                                      groupIndex: 0,
                                     );
                                     _ttbStatus.update();
                                     return null;
@@ -198,9 +200,9 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                           validator: (value) {
                             if (value == null || value.trim() == '') {
                               return 'Value cannot be empty';
-                            } else if (_ttbStatus.temp.axisCustom
-                                .contains(value)) {
-                              return 'Value already exists';
+                            // } else if (_ttbStatus.temp.axisCustom
+                            //     .contains(value)) {
+                            //   return 'Value already exists';
                             } else {
                               return null;
                             }

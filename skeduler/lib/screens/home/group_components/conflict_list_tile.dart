@@ -154,7 +154,9 @@ class ConflictListTile extends StatelessWidget {
 
                             // get gridData to remove
                             TimetableGridData gridDataToUpdate =
-                                timetable.gridDataList.value.firstWhere(
+                                // unsure
+                                timetable.groups[0].gridDataList.value
+                                    .firstWhere(
                               (gridData) =>
                                   gridData.coord == conflict.gridData.coord,
                               orElse: () => null,
@@ -163,7 +165,9 @@ class ConflictListTile extends StatelessWidget {
                             // remove gridData
                             if (gridDataToUpdate != null) {
                               gridDataToUpdate.ignore = true;
-                              timetable.gridDataList.push(gridDataToUpdate);
+                              // unsure
+                              timetable.groups[0].gridDataList
+                                  .push(gridDataToUpdate);
                             }
 
                             // update in firestore
@@ -184,7 +188,9 @@ class ConflictListTile extends StatelessWidget {
 
                             // get gridData to remove
                             TimetableGridData gridDataToUpdate =
-                                timetable.gridDataList.value.firstWhere(
+                                // unsure
+                                timetable.groups[0].gridDataList.value
+                                    .firstWhere(
                               (gridData) =>
                                   gridData.coord == conflict.gridData.coord,
                               orElse: () => null,
@@ -193,7 +199,9 @@ class ConflictListTile extends StatelessWidget {
                             // remove gridData
                             if (gridDataToUpdate != null) {
                               gridDataToUpdate.ignore = false;
-                              timetable.gridDataList.push(gridDataToUpdate);
+                              // unsure
+                              timetable.groups[0].gridDataList
+                                  .push(gridDataToUpdate);
                             }
 
                             // update in firestore
@@ -225,7 +233,9 @@ class ConflictListTile extends StatelessWidget {
 
                                     // get gridData to remove
                                     TimetableGridData gridDataToRemove =
-                                        timetable.gridDataList.value.firstWhere(
+                                        // unsure
+                                        timetable.groups[0].gridDataList.value
+                                            .firstWhere(
                                       (gridData) =>
                                           gridData.coord ==
                                           conflict.gridData.coord,
@@ -234,7 +244,8 @@ class ConflictListTile extends StatelessWidget {
 
                                     // remove gridData
                                     if (gridDataToRemove != null) {
-                                      timetable.gridDataList
+                                      // unsure
+                                      timetable.groups[0].gridDataList
                                           .pop(gridDataToRemove);
                                     }
 

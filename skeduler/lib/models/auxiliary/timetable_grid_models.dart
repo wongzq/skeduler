@@ -13,33 +13,41 @@ import 'package:skeduler/models/firestore/timetable.dart';
 class TimetableStatus extends ChangeNotifier {
   // properties
   // current
+  int _currGroupIndex;
   Timetable _curr;
   TimetableAxes _currAxes;
   TimetableScroll _currScroll;
   bool _currAxesIsCustom;
 
   // editing
+  int _editGroupIndex;
   EditTimetable _edit;
   TimetableAxes _editAxes;
   TimetableScroll _editScroll;
 
   // temporary
+  int _tempGroupIndex;
   EditTimetable _temp;
 
   TimetableStatus()
-      : _currScroll = TimetableScroll(),
-        _editScroll = TimetableScroll();
+      : this._currGroupIndex = 0,
+        this._editGroupIndex = 0,
+        this._currScroll = TimetableScroll(),
+        this._editScroll = TimetableScroll();
 
   // getter methods
+  int get currGroupIndex => this._currGroupIndex ?? 0;
   Timetable get curr => this._curr;
   TimetableAxes get currAxes => this._currAxes;
   TimetableScroll get currScroll => this._currScroll;
   bool get currAxesIsCustom => this._currAxesIsCustom;
 
+  int get editGroupIndex => this._editGroupIndex ?? 0;
   EditTimetable get edit => this._edit;
   TimetableAxes get editAxes => this._editAxes;
   TimetableScroll get editScroll => this._editScroll;
 
+  int get tempGroupIndex => this._tempGroupIndex ?? 0;
   EditTimetable get temp => this._temp;
 
   set currAxesIsCustom(bool isCustom) {
@@ -58,6 +66,7 @@ class TimetableStatus extends ChangeNotifier {
 
     // reset currAxes
     if (ttb == null) {
+      this._currGroupIndex = 0;
       this._currAxes = null;
       this._currAxesIsCustom = false;
     }
@@ -66,17 +75,21 @@ class TimetableStatus extends ChangeNotifier {
       this._currAxesIsCustom = false;
       this._currAxes = _newAxes(
         this._curr == null ? EditTimetable() : EditTimetable.fromTimetable(ttb),
+        this._currGroupIndex,
       );
     }
     // update currAxes keep grid axis
     else if (this._currAxesIsCustom == false) {
       this._currAxes = _newAxes(
         this._curr == null ? EditTimetable() : EditTimetable.fromTimetable(ttb),
+        this._currGroupIndex,
       );
     } else {
       this._currAxes = _updateAxesKeepGridAxis(
         this._curr == null ? EditTimetable() : EditTimetable.fromTimetable(ttb),
         this._currAxes,
+        // unsure
+        0,
       );
     }
   }
@@ -86,19 +99,30 @@ class TimetableStatus extends ChangeNotifier {
 
     // reset editAxes
     if (editTtb == null) {
+      this._editGroupIndex = 0;
       this._editAxes = null;
     }
     // new editAxes
     else if (this._editAxes == null) {
-      this._editAxes = _newAxes(editTtb);
+      this._editAxes = _newAxes(editTtb, this._editGroupIndex);
     }
     // update editAxes keep grid axes
     else {
-      this._editAxes = _updateAxesKeepGridAxis(editTtb, this._editAxes);
+      this._editAxes = _updateAxesKeepGridAxis(
+        editTtb,
+        this._editAxes,
+        this._editGroupIndex,
+      );
     }
   }
 
+  set tempGroupIndex(int value){
+    this._tempGroupIndex = value;
+    notifyListeners();
+  }
+
   set temp(EditTimetable editTtb) {
+    this._tempGroupIndex = 0;
     this._temp = editTtb;
   }
 
@@ -143,50 +167,53 @@ class TimetableStatus extends ChangeNotifier {
 
   // auxiliary methods
   // unsure
-  TimetableAxes _newAxes(EditTimetable editTtb) {
+  TimetableAxes _newAxes(EditTimetable editTtb, int groupIndex) {
     return TimetableAxes(
       day: TimetableAxis(
         gridAxis: editTtb.gridAxisOfDay,
         dataAxis: DataAxis.day,
-        list: editTtb.groups[0].axisDay,
-        listStr: editTtb.groups[0].axisDayShortStr,
+        list: editTtb.groups[groupIndex].axisDay,
+        listStr: editTtb.groups[groupIndex].axisDayShortStr,
       ),
       time: TimetableAxis(
         gridAxis: editTtb.gridAxisOfTime,
         dataAxis: DataAxis.time,
-        list: editTtb.groups[0].axisTime,
-        listStr: editTtb.groups[0].axisTimeStr,
+        list: editTtb.groups[groupIndex].axisTime,
+        listStr: editTtb.groups[groupIndex].axisTimeStr,
       ),
       custom: TimetableAxis(
         gridAxis: editTtb.gridAxisOfCustom,
         dataAxis: DataAxis.custom,
-        list: editTtb.groups[0].axisCustom,
-        listStr: editTtb.groups[0].axisCustom,
+        list: editTtb.groups[groupIndex].axisCustom,
+        listStr: editTtb.groups[groupIndex].axisCustom,
       ),
     );
   }
 
   // unsure
   TimetableAxes _updateAxesKeepGridAxis(
-      EditTimetable editTtb, TimetableAxes keepGridAxis) {
+    EditTimetable editTtb,
+    TimetableAxes keepGridAxis,
+    int groupIndex,
+  ) {
     return TimetableAxes(
       day: TimetableAxis(
         gridAxis: keepGridAxis.dayGridAxis,
         dataAxis: DataAxis.day,
-        list: editTtb.groups[0].axisDay,
-        listStr: editTtb.groups[0].axisDayShortStr,
+        list: editTtb.groups[groupIndex].axisDay,
+        listStr: editTtb.groups[groupIndex].axisDayShortStr,
       ),
       time: TimetableAxis(
         gridAxis: keepGridAxis.timeGridAxis,
         dataAxis: DataAxis.time,
-        list: editTtb.groups[0].axisTime,
-        listStr: editTtb.groups[0].axisTimeStr,
+        list: editTtb.groups[groupIndex].axisTime,
+        listStr: editTtb.groups[groupIndex].axisTimeStr,
       ),
       custom: TimetableAxis(
         gridAxis: keepGridAxis.customGridAxis,
         dataAxis: DataAxis.custom,
-        list: editTtb.groups[0].axisCustom,
-        listStr: editTtb.groups[0].axisCustom,
+        list: editTtb.groups[groupIndex].axisCustom,
+        listStr: editTtb.groups[groupIndex].axisCustom,
       ),
     );
   }

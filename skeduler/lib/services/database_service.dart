@@ -1142,12 +1142,13 @@ class DatabaseService {
             gridAxisOfCustom: snapshot.data['gridAxisOfCustom'] == null
                 ? GridAxis.z
                 : GridAxis.values[snapshot.data['gridAxisOfCustom']],
-            axisDay: _weekdaysFromDynamicList(snapshot.data['axisDay'] ?? []),
-            axisTime: _timesFromDynamicList(snapshot.data['axisTime'] ?? []),
-            axisCustom:
-                _stringsFromDynamicList(snapshot.data['axisCustom'] ?? []),
-            gridDataList: _gridDataListFromDynamicList(
-                snapshot.data['gridDataList'] ?? []),
+            // unsure
+            // axisDay: _weekdaysFromDynamicList(snapshot.data['axisDay'] ?? []),
+            // axisTime: _timesFromDynamicList(snapshot.data['axisTime'] ?? []),
+            // axisCustom:
+            //     _stringsFromDynamicList(snapshot.data['axisCustom'] ?? []),
+            // gridDataList: _gridDataListFromDynamicList(
+            //     snapshot.data['gridDataList'] ?? []),
           )
         : Timetable(docId: '');
   }

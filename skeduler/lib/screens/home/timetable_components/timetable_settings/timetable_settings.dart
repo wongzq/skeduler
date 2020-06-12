@@ -10,6 +10,7 @@ import 'package:skeduler/screens/home/timetable_components/timetable_settings/ax
 import 'package:skeduler/screens/home/timetable_components/timetable_settings/axis_day.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_settings/axis_time.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_settings/timetable_date_range.dart';
+import 'package:skeduler/screens/home/timetable_components/timetable_settings/timetable_group_selector.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/widgets/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -81,10 +82,11 @@ class TimetableSettings extends StatelessWidget {
                       docId: ttbStatus.temp.docId,
                       startDate: ttbStatus.temp.startDate,
                       endDate: ttbStatus.temp.endDate,
-                      axisDay: ttbStatus.temp.axisDay,
-                      axisTime: ttbStatus.temp.axisTime,
-                      axisCustom: ttbStatus.temp.axisCustom,
-                      gridDataList: ttbStatus.temp.gridDataList,
+                      // unsure
+                      // axisDay: ttbStatus.temp.axisDay,
+                      // axisTime: ttbStatus.temp.axisTime,
+                      // axisCustom: ttbStatus.temp.axisCustom,
+                      // gridDataList: ttbStatus.temp.gridDataList,
                     );
                     ttbStatus.update();
                     Navigator.of(context).maybePop();
@@ -112,9 +114,10 @@ class TimetableSettings extends StatelessWidget {
                         docId: ttbStatus.temp.docId,
                         startDate: ttbStatus.temp.startDate,
                         endDate: ttbStatus.temp.endDate,
-                        axisDay: ttbStatus.temp.axisDay,
-                        axisTime: ttbStatus.temp.axisTime,
-                        axisCustom: ttbStatus.temp.axisCustom,
+                        // unsure
+                        // axisDay: ttbStatus.temp.axisDay,
+                        // axisTime: ttbStatus.temp.axisTime,
+                        // axisCustom: ttbStatus.temp.axisCustom,
                       );
                       ttbStatus.update();
                       Navigator.of(context).maybePop();
@@ -158,19 +161,20 @@ class TimetableSettings extends StatelessWidget {
               initialEndDate: ttbStatus.temp.endDate,
               valSetStartDate: (startDate) {
                 ttbStatus.temp.startDate = startDate;
-                ttbStatus.temp
-                    .validateGridDataList(members: groupStatus.members);
+                ttbStatus.temp.validateAllGridDataList(groupStatus.members);
                 ttbStatus.update();
               },
               valSetEndDate: (endDate) {
                 ttbStatus.temp.endDate = endDate;
-                ttbStatus.temp
-                    .validateGridDataList(members: groupStatus.members);
+                ttbStatus.temp.validateAllGridDataList(groupStatus.members);
                 ttbStatus.update();
               },
             ),
             SizedBox(height: 10.0),
             Divider(thickness: 1.0),
+
+            // Groups
+            TimetableGroupSelector(),
 
             // Axis Day
             Theme(
@@ -178,11 +182,12 @@ class TimetableSettings extends StatelessWidget {
                 dividerColor: Colors.transparent,
               ),
               child: AxisDay(
-                initialWeekdaysSelected: ttbStatus.temp.axisDay,
-                valSetWeekdaysSelected: (timetableWeekdaysSelected) {
-                  ttbStatus.temp.axisDay = timetableWeekdaysSelected;
-                },
-              ),
+                  // unsure
+                  // initialWeekdaysSelected: ttbStatus.temp.axisDay,
+                  // valSetWeekdaysSelected: (timetableWeekdaysSelected) {
+                  //   ttbStatus.temp.axisDay = timetableWeekdaysSelected;
+                  // },
+                  ),
             ),
             Divider(thickness: 1.0),
 
@@ -192,11 +197,12 @@ class TimetableSettings extends StatelessWidget {
                 dividerColor: Colors.transparent,
               ),
               child: AxisTime(
-                initialTimes: ttbStatus.temp.axisTime,
-                valSetTimes: (times) {
-                  ttbStatus.temp.axisTime = times;
-                },
-              ),
+                  // unsure
+                  // initialTimes: ttbStatus.temp.axisTime,
+                  // valSetTimes: (times) {
+                  //   ttbStatus.temp.axisTime = times;
+                  // },
+                  ),
             ),
             Divider(thickness: 1.0),
 
@@ -206,11 +212,12 @@ class TimetableSettings extends StatelessWidget {
                 dividerColor: Colors.transparent,
               ),
               child: AxisCustom(
-                initialCustoms: ttbStatus.temp.axisCustom,
-                valSetCustoms: (customVals) {
-                  ttbStatus.temp.axisCustom = customVals;
-                },
-              ),
+                  // unsure
+                  // initialCustoms: ttbStatus.temp.axisCustom,
+                  // valSetCustoms: (customVals) {
+                  //   ttbStatus.temp.axisCustom = customVals;
+                  // },
+                  ),
             ),
             Divider(thickness: 1.0),
             Padding(

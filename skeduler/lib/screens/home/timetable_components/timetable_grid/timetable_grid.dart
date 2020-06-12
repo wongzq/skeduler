@@ -28,7 +28,7 @@ class _TimetableGridState extends State<TimetableGrid> {
 
     int length = groups.reduce((value, element) => value + element).length;
     double size = MediaQuery.of(context).size.width / length;
-    double height = size;
+    double height = 40;
 
     for (int i = 0; i < groups.length; i++) {
       widgets.add(Container(

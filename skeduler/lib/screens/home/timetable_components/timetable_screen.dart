@@ -197,37 +197,46 @@ class _TimetableScreenState extends State<TimetableScreen> {
                               if (value == 0) {
                                 if (groupStatus.me.role == MemberRole.owner ||
                                     groupStatus.me.role == MemberRole.admin) {
-                                  ttbStatus.temp = EditTimetable(
-                                    axisDay: List.generate(
-                                        5, (index) => Weekday.values[index]),
-                                    axisTime: [
-                                      Time(
-                                        startTime:
-                                            DateTime(DateTime.now().year).add(
-                                          Duration(
-                                              hours: DateTime.now().hour + 0),
-                                        ),
-                                        endTime:
-                                            DateTime(DateTime.now().year).add(
-                                          Duration(
-                                              hours: DateTime.now().hour + 1),
-                                        ),
-                                      ),
-                                      Time(
-                                        startTime:
-                                            DateTime(DateTime.now().year).add(
-                                          Duration(
-                                              hours: DateTime.now().hour + 2),
-                                        ),
-                                        endTime:
-                                            DateTime(DateTime.now().year).add(
-                                          Duration(
-                                              hours: DateTime.now().hour + 3),
-                                        ),
-                                      ),
-                                    ],
-                                    axisCustom: ['A', 'B'],
-                                  );
+                                  // unsure
+                                  ttbStatus.temp = EditTimetable(groups: [
+                                    TimetableGroup(
+                                        axisDay: List.generate(5,
+                                            (index) => Weekday.values[index]),
+                                        axisTime: [
+                                          Time(
+                                            startTime:
+                                                DateTime(DateTime.now().year)
+                                                    .add(Duration(
+                                                        hours: DateTime.now()
+                                                                .hour +
+                                                            0)),
+                                            endTime:
+                                                DateTime(DateTime.now().year)
+                                                    .add(Duration(
+                                                        hours: DateTime.now()
+                                                                .hour +
+                                                            1)),
+                                          ),
+                                          Time(
+                                            startTime:
+                                                DateTime(DateTime.now().year)
+                                                    .add(Duration(
+                                                        hours: DateTime.now()
+                                                                .hour +
+                                                            2)),
+                                            endTime:
+                                                DateTime(DateTime.now().year)
+                                                    .add(Duration(
+                                                        hours: DateTime.now()
+                                                                .hour +
+                                                            3)),
+                                          ),
+                                        ],
+                                        axisCustom: [
+                                          'A',
+                                          'B'
+                                        ])
+                                  ]);
                                   Navigator.of(context).pushNamed(
                                     '/timetables/newTimetable',
                                     arguments: RouteArgs(),

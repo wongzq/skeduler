@@ -26,7 +26,8 @@ class ScheduleView extends StatelessWidget {
 
               for (Timetable timetable in timetables) {
                 for (TimetableGridData gridData
-                    in timetable.gridDataList.value) {
+                    // unsure
+                    in timetable.groups[0].gridDataList.value) {
                   if (gridData.dragData.member.docId ==
                       groupStatus.member.docId) {
                     List<Time> scheduleTimes = generateTimes(

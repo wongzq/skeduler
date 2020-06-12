@@ -156,10 +156,12 @@ class _AxisTimeState extends State<AxisTime> {
                               _ttbStatus.temp.updateAxisTimeValue(
                                 prev: prev,
                                 next: next,
+                                // unsure
+                                groupIndex: 0,
                               );
 
-                              _ttbStatus.temp.validateGridDataList(
-                                members: _groupStatus.members,
+                              _ttbStatus.temp.validateAllGridDataList(
+                                _groupStatus.members,
                               );
 
                               _times.add(next);

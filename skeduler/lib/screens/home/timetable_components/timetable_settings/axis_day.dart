@@ -73,7 +73,7 @@ class _AxisDayState extends State<AxisDay> {
   @override
   void initState() {
     _expanded = widget.initiallyExpanded;
-    _weekdaysSelected = widget.initialWeekdaysSelected ?? [];
+    _weekdaysSelected = List.from(widget.initialWeekdaysSelected) ?? [];
     super.initState();
   }
 

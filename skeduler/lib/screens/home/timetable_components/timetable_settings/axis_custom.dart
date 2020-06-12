@@ -98,13 +98,17 @@ class _AxisCustomState extends State<AxisCustom> {
                             validator: (value) {
                               if (value == null || value.trim() == '') {
                                 return 'Value cannot be empty';
-                              } else if (_ttbStatus.temp.axisCustom
-                                  .contains(value)) {
-                                return 'Value already exists';
+                                // unsure
+                                // } else if (_ttbStatus.temp.axisCustom
+                                //     .contains(value)) {
+                                //   return 'Value already exists';
+
                               } else {
+                                // unsure
                                 _ttbStatus.temp.updateAxisCustomValue(
                                   prev: custom,
                                   next: value,
+                                  groupIndex: 0,
                                 );
                                 return null;
                               }
