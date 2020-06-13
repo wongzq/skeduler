@@ -151,6 +151,7 @@ class _NewTimetableState extends State<NewTimetable> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5.0),
                     child: LabelTextInput(
+                      key: GlobalKey(),
                       label: 'Name',
                       formKey: _formKey,
                       hintText: 'Timetable Name',
@@ -170,6 +171,7 @@ class _NewTimetableState extends State<NewTimetable> {
 
                   // Date range
                   TimetableDateRange(
+                    key: GlobalKey(),
                     initialStartDate: ttbStatus.temp.startDate,
                     initialEndDate: ttbStatus.temp.endDate,
                     valSetStartDate: (startDate) {
@@ -286,10 +288,25 @@ class _NewTimetableState extends State<NewTimetable> {
                                     }
                                   });
 
+                                  print(ttbStatus.temp.docId);
+                                  print(ttbStatus.temp.startDate);
+                                  print(ttbStatus.temp.endDate);
+                                  print(ttbStatus.temp.gridAxisOfDay);
+                                  print(ttbStatus.temp.gridAxisOfTime);
+                                  print(ttbStatus.temp.gridAxisOfCustom);
+                                  for (TimetableGroup group
+                                      in ttbStatus.temp.groups) {
+                                    print(group.axisDay);
+                                    print(group.axisTime);
+                                    print(group.axisCustom);
+                                    print(group.gridDataList.value);
+                                  }
+
                                   if (nameFound) {
                                     Fluttertoast.showToast(
                                         msg: 'Timetable ID already exists');
                                   } else {
+                                    // unsure
                                     dbService
                                         .updateGroupTimetable(
                                       groupStatus.group.docId,

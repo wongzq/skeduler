@@ -43,6 +43,7 @@ class _TimetableGroupSelectorState extends State<TimetableGroupSelector> {
           width: width,
           height: height,
           child: FlatButton(
+              splashColor: _originTheme.primaryColor,
               color: widget.valGetGroupSelected() == i
                   ? _originTheme.primaryColor
                   : Theme.of(context).scaffoldBackgroundColor,

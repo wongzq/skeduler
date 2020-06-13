@@ -1142,6 +1142,7 @@ class DatabaseService {
             gridAxisOfCustom: snapshot.data['gridAxisOfCustom'] == null
                 ? GridAxis.z
                 : GridAxis.values[snapshot.data['gridAxisOfCustom']],
+            groups: _timetableGroupsFromDynamicList(snapshot.data['groups']),
             // unsure
             // axisDay: _weekdaysFromDynamicList(snapshot.data['axisDay'] ?? []),
             // axisTime: _timesFromDynamicList(snapshot.data['axisTime'] ?? []),
@@ -1230,6 +1231,24 @@ class DatabaseService {
     });
 
     return timetableMetadatas;
+  }
+
+  List<TimetableGroup> _timetableGroupsFromDynamicList(
+      List<dynamic> groupsDynamic) {
+    List<TimetableGroup> groups = [];
+
+    for (dynamic elem in groupsDynamic) {
+      Map map = elem as Map;
+
+      groups.add(TimetableGroup(
+        axisDay: _weekdaysFromDynamicList(map['axisDay'] ?? []),
+        axisTime: _timesFromDynamicList(map['axisTime'] ?? []),
+        axisCustom: _stringsFromDynamicList(map['axisCustom'] ?? []),
+        gridDataList: _gridDataListFromDynamicList(map['gridDataList'] ?? []),
+      ));
+    }
+
+    return groups;
   }
 
   // convert [List<dynamic>] into [List<Weekday]

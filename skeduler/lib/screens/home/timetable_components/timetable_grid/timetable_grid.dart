@@ -35,8 +35,10 @@ class _TimetableGridState extends State<TimetableGrid> {
           width: size * groups[i].length,
           height: height,
           child: FlatButton(
+              splashColor: Theme.of(context).primaryColor,
+              highlightColor: Theme.of(context).primaryColor,
               color: _groupSelected == i
-                  ? originTheme.primaryColor
+                  ? Theme.of(context).primaryColor
                   : Theme.of(context).scaffoldBackgroundColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
@@ -49,7 +51,10 @@ class _TimetableGridState extends State<TimetableGrid> {
                       .map((e) => Text(getWeekdayShortStr(e),
                           style: textStyleBody.copyWith(
                               color: _groupSelected == i
-                                  ? originTheme.textColor
+                                  ? Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? originTheme.textColor
+                                      : Colors.white
                                   : Colors.grey)))
                       .toList()))));
     }

@@ -13,6 +13,7 @@ class LabelTextInput extends StatefulWidget {
   final bool enabled;
 
   const LabelTextInput({
+    Key key,
     this.formKey,
     this.controller,
     this.label = '',
@@ -22,7 +23,7 @@ class LabelTextInput extends StatefulWidget {
     this.valSetText,
     this.valSetValid,
     this.enabled,
-  });
+  }) : super(key: key);
 
   @override
   _LabelTextInputState createState() => _LabelTextInputState();
