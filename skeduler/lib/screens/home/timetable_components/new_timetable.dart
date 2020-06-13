@@ -36,6 +36,9 @@ class NewTimetable extends StatefulWidget {
 class _NewTimetableState extends State<NewTimetable> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController _textController = TextEditingController();
+  GlobalKey _key1 = GlobalKey();
+  GlobalKey _key2 = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -151,13 +154,14 @@ class _NewTimetableState extends State<NewTimetable> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5.0),
                     child: LabelTextInput(
-                      key: GlobalKey(),
+                      key: _key1,
                       label: 'Name',
                       formKey: _formKey,
                       hintText: 'Timetable Name',
                       valSetText: (text) {
                         ttbStatus.temp.docId = text;
                       },
+                      controller: _textController,
                       validator: (text) {
                         if (text == null || text.trim() == '') {
                           return 'Timetable name cannot be empty';
@@ -171,7 +175,7 @@ class _NewTimetableState extends State<NewTimetable> {
 
                   // Date range
                   TimetableDateRange(
-                    key: GlobalKey(),
+                    key: _key2,
                     initialStartDate: ttbStatus.temp.startDate,
                     initialEndDate: ttbStatus.temp.endDate,
                     valSetStartDate: (startDate) {
