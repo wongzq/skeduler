@@ -29,6 +29,7 @@ class TimetableStatus extends ChangeNotifier {
   int _tempGroupIndex;
   EditTimetable _temp;
 
+  // constructor
   TimetableStatus()
       : this._currGroupIndex = 0,
         this._editGroupIndex = 0,
@@ -66,31 +67,48 @@ class TimetableStatus extends ChangeNotifier {
 
     // reset currAxes
     if (ttb == null) {
+      this._currAxesIsCustom = false;
       this._currGroupIndex = 0;
       this._currAxes = null;
-      this._currAxesIsCustom = false;
     }
     // new currAxes
     else if (this._currAxes == null) {
       this._currAxesIsCustom = false;
+      this._currGroupIndex = this._currGroupIndex == null ||
+              this._currGroupIndex >= this._curr.groups.length ||
+              this._currGroupIndex < 0
+          ? 0
+          : this._currGroupIndex;
       this._currAxes = _newAxes(
-        this._curr == null ? EditTimetable() : EditTimetable.fromTimetable(ttb),
-        this._currGroupIndex,
-      );
+          this._curr == null
+              ? EditTimetable()
+              : EditTimetable.fromTimetable(ttb),
+          this._currGroupIndex);
     }
     // update currAxes keep grid axis
     else if (this._currAxesIsCustom == false) {
+      this._currGroupIndex = this._currGroupIndex == null ||
+              this._currGroupIndex >= this._curr.groups.length ||
+              this._currGroupIndex < 0
+          ? 0
+          : this._currGroupIndex;
       this._currAxes = _newAxes(
-        this._curr == null ? EditTimetable() : EditTimetable.fromTimetable(ttb),
-        this._currGroupIndex,
-      );
+          this._curr == null
+              ? EditTimetable()
+              : EditTimetable.fromTimetable(ttb),
+          this._currGroupIndex);
     } else {
+      this._currGroupIndex = this._currGroupIndex == null ||
+              this._currGroupIndex >= this._curr.groups.length ||
+              this._currGroupIndex < 0
+          ? 0
+          : this._currGroupIndex;
       this._currAxes = _updateAxesKeepGridAxis(
-        this._curr == null ? EditTimetable() : EditTimetable.fromTimetable(ttb),
-        this._currAxes,
-        // unsure
-        0,
-      );
+          this._curr == null
+              ? EditTimetable()
+              : EditTimetable.fromTimetable(ttb),
+          this._currAxes,
+          this._currGroupIndex);
     }
   }
 
@@ -104,16 +122,40 @@ class TimetableStatus extends ChangeNotifier {
     }
     // new editAxes
     else if (this._editAxes == null) {
-      this._editAxes = _newAxes(editTtb, this._editGroupIndex);
+      this._editGroupIndex = this._editGroupIndex == null ||
+              this._editGroupIndex >= this._edit.groups.length ||
+              this._editGroupIndex < 0
+          ? 0
+          : this._editGroupIndex;
+      this._editAxes =
+          _newAxes(EditTimetable.from(editTtb), this._editGroupIndex);
     }
     // update editAxes keep grid axes
     else {
+      this._editGroupIndex = this._editGroupIndex == null ||
+              this._editGroupIndex >= this._edit.groups.length ||
+              this._editGroupIndex < 0
+          ? 0
+          : this._editGroupIndex;
       this._editAxes = _updateAxesKeepGridAxis(
-        editTtb,
-        this._editAxes,
-        this._editGroupIndex,
-      );
+          editTtb, this._editAxes, this._editGroupIndex);
     }
+  }
+
+  set temp(EditTimetable editTtb) {
+    this._temp = editTtb;
+
+    this._tempGroupIndex = editTtb == null ||
+            this._tempGroupIndex == null ||
+            this._tempGroupIndex >= this._temp.groups.length ||
+            this._tempGroupIndex < 0
+        ? 0
+        : this._tempGroupIndex;
+  }
+
+  set currGroupIndex(int value) {
+    this._currGroupIndex = value;
+    notifyListeners();
   }
 
   set editGroupIndex(int value) {
@@ -124,11 +166,6 @@ class TimetableStatus extends ChangeNotifier {
   set tempGroupIndex(int value) {
     this._tempGroupIndex = value;
     notifyListeners();
-  }
-
-  set temp(EditTimetable editTtb) {
-    this._tempGroupIndex = this._tempGroupIndex ?? 0;
-    this._temp = editTtb;
   }
 
   set currDayGridAxis(GridAxis gridAxis) {

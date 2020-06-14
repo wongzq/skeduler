@@ -13,7 +13,7 @@ class TimetableGrid extends StatefulWidget {
 }
 
 class _TimetableGridState extends State<TimetableGrid> {
-  int _groupSelected = 0;
+  int _groupSelected;
 
   TimetableStatus _ttbStatus;
   TimetableEditMode _editMode;
@@ -41,7 +41,14 @@ class _TimetableGridState extends State<TimetableGrid> {
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(height / 2),
                       bottomRight: Radius.circular(height / 2))),
-              onPressed: () => setState(() => _groupSelected = i),
+              onPressed: () => setState(() {
+                    if (_editMode.editing) {
+                      _ttbStatus.editGroupIndex = i;
+                    } else {
+                      _ttbStatus.currGroupIndex = i;
+                    }
+                    _ttbStatus.update();
+                  }),
               child: Text((i + 1).toString(),
                   style: textStyleBody.copyWith(
                       color: _groupSelected == i
@@ -59,6 +66,10 @@ class _TimetableGridState extends State<TimetableGrid> {
     _originTheme = Provider.of<OriginTheme>(context);
     _ttbStatus = Provider.of<TimetableStatus>(context);
     _editMode = Provider.of<TimetableEditMode>(context);
+
+    _groupSelected = _editMode.editing
+        ? _ttbStatus.editGroupIndex ?? 0
+        : _ttbStatus.currGroupIndex ?? 0;
 
     TimetableAxes axes =
         _editMode.editing ? _ttbStatus.editAxes : _ttbStatus.currAxes;

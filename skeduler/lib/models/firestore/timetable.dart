@@ -76,6 +76,15 @@ class TimetableGroup {
   List<String> get axisTimeStr => List.generate(
       this._axisTime.length, (index) => getTimeStr(this._axisTime[index]));
 
+  bool get isValid => this._axisDay == null ||
+          this._axisTime == null ||
+          this._axisCustom == null ||
+          this._axisDay.isEmpty ||
+          this._axisTime.isEmpty ||
+          this._axisCustom.isEmpty
+      ? false
+      : true;
+
   // custom setter methods
   void _setAxisDay(List<Weekday> axisDay) {
     this._axisDay = axisDay;
@@ -324,7 +333,8 @@ class EditTimetable extends ChangeNotifier {
   bool get isValid => this._docId != null &&
           this._docId.trim() != '' &&
           this._startDate != null &&
-          this._endDate != null
+          this._endDate != null &&
+          this._startDate.isBefore(this._endDate)
       ? true
       : false;
 
@@ -333,6 +343,13 @@ class EditTimetable extends ChangeNotifier {
       this
           ._groups
           .contains((TimetableGroup group) => group.gridDataList.hasChanges);
+
+  bool get groupsAreValid {
+    for (TimetableGroup group in this.groups) {
+      if (!group.isValid) return false;
+    }
+    return true;
+  }
 
   // setter methods
   set docId(String docId) {
@@ -412,6 +429,17 @@ class EditTimetable extends ChangeNotifier {
     this.docId = docId ?? this.docId;
     this.startDate = startDate ?? this.startDate;
     this.endDate = endDate ?? this.endDate;
+
+    if (this._groups.length < groups.length) {
+      for (int i = this._groups.length; i < groups.length; i++) {
+        this._groups.add(TimetableGroup());
+      }
+    } else if (groups.length < this._groups.length) {
+      int thisGroupsLength = this._groups.length;
+      for (int i = groups.length; i < thisGroupsLength; i++) {
+        this._groups.removeAt(i);
+      }
+    }
 
     for (int i = 0; i < groups.length; i++) {
       this._groups[i]._setAxisDay(groups[i].axisDay);
