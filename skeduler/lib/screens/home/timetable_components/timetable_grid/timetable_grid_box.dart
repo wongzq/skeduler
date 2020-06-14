@@ -8,6 +8,7 @@ import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/firestore/timetable.dart';
 import 'package:skeduler/models/firestore/user.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_grid/timetable_switch_dialog.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
@@ -597,7 +598,6 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
   bool memberIsAssigned(
     TimetableDragData checkDragData,
   ) {
-    bool isAssigned;
     String memberDocId;
 
     if (checkDragData is TimetableDragMember) {
@@ -607,6 +607,16 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
     }
 
     if (memberDocId != null) {
+      for (TimetableGroup group in _ttbStatus.edit.groups) {
+        for (TimetableGridData gridData in group.gridDataList.value) {
+          if (gridData.dragData.member.docId == memberDocId &&
+              gridData.coord.day == _gridData.coord.day &&
+              gridData.coord.time == _gridData.coord.time) {
+            return true;
+          }
+        }
+      }
+
       // unsure
       // isAssigned = _ttbStatus.edit.gridDataList.value.firstWhere((gridData) {
       //           return gridData.dragData.member.docId == memberDocId &&
@@ -616,11 +626,9 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
       //         null
       //     ? true
       //     : false;
-    } else {
-      isAssigned = false;
     }
 
-    return isAssigned;
+    return false;
   }
 
   @override

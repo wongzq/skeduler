@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/firestore/timetable.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_grid/timetable_headers.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_grid/timetable_slots.dart';
 import 'package:skeduler/shared/ui_settings.dart';
@@ -15,24 +15,21 @@ class TimetableGrid extends StatefulWidget {
 class _TimetableGridState extends State<TimetableGrid> {
   int _groupSelected = 0;
 
+  TimetableStatus _ttbStatus;
+  TimetableEditMode _editMode;
+  OriginTheme _originTheme;
+
   Widget _generateTimetableGroups(BuildContext context) {
-    // TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
-    OriginTheme originTheme = Provider.of<OriginTheme>(context);
-
     List<Widget> widgets = [];
-    List<List<Weekday>> groups = [
-      [Weekday.mon, Weekday.tue, Weekday.wed, Weekday.thu],
-      [Weekday.fri],
-      [Weekday.sat, Weekday.sun]
-    ];
+    List<TimetableGroup> groups =
+        _editMode.editing ? _ttbStatus.edit.groups : _ttbStatus.curr.groups;
 
-    int length = groups.reduce((value, element) => value + element).length;
-    double size = MediaQuery.of(context).size.width / length;
+    double width = MediaQuery.of(context).size.width / groups.length;
     double height = 40;
 
     for (int i = 0; i < groups.length; i++) {
       widgets.add(Container(
-          width: size * groups[i].length,
+          width: width,
           height: height,
           child: FlatButton(
               splashColor: Theme.of(context).primaryColor,
@@ -45,18 +42,13 @@ class _TimetableGridState extends State<TimetableGrid> {
                       bottomLeft: Radius.circular(height / 2),
                       bottomRight: Radius.circular(height / 2))),
               onPressed: () => setState(() => _groupSelected = i),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: groups[i]
-                      .map((e) => Text(getWeekdayShortStr(e),
-                          style: textStyleBody.copyWith(
-                              color: _groupSelected == i
-                                  ? Theme.of(context).brightness ==
-                                          Brightness.light
-                                      ? originTheme.textColor
-                                      : Colors.white
-                                  : Colors.grey)))
-                      .toList()))));
+              child: Text((i + 1).toString(),
+                  style: textStyleBody.copyWith(
+                      color: _groupSelected == i
+                          ? Theme.of(context).brightness == Brightness.light
+                              ? _originTheme.textColor
+                              : Colors.white
+                          : Colors.grey)))));
     }
 
     return Container(height: height, child: Row(children: widgets));
@@ -64,11 +56,12 @@ class _TimetableGridState extends State<TimetableGrid> {
 
   @override
   Widget build(BuildContext context) {
-    TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
-    TimetableEditMode editMode = Provider.of<TimetableEditMode>(context);
+    _originTheme = Provider.of<OriginTheme>(context);
+    _ttbStatus = Provider.of<TimetableStatus>(context);
+    _editMode = Provider.of<TimetableEditMode>(context);
 
     TimetableAxes axes =
-        editMode.editing ? ttbStatus.editAxes : ttbStatus.currAxes;
+        _editMode.editing ? _ttbStatus.editAxes : _ttbStatus.currAxes;
 
     return axes == null
         ? Container()

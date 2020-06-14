@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/timetable.dart';
@@ -16,21 +17,31 @@ import 'package:skeduler/shared/widgets/label_text_input.dart';
 import 'package:skeduler/shared/functions.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
 
-class TimetableSettings extends StatelessWidget {
+class TimetableSettings extends StatefulWidget {
+  @override
+  _TimetableSettingsState createState() => _TimetableSettingsState();
+}
+
+class _TimetableSettingsState extends State<TimetableSettings> {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  GlobalKey _key1 = GlobalKey();
+  GlobalKey _key2 = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
+    OriginTheme originTheme = Provider.of<OriginTheme>(context);
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
-
-    GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-    GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
     ttbStatus.temp = ttbStatus.temp != null && ttbStatus.temp.isValid
         ? ttbStatus.temp
         : ttbStatus.edit != null && ttbStatus.edit.isValid
             ? EditTimetable.from(ttbStatus.edit)
             : EditTimetable();
+
+    int index = ttbStatus.tempGroupIndex;
 
     return GestureDetector(
       onTap: () => unfocus(),
@@ -71,7 +82,7 @@ class TimetableSettings extends StatelessWidget {
                 color: Colors.white,
               ),
               onPressed: () async {
-                if (formKey.currentState.validate() &&
+                if (_formKey.currentState.validate() &&
                     ttbStatus.temp.startDate != null &&
                     ttbStatus.temp.endDate != null &&
                     ttbStatus.temp.startDate.isBefore(ttbStatus.temp.endDate)) {
@@ -137,8 +148,9 @@ class TimetableSettings extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 5.0),
               child: LabelTextInput(
+                key: _key1,
                 label: 'Name',
-                formKey: formKey,
+                formKey: _formKey,
                 hintText: 'Timetable Name',
                 initialValue: ttbStatus.temp.docId,
                 valSetText: (text) {
@@ -157,6 +169,7 @@ class TimetableSettings extends StatelessWidget {
 
             // Date range
             TimetableDateRange(
+              key: _key2,
               initialStartDate: ttbStatus.temp.startDate,
               initialEndDate: ttbStatus.temp.endDate,
               valSetStartDate: (startDate) {
@@ -171,10 +184,15 @@ class TimetableSettings extends StatelessWidget {
               },
             ),
             SizedBox(height: 10.0),
-            Divider(thickness: 1.0),
 
             // Groups
-            TimetableGroupSelector(),
+            TimetableGroupSelector(
+                valGetGroups: () => ttbStatus.temp.groups,
+                valSetGroups: (value) =>
+                    setState(() => ttbStatus.temp.groups = value),
+                valGetGroupSelected: () => ttbStatus.tempGroupIndex,
+                valSetGroupSelected: (value) =>
+                    setState(() => ttbStatus.tempGroupIndex = value)),
 
             // Axis Day
             Theme(
@@ -182,44 +200,43 @@ class TimetableSettings extends StatelessWidget {
                 dividerColor: Colors.transparent,
               ),
               child: AxisDay(
-                  // unsure
-                  // initialWeekdaysSelected: ttbStatus.temp.axisDay,
-                  // valSetWeekdaysSelected: (timetableWeekdaysSelected) {
-                  //   ttbStatus.temp.axisDay = timetableWeekdaysSelected;
-                  // },
-                  ),
+                  initialWeekdaysSelected: ttbStatus.temp.groups[index].axisDay,
+                  valSetWeekdaysSelected: (timetableWeekdaysSelected) =>
+                      ttbStatus.temp
+                          .setGroupAxisDay(index, timetableWeekdaysSelected),
+                  valGetWeekdaysSelected: () =>
+                      ttbStatus.temp.groups[index].axisDay),
             ),
             Divider(thickness: 1.0),
 
             // Axis Time
             Theme(
-              data: Theme.of(context).copyWith(
-                dividerColor: Colors.transparent,
-              ),
-              child: AxisTime(
-                  // unsure
-                  // initialTimes: ttbStatus.temp.axisTime,
-                  // valSetTimes: (times) {
-                  //   ttbStatus.temp.axisTime = times;
-                  // },
-                  ),
-            ),
+                data: Theme.of(context).copyWith(
+                  dividerColor: Colors.transparent,
+                ),
+                child: AxisTime(
+                    initialTimes: ttbStatus.temp.groups[index].axisTime,
+                    valSetTimes: (times) =>
+                        ttbStatus.temp.setGroupAxisTime(index, times),
+                    valGetTimes: () => ttbStatus.temp.groups[index].axisTime)),
+
             Divider(thickness: 1.0),
 
             // Axis Custom
             Theme(
-              data: Theme.of(context).copyWith(
-                dividerColor: Colors.transparent,
-              ),
-              child: AxisCustom(
-                  // unsure
-                  // initialCustoms: ttbStatus.temp.axisCustom,
-                  // valSetCustoms: (customVals) {
-                  //   ttbStatus.temp.axisCustom = customVals;
-                  // },
-                  ),
-            ),
+                data: Theme.of(context).copyWith(
+                  dividerColor: Colors.transparent,
+                ),
+                child: AxisCustom(
+                    // unsure
+                    initialCustoms: ttbStatus.temp.groups[index].axisCustom,
+                    valSetCustoms: (customVals) =>
+                        ttbStatus.temp.setGroupAxisCustom(index, customVals),
+                    valGetCustoms: () =>
+                        ttbStatus.temp.groups[index].axisCustom)),
             Divider(thickness: 1.0),
+
+            // Delete button
             Padding(
               padding: EdgeInsets.all(20.0),
               child: RaisedButton(

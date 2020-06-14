@@ -36,7 +36,6 @@ class NewTimetable extends StatefulWidget {
 class _NewTimetableState extends State<NewTimetable> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _textController = TextEditingController();
   GlobalKey _key1 = GlobalKey();
   GlobalKey _key2 = GlobalKey();
 
@@ -59,7 +58,6 @@ class _NewTimetableState extends State<NewTimetable> {
                       Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
                   onPressed: () {
                     ttbStatus.temp = EditTimetable();
-
                     Navigator.of(context).maybePop();
                   }),
               title: AppBarTitle(title: 'New Timetable'),
@@ -161,7 +159,6 @@ class _NewTimetableState extends State<NewTimetable> {
                       valSetText: (text) {
                         ttbStatus.temp.docId = text;
                       },
-                      controller: _textController,
                       validator: (text) {
                         if (text == null || text.trim() == '') {
                           return 'Timetable name cannot be empty';
@@ -186,8 +183,8 @@ class _NewTimetableState extends State<NewTimetable> {
                     },
                   ),
                   SizedBox(height: 10.0),
-                  // Divider(thickness: 1.0),
-
+                  
+                  // Groups
                   TimetableGroupSelector(
                       valGetGroups: () => ttbStatus.temp.groups,
                       valSetGroups: (value) =>
