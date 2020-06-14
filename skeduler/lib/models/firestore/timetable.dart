@@ -55,6 +55,13 @@ class TimetableGroup {
         this._gridDataList =
             TimetableGridDataList.from(gridDataList ?? TimetableGridDataList());
 
+  TimetableGroup.from(TimetableGroup group)
+      : this._axisDay = List.from(group._axisDay ?? []),
+        this._axisTime = List.from(group._axisTime ?? []),
+        this._axisCustom = List.from(group._axisCustom ?? []),
+        this._gridDataList = TimetableGridDataList.from(
+            group._gridDataList ?? TimetableGridDataList());
+
   // getter methods
   List<Weekday> get axisDay => List.from(this._axisDay);
   List<Time> get axisTime => List.from(this._axisTime);
@@ -289,14 +296,15 @@ class EditTimetable extends ChangeNotifier {
 
   EditTimetable.from(EditTimetable editTtb)
       : this(
-          docId: editTtb.docId,
-          startDate: editTtb.startDate,
-          endDate: editTtb.endDate,
-          gridAxisOfDay: editTtb.gridAxisOfDay,
-          gridAxisOfTime: editTtb.gridAxisOfTime,
-          gridAxisOfCustom: editTtb.gridAxisOfCustom,
-          groups: editTtb.groups,
-        );
+            docId: editTtb.docId,
+            startDate: editTtb.startDate,
+            endDate: editTtb.endDate,
+            gridAxisOfDay: editTtb.gridAxisOfDay,
+            gridAxisOfTime: editTtb.gridAxisOfTime,
+            gridAxisOfCustom: editTtb.gridAxisOfCustom,
+            groups: editTtb.groups
+                .map((group) => TimetableGroup.from(group))
+                .toList());
 
   // getter methods
   String get docId => this._docId;
@@ -305,7 +313,7 @@ class EditTimetable extends ChangeNotifier {
   GridAxis get gridAxisOfDay => this._gridAxisOfDay;
   GridAxis get gridAxisOfTime => this._gridAxisOfTime;
   GridAxis get gridAxisOfCustom => this._gridAxisOfCustom;
-  List<TimetableGroup> get groups => List.from(this._groups);
+  List<TimetableGroup> get groups => this._groups;
 
   TimetableMetadata get metadata => TimetableMetadata(
         docId: this._docId,

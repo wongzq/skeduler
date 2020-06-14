@@ -116,13 +116,18 @@ class TimetableStatus extends ChangeNotifier {
     }
   }
 
-  set tempGroupIndex(int value){
+  set editGroupIndex(int value) {
+    this._editGroupIndex = value;
+    notifyListeners();
+  }
+
+  set tempGroupIndex(int value) {
     this._tempGroupIndex = value;
     notifyListeners();
   }
 
   set temp(EditTimetable editTtb) {
-    this._tempGroupIndex = 0;
+    this._tempGroupIndex = this._tempGroupIndex ?? 0;
     this._temp = editTtb;
   }
 

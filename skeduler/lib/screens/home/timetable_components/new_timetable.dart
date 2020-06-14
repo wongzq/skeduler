@@ -183,7 +183,7 @@ class _NewTimetableState extends State<NewTimetable> {
                     },
                   ),
                   SizedBox(height: 10.0),
-                  
+
                   // Groups
                   TimetableGroupSelector(
                       valGetGroups: () => ttbStatus.temp.groups,
@@ -288,20 +288,6 @@ class _NewTimetableState extends State<NewTimetable> {
                                       nameFound = true;
                                     }
                                   });
-
-                                  print(ttbStatus.temp.docId);
-                                  print(ttbStatus.temp.startDate);
-                                  print(ttbStatus.temp.endDate);
-                                  print(ttbStatus.temp.gridAxisOfDay);
-                                  print(ttbStatus.temp.gridAxisOfTime);
-                                  print(ttbStatus.temp.gridAxisOfCustom);
-                                  for (TimetableGroup group
-                                      in ttbStatus.temp.groups) {
-                                    print(group.axisDay);
-                                    print(group.axisTime);
-                                    print(group.axisCustom);
-                                    print(group.gridDataList.value);
-                                  }
 
                                   if (nameFound) {
                                     Fluttertoast.showToast(

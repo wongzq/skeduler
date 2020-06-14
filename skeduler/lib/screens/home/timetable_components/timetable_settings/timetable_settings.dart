@@ -30,7 +30,6 @@ class _TimetableSettingsState extends State<TimetableSettings> {
 
   @override
   Widget build(BuildContext context) {
-    OriginTheme originTheme = Provider.of<OriginTheme>(context);
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
@@ -93,6 +92,8 @@ class _TimetableSettingsState extends State<TimetableSettings> {
                       docId: ttbStatus.temp.docId,
                       startDate: ttbStatus.temp.startDate,
                       endDate: ttbStatus.temp.endDate,
+                      groups: ttbStatus.temp.groups,
+                      members: groupStatus.members,
                       // unsure
                       // axisDay: ttbStatus.temp.axisDay,
                       // axisTime: ttbStatus.temp.axisTime,
@@ -191,22 +192,22 @@ class _TimetableSettingsState extends State<TimetableSettings> {
                 valSetGroups: (value) =>
                     setState(() => ttbStatus.temp.groups = value),
                 valGetGroupSelected: () => ttbStatus.tempGroupIndex,
-                valSetGroupSelected: (value) =>
-                    setState(() => ttbStatus.tempGroupIndex = value)),
+                valSetGroupSelected: (value) {
+                  setState(() => ttbStatus.tempGroupIndex = value);
+                }),
 
             // Axis Day
             Theme(
-              data: Theme.of(context).copyWith(
-                dividerColor: Colors.transparent,
-              ),
-              child: AxisDay(
-                  initialWeekdaysSelected: ttbStatus.temp.groups[index].axisDay,
-                  valSetWeekdaysSelected: (timetableWeekdaysSelected) =>
-                      ttbStatus.temp
-                          .setGroupAxisDay(index, timetableWeekdaysSelected),
-                  valGetWeekdaysSelected: () =>
-                      ttbStatus.temp.groups[index].axisDay),
-            ),
+                data: Theme.of(context)
+                    .copyWith(dividerColor: Colors.transparent),
+                child: AxisDay(
+                    initialWeekdaysSelected:
+                        ttbStatus.temp.groups[index].axisDay,
+                    valSetWeekdaysSelected: (timetableWeekdaysSelected) =>
+                        setState(() => ttbStatus.temp
+                            .setGroupAxisDay(index, timetableWeekdaysSelected)),
+                    valGetWeekdaysSelected: () =>
+                        ttbStatus.temp.groups[index].axisDay)),
             Divider(thickness: 1.0),
 
             // Axis Time
@@ -216,8 +217,8 @@ class _TimetableSettingsState extends State<TimetableSettings> {
                 ),
                 child: AxisTime(
                     initialTimes: ttbStatus.temp.groups[index].axisTime,
-                    valSetTimes: (times) =>
-                        ttbStatus.temp.setGroupAxisTime(index, times),
+                    valSetTimes: (times) => setState(
+                        () => ttbStatus.temp.setGroupAxisTime(index, times)),
                     valGetTimes: () => ttbStatus.temp.groups[index].axisTime)),
 
             Divider(thickness: 1.0),
@@ -230,8 +231,8 @@ class _TimetableSettingsState extends State<TimetableSettings> {
                 child: AxisCustom(
                     // unsure
                     initialCustoms: ttbStatus.temp.groups[index].axisCustom,
-                    valSetCustoms: (customVals) =>
-                        ttbStatus.temp.setGroupAxisCustom(index, customVals),
+                    valSetCustoms: (customVals) => setState(() =>
+                        ttbStatus.temp.setGroupAxisCustom(index, customVals)),
                     valGetCustoms: () =>
                         ttbStatus.temp.groups[index].axisCustom)),
             Divider(thickness: 1.0),
