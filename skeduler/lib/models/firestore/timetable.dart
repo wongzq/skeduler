@@ -285,14 +285,14 @@ class EditTimetable extends ChangeNotifier {
 
   EditTimetable.fromTimetable(Timetable ttb)
       : this(
-          docId: ttb.docId,
-          startDate: ttb.startDate,
-          endDate: ttb.endDate,
-          gridAxisOfDay: ttb.gridAxisOfDay,
-          gridAxisOfTime: ttb.gridAxisOfTime,
-          gridAxisOfCustom: ttb.gridAxisOfCustom,
-          groups: ttb.groups,
-        );
+            docId: ttb.docId,
+            startDate: ttb.startDate,
+            endDate: ttb.endDate,
+            gridAxisOfDay: ttb.gridAxisOfDay,
+            gridAxisOfTime: ttb.gridAxisOfTime,
+            gridAxisOfCustom: ttb.gridAxisOfCustom,
+            groups:
+                ttb.groups.map((group) => TimetableGroup.from(group)).toList());
 
   EditTimetable.from(EditTimetable editTtb)
       : this(
