@@ -221,7 +221,6 @@ class _TimetableSettingsState extends State<TimetableSettings> {
                               dividerColor: Colors.transparent,
                             ),
                             child: AxisCustom(
-                                // unsure
                                 initialCustoms:
                                     ttbStatus.temp.groups[index].axisCustom,
                                 valSetCustoms: (customVals) => setState(() =>

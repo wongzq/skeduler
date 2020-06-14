@@ -197,7 +197,6 @@ class _TimetableScreenState extends State<TimetableScreen> {
                               if (value == 0) {
                                 if (groupStatus.me.role == MemberRole.owner ||
                                     groupStatus.me.role == MemberRole.admin) {
-                                  // unsure
                                   ttbStatus.temp = EditTimetable(groups: [
                                     TimetableGroup(
                                         axisDay: List.generate(5,

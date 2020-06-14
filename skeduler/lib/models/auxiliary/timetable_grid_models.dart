@@ -208,7 +208,6 @@ class TimetableStatus extends ChangeNotifier {
   }
 
   // auxiliary methods
-  // unsure
   TimetableAxes _newAxes(EditTimetable editTtb, int groupIndex) {
     return TimetableAxes(
       day: TimetableAxis(
@@ -232,7 +231,6 @@ class TimetableStatus extends ChangeNotifier {
     );
   }
 
-  // unsure
   TimetableAxes _updateAxesKeepGridAxis(
     EditTimetable editTtb,
     TimetableAxes keepGridAxis,

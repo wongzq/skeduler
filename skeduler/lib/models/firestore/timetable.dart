@@ -402,7 +402,6 @@ class EditTimetable extends ChangeNotifier {
     this._changed();
   }
 
-  // unsure
   set hasChanges(bool value) {
     this._hasChanges = value;
     notifyListeners();

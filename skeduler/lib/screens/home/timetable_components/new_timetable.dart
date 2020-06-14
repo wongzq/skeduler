@@ -198,7 +198,6 @@ class _NewTimetableState extends State<NewTimetable> {
                       data: Theme.of(context)
                           .copyWith(dividerColor: Colors.transparent),
                       child: AxisDay(
-                          // unsure
                           initialWeekdaysSelected:
                               ttbStatus.temp.groups[index].axisDay,
                           valSetWeekdaysSelected: (timetableWeekdaysSelected) =>
@@ -213,7 +212,6 @@ class _NewTimetableState extends State<NewTimetable> {
                       data: Theme.of(context)
                           .copyWith(dividerColor: Colors.transparent),
                       child: AxisTime(
-                          // unsure
                           initialTimes: ttbStatus.temp.groups[index].axisTime,
                           valSetTimes: (times) =>
                               ttbStatus.temp.setGroupAxisTime(index, times),
@@ -227,7 +225,6 @@ class _NewTimetableState extends State<NewTimetable> {
                         dividerColor: Colors.transparent,
                       ),
                       child: AxisCustom(
-                          // unsure
                           initialCustoms:
                               ttbStatus.temp.groups[index].axisCustom,
                           valSetCustoms: (customVals) => ttbStatus.temp
@@ -293,7 +290,6 @@ class _NewTimetableState extends State<NewTimetable> {
                                     Fluttertoast.showToast(
                                         msg: 'Timetable ID already exists');
                                   } else {
-                                    // unsure
                                     dbService
                                         .updateGroupTimetable(
                                       groupStatus.group.docId,
