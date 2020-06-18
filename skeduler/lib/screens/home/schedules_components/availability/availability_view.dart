@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/time.dart';
-import 'package:skeduler/screens/home/schedules_components/availability/availability_month_expansion_tile.dart';
+import 'package:skeduler/screens/home/schedules_components/availability/availability_expansion_tile.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
@@ -39,91 +39,74 @@ class _AvailabilityViewState extends State<AvailabilityView> {
 
     return groupStatus.member == null
         ? Container()
-        : Column(
-            children: <Widget>[
-              // Switch default availability
-              Container(
+        : Column(children: <Widget>[
+            // Switch default availability
+            Container(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: 5.0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        'only available on',
-                        overflow: TextOverflow.fade,
-                        style: alwaysAvailable
-                            ? textStyleBody.copyWith(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? Colors.grey.shade400
-                                    : Colors.grey.shade700,
-                              )
-                            : textStyleBody,
-                      ),
-                      Switch(
-                        activeColor: originTheme.accentColor,
-                        activeTrackColor:
-                            Theme.of(context).brightness == Brightness.light
-                                ? Colors.grey.shade400.withOpacity(0.5)
-                                : Colors.grey.withOpacity(0.5),
-                        inactiveThumbColor: originTheme.accentColor,
-                        inactiveTrackColor:
-                            Theme.of(context).brightness == Brightness.light
-                                ? Colors.grey.shade400.withOpacity(0.5)
-                                : Colors.grey.withOpacity(0.5),
-                        value: alwaysAvailable,
-                        onChanged: (value) async {
-                          await dbService
-                              .updateGroupMemberAlwaysAvailable(
-                                groupStatus.group.docId,
-                                groupStatus.member.docId,
-                                value,
-                              )
-                              .then((_) => setState(() {}));
-                        },
-                      ),
-                      Text(
-                        ' always available',
-                        overflow: TextOverflow.fade,
-                        style: alwaysAvailable
-                            ? textStyleBody
-                            : textStyleBody.copyWith(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? Colors.grey.shade400
-                                    : Colors.grey.shade700,
-                              ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            'only available on',
+                            overflow: TextOverflow.fade,
+                            style: alwaysAvailable
+                                ? textStyleBody.copyWith(
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? Colors.grey.shade400
+                                        : Colors.grey.shade700)
+                                : textStyleBody,
+                          ),
+                          Switch(
+                              activeColor: originTheme.accentColor,
+                              activeTrackColor: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.grey.shade400.withOpacity(0.5)
+                                  : Colors.grey.withOpacity(0.5),
+                              inactiveThumbColor: originTheme.accentColor,
+                              inactiveTrackColor:
+                                  Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.grey.shade400.withOpacity(0.5)
+                                      : Colors.grey.withOpacity(0.5),
+                              value: alwaysAvailable,
+                              onChanged: (value) async {
+                                await dbService
+                                    .updateGroupMemberAlwaysAvailable(
+                                        groupStatus.group.docId,
+                                        groupStatus.member.docId,
+                                        value);
+                              }),
+                          Text(' always available',
+                              overflow: TextOverflow.fade,
+                              style: alwaysAvailable
+                                  ? textStyleBody
+                                  : textStyleBody.copyWith(
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.light
+                                          ? Colors.grey.shade400
+                                          : Colors.grey.shade700))
+                        ]))),
 
-              // if times is empty
-              times.length <= 0
-                  ? Column(
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.all(10.0),
-                          child: Text(
+            // if times is empty
+            times.length <= 0
+                ? Column(children: <Widget>[
+                    Container(
+                        padding: EdgeInsets.all(10.0),
+                        child: Text(
                             alwaysAvailable
                                 ? 'NO EXCEPTIONS'
                                 : 'NO AVAILABLE TIMES',
                             style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 16.0,
-                              letterSpacing: 2.0,
-                            ),
-                          ),
-                        ),
-                        Divider(height: 1.0),
-                      ],
-                    )
-                  : Expanded(
-                      child: ListView.builder(
+                                color: Colors.grey,
+                                fontSize: 16.0,
+                                letterSpacing: 2.0))),
+                    Divider(height: 1.0),
+                  ])
+                : Expanded(
+                    child: ListView.builder(
                         physics: BouncingScrollPhysics(
                           parent: AlwaysScrollableScrollPhysics(),
                         ),
@@ -135,14 +118,10 @@ class _AvailabilityViewState extends State<AvailabilityView> {
 
                           return index >= availabilityMonths.length
                               ? SizedBox(height: 100.0)
-                              : AvailabilityMonthExpansionTile(
+                              : AvailabilityExpansionTile(
                                   monthIndex: monthIndex,
-                                  times: availabilityMonths[monthIndex],
-                                );
-                        },
-                      ),
-                    ),
-            ],
-          );
+                                  times: availabilityMonths[monthIndex]);
+                        }))
+          ]);
   }
 }

@@ -37,6 +37,7 @@ class TimetableMetadata {
 
 class TimetableGroup {
   // properties
+  String _docId;
   List<Weekday> _axisDay;
   List<Time> _axisTime;
   List<String> _axisCustom;
@@ -45,11 +46,13 @@ class TimetableGroup {
 
   // constructor
   TimetableGroup({
+    String docId,
     List<Weekday> axisDay,
     List<Time> axisTime,
     List<String> axisCustom,
     TimetableGridDataList gridDataList,
-  })  : this._axisDay = List<Weekday>.from(axisDay ?? []),
+  })  : this._docId = docId,
+        this._axisDay = List<Weekday>.from(axisDay ?? []),
         this._axisTime = List<Time>.from(axisTime ?? []),
         this._axisCustom = List<String>.from(axisCustom ?? []),
         this._gridDataList =
@@ -63,6 +66,7 @@ class TimetableGroup {
             group._gridDataList ?? TimetableGridDataList());
 
   // getter methods
+  String get docId => this._docId;
   List<Weekday> get axisDay => List.from(this._axisDay);
   List<Time> get axisTime => List.from(this._axisTime);
   List<String> get axisCustom => List.from(this._axisCustom);
@@ -198,6 +202,86 @@ class TimetableGroup {
       }
     }
   }
+
+  Map<String, dynamic> asFirestoreMap() {
+    Map<String, dynamic> groupMap = {};
+
+    // convert axisDay
+    if (this.axisDay != null) {
+      List<int> axisDaysInt = [];
+      this.axisDay.forEach((weekday) => axisDaysInt.add(weekday.index));
+      axisDaysInt.sort((a, b) => a.compareTo(b));
+      groupMap['axisDay'] = axisDaysInt;
+    }
+
+    // convert axisTime
+    if (this.axisTime != null) {
+      List<Map<String, Timestamp>> axisTimesTimestamps = [];
+      this.axisTime.forEach((time) {
+        axisTimesTimestamps.add({
+          'startTime': Timestamp.fromDate(time.startTime),
+          'endTime': Timestamp.fromDate(time.endTime),
+        });
+      });
+      axisTimesTimestamps
+          .sort((a, b) => a['startTime'].compareTo(b['startTime']));
+      groupMap['axisTime'] = axisTimesTimestamps;
+    }
+
+    // convert axisCustom
+    if (this.axisCustom != null) {
+      groupMap['axisCustom'] = this.axisCustom;
+    }
+
+    // convert gridDataList
+    if (this.gridDataList != null) {
+      List<Map<String, dynamic>> gridDataList = [];
+
+      for (TimetableGridData gridData in this.gridDataList.value) {
+        if (this.axisDay.contains(gridData.coord.day) &&
+            this.axisTime.contains(gridData.coord.time) &&
+            this.axisCustom.contains(gridData.coord.custom)) {
+          // convert coords
+          Map<String, dynamic> coord = {
+            'day': gridData.coord.day.index,
+            'time': {
+              'startTime': Timestamp.fromDate(gridData.coord.time.startTime),
+              'endTime': Timestamp.fromDate(gridData.coord.time.endTime),
+            },
+            'custom': gridData.coord.custom,
+          };
+
+          // convert subject
+          Map subject = {
+            'docId': gridData.dragData.subject.docId,
+            'display': gridData.dragData.subject.display,
+          };
+
+          // convert member
+          Map member = {
+            'docId': gridData.dragData.member.docId,
+            'display': gridData.dragData.member.display,
+          };
+
+          // convert available
+          bool available = gridData.available;
+          bool ignore = gridData.ignore;
+
+          // add to list
+          gridDataList.add({
+            'coord': coord,
+            'subject': subject,
+            'member': member,
+            'available': available,
+            'ignore': ignore,
+          });
+        }
+      }
+      groupMap['gridDataList'] = gridDataList;
+    }
+
+    return groupMap;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -239,6 +323,17 @@ class Timetable {
         this._gridAxisOfCustom = gridAxisOfCustom,
         this._groups = groups ?? [];
 
+  Timetable.fromTimetableAndGroups(
+      Timetable timetable, List<TimetableGroup> groups)
+      : this(
+            docId: timetable.docId,
+            startDate: Timestamp.fromDate(timetable.startDate),
+            endDate: Timestamp.fromDate(timetable.endDate),
+            gridAxisOfDay: timetable.gridAxisOfDay,
+            gridAxisOfTime: timetable.gridAxisOfTime,
+            gridAxisOfCustom: timetable.gridAxisOfCustom,
+            groups: groups);
+
   // getter methods
   String get docId => this._docId;
   DateTime get startDate => this._startDate;
@@ -247,6 +342,10 @@ class Timetable {
   GridAxis get gridAxisOfTime => this._gridAxisOfTime;
   GridAxis get gridAxisOfCustom => this._gridAxisOfCustom;
   List<TimetableGroup> get groups => List.unmodifiable(this._groups);
+  TimetableMetadata get metadata => TimetableMetadata(
+      docId: this._docId,
+      startDate: Timestamp.fromDate(this._startDate),
+      endDate: Timestamp.fromDate(this._endDate));
 
   bool get isValid => this._docId != null &&
           this._docId.trim() != '' &&
@@ -325,10 +424,9 @@ class EditTimetable extends ChangeNotifier {
   List<TimetableGroup> get groups => this._groups;
 
   TimetableMetadata get metadata => TimetableMetadata(
-        docId: this._docId,
-        startDate: Timestamp.fromDate(this._startDate),
-        endDate: Timestamp.fromDate(this._endDate),
-      );
+      docId: this._docId,
+      startDate: Timestamp.fromDate(this._startDate),
+      endDate: Timestamp.fromDate(this._endDate));
 
   bool get isValid => this._docId != null &&
           this._docId.trim() != '' &&
@@ -428,25 +526,13 @@ class EditTimetable extends ChangeNotifier {
     this.docId = docId ?? this.docId;
     this.startDate = startDate ?? this.startDate;
     this.endDate = endDate ?? this.endDate;
+    this._groups = groups ?? [];
 
-    if (this._groups.length < groups.length) {
-      for (int i = this._groups.length; i < groups.length; i++) {
-        this._groups.add(TimetableGroup());
-      }
-    } else if (groups.length < this._groups.length) {
-      int thisGroupsLength = this._groups.length;
-      for (int i = groups.length; i < thisGroupsLength; i++) {
-        this._groups.removeAt(i);
-      }
-    }
-
-    for (int i = 0; i < groups.length; i++) {
-      this._groups[i]._setAxisDay(groups[i].axisDay);
-      this._groups[i]._setAxisTime(groups[i].axisTime);
-      this._groups[i]._setAxisCustom(groups[i].axisCustom);
+    for (int i = 0; i < this._groups.length; i++) {
       this._groups[i].validateGridDataList(
           startDate: this.startDate, endDate: this.endDate, members: members);
     }
+
     this._changed();
   }
 
@@ -523,6 +609,45 @@ class EditTimetable extends ChangeNotifier {
     this._hasChanges = true;
     notifyListeners();
   }
+
+// convert from [EditTimetable] to Firestore's [Map<String, dynamic>] format
+  Map<String, dynamic> asFirestoreMap() {
+    Map<String, dynamic> firestoreMap = {};
+
+    // convert startDate and endDate
+    firestoreMap['startDate'] = Timestamp.fromDate(this.startDate);
+    firestoreMap['endDate'] = Timestamp.fromDate(this.endDate);
+
+    // convert gridAxisTypes
+    if (this.gridAxisOfDay == null ||
+        this.gridAxisOfTime == null ||
+        this.gridAxisOfCustom == null) {
+      firestoreMap['gridAxisOfDay'] = GridAxis.x.index;
+      firestoreMap['gridAxisOfTime'] = GridAxis.y.index;
+      firestoreMap['gridAxisOfCustom'] = GridAxis.z.index;
+    } else {
+      List<GridAxis> gridAxisTypes = [
+        this.gridAxisOfDay,
+        this.gridAxisOfTime,
+        this.gridAxisOfCustom,
+      ];
+
+      if (gridAxisTypes.contains(GridAxis.x) &&
+          gridAxisTypes.contains(GridAxis.y) &&
+          gridAxisTypes.contains(GridAxis.z)) {
+        firestoreMap['gridAxisOfDay'] = this.gridAxisOfDay.index;
+        firestoreMap['gridAxisOfTime'] = this.gridAxisOfTime.index;
+        firestoreMap['gridAxisOfCustom'] = this.gridAxisOfCustom.index;
+      } else {
+        firestoreMap['gridAxisOfDay'] = GridAxis.x.index;
+        firestoreMap['gridAxisOfTime'] = GridAxis.y.index;
+        firestoreMap['gridAxisOfCustom'] = GridAxis.z.index;
+      }
+    }
+
+    // return final map in firestore format
+    return firestoreMap;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -565,127 +690,4 @@ bool isConsecutiveTimetables(List<TimetableMetadata> ttbMetadatas) {
   }
 
   return isConsecutive;
-}
-
-// convert from [EditTimetable] to Firestore's [Map<String, dynamic>] format
-Map<String, dynamic> firestoreMapFromEditTimetable(EditTimetable editTtb) {
-  Map<String, dynamic> firestoreMap = {};
-
-  // convert startDate and endDate
-  firestoreMap['startDate'] = Timestamp.fromDate(editTtb.startDate);
-  firestoreMap['endDate'] = Timestamp.fromDate(editTtb.endDate);
-
-  // convert gridAxisTypes
-  if (editTtb.gridAxisOfDay == null ||
-      editTtb.gridAxisOfTime == null ||
-      editTtb.gridAxisOfCustom == null) {
-    firestoreMap['gridAxisOfDay'] = GridAxis.x.index;
-    firestoreMap['gridAxisOfTime'] = GridAxis.y.index;
-    firestoreMap['gridAxisOfCustom'] = GridAxis.z.index;
-  } else {
-    List<GridAxis> gridAxisTypes = [
-      editTtb.gridAxisOfDay,
-      editTtb.gridAxisOfTime,
-      editTtb.gridAxisOfCustom,
-    ];
-
-    if (gridAxisTypes.contains(GridAxis.x) &&
-        gridAxisTypes.contains(GridAxis.y) &&
-        gridAxisTypes.contains(GridAxis.z)) {
-      firestoreMap['gridAxisOfDay'] = editTtb.gridAxisOfDay.index;
-      firestoreMap['gridAxisOfTime'] = editTtb.gridAxisOfTime.index;
-      firestoreMap['gridAxisOfCustom'] = editTtb.gridAxisOfCustom.index;
-    } else {
-      firestoreMap['gridAxisOfDay'] = GridAxis.x.index;
-      firestoreMap['gridAxisOfTime'] = GridAxis.y.index;
-      firestoreMap['gridAxisOfCustom'] = GridAxis.z.index;
-    }
-  }
-
-  // convert TimetableGroups and TimetableGridDataList
-  List<Map<String, dynamic>> groups = [];
-
-  for (TimetableGroup group in editTtb.groups) {
-    Map<String, dynamic> groupMap = {};
-
-    // convert axisDay
-    if (group.axisDay != null) {
-      List<int> axisDaysInt = [];
-      group.axisDay.forEach((weekday) => axisDaysInt.add(weekday.index));
-      axisDaysInt.sort((a, b) => a.compareTo(b));
-      groupMap['axisDay'] = axisDaysInt;
-    }
-
-    // convert axisTime
-    if (group.axisTime != null) {
-      List<Map<String, Timestamp>> axisTimesTimestamps = [];
-      group.axisTime.forEach((time) {
-        axisTimesTimestamps.add({
-          'startTime': Timestamp.fromDate(time.startTime),
-          'endTime': Timestamp.fromDate(time.endTime),
-        });
-      });
-      axisTimesTimestamps
-          .sort((a, b) => a['startTime'].compareTo(b['startTime']));
-      groupMap['axisTime'] = axisTimesTimestamps;
-    }
-
-    // convert axisCustom
-    if (group.axisCustom != null) {
-      groupMap['axisCustom'] = group.axisCustom;
-    }
-
-    // convert gridDataList
-    if (group.gridDataList != null) {
-      List<Map<String, dynamic>> gridDataList = [];
-
-      for (TimetableGridData gridData in group.gridDataList.value) {
-        if (group.axisDay.contains(gridData.coord.day) &&
-            group.axisTime.contains(gridData.coord.time) &&
-            group.axisCustom.contains(gridData.coord.custom)) {
-          // convert coords
-          Map<String, dynamic> coord = {
-            'day': gridData.coord.day.index,
-            'time': {
-              'startTime': Timestamp.fromDate(gridData.coord.time.startTime),
-              'endTime': Timestamp.fromDate(gridData.coord.time.endTime),
-            },
-            'custom': gridData.coord.custom,
-          };
-
-          // convert subject
-          Map subject = {
-            'docId': gridData.dragData.subject.docId,
-            'display': gridData.dragData.subject.display,
-          };
-
-          // convert member
-          Map member = {
-            'docId': gridData.dragData.member.docId,
-            'display': gridData.dragData.member.display,
-          };
-
-          // convert available
-          bool available = gridData.available;
-          bool ignore = gridData.ignore;
-
-          // add to list
-          gridDataList.add({
-            'coord': coord,
-            'subject': subject,
-            'member': member,
-            'available': available,
-            'ignore': ignore,
-          });
-        }
-      }
-      groupMap['gridDataList'] = gridDataList;
-    }
-    groups.add(groupMap);
-  }
-
-  firestoreMap['groups'] = groups;
-
-  // return final map in firestore format
-  return firestoreMap;
 }

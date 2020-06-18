@@ -10,7 +10,7 @@ export const createGroup = functions.firestore
       | FirebaseFirestore.DocumentData
       | undefined = snapshot.data();
 
-    if (snapshot == null || groupData == null) {
+    if (snapshot === null || groupData === null || groupData === undefined) {
       return null;
     } else {
       const ownerEmail: string = groupData.owner.email;
@@ -98,7 +98,7 @@ export const deleteGroup = functions.firestore
     }
   });
 
-interface validateConflictsArgs {
+interface ValidateConflictsArgs {
   groupDocId: string;
   memberDocId?: string | undefined;
   timetableDocId?: string | undefined;
@@ -108,7 +108,7 @@ export async function validateConflicts({
   groupDocId,
   memberDocId,
   timetableDocId,
-}: validateConflictsArgs): Promise<any> {
+}: ValidateConflictsArgs): Promise<any> {
   if (groupDocId == null) {
     return null;
   } else {
@@ -208,77 +208,85 @@ export async function validateConflicts({
 
       // iterate through timetables
       for (const timetable of timetables) {
-        for (const gridData of timetable.gridDataList) {
-          const timetableTimes: Time[] = Time.generateTimes(
-            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-            [gridData.coord.day],
-            new Time(
-              admin.firestore.Timestamp.fromDate(gridData.coord.time.startTime),
-              admin.firestore.Timestamp.fromDate(gridData.coord.time.endTime)
-            ),
-            timetable.startDate,
-            timetable.endDate
-          );
+        for (const group of timetable.groups) {
+          const groupIndex: number = timetable.groups.indexOf(group);
 
-          const conflictDates: Date[] = [];
-
-          if (member == null) {
-            for (const timetableTime of timetableTimes) {
-              conflictDates.push(timetableTime.startDate);
-            }
-
-            newConflicts.push(
-              Conflict.create(
-                timetable.docId,
-                gridData,
-                "",
-                "deleted member",
-                " - ",
-                conflictDates
-              )
+          for (const gridData of group.gridDataList) {
+            const timetableTimes: Time[] = Time.generateTimes(
+              [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+              [gridData.coord.day],
+              new Time(
+                admin.firestore.Timestamp.fromDate(
+                  gridData.coord.time.startTime
+                ),
+                admin.firestore.Timestamp.fromDate(gridData.coord.time.endTime)
+              ),
+              timetable.startDate,
+              timetable.endDate
             );
-          } else if (gridData.member.docId == member.docId) {
-            for (const timetableTime of timetableTimes) {
-              let availableTimeFound: boolean = false;
 
-              for (const memberTime of memberTimes) {
-                // if member is always available, check unavailable times
-                // if timetableTime is within unavailable times, member is not available
-                if (
-                  member.alwaysAvailable &&
-                  !timetableTime.notWithinDateTimeOf(memberTime)
-                ) {
-                  conflictDates.push(timetable.startDate);
-                  break;
-                }
-                // if member is not always available, check available times
-                // if timetableTime is not within available times, member is ot available
-                else if (
-                  !member.alwaysAvailable &&
-                  timetableTime.withinDateTimeOf(memberTime)
-                ) {
-                  availableTimeFound = true;
-                  break;
-                }
-              } // memberTimes loop end
+            const conflictDates: Date[] = [];
 
-              if (!member.alwaysAvailable && !availableTimeFound) {
+            if (member == null) {
+              for (const timetableTime of timetableTimes) {
                 conflictDates.push(timetableTime.startDate);
               }
-            } // timetableTimes loop end
 
-            // after checking for conflict dates
-            if (conflictDates.length > 0) {
               newConflicts.push(
                 Conflict.create(
                   timetable.docId,
+                  groupIndex,
                   gridData,
-                  member.docId,
-                  member.name,
-                  member.nickname,
+                  "",
+                  "deleted member",
+                  " - ",
                   conflictDates
                 )
               );
+            } else if (gridData.member.docId == member.docId) {
+              for (const timetableTime of timetableTimes) {
+                let availableTimeFound: boolean = false;
+
+                for (const memberTime of memberTimes) {
+                  // if member is always available, check unavailable times
+                  // if timetableTime is within unavailable times, member is not available
+                  if (
+                    member.alwaysAvailable &&
+                    !timetableTime.notWithinDateTimeOf(memberTime)
+                  ) {
+                    conflictDates.push(timetable.startDate);
+                    break;
+                  }
+                  // if member is not always available, check available times
+                  // if timetableTime is not within available times, member is ot available
+                  else if (
+                    !member.alwaysAvailable &&
+                    timetableTime.withinDateTimeOf(memberTime)
+                  ) {
+                    availableTimeFound = true;
+                    break;
+                  }
+                } // memberTimes loop end
+
+                if (!member.alwaysAvailable && !availableTimeFound) {
+                  conflictDates.push(timetableTime.startDate);
+                }
+              } // timetableTimes loop end
+
+              // after checking for conflict dates
+              if (conflictDates.length > 0) {
+                newConflicts.push(
+                  Conflict.create(
+                    timetable.docId,
+                    groupIndex,
+                    gridData,
+                    member.docId,
+                    member.name,
+                    member.nickname,
+                    conflictDates
+                  )
+                );
+              }
             }
           }
         }

@@ -63,9 +63,10 @@ class _TimetableGroupSelectorState extends State<TimetableGroupSelector> {
                               : Colors.white)))));
     }
 
+    // add button
     if (widget.valGetGroups().length < maxTimetableGroups) {
       widgets.add(Container(
-          width: width / 2,
+          width: widget.valGetGroups().length > 1 ? width / 2 : width,
           height: height,
           child: FlatButton(
               color: Theme.of(context).scaffoldBackgroundColor,
@@ -86,43 +87,46 @@ class _TimetableGroupSelectorState extends State<TimetableGroupSelector> {
               child: Icon(Icons.add))));
     }
 
-    widgets.add(Container(
-        width: widget.valGetGroups().length < maxTimetableGroups
-            ? width / 2
-            : width / 2,
-        height: height,
-        child: FlatButton(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(height / 2)),
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return SimpleAlertDialog(
-                      context: context,
-                      contentDisplay: 'Delete Timetable group ' +
-                          (widget.valGetGroupSelected() + 1).toString() +
-                          '?',
-                      confirmDisplay: 'DELETE',
-                      confirmFunction: () {
-                        setState(() {
-                          if (widget.valSetGroups != null) {
-                            List<TimetableGroup> newGroups =
-                                List.from(widget.valGetGroups());
-                            newGroups.removeAt(widget.valGetGroupSelected());
-                            widget.valSetGroups(newGroups);
-                            int newIndex = widget.valGetGroupSelected() - 1;
-                            newIndex = newIndex < 0 ? 0 : newIndex;
-                            widget.valSetGroupSelected(newIndex);
-                          }
-                          Navigator.of(context).maybePop();
-                        });
-                      },
-                    );
-                  });
-            },
-            child: Center(child: Icon(Icons.delete)))));
+    // delete button
+    if (widget.valGetGroups().length > 1) {
+      widgets.add(Container(
+          width: widget.valGetGroups().length < maxTimetableGroups
+              ? width / 2
+              : width / 2,
+          height: height,
+          child: FlatButton(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(height / 2)),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return SimpleAlertDialog(
+                          context: context,
+                          contentDisplay: 'Delete Timetable group ' +
+                              (widget.valGetGroupSelected() + 1).toString() +
+                              '?',
+                          confirmDisplay: 'DELETE',
+                          confirmFunction: () {
+                            setState(() {
+                              if (widget.valSetGroups != null) {
+                                List<TimetableGroup> newGroups =
+                                    List.from(widget.valGetGroups());
+                                newGroups
+                                    .removeAt(widget.valGetGroupSelected());
+                                widget.valSetGroups(newGroups);
+                                int newIndex = widget.valGetGroupSelected() - 1;
+                                newIndex = newIndex < 0 ? 0 : newIndex;
+                                widget.valSetGroupSelected(newIndex);
+                              }
+                              Navigator.of(context).maybePop();
+                            });
+                          });
+                    });
+              },
+              child: Center(child: Icon(Icons.delete)))));
+    }
 
     return widgets;
   }

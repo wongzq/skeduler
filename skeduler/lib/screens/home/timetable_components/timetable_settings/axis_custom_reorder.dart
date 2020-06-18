@@ -99,7 +99,7 @@ class _AxisCustomReoderState extends State<AxisCustomReoder> {
                                     _ttbStatus.temp.updateAxisCustomValue(
                                       prev: custom,
                                       next: value,
-                                      groupIndex: 0,
+                                      groupIndex: _ttbStatus.tempGroupIndex,
                                     );
                                     _ttbStatus.update();
                                     return null;

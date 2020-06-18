@@ -3,12 +3,14 @@ import * as admin from "firebase-admin";
 // used classes
 export class Conflict {
   timetable: string;
+  groupIndex: number;
   gridData: TimetableGridData;
   member: { docId: string; name: string; nickname: string };
   conflictDates: FirebaseFirestore.Timestamp[];
 
   constructor(
     timetable: string,
+    groupIndex: number,
     gridData: TimetableGridData,
     memberDocId: string,
     memberName: string,
@@ -16,6 +18,7 @@ export class Conflict {
     conflictDates: FirebaseFirestore.Timestamp[]
   ) {
     this.timetable = timetable;
+    this.groupIndex = groupIndex;
     this.gridData = gridData;
     this.member = {
       docId: memberDocId,
@@ -27,6 +30,7 @@ export class Conflict {
 
   static create(
     timetable: string,
+    groupIndex: number,
     gridData: TimetableGridData,
     memberDocId: string,
     memberName: string,
@@ -41,6 +45,7 @@ export class Conflict {
 
     return new Conflict(
       timetable,
+      groupIndex,
       gridData,
       memberDocId,
       memberName,
@@ -52,6 +57,7 @@ export class Conflict {
   static fromFirestoreField(conflict: any) {
     return new Conflict(
       conflict.timetable,
+      conflict.groupIndex,
       TimetableGridData.fromFirestoreField(conflict.gridData),
       conflict.member.docId,
       conflict.member.name,
@@ -63,6 +69,7 @@ export class Conflict {
   static from(conflict: Conflict) {
     return new Conflict(
       conflict.timetable,
+      conflict.groupIndex,
       conflict.gridData,
       conflict.member.docId,
       conflict.member.name,
@@ -74,6 +81,7 @@ export class Conflict {
   asFirestoreMap(): any {
     return {
       timetable: this.timetable ?? "",
+      groupIndex: this.groupIndex ?? 0,
       gridData: this.gridData.asFirestoreMap(),
       member: {
         docId: this.member.docId ?? "",
@@ -304,24 +312,12 @@ export class Time {
   }
 }
 
-export class Timetable {
-  docId: string;
-  startTimestamp: FirebaseFirestore.Timestamp;
-  endTimestamp: FirebaseFirestore.Timestamp;
+export class TimetableGroup {
   gridDataList: TimetableGridData[];
 
-  constructor(
-    docId: string,
-    startTimestamp: FirebaseFirestore.Timestamp,
-    endTimestamp: FirebaseFirestore.Timestamp,
-    gridDataList: any[]
-  ) {
-    this.docId = docId;
-    this.startTimestamp = startTimestamp;
-    this.endTimestamp = endTimestamp;
+  constructor(group: any) {
     this.gridDataList = [];
-
-    for (const gridData of gridDataList) {
+    for (const gridData of group.gridDataList) {
       this.gridDataList.push(
         new TimetableGridData(
           gridData.ignore,
@@ -336,6 +332,29 @@ export class Timetable {
           gridData.subject.display
         )
       );
+    }
+  }
+}
+
+export class Timetable {
+  docId: string;
+  startTimestamp: FirebaseFirestore.Timestamp;
+  endTimestamp: FirebaseFirestore.Timestamp;
+  groups: TimetableGroup[];
+
+  constructor(
+    docId: string,
+    startTimestamp: FirebaseFirestore.Timestamp,
+    endTimestamp: FirebaseFirestore.Timestamp,
+    groups: any[]
+  ) {
+    this.docId = docId;
+    this.startTimestamp = startTimestamp;
+    this.endTimestamp = endTimestamp;
+    this.groups = [];
+
+    for (const group of groups) {
+      this.groups.push(new TimetableGroup(group));
     }
   }
 
@@ -353,7 +372,7 @@ export class Timetable {
         snapshot.id,
         snapshotData.startDate,
         snapshotData.endDate,
-        snapshotData.gridDataList
+        snapshotData.groups
       );
     }
   }

@@ -20,13 +20,13 @@ class Schedule {
     String custom,
     String member,
     String subject,
-  })  : this._available = available,
+  })  : this._available = available ?? false,
         this._day = day,
         this._startTime = startTime,
         this._endTime = endTime,
-        this._custom = custom,
-        this._member = member,
-        this._subject = subject;
+        this._custom = custom ?? '',
+        this._member = member ?? '',
+        this._subject = subject ?? '';
 
   bool get available => this._available;
   DateTime get date => this._startTime;

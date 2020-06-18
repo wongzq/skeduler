@@ -5,7 +5,7 @@ import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/schedule.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/models/firestore/timetable.dart';
-import 'package:skeduler/screens/home/schedules_components/schedule/schedule_month_expansion_tile.dart';
+import 'package:skeduler/screens/home/schedules_components/schedule/schedules_expansion_tile.dart';
 import 'package:skeduler/services/database_service.dart';
 
 class ScheduleView extends StatelessWidget {
@@ -16,100 +16,57 @@ class ScheduleView extends StatelessWidget {
 
     return groupStatus.group == null
         ? Container()
-        : StreamBuilder<Object>(
+        : StreamBuilder<List<Timetable>>(
             stream: dbService.streamGroupTimetables(groupStatus.group.docId),
             builder: (context, snapshot) {
-              List<Timetable> timetables =
-                  snapshot != null ? snapshot.data ?? [] : [];
+              // timetables
+              List<Timetable> timetables = snapshot.data ?? [];
 
-              List<Schedule> schedules = [];
+              return ListView.builder(
+                  itemCount: timetables.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return StreamBuilder<List<TimetableGroup>>(
+                        stream: dbService.streamGroupTimetableGroups(
+                            groupStatus.group.docId, timetables[index].docId),
+                        builder: (context, snapshot) {
+                          // timetable groups
+                          List<TimetableGroup> timetableGroups =
+                              snapshot.data ?? [];
 
-              for (Timetable timetable in timetables) {
-                for (TimetableGridData gridData
-                    // unsure
-                    in timetable.groups[0].gridDataList.value) {
-                  if (gridData.dragData.member.docId ==
-                      groupStatus.member.docId) {
-                    List<Time> scheduleTimes = generateTimes(
-                      months: List.generate(
-                        Month.values.length,
-                        (index) => Month.values[index],
-                      ),
-                      weekdays: [gridData.coord.day],
-                      time: gridData.coord.time,
-                      startDate: timetable.startDate,
-                      endDate: timetable.endDate,
-                    );
+                          List<Schedule> schedules = [];
+                          for (TimetableGroup group in timetableGroups) {
+                            for (TimetableGridData gridData
+                                in group.gridDataList.value) {
+                              if (gridData.dragData.member.docId ==
+                                  groupStatus.member.docId) {
+                                List<Time> scheduleTimes = generateTimes(
+                                    months: List.generate(Month.values.length,
+                                        (index) => Month.values[index]),
+                                    weekdays: [gridData.coord.day],
+                                    time: gridData.coord.time,
+                                    startDate: timetables[index].startDate,
+                                    endDate: timetables[index].endDate);
 
-                    scheduleTimes.forEach((scheduleTime) {
-                      schedules.add(
-                        Schedule(
-                          available: gridData.available,
-                          day: gridData.coord.day,
-                          startTime: scheduleTime.startTime,
-                          endTime: scheduleTime.endTime,
-                          custom: gridData.coord.custom,
-                          member: gridData.dragData.member.display ?? '',
-                          subject: gridData.dragData.subject.display ?? '',
-                        ),
-                      );
-                    });
-                  }
-                }
-              }
+                                for (Time scheduleTime in scheduleTimes) {
+                                  schedules.add(Schedule(
+                                    available: gridData.available,
+                                    day: gridData.coord.day,
+                                    startTime: scheduleTime.startTime,
+                                    endTime: scheduleTime.endTime,
+                                    custom: gridData.coord.custom,
+                                    member: gridData.dragData.member.display,
+                                    subject: gridData.dragData.subject.display,
+                                  ));
+                                }
+                              }
+                            }
+                          }
 
-              schedules.sort((a, b) => a.date.compareTo(b.date));
-
-              Map<int, List<Schedule>> schedulesMonths = {};
-
-              for (Schedule schedule in schedules) {
-                if (schedulesMonths.containsKey(schedule.date.month)) {
-                  schedulesMonths[schedule.date.month].add(schedule);
-                } else {
-                  schedulesMonths[schedule.date.month] = [];
-                  schedulesMonths[schedule.date.month].add(schedule);
-                }
-              }
-
-              return schedules.length <= 0
-                  ? Column(
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.all(10.0),
-                          child: Text(
-                            'NO SCHEDULES FOUND',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 16.0,
-                              // fontStyle: FontStyle.italic,
-                              letterSpacing: 2.0,
-                            ),
-                          ),
-                        ),
-                        Divider(height: 1.0),
-                      ],
-                    )
-                  : ListView.builder(
-                      controller: ScrollController(),
-                      physics: BouncingScrollPhysics(
-                        parent: AlwaysScrollableScrollPhysics(),
-                      ),
-                      scrollDirection: Axis.vertical,
-                      itemCount: schedulesMonths.length + 1,
-                      itemBuilder: (context, index) {
-                        int monthIndex = index >= schedulesMonths.length
-                            ? -1
-                            : schedulesMonths.keys.elementAt(index);
-
-                        return index >= schedulesMonths.length
-                            ? SizedBox(height: 100.0)
-                            : ScheduleMonthExpansionTile(
-                                monthIndex: monthIndex,
-                                schedules: schedulesMonths[monthIndex],
-                              );
-                      },
-                    );
-            },
-          );
+                          return SchedulesExpansionTile(
+                              timetable: timetables[index].metadata,
+                              schedules: schedules);
+                        });
+                  });
+            });
   }
 }

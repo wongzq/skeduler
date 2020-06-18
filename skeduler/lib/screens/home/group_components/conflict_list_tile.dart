@@ -153,10 +153,9 @@ class ConflictListTile extends StatelessWidget {
                             );
 
                             // get gridData to remove
-                            TimetableGridData gridDataToUpdate =
-                                // unsure
-                                timetable.groups[0].gridDataList.value
-                                    .firstWhere(
+                            TimetableGridData gridDataToUpdate = timetable
+                                .groups[conflict.groupIndex].gridDataList.value
+                                .firstWhere(
                               (gridData) =>
                                   gridData.coord == conflict.gridData.coord,
                               orElse: () => null,
@@ -165,32 +164,26 @@ class ConflictListTile extends StatelessWidget {
                             // remove gridData
                             if (gridDataToUpdate != null) {
                               gridDataToUpdate.ignore = true;
-                              // unsure
-                              timetable.groups[0].gridDataList
+                              timetable.groups[conflict.groupIndex].gridDataList
                                   .push(gridDataToUpdate);
                             }
 
                             // update in firestore
                             await dbService.updateGroupTimetable(
-                              groupStatus.group.docId,
-                              timetable,
-                            );
+                                groupStatus.group.docId, timetable);
                             break;
 
                           case ConflictOption.unkeep: // get timetable
                             EditTimetable timetable =
                                 EditTimetable.fromTimetable(
                               await dbService.getGroupTimetable(
-                                groupStatus.group.docId,
-                                conflict.timetable,
-                              ),
+                                  groupStatus.group.docId, conflict.timetable),
                             );
 
                             // get gridData to remove
-                            TimetableGridData gridDataToUpdate =
-                                // unsure
-                                timetable.groups[0].gridDataList.value
-                                    .firstWhere(
+                            TimetableGridData gridDataToUpdate = timetable
+                                .groups[conflict.groupIndex].gridDataList.value
+                                .firstWhere(
                               (gridData) =>
                                   gridData.coord == conflict.gridData.coord,
                               orElse: () => null,
@@ -199,8 +192,7 @@ class ConflictListTile extends StatelessWidget {
                             // remove gridData
                             if (gridDataToUpdate != null) {
                               gridDataToUpdate.ignore = false;
-                              // unsure
-                              timetable.groups[0].gridDataList
+                              timetable.groups[conflict.groupIndex].gridDataList
                                   .push(gridDataToUpdate);
                             }
 
@@ -233,8 +225,8 @@ class ConflictListTile extends StatelessWidget {
 
                                     // get gridData to remove
                                     TimetableGridData gridDataToRemove =
-                                        // unsure
-                                        timetable.groups[0].gridDataList.value
+                                        timetable.groups[conflict.groupIndex]
+                                            .gridDataList.value
                                             .firstWhere(
                                       (gridData) =>
                                           gridData.coord ==
@@ -244,8 +236,8 @@ class ConflictListTile extends StatelessWidget {
 
                                     // remove gridData
                                     if (gridDataToRemove != null) {
-                                      // unsure
-                                      timetable.groups[0].gridDataList
+                                      timetable.groups[conflict.groupIndex]
+                                          .gridDataList
                                           .pop(gridDataToRemove);
                                     }
 

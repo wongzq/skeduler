@@ -4,23 +4,23 @@ import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/time.dart';
 import 'package:skeduler/screens/home/schedules_components/availability/availability_list_tile.dart';
 
-class AvailabilityMonthExpansionTile extends StatefulWidget {
+class AvailabilityExpansionTile extends StatefulWidget {
   final int monthIndex;
   final List<Time> times;
 
-  const AvailabilityMonthExpansionTile({
+  const AvailabilityExpansionTile({
     Key key,
     @required this.monthIndex,
     @required this.times,
   }) : super(key: key);
 
   @override
-  _AvailabilityMonthExpansionTileState createState() =>
-      _AvailabilityMonthExpansionTileState();
+  _AvailabilityExpansionTileState createState() =>
+      _AvailabilityExpansionTileState();
 }
 
-class _AvailabilityMonthExpansionTileState
-    extends State<AvailabilityMonthExpansionTile> {
+class _AvailabilityExpansionTileState
+    extends State<AvailabilityExpansionTile> {
   bool _expanded;
 
   List<Widget> _generateAvailabilityListTiles(BuildContext context) {

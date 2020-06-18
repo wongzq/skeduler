@@ -315,8 +315,8 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
               _gridData.dragData = newDragData;
             }
           }
-          // unsure
-          // _ttbStatus.edit.gridDataList.push(_gridData);
+          _ttbStatus.edit.groups[_ttbStatus.editGroupIndex].gridDataList
+              .push(_gridData);
         }
       },
       builder: (context, _, __) {
@@ -336,16 +336,19 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                                 cancelDisplay: 'REMOVE',
                                 cancelFunction: () {
                                   Navigator.of(context).maybePop();
-                                  // unsure
-                                  // _ttbStatus.edit.gridDataList.push(
-                                  //   TimetableGridData(
-                                  //     coord: _gridData.coord,
-                                  //     dragData: TimetableDragSubjectMember(
-                                  //       subject: _gridData.dragData.subject,
-                                  //     ),
-                                  //     available: true,
-                                  //   ),
-                                  // );
+                                  _ttbStatus
+                                      .edit
+                                      .groups[_ttbStatus.editGroupIndex]
+                                      .gridDataList
+                                      .push(
+                                    TimetableGridData(
+                                      coord: _gridData.coord,
+                                      dragData: TimetableDragSubjectMember(
+                                        subject: _gridData.dragData.subject,
+                                      ),
+                                      available: true,
+                                    ),
+                                  );
                                   _ttbStatus.update();
                                 },
                                 confirmDisplay: 'KEEP',
@@ -393,42 +396,58 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
 
                             if (_gridData.dragData.hasSubjectAndMember) {
                               if (_editMode.dragSubjectAndMember) {
-                                // unsure
-                                // _ttbStatus.edit.gridDataList.pop(_gridData);
+                                _ttbStatus
+                                    .edit
+                                    .groups[_ttbStatus.editGroupIndex]
+                                    .gridDataList
+                                    .pop(_gridData);
                               } else if (_editMode.dragSubjectOnly) {
-                                // unsure
-                                // _ttbStatus.edit.gridDataList.push(
-                                //   TimetableGridData(
-                                //     coord: _gridData.coord,
-                                //     dragData: TimetableDragSubjectMember(
-                                //       member: _gridData.dragData.member,
-                                //     ),
-                                //     available: true,
-                                //   ),
-                                // );
+                                _ttbStatus
+                                    .edit
+                                    .groups[_ttbStatus.editGroupIndex]
+                                    .gridDataList
+                                    .push(
+                                  TimetableGridData(
+                                    coord: _gridData.coord,
+                                    dragData: TimetableDragSubjectMember(
+                                      member: _gridData.dragData.member,
+                                    ),
+                                    available: true,
+                                  ),
+                                );
                               } else if (_editMode.dragMemberOnly) {
-                                // _ttbStatus.edit.gridDataList.push(
-                                //   TimetableGridData(
-                                //     coord: _gridData.coord,
-                                //     dragData: TimetableDragSubjectMember(
-                                //       subject: _gridData.dragData.subject,
-                                //     ),
-                                //     available: true,
-                                //   ),
-                                // );
+                                _ttbStatus
+                                    .edit
+                                    .groups[_ttbStatus.editGroupIndex]
+                                    .gridDataList
+                                    .push(
+                                  TimetableGridData(
+                                    coord: _gridData.coord,
+                                    dragData: TimetableDragSubjectMember(
+                                      subject: _gridData.dragData.subject,
+                                    ),
+                                    available: true,
+                                  ),
+                                );
                               }
                             } else if (_gridData.dragData.hasSubjectOnly) {
                               if (_editMode.dragSubject) {
-                                // unsure
-                                // _ttbStatus.edit.gridDataList.pop(_gridData);
+                                _ttbStatus
+                                    .edit
+                                    .groups[_ttbStatus.editGroupIndex]
+                                    .gridDataList
+                                    .pop(_gridData);
                               } else {
                                 Fluttertoast.showToast(
                                     msg: 'Dragging subject is disabled');
                               }
                             } else if (_gridData.dragData.hasMemberOnly) {
                               if (_editMode.dragMember) {
-                                // unsure
-                                // _ttbStatus.edit.gridDataList.pop(_gridData);
+                                _ttbStatus
+                                    .edit
+                                    .groups[_ttbStatus.editGroupIndex]
+                                    .gridDataList
+                                    .pop(_gridData);
                               } else {
                                 Fluttertoast.showToast(
                                     msg: 'Dragging member is disabled');
@@ -616,16 +635,6 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
           }
         }
       }
-
-      // unsure
-      // isAssigned = _ttbStatus.edit.gridDataList.value.firstWhere((gridData) {
-      //           return gridData.dragData.member.docId == memberDocId &&
-      //               gridData.coord.day == _gridData.coord.day &&
-      //               gridData.coord.time == _gridData.coord.time;
-      //         }, orElse: () => null) !=
-      //         null
-      //     ? true
-      //     : false;
     }
 
     return false;
@@ -666,19 +675,17 @@ class _TimetableGridBoxState extends State<TimetableGridBox> {
                 TimetableGridData returnGridData;
 
                 if (_editMode.editing) {
-                  // unsure
-                  // _ttbStatus.edit.gridDataList.value.forEach((gridData) {
-                  //   if (gridData.coord == widget.coord) {
-                  //     returnGridData = TimetableGridData.from(gridData);
-                  //   }
-                  // });
+                  _ttbStatus.edit.groups[_ttbStatus.editGroupIndex].gridDataList.value.forEach((gridData) {
+                    if (gridData.coord == widget.coord) {
+                      returnGridData = TimetableGridData.from(gridData);
+                    }
+                  });
                 } else {
-                  // unsure
-                  // _ttbStatus.curr.gridDataList.value.forEach((gridData) {
-                  //   if (gridData.coord == widget.coord) {
-                  //     returnGridData = TimetableGridData.from(gridData);
-                  //   }
-                  // });
+                  _ttbStatus.curr.groups[_ttbStatus.currGroupIndex].gridDataList.value.forEach((gridData) {
+                    if (gridData.coord == widget.coord) {
+                      returnGridData = TimetableGridData.from(gridData);
+                    }
+                  });
                 }
 
                 return returnGridData ??

@@ -97,6 +97,22 @@ class DatabaseService {
             .map(_timetablesFromSnapshots);
   }
 
+  Stream<List<TimetableGroup>> streamGroupTimetableGroups(
+      String groupDocId, String timetableDocId) {
+    return groupDocId == null ||
+            groupDocId.trim() == '' ||
+            timetableDocId == null ||
+            timetableDocId.trim() == ''
+        ? null
+        : groupsCollection
+            .document(groupDocId)
+            .collection('timetables')
+            .document(timetableDocId)
+            .collection('groups')
+            .snapshots()
+            .map(_timetableGroupsFromSnapshots);
+  }
+
   // get [Group][Timetable] data of today as stream
   Stream<Timetable> streamGroupTimetableForToday(
     String groupDocId,
@@ -153,8 +169,24 @@ class DatabaseService {
             .collection('timetables')
             .document(timetableDocId)
             .get()
-            .then((timetable) {
-            return timetable.exists ? _timetableFromSnapshot(timetable) : null;
+            .then((timetable) async {
+            if (timetable.exists) {
+              Timetable tmpTimetable = _timetableFromSnapshot(timetable);
+
+              List<TimetableGroup> tmpGroups = await groupsCollection
+                  .document(groupDocId)
+                  .collection('timetables')
+                  .document(timetableDocId)
+                  .collection('groups')
+                  .getDocuments()
+                  .then((querySnap) => querySnap.documents
+                      .map(_timetableGroupFromSnapshot)
+                      .toList());
+
+              return Timetable.fromTimetableAndGroups(tmpTimetable, tmpGroups);
+            } else {
+              return null;
+            }
           });
   }
 
@@ -672,11 +704,41 @@ class DatabaseService {
                   if (timetable.exists) {
                     return await timetablesRef
                         .document(editTtb.docId)
-                        .updateData(firestoreMapFromEditTimetable(editTtb));
+                        .updateData(editTtb.asFirestoreMap())
+                        .then((_) async {
+                      List<Future> futures = [];
+
+                      for (TimetableGroup group in editTtb.groups) {
+                        int index = editTtb.groups.indexOf(group);
+
+                        futures.add(timetablesRef
+                            .document(editTtb.docId)
+                            .collection('groups')
+                            .document(index.toString())
+                            .setData(group.asFirestoreMap(), merge: true));
+                      }
+
+                      return Future.wait(futures);
+                    });
                   } else {
                     return await timetablesRef
                         .document(editTtb.docId)
-                        .setData(firestoreMapFromEditTimetable(editTtb));
+                        .setData(editTtb.asFirestoreMap())
+                        .then((_) async {
+                      List<Future> futures = [];
+
+                      for (TimetableGroup group in editTtb.groups) {
+                        int index = editTtb.groups.indexOf(group);
+
+                        futures.add(timetablesRef
+                            .document(editTtb.docId)
+                            .collection('groups')
+                            .document(index.toString())
+                            .setData(group.asFirestoreMap(), merge: true));
+                      }
+
+                      return Future.wait(futures);
+                    });
                   }
                 });
               } else {
@@ -1127,6 +1189,32 @@ class DatabaseService {
   }
 
   // convert snapshot to [Timetable]
+  // Timetable _timetableWithGroups(DocumentSnapshot snapshot, String groupDocId,
+  //     String timetableDocId) async {
+  //   List<TimetableGroup> timetableGroups = await groupsCollection
+  //       .document(groupDocId)
+  //       .collection('timetables')
+  //       .document(timetableDocId)
+  //       .collection('groups')
+  //       .snapshots()
+  //       .map((event) => null);
+  //   return snapshot.data != null
+  //       ? Timetable(
+  //           docId: snapshot.documentID,
+  //           startDate: snapshot.data['startDate'] ?? null,
+  //           endDate: snapshot.data['endDate'] ?? null,
+  //           gridAxisOfDay: snapshot.data['gridAxisOfDay'] == null
+  //               ? GridAxis.x
+  //               : GridAxis.values[snapshot.data['gridAxisOfDay']],
+  //           gridAxisOfTime: snapshot.data['gridAxisOfTime'] == null
+  //               ? GridAxis.y
+  //               : GridAxis.values[snapshot.data['gridAxisOfTime']],
+  //           gridAxisOfCustom: snapshot.data['gridAxisOfCustom'] == null
+  //               ? GridAxis.z
+  //               : GridAxis.values[snapshot.data['gridAxisOfCustom']])
+  //       : Timetable(docId: '');
+  // }
+
   Timetable _timetableFromSnapshot(DocumentSnapshot snapshot) {
     return snapshot.data != null
         ? Timetable(
@@ -1141,10 +1229,21 @@ class DatabaseService {
                 : GridAxis.values[snapshot.data['gridAxisOfTime']],
             gridAxisOfCustom: snapshot.data['gridAxisOfCustom'] == null
                 ? GridAxis.z
-                : GridAxis.values[snapshot.data['gridAxisOfCustom']],
-            groups: _timetableGroupsFromDynamicList(snapshot.data['groups']),
-          )
+                : GridAxis.values[snapshot.data['gridAxisOfCustom']])
         : Timetable(docId: '');
+  }
+
+  TimetableGroup _timetableGroupFromSnapshot(DocumentSnapshot snapshot) {
+    return snapshot.data != null
+        ? TimetableGroup(
+            docId: snapshot.documentID,
+            axisDay: _weekdaysFromDynamicList(snapshot['axisDay'] ?? []),
+            axisTime: _timesFromDynamicList(snapshot['axisTime'] ?? []),
+            axisCustom: _stringsFromDynamicList(snapshot['axisCustom'] ?? []),
+            gridDataList:
+                _gridDataListFromDynamicList(snapshot['gridDataList'] ?? []),
+          )
+        : TimetableGroup();
   }
 
   // convert document snapshots into [User]s
@@ -1172,6 +1271,11 @@ class DatabaseService {
     return query.documents.map(_timetableFromSnapshot).toList();
   }
 
+  // convert document snapshots into [Timetable]s
+  List<TimetableGroup> _timetableGroupsFromSnapshots(QuerySnapshot query) {
+    return query.documents.map(_timetableGroupFromSnapshot).toList();
+  }
+
   // convert [List<dynamic>] into [List<Conflict>]
   List<Conflict> _conflictsFromDynamicList(List<dynamic> list) {
     List<Conflict> conflicts = [];
@@ -1181,12 +1285,12 @@ class DatabaseService {
       conflicts.add(
         Conflict(
           timetable: map['timetable'] ?? '',
-          member: MemberMetadata(
-            docId: map['member']['docId'],
-            name: map['member']['name'],
-            nickname: map['member']['nickname'],
-          ),
+          groupIndex: map['groupIndex'] ?? 0,
           gridData: _gridDataFromMap(map['gridData'] as Map),
+          member: MemberMetadata(
+              docId: map['member']['docId'],
+              name: map['member']['name'],
+              nickname: map['member']['nickname']),
           conflictDates:
               _datesFromDynamicList(map['conflictDates'] as List<dynamic>),
         ),
@@ -1224,24 +1328,6 @@ class DatabaseService {
     });
 
     return timetableMetadatas;
-  }
-
-  List<TimetableGroup> _timetableGroupsFromDynamicList(
-      List<dynamic> groupsDynamic) {
-    List<TimetableGroup> groups = [];
-
-    for (dynamic elem in groupsDynamic) {
-      Map map = elem as Map;
-
-      groups.add(TimetableGroup(
-        axisDay: _weekdaysFromDynamicList(map['axisDay'] ?? []),
-        axisTime: _timesFromDynamicList(map['axisTime'] ?? []),
-        axisCustom: _stringsFromDynamicList(map['axisCustom'] ?? []),
-        gridDataList: _gridDataListFromDynamicList(map['gridDataList'] ?? []),
-      ));
-    }
-
-    return groups;
   }
 
   // convert [List<dynamic>] into [List<Weekday]

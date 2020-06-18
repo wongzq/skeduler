@@ -135,12 +135,22 @@ service cloud.firestore {
         request.resource.data.gridAxisOfTime <= 2 &&
         request.resource.data.gridAxisOfCustom is int &&
         request.resource.data.gridAxisOfCustom >= 0 &&
-        request.resource.data.gridAxisOfCustom <= 2 &&
-        request.resource.data.groups is list;
+        request.resource.data.gridAxisOfCustom <= 2;
+        // request.resource.data.groups is list;
         
         allow delete: if
         authenticated() &&
         isOwnerOrAdmin();
+        
+        match /groups/{timetableGroupID} {
+          allow read: if
+          authenticated() &&
+          isOwnerOrAdminOrMember();
+          
+          allow write: if
+          authenticated() &&
+          isOwnerOrAdmin();
+        }
       }
       
     // group functions

@@ -106,7 +106,7 @@ class _AxisCustomState extends State<AxisCustom> {
                                 _ttbStatus.temp.updateAxisCustomValue(
                                   prev: custom,
                                   next: value,
-                                  groupIndex: 0,
+                                  groupIndex: _ttbStatus.tempGroupIndex,
                                 );
                                 return null;
                               }

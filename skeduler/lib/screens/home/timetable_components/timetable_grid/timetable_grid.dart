@@ -27,35 +27,37 @@ class _TimetableGridState extends State<TimetableGrid> {
     double width = MediaQuery.of(context).size.width / groups.length;
     double height = 40;
 
-    for (int i = 0; i < groups.length; i++) {
-      widgets.add(Container(
-          width: width,
-          height: height,
-          child: FlatButton(
-              splashColor: Theme.of(context).primaryColor,
-              highlightColor: Theme.of(context).primaryColor,
-              color: _groupSelected == i
-                  ? Theme.of(context).primaryColor
-                  : Theme.of(context).scaffoldBackgroundColor,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(height / 2),
-                      bottomRight: Radius.circular(height / 2))),
-              onPressed: () => setState(() {
-                    if (_editMode.editing) {
-                      _ttbStatus.editGroupIndex = i;
-                    } else {
-                      _ttbStatus.currGroupIndex = i;
-                    }
-                    _ttbStatus.update();
-                  }),
-              child: Text((i + 1).toString(),
-                  style: textStyleBody.copyWith(
-                      color: _groupSelected == i
-                          ? Theme.of(context).brightness == Brightness.light
-                              ? _originTheme.textColor
-                              : Colors.white
-                          : Colors.grey)))));
+    if (groups.length > 1) {
+      for (int i = 0; i < groups.length; i++) {
+        widgets.add(Container(
+            width: width,
+            height: height,
+            child: FlatButton(
+                splashColor: Theme.of(context).primaryColor,
+                highlightColor: Theme.of(context).primaryColor,
+                color: _groupSelected == i
+                    ? Theme.of(context).primaryColor
+                    : Theme.of(context).scaffoldBackgroundColor,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(height / 2),
+                        bottomRight: Radius.circular(height / 2))),
+                onPressed: () => setState(() {
+                      if (_editMode.editing) {
+                        _ttbStatus.editGroupIndex = i;
+                      } else {
+                        _ttbStatus.currGroupIndex = i;
+                      }
+                      _ttbStatus.update();
+                    }),
+                child: Text((i + 1).toString(),
+                    style: textStyleBody.copyWith(
+                        color: _groupSelected == i
+                            ? Theme.of(context).brightness == Brightness.light
+                                ? _originTheme.textColor
+                                : Colors.white
+                            : Colors.grey)))));
+      }
     }
 
     return Container(height: height, child: Row(children: widgets));

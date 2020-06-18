@@ -850,9 +850,8 @@ class TimetableGridData {
   TimetableGridData.from(TimetableGridData gridData)
       : this._coord = TimetableCoord.from(gridData.coord),
         this._dragData = TimetableDragSubjectMember(
-          subject: gridData._dragData.subject,
-          member: gridData._dragData.member,
-        ),
+            subject: gridData._dragData.subject,
+            member: gridData._dragData.member),
         this._available = gridData.available,
         this._ignore = gridData.ignore;
 
@@ -915,21 +914,11 @@ class TimetableGridDataList extends ChangeNotifier {
   }
 
   bool push(TimetableGridData newGridData) {
+    TimetableGridData tmpGridData = TimetableGridData.from(newGridData);
+
     if (newGridData != null) {
-      TimetableGridData toRemove;
-
-      for (TimetableGridData gridData in this._value) {
-        if (gridData.coord == newGridData.coord) {
-          toRemove = gridData;
-          break;
-        }
-      }
-
-      if (toRemove != null) {
-        this._value.remove(toRemove);
-      }
-
-      this._value.add(newGridData);
+      this.pop(newGridData);
+      this._value.add(tmpGridData);
       this._hasChanges = true;
       notifyListeners();
       return true;

@@ -48,12 +48,11 @@ class ScheduleListTile extends StatelessWidget {
         schedule.date.month == DateTime.now().month &&
         schedule.date.day == DateTime.now().day;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Divider(height: 1.0),
-        // Custom List Tile
-        Container(
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+        Widget>[
+      Divider(height: 1.0),
+      // Custom List Tile
+      Container(
           color: scheduleIsToday ? originTheme.primaryColorLight : null,
           padding: EdgeInsets.fromLTRB(
             20.0,
@@ -61,20 +60,15 @@ class ScheduleListTile extends StatelessWidget {
             0.0,
             10.0,
           ),
-          child: Column(
-            children: [
-              _memberIsAvailableAtThisTime(context)
-                  ? Container()
-                  : Container(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        'You are not available at this time',
+          child: Column(children: [
+            _memberIsAvailableAtThisTime(context)
+                ? Container()
+                : Container(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text('You are not available at this time',
                         style: TextStyle(
-                          color: scheduleIsToday ? Colors.red : Colors.red,
-                        ),
-                      ),
-                    ),
-              Row(
+                            color: scheduleIsToday ? Colors.red : Colors.red))),
+            Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -82,131 +76,102 @@ class ScheduleListTile extends StatelessWidget {
                   // Display Custom : Subjects
                   // Display Weekday, Day Month
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        schedule.custom + ' : ' + schedule.subject ?? '',
-                        style: scheduleIsToday
-                            ? textStyleBody.copyWith(
-                                color: Colors.black,
-                                fontSize: 15.0,
-                              )
-                            : textStyleBody.copyWith(
-                                fontSize: 15.0,
-                              ),
-                        overflow: TextOverflow.fade,
-                      ),
-                      Text(
-                        schedule.dateStr,
-                        style: textStyleBodyLight.copyWith(
-                          color: scheduleIsToday
-                              ? Colors.grey.shade700
-                              : Theme.of(context).brightness == Brightness.light
-                                  ? Colors.grey.shade600
-                                  : Colors.grey,
-                          fontSize: 13.0,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(schedule.custom + ' : ' + schedule.subject ?? '',
+                            style: scheduleIsToday
+                                ? textStyleBody.copyWith(
+                                    color: Colors.black, fontSize: 15.0)
+                                : textStyleBody.copyWith(fontSize: 15.0),
+                            overflow: TextOverflow.fade),
+                        Text(
+                          schedule.dateStr,
+                          style: textStyleBodyLight.copyWith(
+                              color: scheduleIsToday
+                                  ? Colors.grey.shade700
+                                  : Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.grey.shade600
+                                      : Colors.grey,
+                              fontSize: 13.0),
+                          overflow: TextOverflow.fade,
                         ),
-                        overflow: TextOverflow.fade,
-                      ),
-                      Text(
-                        schedule.dayStr,
-                        style: textStyleBodyLight.copyWith(
-                          color: scheduleIsToday
-                              ? Colors.grey.shade700
-                              : Theme.of(context).brightness == Brightness.light
-                                  ? Colors.grey.shade600
-                                  : Colors.grey,
-                          fontSize: 13.0,
-                        ),
-                        overflow: TextOverflow.fade,
-                      ),
-                    ],
-                  ),
+                        Text(
+                          schedule.dayStr,
+                          style: textStyleBodyLight.copyWith(
+                              color: scheduleIsToday
+                                  ? Colors.grey.shade700
+                                  : Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.grey.shade600
+                                      : Colors.grey,
+                              fontSize: 13.0),
+                          overflow: TextOverflow.fade,
+                        )
+                      ]),
 
                   // Right section
                   // Display Start Time to End Time
-                  Row(
-                    children: <Widget>[
-                      Container(
+                  Row(children: <Widget>[
+                    Container(
                         padding: EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
-                          color: scheduleIsToday
-                              ? Theme.of(context).scaffoldBackgroundColor
-                              : originTheme.primaryColorLight,
-                          borderRadius: BorderRadius.circular(50.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.light
-                                  ? Colors.grey
-                                  : Colors.transparent,
-                              blurRadius: 1.0,
-                              offset: Offset(0.0, 2.0),
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          schedule.startTimeStr,
-                          style: TextStyle(
                             color: scheduleIsToday
-                                ? Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? Colors.black
-                                    : Colors.white
-                                : Colors.black,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                      ),
-                      Container(
+                                ? Theme.of(context).scaffoldBackgroundColor
+                                : originTheme.primaryColorLight,
+                            borderRadius: BorderRadius.circular(50.0),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.grey
+                                      : Colors.transparent,
+                                  blurRadius: 1.0,
+                                  offset: Offset(0.0, 2.0))
+                            ]),
+                        child: Text(schedule.startTimeStr,
+                            style: TextStyle(
+                                color: scheduleIsToday
+                                    ? Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? Colors.black
+                                        : Colors.white
+                                    : Colors.black,
+                                letterSpacing: 1.0))),
+                    Container(
                         padding: EdgeInsets.all(7.5),
-                        child: Text(
-                          'to',
-                          style: TextStyle(
-                            color: scheduleIsToday ? Colors.black : null,
-                          ),
-                        ),
-                      ),
-                      Container(
+                        child: Text('to',
+                            style: TextStyle(
+                                color: scheduleIsToday ? Colors.black : null))),
+                    Container(
                         padding: EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
-                          color: scheduleIsToday
-                              ? Theme.of(context).scaffoldBackgroundColor
-                              : originTheme.primaryColorLight,
-                          borderRadius: BorderRadius.circular(50.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.light
-                                  ? Colors.grey
-                                  : Colors.transparent,
-                              blurRadius: 1.0,
-                              offset: Offset(0.0, 2.0),
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          schedule.endTimeStr,
-                          style: TextStyle(
                             color: scheduleIsToday
-                                ? Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? Colors.black
-                                    : Colors.white
-                                : Colors.black,
-                            letterSpacing: 1.0,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 20.0),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+                                ? Theme.of(context).scaffoldBackgroundColor
+                                : originTheme.primaryColorLight,
+                            borderRadius: BorderRadius.circular(50.0),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.grey
+                                      : Colors.transparent,
+                                  blurRadius: 1.0,
+                                  offset: Offset(0.0, 2.0))
+                            ]),
+                        child: Text(schedule.endTimeStr,
+                            style: TextStyle(
+                                color: scheduleIsToday
+                                    ? Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? Colors.black
+                                        : Colors.white
+                                    : Colors.black,
+                                letterSpacing: 1.0))),
+                    SizedBox(width: 20.0)
+                  ])
+                ])
+          ]))
+    ]);
   }
 }
