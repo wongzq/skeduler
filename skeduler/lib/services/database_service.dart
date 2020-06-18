@@ -151,7 +151,7 @@ class DatabaseService {
   }
 
   // get [Group][Timetable] data
-  Future<Timetable> getGroupTimetable(
+  Future<Timetable> getGroupTimetableWithGroups(
     String groupDocId,
     String timetableDocId,
   ) async {
@@ -191,37 +191,28 @@ class DatabaseService {
   }
 
   Future<String> getGroupTimetableIdForToday(String groupDocId) async {
-    String timetableIdForToday;
-
     if (!(await dbCheckInternetConnection())) {
       return null;
     }
 
-    return await groupsCollection.document(groupDocId).get().then((group) {
-      // get timetable metadatas from group document's field value
-      _timetableMetadatasFromDynamicList(group.data['timetables'] ?? [])
-          .forEach((metadata) {
-        if (
+    DocumentSnapshot group = await groupsCollection.document(groupDocId).get();
 
-            // If startDate is before or equal to now
-            (metadata.startDate.toDate().isBefore(DateTime.now()) ||
-                    metadata.startDate
-                        .toDate()
-                        .isAtSameMomentAs(DateTime.now())) &&
+    String timetableIdForToday;
 
-                // If endDate + 1 day is after or equal to now
-                (metadata.endDate
-                        .toDate()
-                        .add(Duration(days: 1))
-                        .isAfter(DateTime.now()) ||
-                    metadata.endDate
-                        .toDate()
-                        .add(Duration(days: 1))
-                        .isAtSameMomentAs(DateTime.now()))) {
-          timetableIdForToday = metadata.docId;
-        }
-      });
-    }).then((_) => timetableIdForToday);
+    for (TimetableMetadata metadata
+        in _timetableMetadatasFromDynamicList(group.data['timetables'] ?? [])) {
+      if (metadata.startDate.millisecondsSinceEpoch <=
+              DateTime.now().millisecondsSinceEpoch &&
+          metadata.endDate
+                  .toDate()
+                  .add(Duration(days: 1))
+                  .millisecondsSinceEpoch >=
+              DateTime.now().millisecondsSinceEpoch) {
+        timetableIdForToday = metadata.docId;
+      }
+    }
+
+    return timetableIdForToday;
   }
 
   // --------------------------------------------------------------------------------
@@ -234,9 +225,7 @@ class DatabaseService {
       return null;
     }
 
-    return await usersCollection.document(email).setData({
-      'name': name,
-    });
+    return await usersCollection.document(email).setData({'name': name});
   }
 
   // create [Group]
@@ -274,9 +263,7 @@ class DatabaseService {
       return null;
     }
 
-    return await usersCollection.document(userId).updateData({
-      'name': name,
-    });
+    return await usersCollection.document(userId).updateData({'name': name});
   }
 
   // --------------------------------------------------------------------------------
@@ -878,9 +865,8 @@ class DatabaseService {
       groupsCollection.document(groupDocId).get().then((group) async {
         return await groupsCollection.document(groupDocId).updateData({
           'timetables': _getUpdatedGroupTimetablesMetadataAfterRemove(
-            timetablesSnapshot: group.data['timetables'],
-            timetableId: timetableId,
-          )
+              timetablesSnapshot: group.data['timetables'],
+              timetableId: timetableId)
         });
       });
     });

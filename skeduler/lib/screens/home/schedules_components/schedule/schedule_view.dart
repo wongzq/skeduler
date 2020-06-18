@@ -62,6 +62,8 @@ class ScheduleView extends StatelessWidget {
                             }
                           }
 
+                          schedules.sort((a, b) => a.date.compareTo(b.date));
+
                           return SchedulesExpansionTile(
                               timetable: timetables[index].metadata,
                               schedules: schedules);

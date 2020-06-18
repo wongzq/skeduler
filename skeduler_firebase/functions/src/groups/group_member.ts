@@ -1,7 +1,7 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { TimetableGridData } from "../models/custom_classes";
-import { validateTimetablesGridDataList } from "./group_timetable";
+import { validateTimetableGroupsGridDataList } from "./group_timetable";
 import { validateConflicts } from "..";
 
 export const createGroupMember = functions.firestore
@@ -45,7 +45,7 @@ export const deleteGroupMember = functions.firestore
           members: admin.firestore.FieldValue.arrayRemove(snapshot.id),
         })
         .then(() => {
-          return validateTimetablesGridDataList(groupDocId, memberDocId);
+          return validateTimetableGroupsGridDataList(groupDocId, memberDocId);
         });
     }
   });
@@ -82,7 +82,7 @@ export const updateGroupMember = functions.firestore
       }
 
       promises.push(
-        validateTimetablesGridDataList(groupDocId, memberDocId)
+        validateTimetableGroupsGridDataList(groupDocId, memberDocId)
           .then(async () => {
             // check nickname changed
             if (beforeData.nickname == afterData.nickname) {

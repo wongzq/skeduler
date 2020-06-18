@@ -266,7 +266,7 @@ export class Time {
   ): Time[] {
     endDate.setDate(endDate.getDate() + 1);
 
-    let times: Time[] = [];
+    const times: Time[] = [];
 
     // iterate through each month
     for (const month of months) {
@@ -274,7 +274,7 @@ export class Time {
       const year: number = new Date(Date.now()).getUTCFullYear();
 
       for (let day = 0; day < Time.daysInMonth(year, month); day++) {
-        let newTime: Date = new Date(year, month, day);
+        const newTime: Date = new Date(year, month, day);
 
         // iterate through each weekday
         for (const weekday of weekdays) {
@@ -313,12 +313,45 @@ export class Time {
 }
 
 export class TimetableGroup {
+  docId: string;
+  axisDay: [];
+  axisTime: [];
+  axisCustom: [];
   gridDataList: TimetableGridData[];
 
-  constructor(group: any) {
-    this.gridDataList = [];
-    for (const gridData of group.gridDataList) {
-      this.gridDataList.push(
+  constructor(
+    docId: string,
+    axisDay: [],
+    axisTime: [],
+    axisCustom: [],
+    gridDataList: TimetableGridData[]
+  ) {
+    this.docId = docId ?? "";
+    this.gridDataList = gridDataList ?? [];
+    this.axisDay = axisDay ?? [];
+    this.axisTime = axisTime ?? [];
+    this.axisCustom = axisCustom ?? [];
+  }
+
+  static from(group: TimetableGroup): TimetableGroup {
+    return new TimetableGroup(
+      group.docId,
+      group.axisDay,
+      group.axisTime,
+      group.axisCustom,
+      group.gridDataList
+    );
+  }
+
+  static fromFirestoreQueryDocumentSnapshot(
+    snapshot: FirebaseFirestore.QueryDocumentSnapshot<
+      FirebaseFirestore.DocumentData
+    >
+  ): TimetableGroup {
+    const gridDataList: TimetableGridData[] = [];
+
+    for (const gridData of snapshot.data().gridDataList) {
+      gridDataList.push(
         new TimetableGridData(
           gridData.ignore,
           gridData.available,
@@ -333,6 +366,8 @@ export class TimetableGroup {
         )
       );
     }
+
+    return new TimetableGroup(snapshot.id, [], [], [], gridDataList);
   }
 }
 
@@ -351,30 +386,20 @@ export class Timetable {
     this.docId = docId;
     this.startTimestamp = startTimestamp;
     this.endTimestamp = endTimestamp;
-    this.groups = [];
-
-    for (const group of groups) {
-      this.groups.push(new TimetableGroup(group));
-    }
+    this.groups = groups ?? [];
   }
 
-  static fromFirestoreSnapshot(
-    snapshot: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>
-  ): Timetable | null {
-    const snapshotData:
-      | FirebaseFirestore.DocumentData
-      | undefined = snapshot.data();
-
-    if (snapshotData == null) {
-      return null;
-    } else {
-      return new Timetable(
-        snapshot.id,
-        snapshotData.startDate,
-        snapshotData.endDate,
-        snapshotData.groups
-      );
-    }
+  static fromFirestoreQueryDocumentSnapshot(
+    snapshot: FirebaseFirestore.QueryDocumentSnapshot<
+      FirebaseFirestore.DocumentData
+    >
+  ): Timetable {
+    return new Timetable(
+      snapshot.id,
+      snapshot.data().startDate,
+      snapshot.data().endDate,
+      snapshot.data().groups
+    );
   }
 
   get startDate(): Date {

@@ -303,7 +303,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                                   ttbStatus.edit = EditTimetable
                                                       .fromTimetable(
                                                     await dbService
-                                                        .getGroupTimetable(
+                                                        .getGroupTimetableWithGroups(
                                                       groupStatus.group.docId,
                                                       value,
                                                     ),
@@ -317,7 +317,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                                         .me.role ==
                                                     MemberRole.member) {
                                                   await dbService
-                                                      .getGroupTimetable(
+                                                      .getGroupTimetableWithGroups(
                                                           groupStatus
                                                               .group.docId,
                                                           value)

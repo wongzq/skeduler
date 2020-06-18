@@ -1,6 +1,12 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import { Timetable, Member, Time, Conflict } from "../models/custom_classes";
+import {
+  Timetable,
+  Member,
+  Time,
+  Conflict,
+  TimetableGroup,
+} from "../models/custom_classes";
 
 export const createGroup = functions.firestore
   .document("/groups/{groupDocId}")
@@ -149,21 +155,37 @@ export async function validateConflicts({
       .doc(groupDocId)
       .collection("timetables")
       .get()
-      .then((timetablesQuerySnap) => {
+      .then(async (timetablesQuerySnap) => {
         const tmpTimetables: Timetable[] = [];
-
         for (const timetableQueryDoc of timetablesQuerySnap.docs) {
-          const tmpTimetable: Timetable | null = Timetable.fromFirestoreSnapshot(
-            timetableQueryDoc
-          );
+          if (
+            timetableDocId == null ||
+            (timetableDocId != null && timetableQueryDoc.id == timetableDocId)
+          ) {
+            const timetableGroups: TimetableGroup[] = await admin
+              .firestore()
+              .collection("groups")
+              .doc(groupDocId)
+              .collection("timetables")
+              .doc(timetableQueryDoc.id)
+              .collection("groups")
+              .get()
+              .then((snapshot) => {
+                return snapshot.docs.map((timetableGroup) => {
+                  return TimetableGroup.fromFirestoreQueryDocumentSnapshot(
+                    timetableGroup
+                  );
+                });
+              });
 
-          if (tmpTimetable != null) {
-            if (
-              timetableDocId == null ||
-              (timetableDocId != null && tmpTimetable.docId == timetableDocId)
-            ) {
-              tmpTimetables.push(tmpTimetable);
-            }
+            tmpTimetables.push(
+              new Timetable(
+                timetableQueryDoc.id,
+                timetableQueryDoc.data().startDate,
+                timetableQueryDoc.data().endDate,
+                timetableGroups
+              )
+            );
           }
         }
         return tmpTimetables;

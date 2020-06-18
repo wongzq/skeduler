@@ -5,6 +5,7 @@ import {
   Time,
   Member,
   Timetable,
+  TimetableGroup,
 } from "../models/custom_classes";
 import { validateConflicts } from "./group";
 
@@ -24,7 +25,7 @@ export const createGroupTimetable = functions.firestore
     }
   });
 
-  export const deleteGroupTimetable = functions.firestore
+export const deleteGroupTimetable = functions.firestore
   .document("/groups/{groupDocId}/timetables/{timetableDocId}")
   .onDelete(async (snapshot, context) => {
     // const groupDocId: string = context.params.groupDocId;
@@ -69,7 +70,7 @@ export const updateGroupTimetable = functions.firestore
     }
   });
 
-export async function validateTimetablesGridDataList(
+export async function validateTimetableGroupsGridDataList(
   groupDocId: string,
   memberDocId: string
 ): Promise<any> {
@@ -102,12 +103,28 @@ export async function validateTimetablesGridDataList(
 
               // populate timetables
               for (const timetableDoc of timetablesQuerySnap.docs) {
+                const timetableGroups: TimetableGroup[] = await admin
+                  .firestore()
+                  .collection("groups")
+                  .doc(groupDocId)
+                  .collection("timetables")
+                  .doc(timetableDoc.id)
+                  .collection("groups")
+                  .get()
+                  .then((snapshot) => {
+                    return snapshot.docs.map((timetableGroup) => {
+                      return TimetableGroup.fromFirestoreQueryDocumentSnapshot(
+                        timetableGroup
+                      );
+                    });
+                  });
+
                 timetables.push(
                   new Timetable(
                     timetableDoc.id,
                     timetableDoc.data().startDate,
                     timetableDoc.data().endDate,
-                    timetableDoc.data().groups
+                    timetableGroups
                   )
                 );
               }
@@ -124,7 +141,7 @@ export async function validateTimetablesGridDataList(
                       gridData.member.docId == memberDocId
                     ) {
                       // new grid data
-                      let newGridData: TimetableGridData = TimetableGridData.from(
+                      const newGridData: TimetableGridData = TimetableGridData.from(
                         gridData
                       );
 
@@ -142,6 +159,8 @@ export async function validateTimetablesGridDataList(
                             .doc(groupDocId)
                             .collection("timetables")
                             .doc(timetable.docId)
+                            .collection("groups")
+                            .doc(group.docId)
                             .update({
                               groups: admin.firestore.FieldValue.arrayRemove(
                                 gridData.asFirestoreMap()
@@ -155,6 +174,8 @@ export async function validateTimetablesGridDataList(
                                 .doc(groupDocId)
                                 .collection("timetables")
                                 .doc(timetable.docId)
+                                .collection("groups")
+                                .doc(group.docId)
                                 .update({
                                   groups: admin.firestore.FieldValue.arrayUnion(
                                     newGridData.asFirestoreMap()
@@ -193,12 +214,28 @@ export async function validateTimetablesGridDataList(
 
               // populate timetables
               for (const timetableDoc of timetablesQuerySnap.docs) {
+                const timetableGroups: TimetableGroup[] = await admin
+                  .firestore()
+                  .collection("groups")
+                  .doc(groupDocId)
+                  .collection("timetables")
+                  .doc(timetableDoc.id)
+                  .collection("groups")
+                  .get()
+                  .then((snapshot) => {
+                    return snapshot.docs.map((timetableGroup) => {
+                      return TimetableGroup.fromFirestoreQueryDocumentSnapshot(
+                        timetableGroup
+                      );
+                    });
+                  });
+
                 timetables.push(
                   new Timetable(
                     timetableDoc.id,
                     timetableDoc.data().startDate,
                     timetableDoc.data().endDate,
-                    timetableDoc.data().groups
+                    timetableGroups
                   )
                 );
               }
@@ -216,7 +253,7 @@ export async function validateTimetablesGridDataList(
                       gridData.member.docId == member.docId
                     ) {
                       // new grid data
-                      let newGridData: TimetableGridData = TimetableGridData.from(
+                      const newGridData: TimetableGridData = TimetableGridData.from(
                         gridData
                       );
 
@@ -291,6 +328,8 @@ export async function validateTimetablesGridDataList(
                             .doc(groupDocId)
                             .collection("timetables")
                             .doc(timetable.docId)
+                            .collection("groups")
+                            .doc(group.docId)
                             .update({
                               gridDataList: admin.firestore.FieldValue.arrayRemove(
                                 gridData.asFirestoreMap()
@@ -304,6 +343,8 @@ export async function validateTimetablesGridDataList(
                                 .doc(groupDocId)
                                 .collection("timetables")
                                 .doc(timetable.docId)
+                                .collection("groups")
+                                .doc(group.docId)
                                 .update({
                                   gridDataList: admin.firestore.FieldValue.arrayUnion(
                                     newGridData.asFirestoreMap()
