@@ -136,24 +136,32 @@ service cloud.firestore {
         request.resource.data.gridAxisOfCustom is int &&
         request.resource.data.gridAxisOfCustom >= 0 &&
         request.resource.data.gridAxisOfCustom <= 2;
-        // request.resource.data.groups is list;
         
         allow delete: if
         authenticated() &&
         isOwnerOrAdmin();
         
+        // group > timetables > group
         match /groups/{timetableGroupID} {
           allow read: if
           authenticated() &&
           isOwnerOrAdminOrMember();
           
-          allow write: if
+          allow create, update: if
+          authenticated() &&
+          isOwnerOrAdmin() &&
+          request.resource.data.axisDay is list &&
+          request.resource.data.axisTime is list &&
+          request.resource.data.axisCustom is list &&
+          request.resource.data.gridDataList is list;
+
+          allow delete: if
           authenticated() &&
           isOwnerOrAdmin();
         }
       }
       
-    // group functions
+      // group functions
       function isOwnerOrAdmin() {
         return isOwner() || isAdmin();
       }
@@ -194,7 +202,7 @@ service cloud.firestore {
       }
     }
     
-  // functions
+    // functions
     function authenticated() {
       return request.auth != null;
     }
