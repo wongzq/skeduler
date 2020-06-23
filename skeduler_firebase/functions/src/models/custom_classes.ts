@@ -1,159 +1,6 @@
 import * as admin from "firebase-admin";
 
 // used classes
-export class Conflict {
-  timetable: string;
-  groupIndex: number;
-  gridData: TimetableGridData;
-  member: { docId: string; name: string; nickname: string };
-  conflictDates: FirebaseFirestore.Timestamp[];
-
-  constructor(
-    timetable: string,
-    groupIndex: number,
-    gridData: TimetableGridData,
-    memberDocId: string,
-    memberName: string,
-    memberNickname: string,
-    conflictDates: FirebaseFirestore.Timestamp[]
-  ) {
-    this.timetable = timetable;
-    this.groupIndex = groupIndex;
-    this.gridData = gridData;
-    this.member = {
-      docId: memberDocId,
-      name: memberName,
-      nickname: memberNickname,
-    };
-    this.conflictDates = conflictDates ?? [];
-  }
-
-  static create(
-    timetable: string,
-    groupIndex: number,
-    gridData: TimetableGridData,
-    memberDocId: string,
-    memberName: string,
-    memberNickname: string,
-    conflictDates: Date[]
-  ): Conflict {
-    const conflictTimestamps: FirebaseFirestore.Timestamp[] = [];
-
-    for (const date of conflictDates) {
-      conflictTimestamps.push(admin.firestore.Timestamp.fromDate(date));
-    }
-
-    return new Conflict(
-      timetable,
-      groupIndex,
-      gridData,
-      memberDocId,
-      memberName,
-      memberNickname,
-      conflictTimestamps
-    );
-  }
-
-  static fromFirestoreField(conflict: any) {
-    return new Conflict(
-      conflict.timetable,
-      conflict.groupIndex,
-      TimetableGridData.fromFirestoreField(conflict.gridData),
-      conflict.member.docId,
-      conflict.member.name,
-      conflict.member.nickname,
-      conflict.conflictDates
-    );
-  }
-
-  static from(conflict: Conflict) {
-    return new Conflict(
-      conflict.timetable,
-      conflict.groupIndex,
-      conflict.gridData,
-      conflict.member.docId,
-      conflict.member.name,
-      conflict.member.nickname,
-      conflict.conflictDates
-    );
-  }
-
-  asFirestoreMap(): any {
-    return {
-      timetable: this.timetable ?? "",
-      groupIndex: this.groupIndex ?? 0,
-      gridData: this.gridData.asFirestoreMap(),
-      member: {
-        docId: this.member.docId ?? "",
-        name: this.member.name ?? "",
-        nickname: this.member.nickname ?? "",
-      },
-      conflictDates: this.conflictDates ?? [],
-    };
-  }
-}
-
-export class Member {
-  docId: string;
-  alwaysAvailable: boolean;
-  name: string;
-  nickname: string;
-  role: number;
-  timesAvailable: Time[];
-  timesUnavailable: Time[];
-
-  constructor(
-    docId: string,
-    alwaysAvailable: boolean,
-    name: string,
-    nickname: string,
-    role: number,
-    timesAvailable: any,
-    timesUnavailable: any
-  ) {
-    this.docId = docId;
-    this.alwaysAvailable = alwaysAvailable;
-    this.name = name;
-    this.nickname = nickname;
-    this.role = role;
-    this.timesAvailable = [];
-    this.timesUnavailable = [];
-
-    if (timesAvailable != null) {
-      for (let time of timesAvailable) {
-        this.timesAvailable.push(new Time(time.startTime, time.endTime));
-      }
-    }
-
-    if (timesUnavailable != null) {
-      for (let time of timesUnavailable) {
-        this.timesUnavailable.push(new Time(time.startTime, time.endTime));
-      }
-    }
-  }
-
-  static fromFirestoreSnapshot(
-    snapshot: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>
-  ): Member | null {
-    const snapshotData:
-      | FirebaseFirestore.DocumentData
-      | undefined = snapshot.data();
-
-    if (snapshotData == null) {
-      return null;
-    } else {
-      return new Member(
-        snapshot.id,
-        snapshotData.alwaysAvailable,
-        snapshotData.name,
-        snapshotData.nickname,
-        snapshotData.role,
-        snapshotData.timesAvailable,
-        snapshotData.timesUnavailable
-      );
-    }
-  }
-}
 
 export class Time {
   // attributes
@@ -177,15 +24,20 @@ export class Time {
   get startDate(): Date {
     return this.startTime.toDate();
   }
+
   get endDate(): Date {
     return this.endTime.toDate();
   }
 
   // methods
-  sameDateAs(time: Time): boolean {
+  sameDateAsIgnoreTime(time: Time): boolean {
     return (
-      this.startDate.valueOf() == time.startDate.valueOf() &&
-      this.endDate.valueOf() == time.endDate.valueOf()
+      this.startDate.getFullYear() === time.startDate.getFullYear() &&
+      this.startDate.getMonth() === time.startDate.getMonth() &&
+      this.startDate.getDate() === time.startDate.getDate() &&
+      this.endDate.getFullYear() === time.endDate.getFullYear() &&
+      this.endDate.getMonth() === time.endDate.getMonth() &&
+      this.endDate.getDate() === time.endDate.getDate()
     );
   }
 
@@ -278,7 +130,7 @@ export class Time {
 
         // iterate through each weekday
         for (const weekday of weekdays) {
-          if (newTime.getDay() == weekday + 1) {
+          if (newTime.getDay() === weekday + 1) {
             const newStartTime: Date = new Date(
               newTime.getUTCFullYear(),
               newTime.getUTCMonth(),
@@ -312,62 +164,57 @@ export class Time {
   }
 }
 
-export class TimetableGroup {
+export class Member {
   docId: string;
-  axisDay: [];
-  axisTime: [];
-  axisCustom: [];
-  gridDataList: TimetableGridData[];
+  alwaysAvailable: boolean;
+  name: string;
+  nickname: string;
+  role: number;
+  timesAvailable: Time[];
+  timesUnavailable: Time[];
 
   constructor(
     docId: string,
-    axisDay: [],
-    axisTime: [],
-    axisCustom: [],
-    gridDataList: TimetableGridData[]
+    alwaysAvailable: boolean,
+    name: string,
+    nickname: string,
+    role: number,
+    timesAvailable: any,
+    timesUnavailable: any
   ) {
-    this.docId = docId ?? "";
-    this.gridDataList = gridDataList ?? [];
-    this.axisDay = axisDay ?? [];
-    this.axisTime = axisTime ?? [];
-    this.axisCustom = axisCustom ?? [];
-  }
+    this.docId = docId;
+    this.alwaysAvailable = alwaysAvailable;
+    this.name = name;
+    this.nickname = nickname;
+    this.role = role;
+    this.timesAvailable = [];
+    this.timesUnavailable = [];
 
-  static from(group: TimetableGroup): TimetableGroup {
-    return new TimetableGroup(
-      group.docId,
-      group.axisDay,
-      group.axisTime,
-      group.axisCustom,
-      group.gridDataList
-    );
-  }
-
-  static fromFirestoreQueryDocumentSnapshot(
-    snapshot: FirebaseFirestore.QueryDocumentSnapshot<
-      FirebaseFirestore.DocumentData
-    >
-  ): TimetableGroup {
-    const gridDataList: TimetableGridData[] = [];
-
-    for (const gridData of snapshot.data().gridDataList) {
-      gridDataList.push(
-        new TimetableGridData(
-          gridData.ignore,
-          gridData.available,
-          gridData.coord.day,
-          gridData.coord.time.startTime.toDate(),
-          gridData.coord.time.endTime.toDate(),
-          gridData.coord.custom,
-          gridData.member.docId,
-          gridData.member.display,
-          gridData.subject.docId,
-          gridData.subject.display
-        )
-      );
+    if (timesAvailable !== null) {
+      for (let time of timesAvailable) {
+        this.timesAvailable.push(new Time(time.startTime, time.endTime));
+      }
     }
 
-    return new TimetableGroup(snapshot.id, [], [], [], gridDataList);
+    if (timesUnavailable !== null) {
+      for (let time of timesUnavailable) {
+        this.timesUnavailable.push(new Time(time.startTime, time.endTime));
+      }
+    }
+  }
+
+  static fromFirestoreDocument(
+    snapshot: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>
+  ): Member {
+    return new Member(
+      snapshot.id,
+      snapshot.data()!.alwaysAvailable,
+      snapshot.data()!.name,
+      snapshot.data()!.nickname,
+      snapshot.data()!.role,
+      snapshot.data()!.timesAvailable,
+      snapshot.data()!.timesUnavailable
+    );
   }
 }
 
@@ -389,16 +236,16 @@ export class Timetable {
     this.groups = groups ?? [];
   }
 
-  static fromFirestoreQueryDocumentSnapshot(
-    snapshot: FirebaseFirestore.QueryDocumentSnapshot<
-      FirebaseFirestore.DocumentData
-    >
+  static fromFirestoreDocument(
+    snapshot: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>
   ): Timetable {
     return new Timetable(
       snapshot.id,
-      snapshot.data().startDate,
-      snapshot.data().endDate,
-      snapshot.data().groups
+      snapshot.data()!.startDate,
+      snapshot.data()!.endDate,
+      (snapshot.data()!.groups as any[]).map((value) =>
+        TimetableGroup.fromFirestoreArrayValue(value)
+      )
     );
   }
 
@@ -408,6 +255,55 @@ export class Timetable {
 
   get endDate(): Date {
     return this.endTimestamp.toDate();
+  }
+}
+
+export class TimetableGroup {
+  axisDay: any[];
+  axisTime: any[];
+  axisCustom: any[];
+  gridDataList: TimetableGridData[];
+
+  constructor(
+    axisDay: any[],
+    axisTime: any[],
+    axisCustom: any[],
+    gridDataList: TimetableGridData[]
+  ) {
+    this.axisDay = axisDay ?? [];
+    this.axisTime = axisTime ?? [];
+    this.axisCustom = axisCustom ?? [];
+    this.gridDataList = gridDataList ?? [];
+  }
+
+  static from(group: TimetableGroup): TimetableGroup {
+    return new TimetableGroup(
+      group.axisDay,
+      group.axisTime,
+      group.axisCustom,
+      group.gridDataList
+    );
+  }
+
+  static fromFirestoreArrayValue(value: any): TimetableGroup {
+    return new TimetableGroup(
+      value.axisDay as any[],
+      value.axisTime as any[],
+      value.axisCustom as any[],
+      (value.gridDataList as any[]).map((gridData) =>
+        TimetableGridData.fromFirestoreField(gridData)
+      )
+    );
+  }
+
+  asFirestoreMap(): any {
+    return {
+      axisDay: this.axisDay ?? [],
+      axisTime: this.axisTime ?? [],
+      axisCustom: this.axisCustom ?? [],
+      gridDataList:
+        this.gridDataList.map((gridData) => gridData.asFirestoreMap()) ?? [],
+    };
   }
 }
 
@@ -454,6 +350,21 @@ export class TimetableGridData {
     this.subject = { docId: subjectDocId, display: subjectDisplay };
   }
 
+  static from(gridData: TimetableGridData): TimetableGridData {
+    return new TimetableGridData(
+      gridData.ignore,
+      gridData.available,
+      gridData.coord.day,
+      gridData.coord.time.startTime,
+      gridData.coord.time.endTime,
+      gridData.coord.custom,
+      gridData.member.docId,
+      gridData.member.display,
+      gridData.subject.docId,
+      gridData.subject.display
+    );
+  }
+  
   static fromFirestoreField(gridData: any): TimetableGridData {
     return new TimetableGridData(
       gridData.ignore,
@@ -469,35 +380,20 @@ export class TimetableGridData {
     );
   }
 
-  static from(gridData: TimetableGridData): TimetableGridData {
-    return new TimetableGridData(
-      gridData.ignore,
-      gridData.available,
-      gridData.coord.day,
-      gridData.coord.time.startTime,
-      gridData.coord.time.endTime,
-      gridData.coord.custom,
-      gridData.member.docId,
-      gridData.member.display,
-      gridData.subject.docId,
-      gridData.subject.display
-    );
-  }
-
   isEqual(gridData: TimetableGridData): boolean {
     return (
-      this.ignore == gridData.ignore &&
-      this.available == gridData.available &&
-      this.coord.day == gridData.coord.day &&
+      this.ignore === gridData.ignore &&
+      this.available === gridData.available &&
+      this.coord.day === gridData.coord.day &&
       this.coord.time.startTime.valueOf() ==
         gridData.coord.time.startTime.valueOf() &&
       this.coord.time.endTime.valueOf() ==
         gridData.coord.time.endTime.valueOf() &&
-      this.coord.custom == gridData.coord.custom &&
-      this.member.docId == gridData.member.docId &&
-      this.member.display == gridData.member.display &&
-      this.subject.docId == gridData.subject.docId &&
-      this.subject.display == gridData.subject.display
+      this.coord.custom === gridData.coord.custom &&
+      this.member.docId === gridData.member.docId &&
+      this.member.display === gridData.member.display &&
+      this.subject.docId === gridData.subject.docId &&
+      this.subject.display === gridData.subject.display
     );
   }
 
@@ -525,6 +421,98 @@ export class TimetableGridData {
         docId: this.subject.docId,
         display: this.subject.display,
       },
+    };
+  }
+}
+
+export class Conflict {
+  timetable: string;
+  groupIndex: number;
+  gridData: TimetableGridData;
+  member: { docId: string; name: string; nickname: string };
+  conflictDates: FirebaseFirestore.Timestamp[];
+
+  constructor(
+    timetable: string,
+    groupIndex: number,
+    gridData: TimetableGridData,
+    memberDocId: string,
+    memberName: string,
+    memberNickname: string,
+    conflictDates: FirebaseFirestore.Timestamp[]
+  ) {
+    this.timetable = timetable;
+    this.groupIndex = groupIndex;
+    this.gridData = gridData;
+    this.member = {
+      docId: memberDocId,
+      name: memberName,
+      nickname: memberNickname,
+    };
+    this.conflictDates = conflictDates ?? [];
+  }
+
+  static create(
+    timetable: string,
+    groupIndex: number,
+    gridData: TimetableGridData,
+    memberDocId: string,
+    memberName: string,
+    memberNickname: string,
+    conflictDates: Date[]
+  ): Conflict {
+    const conflictTimestamps: FirebaseFirestore.Timestamp[] = [];
+
+    for (const date of conflictDates) {
+      conflictTimestamps.push(admin.firestore.Timestamp.fromDate(date));
+    }
+
+    return new Conflict(
+      timetable,
+      groupIndex,
+      gridData,
+      memberDocId,
+      memberName,
+      memberNickname,
+      conflictTimestamps
+    );
+  }
+
+  static fromFirestoreField(conflict: any) {
+    return new Conflict(
+      conflict.timetable,
+      conflict.groupIndex,
+      TimetableGridData.fromFirestoreField(conflict.gridData),
+      conflict.member.docId,
+      conflict.member.name,
+      conflict.member.nickname,
+      conflict.conflictDates
+    );
+  }
+
+  static from(conflict: Conflict) {
+    return new Conflict(
+      conflict.timetable,
+      conflict.groupIndex,
+      conflict.gridData,
+      conflict.member.docId,
+      conflict.member.name,
+      conflict.member.nickname,
+      conflict.conflictDates
+    );
+  }
+
+  asFirestoreMap(): any {
+    return {
+      timetable: this.timetable ?? "",
+      groupIndex: this.groupIndex ?? 0,
+      gridData: this.gridData.asFirestoreMap(),
+      member: {
+        docId: this.member.docId ?? "",
+        name: this.member.name ?? "",
+        nickname: this.member.nickname ?? "",
+      },
+      conflictDates: this.conflictDates ?? [],
     };
   }
 }

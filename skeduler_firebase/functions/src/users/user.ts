@@ -11,9 +11,14 @@ export const updateUserName = functions.firestore
       | FirebaseFirestore.DocumentData
       | undefined = change.after.data();
 
-    if (beforeData == null || afterData == null) {
+    if (
+      beforeData === undefined ||
+      beforeData === null ||
+      afterData === undefined ||
+      afterData === null
+    ) {
       return null;
-    } else if (beforeData.name != afterData.name) {
+    } else if (beforeData.name !== afterData.name) {
       const userDocId = context.params.userDocId;
       const promises: Promise<any>[] = [];
 
@@ -22,7 +27,10 @@ export const updateUserName = functions.firestore
         admin
           .firestore()
           .collection("groups")
-          .where("owner", "==", { email: change.before.id, name: beforeData.name })
+          .where("owner", "==", {
+            email: change.before.id,
+            name: beforeData.name,
+          })
           .get()
           .then(async (groupsSnap) => {
             const updateGroupPromises: Promise<any>[] = [];

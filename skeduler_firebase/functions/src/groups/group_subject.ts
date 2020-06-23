@@ -10,7 +10,7 @@ export const createGroupSubject = functions.firestore
       | FirebaseFirestore.DocumentData
       | undefined = snapshot.data();
 
-    if (subjectSnap == null) {
+    if (subjectSnap === undefined || subjectSnap === null) {
       return null;
     } else {
       return await admin
@@ -31,7 +31,7 @@ export const deleteGroupSubject = functions.firestore
       | FirebaseFirestore.DocumentData
       | undefined = snapshot.data();
 
-    if (subjectSnap == null) {
+    if (subjectSnap === undefined || subjectSnap === null) {
       return null;
     } else {
       return await admin
@@ -56,7 +56,12 @@ export const updateGroupSubject = functions.firestore
       | FirebaseFirestore.DocumentData
       | undefined = change.after.data();
 
-    if (beforeData == null || afterData == null) {
+    if (
+      beforeData === undefined ||
+      beforeData === null ||
+      afterData === undefined ||
+      afterData === null
+    ) {
       return null;
     } else {
       const promises: Promise<any>[] = [];
@@ -66,7 +71,7 @@ export const updateGroupSubject = functions.firestore
         .doc(groupDocId);
 
       // check nickname changed
-      if (beforeData.nickname != afterData.nickname) {
+      if (beforeData.nickname !== afterData.nickname) {
         promises.push(
           groupDocRef
             .collection("timetables")
@@ -80,7 +85,7 @@ export const updateGroupSubject = functions.firestore
 
                 // find corresponding gridData
                 gridDataList.forEach((gridData) => {
-                  if (gridData.subject.docId == change.before.id) {
+                  if (gridData.subject.docId === change.before.id) {
                     const tmpGridData: TimetableGridData = new TimetableGridData(
                       gridData.ignore,
                       gridData.available,
