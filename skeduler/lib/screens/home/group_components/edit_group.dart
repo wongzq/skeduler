@@ -182,7 +182,8 @@ class _EditGroupState extends State<EditGroup> {
                       }
                       return _groupColorShade.color;
                     }(),
-                    notifications: widget.group.conflicts.length,
+                    // unsure
+                    // notifications: widget.group.conflicts.length,
                   ),
                 ],
               ),

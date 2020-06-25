@@ -149,7 +149,8 @@ class DashboardScreen extends StatelessWidget {
                             }
                           },
                           child: GroupCard(
-                            notifications: groups[index].pendingConflicts,
+                            // unsure
+                            // notifications: groups[index].pendingConflicts,
                             groupName: groups[index].name,
                             groupColor: groups[index].colorShade.color,
                             numOfMembers: groups[index].numOfMembers,

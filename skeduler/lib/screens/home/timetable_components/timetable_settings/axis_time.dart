@@ -139,7 +139,7 @@ class _AxisTimeState extends State<AxisTime> {
                                 startTime: newStartTime, endTime: newEndTime));
 
                             // If no conflict in temporary, then edit in main
-                            if (isConsecutiveTimes(tempTimes)) {
+                            if (Time.isConsecutiveTimes(tempTimes)) {
                               // Remove previous time slot
                               _times.removeWhere((test) {
                                 return test.startTime == time.startTime &&
@@ -251,7 +251,7 @@ class _AxisTimeState extends State<AxisTime> {
                       .add(Time(startTime: newStartTime, endTime: newEndTime));
 
                   // If no conflict in temporary, then add to main
-                  if (isConsecutiveTimes(tempTimes)) {
+                  if (Time.isConsecutiveTimes(tempTimes)) {
                     _times.add(
                         Time(startTime: newStartTime, endTime: newEndTime));
 

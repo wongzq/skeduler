@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
-import 'package:skeduler/models/auxiliary/conflict.dart';
 import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/subject.dart';
 import 'package:skeduler/models/firestore/timetable.dart';
@@ -21,7 +20,8 @@ class Group {
   List<TimetableMetadata> _timetableMetadatas;
   List<String> _memberMetadatas;
   List<String> _subjectMetadatas;
-  List<Conflict> _conflicts;
+  // unsure
+  // List<Conflict> _conflicts;
 
   // constructors
   Group({
@@ -33,7 +33,8 @@ class Group {
     List<TimetableMetadata> timetableMetadatas = const [],
     List<String> memberMetadatas = const [],
     List<String> subjectMetadatas = const [],
-    List<Conflict> conflicts = const [],
+    // unsure
+    // List<Conflict> conflicts = const [],
   }) {
     this._docId = docId;
 
@@ -45,7 +46,8 @@ class Group {
     this._timetableMetadatas = List.from(timetableMetadatas);
     this._memberMetadatas = List.from(memberMetadatas);
     this._subjectMetadatas = List.from(subjectMetadatas);
-    this._conflicts = List.from(conflicts);
+    // unsure
+    // this._conflicts = List.from(conflicts);
   }
 
   // getter methods
@@ -60,10 +62,12 @@ class Group {
   List<TimetableMetadata> get timetableMetadatas => this._timetableMetadatas;
   List<String> get memberMetadatas => this._memberMetadatas;
   List<String> get subjectMetadatas => this._subjectMetadatas;
-  List<Conflict> get conflicts => this._conflicts;
+  // unsure
+  // List<Conflict> get conflicts => this._conflicts;
 
-  int get pendingConflicts =>
-      this._conflicts.where((element) => !element.gridData.ignore).length;
+  // unsure
+  // int get pendingConflicts =>
+  //     this._conflicts.where((element) => !element.gridData.ignore).length;
 }
 
 // --------------------------------------------------------------------------------

@@ -146,7 +146,7 @@ class ConflictListTile extends StatelessWidget {
                             // get timetable
                             EditTimetable timetable =
                                 EditTimetable.fromTimetable(
-                              await dbService.getGroupTimetableWithGroups(
+                              await dbService.getGroupTimetable(
                                 groupStatus.group.docId,
                                 conflict.timetable,
                               ),
@@ -176,7 +176,7 @@ class ConflictListTile extends StatelessWidget {
                           case ConflictOption.unkeep: // get timetable
                             EditTimetable timetable =
                                 EditTimetable.fromTimetable(
-                              await dbService.getGroupTimetableWithGroups(
+                              await dbService.getGroupTimetable(
                                   groupStatus.group.docId, conflict.timetable),
                             );
 
@@ -217,7 +217,7 @@ class ConflictListTile extends StatelessWidget {
                                     // get timetable
                                     EditTimetable timetable =
                                         EditTimetable.fromTimetable(
-                                      await dbService.getGroupTimetableWithGroups(
+                                      await dbService.getGroupTimetable(
                                         groupStatus.group.docId,
                                         conflict.timetable,
                                       ),
@@ -255,7 +255,7 @@ class ConflictListTile extends StatelessWidget {
 
                           case ConflictOption.editTimetable:
                             ttbStatus.edit = EditTimetable.fromTimetable(
-                              await dbService.getGroupTimetableWithGroups(
+                              await dbService.getGroupTimetable(
                                 groupStatus.group.docId,
                                 conflict.timetable,
                               ),

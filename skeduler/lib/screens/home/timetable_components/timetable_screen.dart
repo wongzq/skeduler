@@ -53,294 +53,261 @@ class _TimetableScreenState extends State<TimetableScreen> {
                   stream: dbService.streamGroupTimetableForToday(
                       groupStatus.group.docId, snapshotTtbId.data),
                   builder: (context, snapshotTtb) {
-                    Timetable tmpTimetable = snapshotTtb.data;
-
-                    isPlaceholder = tmpTimetable == null;
+                    Timetable timetable = snapshotTtb.data;
 
                     // stream timetableGroups
-                    return StreamBuilder<List<TimetableGroup>>(
-                        stream: dbService.streamGroupTimetableGroups(
-                            groupStatus.group.docId,
-                            tmpTimetable == null ? '' : tmpTimetable.docId),
-                        builder: (context, timetableGroupsSnap) {
-                          List<TimetableGroup> timetableGroups =
-                              timetableGroupsSnap.data;
-                          Timetable timetable;
+                    if (timetable != null && timetable.isValid) {
+                      isPlaceholder = false;
 
-                          if (timetableGroups != null) {
-                            timetable = Timetable.fromTimetableAndGroups(
-                                tmpTimetable, timetableGroups);
+                      if (_viewTodayTtb) {
+                        if (ttbStatus.curr == null) {
+                          ttbStatus.curr = timetable;
+                        } else if (ttbStatus.curr.docId == timetable.docId) {
+                          ttbStatus.curr = timetable;
+                        } else {
+                          ttbStatus.curr = null;
+                          ttbStatus.curr = timetable;
+                        }
+                      }
+                    } else {
+                      isPlaceholder = true;
+                      ttbStatus.curr = null;
+                    }
 
-                            if (timetable != null && timetable.isValid) {
-                              isPlaceholder = false;
+                    return Scaffold(
+                        appBar: AppBar(
+                            elevation: 0.0,
+                            title: AppBarTitle(
+                              title: groupStatus.group.name == null
+                                  ? null
+                                  : groupStatus.group.name,
+                              alternateTitle: 'Timetable',
+                              subtitle: groupStatus.group.name == null ||
+                                      timetable == null ||
+                                      !timetable.isValid ||
+                                      ttbStatus.curr == null
+                                  ? 'Timetable'
+                                  : 'Timetable: ${ttbStatus.curr.docId}',
+                            ),
+                            actions: <Widget>[
+                              Padding(
+                                  padding: EdgeInsets.only(right: 10.0),
+                                  child: PopupMenuButton(
+                                      child: Icon(Icons.more_vert),
+                                      itemBuilder: (BuildContext context) {
+                                        List<PopupMenuEntry> popupOptions = [];
 
-                              if (_viewTodayTtb) {
-                                if (ttbStatus.curr == null) {
-                                  ttbStatus.curr = timetable;
-                                } else if (ttbStatus.curr.docId ==
-                                    timetable.docId) {
-                                  ttbStatus.curr = timetable;
-                                } else {
-                                  ttbStatus.curr = null;
-                                  ttbStatus.curr = timetable;
-                                }
-                              }
-                            } else {
-                              isPlaceholder = true;
-                              ttbStatus.curr = null;
-                            }
-                          } else {
-                            isPlaceholder = true;
-                          }
-
-                          return Scaffold(
-                              appBar: AppBar(
-                                  elevation: 0.0,
-                                  title: AppBarTitle(
-                                    title: groupStatus.group.name == null
-                                        ? null
-                                        : groupStatus.group.name,
-                                    alternateTitle: 'Timetable',
-                                    subtitle: groupStatus.group.name == null ||
-                                            timetable == null ||
-                                            !timetable.isValid ||
-                                            ttbStatus.curr == null
-                                        ? 'Timetable'
-                                        : 'Timetable: ${ttbStatus.curr.docId}',
-                                  ),
-                                  actions: <Widget>[
-                                    Padding(
-                                        padding: EdgeInsets.only(right: 10.0),
-                                        child: PopupMenuButton(
-                                            child: Icon(Icons.more_vert),
-                                            itemBuilder:
-                                                (BuildContext context) {
-                                              List<PopupMenuEntry>
-                                                  popupOptions = [];
-
-                                              // Add timetables to options
-                                              groupStatus
-                                                  .group.timetableMetadatas
-                                                  .forEach((timetableMetadata) {
-                                                popupOptions.add(
-                                                  PopupMenuItem(
-                                                    value:
-                                                        timetableMetadata.docId,
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: <Widget>[
-                                                        Text(timetableMetadata
-                                                            .docId),
-                                                        Text(
-                                                          DateFormat('dd MMM').format(
-                                                                  timetableMetadata
-                                                                      .startDate
-                                                                      .toDate()) +
-                                                              ' - ' +
-                                                              DateFormat(
-                                                                      'dd MMM')
-                                                                  .format(timetableMetadata
-                                                                      .endDate
-                                                                      .toDate()),
-                                                          style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontSize: 14.0,
-                                                          ),
-                                                        ),
-                                                      ],
+                                        // Add timetables to options
+                                        groupStatus.group.timetableMetadatas
+                                            .forEach((timetableMetadata) {
+                                          popupOptions.add(
+                                            PopupMenuItem(
+                                              value: timetableMetadata.docId,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(timetableMetadata.docId),
+                                                  Text(
+                                                    DateFormat('dd MMM').format(
+                                                            timetableMetadata
+                                                                .startDate
+                                                                .toDate()) +
+                                                        ' - ' +
+                                                        DateFormat('dd MMM')
+                                                            .format(
+                                                                timetableMetadata
+                                                                    .endDate
+                                                                    .toDate()),
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 14.0,
                                                     ),
                                                   ),
-                                                );
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        });
+
+                                        // Add 'add timetable' button to options
+                                        if (groupStatus.me.role ==
+                                                MemberRole.owner ||
+                                            groupStatus.me.role ==
+                                                MemberRole.admin) {
+                                          popupOptions.add(PopupMenuItem(
+                                            value: 0,
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Visibility(
+                                                  visible: groupStatus
+                                                      .group
+                                                      .timetableMetadatas
+                                                      .isNotEmpty,
+                                                  child:
+                                                      Divider(thickness: 1.0),
+                                                ),
+                                                Row(
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      Icons.add,
+                                                      color: Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.light
+                                                          ? Colors.black
+                                                          : Colors.white,
+                                                    ),
+                                                    SizedBox(width: 10.0),
+                                                    Text('Add timetable'),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ));
+                                        } else if (groupStatus.me.role ==
+                                            MemberRole.member) {
+                                          popupOptions.add(PopupMenuItem(
+                                            value: 0,
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Visibility(
+                                                  visible: groupStatus
+                                                      .group
+                                                      .timetableMetadatas
+                                                      .isNotEmpty,
+                                                  child:
+                                                      Divider(thickness: 1.0),
+                                                ),
+                                                Row(
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      Icons.today,
+                                                      color: Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.light
+                                                          ? Colors.black
+                                                          : Colors.white,
+                                                    ),
+                                                    SizedBox(width: 10.0),
+                                                    Text('Today\'s timetable'),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ));
+                                        }
+                                        return popupOptions;
+                                      },
+                                      onSelected: (value) async {
+                                        if (value == 0) {
+                                          if (groupStatus.me.role ==
+                                                  MemberRole.owner ||
+                                              groupStatus.me.role ==
+                                                  MemberRole.admin) {
+                                            ttbStatus.temp =
+                                                EditTimetable(groups: [
+                                              TimetableGroup(
+                                                  axisDay: List.generate(
+                                                      5,
+                                                      (index) => Weekday
+                                                          .values[index]),
+                                                  axisTime: [
+                                                    Time(
+                                                      startTime: DateTime(
+                                                              DateTime.now()
+                                                                  .year)
+                                                          .add(Duration(
+                                                              hours: DateTime
+                                                                          .now()
+                                                                      .hour +
+                                                                  0)),
+                                                      endTime: DateTime(
+                                                              DateTime.now()
+                                                                  .year)
+                                                          .add(Duration(
+                                                              hours: DateTime
+                                                                          .now()
+                                                                      .hour +
+                                                                  1)),
+                                                    ),
+                                                    Time(
+                                                      startTime: DateTime(
+                                                              DateTime.now()
+                                                                  .year)
+                                                          .add(Duration(
+                                                              hours: DateTime
+                                                                          .now()
+                                                                      .hour +
+                                                                  1)),
+                                                      endTime: DateTime(
+                                                              DateTime.now()
+                                                                  .year)
+                                                          .add(Duration(
+                                                              hours: DateTime
+                                                                          .now()
+                                                                      .hour +
+                                                                  2)),
+                                                    ),
+                                                  ],
+                                                  axisCustom: [
+                                                    'A',
+                                                    'B'
+                                                  ])
+                                            ]);
+                                            Navigator.of(context).pushNamed(
+                                              '/timetables/newTimetable',
+                                              arguments: RouteArgs(),
+                                            );
+                                          } else if (groupStatus.me.role ==
+                                              MemberRole.member) {
+                                            setState(() {
+                                              _viewTodayTtb = true;
+                                              ttbStatus.curr = null;
+                                            });
+                                          }
+                                        } else if (value is String) {
+                                          if (groupStatus.me.role ==
+                                                  MemberRole.owner ||
+                                              groupStatus.me.role ==
+                                                  MemberRole.admin) {
+                                            ttbStatus.edit =
+                                                EditTimetable.fromTimetable(
+                                              await dbService.getGroupTimetable(
+                                                groupStatus.group.docId,
+                                                value,
+                                              ),
+                                            );
+                                            Navigator.of(context).pushNamed(
+                                              '/timetables/editor',
+                                              arguments: RouteArgs(),
+                                            );
+                                          } else if (groupStatus.me.role ==
+                                              MemberRole.member) {
+                                            await dbService
+                                                .getGroupTimetable(
+                                                    groupStatus.group.docId,
+                                                    value)
+                                                .then((value) {
+                                              setState(() {
+                                                _viewTodayTtb = false;
+                                                ttbStatus.curr = null;
+                                                ttbStatus.curr = value;
                                               });
-
-                                              // Add 'add timetable' button to options
-                                              if (groupStatus.me.role ==
-                                                      MemberRole.owner ||
-                                                  groupStatus.me.role ==
-                                                      MemberRole.admin) {
-                                                popupOptions.add(PopupMenuItem(
-                                                  value: 0,
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: <Widget>[
-                                                      Visibility(
-                                                        visible: groupStatus
-                                                            .group
-                                                            .timetableMetadatas
-                                                            .isNotEmpty,
-                                                        child: Divider(
-                                                            thickness: 1.0),
-                                                      ),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Icon(
-                                                            Icons.add,
-                                                            color: Theme.of(context)
-                                                                        .brightness ==
-                                                                    Brightness
-                                                                        .light
-                                                                ? Colors.black
-                                                                : Colors.white,
-                                                          ),
-                                                          SizedBox(width: 10.0),
-                                                          Text('Add timetable'),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ));
-                                              } else if (groupStatus.me.role ==
-                                                  MemberRole.member) {
-                                                popupOptions.add(PopupMenuItem(
-                                                  value: 0,
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: <Widget>[
-                                                      Visibility(
-                                                        visible: groupStatus
-                                                            .group
-                                                            .timetableMetadatas
-                                                            .isNotEmpty,
-                                                        child: Divider(
-                                                            thickness: 1.0),
-                                                      ),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Icon(
-                                                            Icons.today,
-                                                            color: Theme.of(context)
-                                                                        .brightness ==
-                                                                    Brightness
-                                                                        .light
-                                                                ? Colors.black
-                                                                : Colors.white,
-                                                          ),
-                                                          SizedBox(width: 10.0),
-                                                          Text(
-                                                              'Today\'s timetable'),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ));
-                                              }
-                                              return popupOptions;
-                                            },
-                                            onSelected: (value) async {
-                                              if (value == 0) {
-                                                if (groupStatus.me.role ==
-                                                        MemberRole.owner ||
-                                                    groupStatus.me.role ==
-                                                        MemberRole.admin) {
-                                                  ttbStatus.temp =
-                                                      EditTimetable(groups: [
-                                                    TimetableGroup(
-                                                        axisDay: List.generate(
-                                                            5,
-                                                            (index) => Weekday
-                                                                .values[index]),
-                                                        axisTime: [
-                                                          Time(
-                                                            startTime: DateTime(
-                                                                    DateTime.now()
-                                                                        .year)
-                                                                .add(Duration(
-                                                                    hours: DateTime.now()
-                                                                            .hour +
-                                                                        0)),
-                                                            endTime: DateTime(
-                                                                    DateTime.now()
-                                                                        .year)
-                                                                .add(Duration(
-                                                                    hours: DateTime.now()
-                                                                            .hour +
-                                                                        1)),
-                                                          ),
-                                                          Time(
-                                                            startTime: DateTime(
-                                                                    DateTime.now()
-                                                                        .year)
-                                                                .add(Duration(
-                                                                    hours: DateTime.now()
-                                                                            .hour +
-                                                                        1)),
-                                                            endTime: DateTime(
-                                                                    DateTime.now()
-                                                                        .year)
-                                                                .add(Duration(
-                                                                    hours: DateTime.now()
-                                                                            .hour +
-                                                                        2)),
-                                                          ),
-                                                        ],
-                                                        axisCustom: [
-                                                          'A',
-                                                          'B'
-                                                        ])
-                                                  ]);
-                                                  Navigator.of(context)
-                                                      .pushNamed(
-                                                    '/timetables/newTimetable',
-                                                    arguments: RouteArgs(),
-                                                  );
-                                                } else if (groupStatus
-                                                        .me.role ==
-                                                    MemberRole.member) {
-                                                  setState(() {
-                                                    _viewTodayTtb = true;
-                                                    ttbStatus.curr = null;
-                                                  });
-                                                }
-                                              } else if (value is String) {
-                                                if (groupStatus.me.role ==
-                                                        MemberRole.owner ||
-                                                    groupStatus.me.role ==
-                                                        MemberRole.admin) {
-                                                  ttbStatus.edit = EditTimetable
-                                                      .fromTimetable(
-                                                    await dbService
-                                                        .getGroupTimetableWithGroups(
-                                                      groupStatus.group.docId,
-                                                      value,
-                                                    ),
-                                                  );
-                                                  Navigator.of(context)
-                                                      .pushNamed(
-                                                    '/timetables/editor',
-                                                    arguments: RouteArgs(),
-                                                  );
-                                                } else if (groupStatus
-                                                        .me.role ==
-                                                    MemberRole.member) {
-                                                  await dbService
-                                                      .getGroupTimetableWithGroups(
-                                                          groupStatus
-                                                              .group.docId,
-                                                          value)
-                                                      .then((value) {
-                                                    setState(() {
-                                                      _viewTodayTtb = false;
-                                                      ttbStatus.curr = null;
-                                                      ttbStatus.curr = value;
-                                                    });
-                                                  });
-                                                }
-                                              }
-                                            }))
-                                  ]),
-                              drawer: HomeDrawer(DrawerEnum.timetables),
-                              body: groupStatus.me == null
-                                  ? Container()
-                                  : isPlaceholder
-                                      ? EmptyPlaceholder(
-                                          iconData: Icons.table_chart,
-                                          text: 'No timetable for today')
-                                      : TimetableDisplay(editMode: _editMode));
-                        });
+                                            });
+                                          }
+                                        }
+                                      }))
+                            ]),
+                        drawer: HomeDrawer(DrawerEnum.timetables),
+                        body: groupStatus.me == null
+                            ? Container()
+                            : isPlaceholder
+                                ? EmptyPlaceholder(
+                                    iconData: Icons.table_chart,
+                                    text: 'No timetable for today')
+                                : TimetableDisplay(editMode: _editMode));
                   });
             });
   }

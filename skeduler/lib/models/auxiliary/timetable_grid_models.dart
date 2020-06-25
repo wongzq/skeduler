@@ -1,4 +1,5 @@
 // abstract class [TimetableDragData]
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
@@ -866,6 +867,29 @@ class TimetableGridData {
   set dragData(TimetableDragSubjectMember value) => this._dragData = value;
   set available(bool value) => this._available = value;
   set ignore(bool value) => this._ignore = value;
+
+  Map<String, dynamic> asFirestoreMap() {
+    return {
+      'available': this.available,
+      'ignore': this.ignore,
+      'coord': {
+        'day': this.coord.day.index,
+        'time': {
+          'startTime': Timestamp.fromDate(this.coord.time.startTime),
+          'endTime': Timestamp.fromDate(this.coord.time.endTime),
+        },
+        'custom': this.coord.custom,
+      },
+      'member': {
+        'docId': this.dragData.member.docId,
+        'display': this.dragData.member.display,
+      },
+      'subject': {
+        'docId': this.dragData.subject.docId,
+        'display': this.dragData.subject.display,
+      }
+    };
+  }
 
   @override
   String toString() {

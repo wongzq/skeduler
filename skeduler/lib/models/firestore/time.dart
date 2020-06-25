@@ -121,6 +121,91 @@ class Time {
   String toString() {
     return startTime.toString() + ' ' + endTime.toString() + '\n';
   }
+
+  static List<Time> generateTimes({
+    @required List<Month> months,
+    @required List<Weekday> weekdays,
+    @required Time time,
+    @required DateTime startDate,
+    @required DateTime endDate,
+  }) {
+    List<Time> times = [];
+
+    // iterate through each month
+    for (int month = 0; month < months.length; month++) {
+      // iterate through each day
+      for (int day = 0;
+          day < daysInMonth(DateTime.now().year, months[month].index + 1);
+          day++) {
+        DateTime newTime =
+            DateTime(DateTime.now().year, months[month].index + 1, day + 1);
+
+        // iterate through each weekday
+        for (int weekDay = 0; weekDay < weekdays.length; weekDay++) {
+          // check if weekday matches
+          if (newTime.weekday == weekdays[weekDay].index + 1) {
+            // create startDateTime
+            DateTime newStartDateTime = DateTime(
+              newTime.year,
+              newTime.month,
+              newTime.day,
+              time.startTime.hour,
+              time.startTime.minute,
+            );
+
+            // create endDateTime
+            DateTime newEndDateTime = DateTime(
+              newTime.year,
+              newTime.month,
+              newTime.day,
+              time.endTime.hour,
+              time.endTime.minute,
+            );
+
+            if ((newStartDateTime.isAtSameMomentAs(startDate) ||
+                    newStartDateTime.isAfter(startDate)) &&
+                (newEndDateTime
+                        .isAtSameMomentAs(endDate.add(Duration(days: 1))) ||
+                    newEndDateTime.isBefore(endDate.add(Duration(days: 1))))) {
+              times.add(Time(
+                startTime: newStartDateTime,
+                endTime: newEndDateTime,
+              ));
+            }
+          }
+        }
+      }
+    }
+
+    return times;
+  }
+
+// auxiliary function to check if all [Time] in [List<Time>] is consecutive with no conflicts of time
+  static bool isConsecutiveTimes(List<Time> times) {
+    bool isConsecutive = true;
+
+    // sort the area in terms of startTime
+    times.sort((a, b) {
+      return a.startTime.millisecondsSinceEpoch
+          .compareTo(b.startTime.millisecondsSinceEpoch);
+    });
+
+    // loop through the array to find any conflict
+    for (int i = 0; i < times.length; i++) {
+      if (i != 0) {
+        // if conflict is found, returns [hasNoConflict] as [false]
+        if (!(times[i - 1].startTime.isBefore(times[i].startTime) &&
+            times[i - 1].endTime.isBefore(times[i].endTime) &&
+            (times[i - 1].endTime.isBefore(times[i].startTime) ||
+                times[i - 1].endTime.isAtSameMomentAs(times[i].startTime)))) {
+          isConsecutive = false;
+          break;
+        }
+      }
+    }
+
+    return isConsecutive;
+  }
 }
 
 // --------------------------------------------------------------------------------
@@ -277,89 +362,4 @@ String getWeekdayStr(Weekday weekday) {
     default:
       return '';
   }
-}
-
-List<Time> generateTimes({
-  @required List<Month> months,
-  @required List<Weekday> weekdays,
-  @required Time time,
-  @required DateTime startDate,
-  @required DateTime endDate,
-}) {
-  List<Time> times = [];
-
-  // iterate through each month
-  for (int month = 0; month < months.length; month++) {
-    // iterate through each day
-    for (int day = 0;
-        day < daysInMonth(DateTime.now().year, months[month].index + 1);
-        day++) {
-      DateTime newTime =
-          DateTime(DateTime.now().year, months[month].index + 1, day + 1);
-
-      // iterate through each weekday
-      for (int weekDay = 0; weekDay < weekdays.length; weekDay++) {
-        // check if weekday matches
-        if (newTime.weekday == weekdays[weekDay].index + 1) {
-          // create startDateTime
-          DateTime newStartDateTime = DateTime(
-            newTime.year,
-            newTime.month,
-            newTime.day,
-            time.startTime.hour,
-            time.startTime.minute,
-          );
-
-          // create endDateTime
-          DateTime newEndDateTime = DateTime(
-            newTime.year,
-            newTime.month,
-            newTime.day,
-            time.endTime.hour,
-            time.endTime.minute,
-          );
-
-          if ((newStartDateTime.isAtSameMomentAs(startDate) ||
-                  newStartDateTime.isAfter(startDate)) &&
-              (newEndDateTime
-                      .isAtSameMomentAs(endDate.add(Duration(days: 1))) ||
-                  newEndDateTime.isBefore(endDate.add(Duration(days: 1))))) {
-            times.add(Time(
-              startTime: newStartDateTime,
-              endTime: newEndDateTime,
-            ));
-          }
-        }
-      }
-    }
-  }
-
-  return times;
-}
-
-// auxiliary function to check if all [Time] in [List<Time>] is consecutive with no conflicts of time
-bool isConsecutiveTimes(List<Time> times) {
-  bool isConsecutive = true;
-
-  // sort the area in terms of startTime
-  times.sort((a, b) {
-    return a.startTime.millisecondsSinceEpoch
-        .compareTo(b.startTime.millisecondsSinceEpoch);
-  });
-
-  // loop through the array to find any conflict
-  for (int i = 0; i < times.length; i++) {
-    if (i != 0) {
-      // if conflict is found, returns [hasNoConflict] as [false]
-      if (!(times[i - 1].startTime.isBefore(times[i].startTime) &&
-          times[i - 1].endTime.isBefore(times[i].endTime) &&
-          (times[i - 1].endTime.isBefore(times[i].startTime) ||
-              times[i - 1].endTime.isAtSameMomentAs(times[i].startTime)))) {
-        isConsecutive = false;
-        break;
-      }
-    }
-  }
-
-  return isConsecutive;
 }

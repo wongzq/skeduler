@@ -114,7 +114,7 @@ class _TimeEditorState extends State<TimeEditor> {
               ? () async {
                   List<Time> newTimes = [];
 
-                  newTimes = generateTimes(
+                  newTimes = Time.generateTimes(
                     months: widget.valGetMonths(),
                     weekdays: widget.valGetWeekdays(),
                     time: Time(
@@ -212,7 +212,7 @@ class _TimeEditorState extends State<TimeEditor> {
                               LoadingSnackBar(
                                   context, 'Updating available times . . .'));
 
-                          List<Time> removeTimes = generateTimes(
+                          List<Time> removeTimes = Time.generateTimes(
                             months: widget.valGetMonths(),
                             weekdays: widget.valGetWeekdays(),
                             time: Time(

@@ -109,7 +109,7 @@ class _NewTimetableState extends State<NewTimetable> {
                   },
                   onSelected: (CopyTimetableData value) async {
                     await dbService
-                        .getGroupTimetableWithGroups(
+                        .getGroupTimetable(
                       groupStatus.group.docId,
                       value.ttbId,
                     )

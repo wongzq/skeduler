@@ -138,16 +138,13 @@ class TimetableGroup {
               : member.timesAvailable;
 
           // timetable times
-          timetableTimes = generateTimes(
-            months: List.generate(
-              Month.values.length,
-              (index) => Month.values[index],
-            ),
-            weekdays: [gridData.coord.day],
-            time: gridData.coord.time,
-            startDate: startDate,
-            endDate: endDate,
-          );
+          timetableTimes = Time.generateTimes(
+              months: List.generate(
+                  Month.values.length, (index) => Month.values[index]),
+              weekdays: [gridData.coord.day],
+              time: gridData.coord.time,
+              startDate: startDate,
+              endDate: endDate);
 
           // loop through each timetableTime
           timetableTimesLoop:
@@ -217,12 +214,10 @@ class TimetableGroup {
     // convert axisTime
     if (this.axisTime != null) {
       List<Map<String, Timestamp>> axisTimesTimestamps = [];
-      this.axisTime.forEach((time) {
-        axisTimesTimestamps.add({
-          'startTime': Timestamp.fromDate(time.startTime),
-          'endTime': Timestamp.fromDate(time.endTime),
-        });
-      });
+      this.axisTime.forEach((time) => axisTimesTimestamps.add({
+            'startTime': Timestamp.fromDate(time.startTime),
+            'endTime': Timestamp.fromDate(time.endTime),
+          }));
       axisTimesTimestamps
           .sort((a, b) => a['startTime'].compareTo(b['startTime']));
       groupMap['axisTime'] = axisTimesTimestamps;
@@ -235,49 +230,8 @@ class TimetableGroup {
 
     // convert gridDataList
     if (this.gridDataList != null) {
-      List<Map<String, dynamic>> gridDataList = [];
-
-      for (TimetableGridData gridData in this.gridDataList.value) {
-        if (this.axisDay.contains(gridData.coord.day) &&
-            this.axisTime.contains(gridData.coord.time) &&
-            this.axisCustom.contains(gridData.coord.custom)) {
-          // convert coords
-          Map<String, dynamic> coord = {
-            'day': gridData.coord.day.index,
-            'time': {
-              'startTime': Timestamp.fromDate(gridData.coord.time.startTime),
-              'endTime': Timestamp.fromDate(gridData.coord.time.endTime),
-            },
-            'custom': gridData.coord.custom,
-          };
-
-          // convert subject
-          Map subject = {
-            'docId': gridData.dragData.subject.docId,
-            'display': gridData.dragData.subject.display,
-          };
-
-          // convert member
-          Map member = {
-            'docId': gridData.dragData.member.docId,
-            'display': gridData.dragData.member.display,
-          };
-
-          // convert available
-          bool available = gridData.available;
-          bool ignore = gridData.ignore;
-
-          // add to list
-          gridDataList.add({
-            'coord': coord,
-            'subject': subject,
-            'member': member,
-            'available': available,
-            'ignore': ignore,
-          });
-        }
-      }
-      groupMap['gridDataList'] = gridDataList;
+      groupMap['gridDataList'] =
+          this.gridDataList.value.map((e) => e.asFirestoreMap());
     }
 
     return groupMap;
@@ -322,17 +276,6 @@ class Timetable {
         this._gridAxisOfTime = gridAxisOfTime,
         this._gridAxisOfCustom = gridAxisOfCustom,
         this._groups = groups ?? [];
-
-  Timetable.fromTimetableAndGroups(
-      Timetable timetable, List<TimetableGroup> groups)
-      : this(
-            docId: timetable.docId,
-            startDate: Timestamp.fromDate(timetable.startDate),
-            endDate: Timestamp.fromDate(timetable.endDate),
-            gridAxisOfDay: timetable.gridAxisOfDay,
-            gridAxisOfTime: timetable.gridAxisOfTime,
-            gridAxisOfCustom: timetable.gridAxisOfCustom,
-            groups: groups);
 
   // getter methods
   String get docId => this._docId;
@@ -644,6 +587,8 @@ class EditTimetable extends ChangeNotifier {
         firestoreMap['gridAxisOfCustom'] = GridAxis.z.index;
       }
     }
+
+    firestoreMap['groups'] = this.groups.map((e) => e.asFirestoreMap());
 
     // return final map in firestore format
     return firestoreMap;

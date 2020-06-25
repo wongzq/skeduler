@@ -25,49 +25,44 @@ class ScheduleView extends StatelessWidget {
               return ListView.builder(
                   itemCount: timetables.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return StreamBuilder<List<TimetableGroup>>(
-                        stream: dbService.streamGroupTimetableGroups(
-                            groupStatus.group.docId, timetables[index].docId),
-                        builder: (context, snapshot) {
-                          // timetable groups
-                          List<TimetableGroup> timetableGroups =
-                              snapshot.data ?? [];
+                    // timetable groups
+                    List<TimetableGroup> timetableGroups =
+                        timetables[index].groups;
 
-                          List<Schedule> schedules = [];
-                          for (TimetableGroup group in timetableGroups) {
-                            for (TimetableGridData gridData
-                                in group.gridDataList.value) {
-                              if (gridData.dragData.member.docId ==
-                                  groupStatus.member.docId) {
-                                List<Time> scheduleTimes = generateTimes(
-                                    months: List.generate(Month.values.length,
-                                        (index) => Month.values[index]),
-                                    weekdays: [gridData.coord.day],
-                                    time: gridData.coord.time,
-                                    startDate: timetables[index].startDate,
-                                    endDate: timetables[index].endDate);
+                    List<Schedule> schedules = [];
+                    for (TimetableGroup group in timetableGroups) {
+                      for (TimetableGridData gridData
+                          in group.gridDataList.value) {
+                        if (gridData.dragData.member.docId ==
+                            groupStatus.member.docId) {
+                          List<Time> scheduleTimes = Time.generateTimes(
+                              months: List.generate(Month.values.length,
+                                  (index) => Month.values[index]),
+                              weekdays: [gridData.coord.day],
+                              time: gridData.coord.time,
+                              startDate: timetables[index].startDate,
+                              endDate: timetables[index].endDate);
 
-                                for (Time scheduleTime in scheduleTimes) {
-                                  schedules.add(Schedule(
-                                    available: gridData.available,
-                                    day: gridData.coord.day,
-                                    startTime: scheduleTime.startTime,
-                                    endTime: scheduleTime.endTime,
-                                    custom: gridData.coord.custom,
-                                    member: gridData.dragData.member.display,
-                                    subject: gridData.dragData.subject.display,
-                                  ));
-                                }
-                              }
-                            }
+                          for (Time scheduleTime in scheduleTimes) {
+                            schedules.add(Schedule(
+                              available: gridData.available,
+                              day: gridData.coord.day,
+                              startTime: scheduleTime.startTime,
+                              endTime: scheduleTime.endTime,
+                              custom: gridData.coord.custom,
+                              member: gridData.dragData.member.display,
+                              subject: gridData.dragData.subject.display,
+                            ));
                           }
+                        }
+                      }
+                    }
 
-                          schedules.sort((a, b) => a.date.compareTo(b.date));
+                    schedules.sort((a, b) => a.date.compareTo(b.date));
 
-                          return SchedulesExpansionTile(
-                              timetable: timetables[index].metadata,
-                              schedules: schedules);
-                        });
+                    return SchedulesExpansionTile(
+                        timetable: timetables[index].metadata,
+                        schedules: schedules);
                   });
             });
   }
