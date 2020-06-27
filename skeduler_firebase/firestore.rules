@@ -58,38 +58,87 @@ service cloud.firestore {
         request.resource.data.role <= 4;
         
         allow update: if
+        // if I am Owner or Admin, updating self
+        (
         authenticated() &&
-        (
         isOwnerOrAdmin() &&
+        request.auth.token.email == resource.id &&
         request.resource.data.role is int &&
-        request.resource.data.role >= 0 &&
+        request.resource.data.role >= 2 &&
         request.resource.data.role <= 4 &&
         request.resource.data.name is string &&
         request.resource.data.name.size() <= 30 &&
         request.resource.data.nickname is string &&
-        request.resource.data.nickname.size() <= 30
+        request.resource.data.nickname.size() <= 30 &&
+        request.resource.data.alwaysAvailable is bool &&
+        request.resource.data.timesAvailable is list &&
+        request.resource.data.timesUnavailable is list
         ) ||
+        // if I am Owner or Admin, updating members
         (
-        isMember() &&
+        authenticated() &&
+        isOwnerOrAdmin() &&
+        resource.data.role == 2 &&
+        request.resource.data.role is int &&
+        request.resource.data.role >= 2 &&
+        request.resource.data.role <= 4 &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() <= 30 &&
+        request.resource.data.nickname is string &&
+        request.resource.data.nickname.size() <= 30 &&
+        request.resource.data.alwaysAvailable is bool &&
+        request.resource.data.alwaysAvailable == resource.data.alwaysAvailable &&
+        request.resource.data.timesAvailable is list &&
+        request.resource.data.timesAvailable == resource.data.timesAvailable &&
+        request.resource.data.timesUnavailable is list &&
+        request.resource.data.timesUnavailable == resource.data.timesUnavailable
+        ) ||
+        // if I am Owner or Admin, updating dummies
+        (
+        authenticated() &&
+        isOwnerOrAdmin() &&
+        resource.data.role == 1 &&
+        request.resource.data.role is int &&
         request.resource.data.role == resource.data.role &&
-        request.resource.data.name == resource.data.name &&
-        request.resource.data.nickname == resource.data.nickname &&
-        request.resource.data.role is int &&
-        request.resource.data.role >= 0 &&
-        request.resource.data.role <= 4 &&
         request.resource.data.name is string &&
         request.resource.data.name.size() <= 30 &&
         request.resource.data.nickname is string &&
-        request.resource.data.nickname.size() <= 30
+        request.resource.data.nickname.size() <= 30 &&
+        request.resource.data.alwaysAvailable is bool &&
+        request.resource.data.timesAvailable is list &&
+        request.resource.data.timesUnavailable is list
         ) ||
+        // if I am Member
         (
+        authenticated() &&
+        isMember() &&
+        request.auth.token.email == resource.id &&
+        request.resource.data.role is int &&
+        request.resource.data.role == 2 &&
+        request.resource.data.role == resource.data.role &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() <= 30 &&
+        request.resource.data.name == resource.data.name &&
+        request.resource.data.nickname is string &&
+        request.resource.data.nickname.size() <= 30 &&
+        request.resource.data.nickname == resource.data.nickname &&
+        request.resource.data.alwaysAvailable is bool &&
+        request.resource.data.timesAvailable is list &&
+        request.resource.data.timesUnavailable is list
+        ) ||
+        // if I am Pending
+        (
+        authenticated() &&
         isPending() &&
         request.resource.data.role is int &&
         request.resource.data.role == 2 &&
         request.resource.data.name is string &&
         request.resource.data.name.size() <= 30 &&
         request.resource.data.nickname is string &&
-        request.resource.data.nickname.size() <= 30
+        request.resource.data.nickname.size() <= 30 &&
+        request.resource.data.alwaysAvailable is bool &&
+        request.resource.data.timesAvailable is list &&
+        request.resource.data.timesUnavailable is list
         );
         
         allow delete: if
@@ -135,7 +184,8 @@ service cloud.firestore {
         request.resource.data.gridAxisOfTime <= 2 &&
         request.resource.data.gridAxisOfCustom is int &&
         request.resource.data.gridAxisOfCustom >= 0 &&
-        request.resource.data.gridAxisOfCustom <= 2;
+        request.resource.data.gridAxisOfCustom <= 2 &&
+        request.resource.data.groups is list;
         
         allow delete: if
         authenticated() &&
@@ -154,14 +204,14 @@ service cloud.firestore {
           request.resource.data.axisTime is list &&
           request.resource.data.axisCustom is list &&
           request.resource.data.gridDataList is list;
-
+          
           allow delete: if
           authenticated() &&
           isOwnerOrAdmin();
         }
       }
       
-      // group functions
+    // group functions
       function isOwnerOrAdmin() {
         return isOwner() || isAdmin();
       }
@@ -202,7 +252,7 @@ service cloud.firestore {
       }
     }
     
-    // functions
+  // functions
     function authenticated() {
       return request.auth != null;
     }

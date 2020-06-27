@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/group.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/auxiliary/time.dart';
 import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 import 'package:skeduler/shared/widgets/edit_time_dialog.dart';

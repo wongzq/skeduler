@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/auxiliary/time.dart';
 import 'package:skeduler/shared/functions.dart';
 
 enum DateSelectorType { start, end }

@@ -20,8 +20,6 @@ class Group {
   List<TimetableMetadata> _timetableMetadatas;
   List<String> _memberMetadatas;
   List<String> _subjectMetadatas;
-  // unsure
-  // List<Conflict> _conflicts;
 
   // constructors
   Group({
@@ -33,8 +31,6 @@ class Group {
     List<TimetableMetadata> timetableMetadatas = const [],
     List<String> memberMetadatas = const [],
     List<String> subjectMetadatas = const [],
-    // unsure
-    // List<Conflict> conflicts = const [],
   }) {
     this._docId = docId;
 
@@ -46,8 +42,6 @@ class Group {
     this._timetableMetadatas = List.from(timetableMetadatas);
     this._memberMetadatas = List.from(memberMetadatas);
     this._subjectMetadatas = List.from(subjectMetadatas);
-    // unsure
-    // this._conflicts = List.from(conflicts);
   }
 
   // getter methods
@@ -62,12 +56,6 @@ class Group {
   List<TimetableMetadata> get timetableMetadatas => this._timetableMetadatas;
   List<String> get memberMetadatas => this._memberMetadatas;
   List<String> get subjectMetadatas => this._subjectMetadatas;
-  // unsure
-  // List<Conflict> get conflicts => this._conflicts;
-
-  // unsure
-  // int get pendingConflicts =>
-  //     this._conflicts.where((element) => !element.gridData.ignore).length;
 }
 
 // --------------------------------------------------------------------------------

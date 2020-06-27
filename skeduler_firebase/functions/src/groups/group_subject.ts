@@ -87,7 +87,6 @@ export const updateGroupSubject = functions.firestore
                 gridDataList.forEach((gridData) => {
                   if (gridData.subject.docId === change.before.id) {
                     const tmpGridData: TimetableGridData = new TimetableGridData(
-                      gridData.ignore,
                       gridData.available,
                       gridData.coord.day,
                       gridData.coord.time.startTime,
@@ -100,7 +99,6 @@ export const updateGroupSubject = functions.firestore
                     );
 
                     const newGridData: TimetableGridData = new TimetableGridData(
-                      gridData.ignore,
                       gridData.available,
                       gridData.coord.day,
                       gridData.coord.time.startTime,

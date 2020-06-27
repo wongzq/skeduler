@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/group.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/auxiliary/time.dart';
 import 'package:skeduler/screens/home/schedules_components/availability/date_selector.dart';
 import 'package:skeduler/screens/home/schedules_components/availability/time_selector.dart';
 import 'package:skeduler/screens/home/schedules_components/availability/editors_status.dart';

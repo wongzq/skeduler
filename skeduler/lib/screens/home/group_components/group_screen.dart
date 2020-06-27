@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/conflict.dart';
 import 'package:skeduler/models/auxiliary/custom_enums.dart';
-import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/navigation/home_drawer.dart';
@@ -22,10 +21,8 @@ class GroupScreen extends StatefulWidget {
 }
 
 class _GroupScreenState extends State<GroupScreen> {
-  OriginTheme _originTheme;
   GroupStatus _groupStatus;
 
-  bool _showIgnored = false;
   ConflictSort _sortBy = ConflictSort.date;
 
   List<Widget> _generateActions() {
@@ -36,22 +33,22 @@ class _GroupScreenState extends State<GroupScreen> {
           PopupMenuItem(value: ConflictSort.date, child: Text('Sort by date')),
           PopupMenuItem(
               value: ConflictSort.member, child: Text('Sort by member')),
-          PopupMenuItem(
-              child: StatefulBuilder(
-                  builder: (context, popupSetState) => GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => popupSetState(
-                          () => setState(() => _showIgnored = !_showIgnored)),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Show ignored'),
-                            Checkbox(
-                                activeColor: _originTheme.primaryColor,
-                                value: _showIgnored,
-                                onChanged: (_) => popupSetState(() => setState(
-                                    () => _showIgnored = !_showIgnored)))
-                          ]))))
+          // PopupMenuItem(
+          //     child: StatefulBuilder(
+          //         builder: (context, popupSetState) => GestureDetector(
+          //             behavior: HitTestBehavior.opaque,
+          //             onTap: () => popupSetState(
+          //                 () => setState(() => _showIgnored = !_showIgnored)),
+          //             child: Row(
+          //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //                 children: [
+          //                   Text('Show ignored'),
+          //                   Checkbox(
+          //                       activeColor: _originTheme.primaryColor,
+          //                       value: _showIgnored,
+          //                       onChanged: (_) => popupSetState(() => setState(
+          //                           () => _showIgnored = !_showIgnored)))
+          //                 ]))))
         ],
         onSelected: (value) =>
             setState(() => _sortBy = value ?? ConflictSort.date),
@@ -60,42 +57,18 @@ class _GroupScreenState extends State<GroupScreen> {
   }
 
   List<Conflict> _sortConflicts(List<Conflict> conflicts) {
-    conflicts = _showIgnored
-        ? conflicts
-        : conflicts.where((element) => !element.gridData.ignore).toList();
-
     if (_sortBy == ConflictSort.date) {
-      conflicts.sort((a, b) {
-        int result = a.gridData.ignore == true && b.gridData.ignore == false
-            ? 1
-            : a.gridData.ignore == false && b.gridData.ignore == true
-                ? -1
-                : a.gridData.ignore == b.gridData.ignore ? 0 : null;
-
-        return result != 0
-            ? result
-            : a.conflictDates.length == 0 && b.conflictDates.length == 0
-                ? 0
-                : a.conflictDates.length == 0 && b.conflictDates.length > 0
-                    ? -1
-                    : a.conflictDates.length > 0 && b.conflictDates.length == 0
-                        ? 1
-                        : a.conflictDates.first
-                            .compareTo(b.conflictDates.first);
-      });
+      conflicts.sort((a, b) =>
+          a.conflictDates.length == 0 && b.conflictDates.length == 0
+              ? 0
+              : a.conflictDates.length == 0 && b.conflictDates.length > 0
+                  ? -1
+                  : a.conflictDates.length > 0 && b.conflictDates.length == 0
+                      ? 1
+                      : a.conflictDates.first.compareTo(b.conflictDates.first));
     } else if (_sortBy == ConflictSort.member) {
-      conflicts.sort((a, b) {
-        int result = a.gridData.ignore == true && b.gridData.ignore == false
-            ? 1
-            : a.gridData.ignore == false && b.gridData.ignore == true
-                ? -1
-                : a.gridData.ignore == b.gridData.ignore ? 0 : null;
-
-        return result != 0
-            ? result
-            : a.gridData.dragData.member.docId
-                .compareTo(b.gridData.dragData.member.docId);
-      });
+      conflicts.sort((a, b) => a.gridData.dragData.member.docId
+          .compareTo(b.gridData.dragData.member.docId));
     }
 
     return conflicts;
@@ -103,7 +76,6 @@ class _GroupScreenState extends State<GroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _originTheme = Provider.of<OriginTheme>(context);
     _groupStatus = Provider.of<GroupStatus>(context);
 
     List<Conflict> conflicts = _sortConflicts(Conflict.generateConflicts(

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:quiver/core.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/auxiliary/time.dart';
 import 'package:skeduler/models/firestore/timetable.dart';
 
 // --------------------------------------------------------------------------------
@@ -835,43 +835,36 @@ class TimetableGridData {
   TimetableCoord _coord;
   TimetableDragSubjectMember _dragData;
   bool _available;
-  bool _ignore;
 
   // constructors
   TimetableGridData({
     TimetableCoord coord,
     TimetableDragSubjectMember dragData,
     bool available,
-    bool ignore,
   })  : this._coord = coord ?? TimetableCoord(),
         this._dragData = dragData ?? TimetableDragSubjectMember(),
-        this._available = available ?? false,
-        this._ignore = ignore ?? false;
+        this._available = available ?? false;
 
   TimetableGridData.from(TimetableGridData gridData)
       : this._coord = TimetableCoord.from(gridData.coord),
         this._dragData = TimetableDragSubjectMember(
             subject: gridData._dragData.subject,
             member: gridData._dragData.member),
-        this._available = gridData.available,
-        this._ignore = gridData.ignore;
+        this._available = gridData.available;
 
   // getter methods
   TimetableCoord get coord => this._coord;
   TimetableDragSubjectMember get dragData => this._dragData;
   bool get available => this._available;
-  bool get ignore => this._ignore;
 
   // setter methods
   set coord(TimetableCoord value) => this._coord = value;
   set dragData(TimetableDragSubjectMember value) => this._dragData = value;
   set available(bool value) => this._available = value;
-  set ignore(bool value) => this._ignore = value;
 
   Map<String, dynamic> asFirestoreMap() {
     return {
       'available': this.available,
-      'ignore': this.ignore,
       'coord': {
         'day': this.coord.day.index,
         'time': {

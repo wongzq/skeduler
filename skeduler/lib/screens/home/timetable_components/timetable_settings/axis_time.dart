@@ -6,7 +6,7 @@ import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/firestore/group.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/auxiliary/time.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
 import 'package:skeduler/shared/widgets/edit_time_dialog.dart';
 

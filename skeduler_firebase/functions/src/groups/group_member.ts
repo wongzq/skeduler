@@ -304,9 +304,6 @@ export async function validateGridDataLists({
               newGridData.available = false;
 
               if (gridData.notEqual(newGridData)) {
-                // new conflict ignore is false
-                newGridData.ignore = false;
-
                 // remove old gridData in gridDataList
                 newGroup.gridDataList = newGroup.gridDataList.filter((value) =>
                   value.notEqual(gridData)
@@ -376,8 +373,6 @@ export async function validateGridDataLists({
               newGridData.available = memberIsAvailable;
 
               if (gridData.notEqual(newGridData)) {
-                newGridData.ignore = false;
-
                 // remove old gridData in gridDataList
                 newGroup.gridDataList = newGroup.gridDataList.filter((value) =>
                   value.notEqual(gridData)

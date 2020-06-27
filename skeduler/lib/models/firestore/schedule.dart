@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/auxiliary/time.dart';
 
 class Schedule {
   bool _available;

@@ -9,7 +9,7 @@ import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
 import 'package:skeduler/models/firestore/subject.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/auxiliary/time.dart';
 import 'package:skeduler/models/firestore/timetable.dart';
 import 'package:skeduler/models/firestore/user.dart';
 import 'package:skeduler/shared/functions.dart';
@@ -246,6 +246,8 @@ class DatabaseService {
                       'name': dummy.name,
                       'nickname': dummy.display,
                       'alwaysAvailable': true,
+                      'timesAvailable': [],
+                      'timesUnavailable': [],
                     })
                     .then((_) => OperationStatus(OperationResult.success,
                         'Successfully added ${dummy.display}'))
@@ -346,11 +348,17 @@ class DatabaseService {
       return null;
     }
 
-    return groupsCollection
-        .document(groupDocId)
-        .collection('members')
-        .document(memberDocId)
-        .updateData({'role': role.index});
+    return groupDocId == null ||
+            groupDocId.trim() == '' ||
+            memberDocId == null ||
+            memberDocId.trim() == '' ||
+            role == null
+        ? null
+        : groupsCollection
+            .document(groupDocId)
+            .collection('members')
+            .document(memberDocId)
+            .updateData({'role': role.index});
   }
 
   // [Member] accepts [Group] invitation
@@ -372,6 +380,9 @@ class DatabaseService {
                 'role': MemberRole.member.index,
                 'name': userData.data['name'] ?? '',
                 'nickname': userData.data['name'] ?? '',
+                'alwaysAvailable': false,
+                'timesAvailable': [],
+                'timesUnavailable': [],
               });
             }
           });
@@ -739,7 +750,7 @@ class DatabaseService {
             .document(groupDocId)
             .collection('members')
             .document(memberDocId)
-            .updateData({'alwaysAvailable': alwaysAvailable});
+            .updateData({'alwaysAvailable': alwaysAvailable ?? false});
   }
 
   // add new time in [Group][Member]'s available  or unavailable times
@@ -777,11 +788,9 @@ class DatabaseService {
                     .document(groupDocId)
                     .collection('members')
                     .document(memberDocId)
-                    .updateData(
-                    {
-                      targetList: FieldValue.arrayUnion([timestamp]),
-                    },
-                  )
+                    .updateData({
+                    targetList: FieldValue.arrayUnion([timestamp])
+                  })
                 : null;
           });
   }
@@ -1135,7 +1144,6 @@ class DatabaseService {
         ),
       ),
       available: gridData['available'],
-      ignore: gridData['ignore'],
     );
   }
 

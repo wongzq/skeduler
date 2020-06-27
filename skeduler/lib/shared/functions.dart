@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:quiver/time.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/auxiliary/time.dart';
 import 'package:theme_provider/theme_provider.dart';
 
 void unfocus() {

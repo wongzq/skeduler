@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/firestore/group.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/auxiliary/time.dart';
 import 'package:skeduler/screens/home/schedules_components/availability/day_editor.dart';
 import 'package:skeduler/screens/home/schedules_components/availability/editors_status.dart';
 import 'package:skeduler/screens/home/schedules_components/availability/month_editor.dart';

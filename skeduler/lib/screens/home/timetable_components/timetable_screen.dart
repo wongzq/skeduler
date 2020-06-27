@@ -6,7 +6,7 @@ import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/navigation/route_arguments.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/auxiliary/time.dart';
 import 'package:skeduler/models/firestore/timetable.dart';
 import 'package:skeduler/navigation/home_drawer.dart';
 import 'package:skeduler/screens/home/timetable_components/timetable_display.dart';

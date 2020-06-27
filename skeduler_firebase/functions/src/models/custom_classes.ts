@@ -319,7 +319,6 @@ export class TimetableGroup {
 }
 
 export class TimetableGridData {
-  ignore: boolean;
   available: boolean;
   coord: {
     day: number;
@@ -339,7 +338,6 @@ export class TimetableGridData {
   };
 
   constructor(
-    ignore: boolean,
     available: boolean,
     day: number,
     timeStartTime: Date,
@@ -350,7 +348,6 @@ export class TimetableGridData {
     subjectDocId: string,
     subjectDisplay: string
   ) {
-    this.ignore = ignore;
     this.available = available;
     this.coord = {
       day: day,
@@ -363,7 +360,6 @@ export class TimetableGridData {
 
   static from(gridData: TimetableGridData): TimetableGridData {
     return new TimetableGridData(
-      gridData.ignore,
       gridData.available,
       gridData.coord.day,
       gridData.coord.time.startTime,
@@ -378,7 +374,6 @@ export class TimetableGridData {
 
   static fromFirestoreField(gridData: any): TimetableGridData {
     return new TimetableGridData(
-      gridData.ignore,
       gridData.available,
       gridData.coord.day,
       gridData.coord.time.startTime.toDate(),
@@ -393,7 +388,6 @@ export class TimetableGridData {
 
   isEqual(gridData: TimetableGridData): boolean {
     return (
-      this.ignore === gridData.ignore &&
       this.available === gridData.available &&
       this.coord.day === gridData.coord.day &&
       this.coord.time.startTime.valueOf() ===
@@ -414,7 +408,6 @@ export class TimetableGridData {
 
   asFirestoreMap(): any {
     return {
-      ignore: this.ignore,
       available: this.available,
       coord: {
         day: this.coord.day,

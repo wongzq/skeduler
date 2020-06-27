@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/auxiliary/time.dart';
 import 'package:skeduler/screens/home/schedules_components/availability/editors_status.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 

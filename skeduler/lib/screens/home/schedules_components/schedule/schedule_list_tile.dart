@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/schedule.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/auxiliary/time.dart';
 import 'package:skeduler/shared/ui_settings.dart';
 
 class ScheduleListTile extends StatelessWidget {

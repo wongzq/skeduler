@@ -1,7 +1,7 @@
 import 'package:skeduler/models/auxiliary/timetable_grid_models.dart';
 import 'package:skeduler/models/firestore/member.dart';
 import 'package:flutter/foundation.dart';
-import 'package:skeduler/models/firestore/time.dart';
+import 'package:skeduler/models/auxiliary/time.dart';
 import 'package:skeduler/models/firestore/timetable.dart';
 
 class Conflict {

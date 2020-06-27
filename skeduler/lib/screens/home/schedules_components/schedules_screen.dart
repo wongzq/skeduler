@@ -43,89 +43,68 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     return groupStatus.group == null
-        ? Stack(
-            children: <Widget>[
-              Scaffold(
+        ? Stack(children: <Widget>[
+            Scaffold(
                 appBar: AppBar(
-                  title: AppBarTitle(
-                    title: 'Group',
-                    subtitle: 'My schedule',
-                  ),
-                ),
-                drawer: HomeDrawer(DrawerEnum.schedules),
-              ),
-              Loading(),
-            ],
-          )
+                    title:
+                        AppBarTitle(title: 'Group', subtitle: 'My schedule')),
+                drawer: HomeDrawer(DrawerEnum.schedules)),
+            Loading()
+          ])
         : Scaffold(
             appBar: AppBar(
-              elevation: 0.0,
-              title: AppBarTitle(
-                title: groupStatus.group.name,
-                alternateTitle: 'Group',
-                subtitle: groupStatus.member.docId == groupStatus.me.docId
-                    ? 'My schedule'
-                    : groupStatus.member.name + '\'s schedule',
-              ),
-              bottom: TabBar(
-                onTap: (tab) {
-                  setState(() {});
-                },
-                controller: _tabController,
-                indicatorColor: Theme.of(context).scaffoldBackgroundColor,
-                tabs: <Widget>[
-                  Tab(
-                    text: null,
-                    child: Text(
-                      'Schedule',
-                      style: TextStyle(
-                        color: _tabController.index == 0
-                            ? Theme.of(context).primaryTextTheme.bodyText1.color
-                            : Theme.of(context)
-                                .primaryTextTheme
-                                .bodyText1
-                                .color
-                                .withOpacity(0.3),
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                  Tab(
-                    text: null,
-                    child: Text(
-                      'Availability',
-                      style: TextStyle(
-                        color: _tabController.index == 1
-                            ? Theme.of(context).primaryTextTheme.bodyText1.color
-                            : Theme.of(context)
-                                .primaryTextTheme
-                                .bodyText1
-                                .color
-                                .withOpacity(0.3),
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            drawer: HomeDrawer(
-              groupStatus.me.docId == groupStatus.member.docId
-                  ? DrawerEnum.schedules
-                  : DrawerEnum.members,
-            ),
-            body: TabBarView(
-              controller: _tabController,
-              children: <Widget>[
-                ScheduleView(),
-                Stack(children: <Widget>[
-                  AvailabilityView(),
-                  AvailabilityFAB(),
-                ])
-              ],
-            ),
-          );
+                elevation: 0.0,
+                title: AppBarTitle(
+                    title: groupStatus.group.name,
+                    alternateTitle: 'Group',
+                    subtitle: groupStatus.member.docId == groupStatus.me.docId
+                        ? 'My schedule'
+                        : groupStatus.member.name + '\'s schedule'),
+                bottom: TabBar(
+                    onTap: (tab) => setState(() {}),
+                    controller: _tabController,
+                    indicatorColor: Theme.of(context).scaffoldBackgroundColor,
+                    tabs: <Widget>[
+                      Tab(
+                          text: null,
+                          child: Text('Schedule',
+                              style: TextStyle(
+                                  color: _tabController.index == 0
+                                      ? Theme.of(context)
+                                          .primaryTextTheme
+                                          .bodyText1
+                                          .color
+                                      : Theme.of(context)
+                                          .primaryTextTheme
+                                          .bodyText1
+                                          .color
+                                          .withOpacity(0.3),
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w400))),
+                      Tab(
+                          text: null,
+                          child: Text('Availability',
+                              style: TextStyle(
+                                color: _tabController.index == 1
+                                    ? Theme.of(context)
+                                        .primaryTextTheme
+                                        .bodyText1
+                                        .color
+                                    : Theme.of(context)
+                                        .primaryTextTheme
+                                        .bodyText1
+                                        .color
+                                        .withOpacity(0.3),
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w400,
+                              )))
+                    ])),
+            drawer: HomeDrawer(groupStatus.me.docId == groupStatus.member.docId
+                ? DrawerEnum.schedules
+                : DrawerEnum.members),
+            body: TabBarView(controller: _tabController, children: <Widget>[
+              ScheduleView(),
+              Stack(children: <Widget>[AvailabilityView(), AvailabilityFAB()])
+            ]));
   }
 }

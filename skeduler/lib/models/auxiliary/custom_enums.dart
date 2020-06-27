@@ -35,8 +35,8 @@ enum AvailabilityOption {
 }
 
 enum ConflictOption {
-  keep,
-  unkeep,
+  // keep,
+  // unkeep,
   remove,
   editTimetable,
 }
