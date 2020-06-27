@@ -144,11 +144,11 @@ export const updateGroupMember = functions.firestore
           })
         : null;
 
-      const finalPromise: Promise<any> = (
-        changeNicknamePromise ?? Promise.resolve()
-      ).then(() => changeTimesPromise ?? Promise.resolve());
-
-      promises.push(finalPromise);
+      promises.push(
+        (changeNicknamePromise ?? Promise.resolve()).then(() => {
+          return changeTimesPromise ?? Promise.resolve();
+        })
+      );
 
       return Promise.all(promises);
     }
@@ -168,66 +168,68 @@ export async function validateNickname({
   if (groupDocId === undefined || groupDocId === null) {
     return null;
   } else {
-    return admin
+    const promises: Promise<any>[] = [];
+
+    const timetables: Timetable[] = await admin
       .firestore()
       .collection("groups")
       .doc(groupDocId)
       .collection("timetables")
       .get()
-      .then((timetablesQuery) => {
-        const promises: Promise<any>[] = [];
+      .then((timetablesQuery) =>
+        timetablesQuery.docs.map((timetableQueryDoc) =>
+          Timetable.fromFirestoreDocument(timetableQueryDoc)
+        )
+      );
 
-        const timetables: Timetable[] = timetablesQuery.docs.map(
-          (timetableQueryDoc) =>
-            Timetable.fromFirestoreDocument(timetableQueryDoc)
-        );
+    // iterate through timetables
+    for (const timetable of timetables) {
+      const newGroups: TimetableGroup[] = timetable.groups.map((value) =>
+        TimetableGroup.from(value)
+      );
 
-        // iterate through timetables
-        for (const timetable of timetables) {
-          const newGroups: TimetableGroup[] = timetable.groups.map((value) =>
-            TimetableGroup.from(value)
-          );
+      // iterate through groups
+      for (const group of timetable.groups) {
+        const newGroup: TimetableGroup = TimetableGroup.from(group);
 
-          // iterate through groups
-          for (const group of timetable.groups) {
-            const newGroup: TimetableGroup = TimetableGroup.from(group);
+        // iterate through gridDataList
+        for (const gridData of group.gridDataList) {
+          if (gridData.member.docId === memberDocId) {
+            // new grid data
+            const newGridData: TimetableGridData = TimetableGridData.from(
+              gridData
+            );
+            newGridData.member.display = nickname;
 
-            // iterate through gridDataList
-            for (const gridData of group.gridDataList) {
-              if (gridData.member.docId === memberDocId) {
-                // new grid data
-                const newGridData: TimetableGridData = TimetableGridData.from(
-                  gridData
-                );
-                newGridData.member.display = nickname;
-
-                // remove old gridData in gridDataList
-                newGroup.gridDataList = newGroup.gridDataList.filter((value) =>
-                  value.notEqual(gridData)
-                );
-                // add new gridData to gridDataList
-                newGroup.gridDataList.push(newGridData);
-              }
-            }
-
-            // update group
-            const groupIndex: number = timetable.groups.indexOf(group);
-            newGroups.splice(groupIndex, 1, newGroup);
+            // remove old gridData in gridDataList
+            newGroup.gridDataList = newGroup.gridDataList.filter((value) =>
+              value.notEqual(gridData)
+            );
+            // add new gridData to gridDataList
+            newGroup.gridDataList.push(newGridData);
           }
-
-          // update in firestore
-          promises.push(
-            admin
-              .firestore()
-              .collection("groups")
-              .doc(groupDocId)
-              .collection("timetables")
-              .doc(timetable.docId)
-              .update({ groups: newGroups })
-          );
         }
-        return Promise.all(promises);
-      });
+
+        // update group
+        const groupIndex: number = timetable.groups.indexOf(group);
+        newGroups.splice(groupIndex, 1, newGroup);
+      }
+
+      // update in firestore
+      promises.push(
+        admin
+          .firestore()
+          .collection("groups")
+          .doc(groupDocId)
+          .collection("timetables")
+          .doc(timetable.docId)
+          .update({
+            groups: newGroups.map((group) => group.asFirestoreMap()),
+          })
+      );
+    }
+
+    return Promise.all(promises);
   }
 }
 
