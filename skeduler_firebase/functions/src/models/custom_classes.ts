@@ -190,9 +190,6 @@ export class Member {
     this.timesAvailable = [];
     this.timesUnavailable = [];
 
-    console.log(timesAvailable);
-    console.log(timesUnavailable);
-
     if (
       timesAvailable !== undefined &&
       timesAvailable !== null &&

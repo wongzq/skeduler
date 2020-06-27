@@ -32,23 +32,7 @@ class _GroupScreenState extends State<GroupScreen> {
         itemBuilder: (context) => [
           PopupMenuItem(value: ConflictSort.date, child: Text('Sort by date')),
           PopupMenuItem(
-              value: ConflictSort.member, child: Text('Sort by member')),
-          // PopupMenuItem(
-          //     child: StatefulBuilder(
-          //         builder: (context, popupSetState) => GestureDetector(
-          //             behavior: HitTestBehavior.opaque,
-          //             onTap: () => popupSetState(
-          //                 () => setState(() => _showIgnored = !_showIgnored)),
-          //             child: Row(
-          //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                 children: [
-          //                   Text('Show ignored'),
-          //                   Checkbox(
-          //                       activeColor: _originTheme.primaryColor,
-          //                       value: _showIgnored,
-          //                       onChanged: (_) => popupSetState(() => setState(
-          //                           () => _showIgnored = !_showIgnored)))
-          //                 ]))))
+              value: ConflictSort.member, child: Text('Sort by member'))
         ],
         onSelected: (value) =>
             setState(() => _sortBy = value ?? ConflictSort.date),

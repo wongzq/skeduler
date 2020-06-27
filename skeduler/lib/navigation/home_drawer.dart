@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeduler/main.dart';
+import 'package:skeduler/models/auxiliary/conflict.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/navigation/route_arguments.dart';
@@ -60,6 +61,10 @@ class HomeDrawer extends StatelessWidget {
     GroupStatus groupStatus = Provider.of<GroupStatus>(context);
 
     User user = Provider.of<User>(context);
+
+    List<Conflict> conflicts = Conflict.generateConflicts(
+        timetables: groupStatus.timetables, members: groupStatus.members);
+
     return Container(
       width: MediaQuery.of(context).size.width * 0.75,
       child: Drawer(
@@ -105,11 +110,34 @@ class HomeDrawer extends StatelessWidget {
                 child: ListTile(
                   enabled: groupStatus.group != null ? true : false,
                   dense: true,
-                  trailing: groupStatus.me != null &&
-                          (groupStatus.me.role == MemberRole.owner ||
-                              groupStatus.me.role == MemberRole.admin)
-                      ? _screens[DrawerEnum.group]['icon']
-                      : null,
+                  trailing:
+                      Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                    Text(
+                      conflicts.length > 0 ? conflicts.length.toString() : '',
+                      style: TextStyle(
+                          color:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? originTheme.primaryColorDark
+                                  : originTheme.accentColor,
+                          fontSize: 14.0),
+                    ),
+                    SizedBox(width: 5.0),
+                    groupStatus.me != null &&
+                            (groupStatus.me.role == MemberRole.owner ||
+                                groupStatus.me.role == MemberRole.admin)
+                        ? Icon(
+                            conflicts.length > 0
+                                ? Icons.notifications_active
+                                : Icons.notifications_none,
+                            color: conflicts.length > 0
+                                ? Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? originTheme.primaryColorDark
+                                    : originTheme.accentColor
+                                : null,
+                          )
+                        : null
+                  ]),
                   title: Text(
                     groupStatus.group != null
                         ? groupStatus.group.name ??
