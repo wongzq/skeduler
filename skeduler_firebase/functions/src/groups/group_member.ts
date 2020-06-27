@@ -168,15 +168,15 @@ export async function validateNickname({
   if (groupDocId === undefined || groupDocId === null) {
     return null;
   } else {
-    const promises: Promise<any>[] = [];
-
-    admin
+    return admin
       .firestore()
       .collection("groups")
       .doc(groupDocId)
       .collection("timetables")
       .get()
       .then((timetablesQuery) => {
+        const promises: Promise<any>[] = [];
+
         const timetables: Timetable[] = timetablesQuery.docs.map(
           (timetableQueryDoc) =>
             Timetable.fromFirestoreDocument(timetableQueryDoc)
@@ -184,19 +184,19 @@ export async function validateNickname({
 
         // iterate through timetables
         for (const timetable of timetables) {
-          let newGroups: TimetableGroup[] = timetable.groups.map((value) =>
+          const newGroups: TimetableGroup[] = timetable.groups.map((value) =>
             TimetableGroup.from(value)
           );
 
           // iterate through groups
           for (const group of timetable.groups) {
-            let newGroup: TimetableGroup = TimetableGroup.from(group);
+            const newGroup: TimetableGroup = TimetableGroup.from(group);
 
             // iterate through gridDataList
             for (const gridData of group.gridDataList) {
               if (gridData.member.docId === memberDocId) {
                 // new grid data
-                let newGridData: TimetableGridData = TimetableGridData.from(
+                const newGridData: TimetableGridData = TimetableGridData.from(
                   gridData
                 );
                 newGridData.member.display = nickname;
@@ -226,9 +226,8 @@ export async function validateNickname({
               .update({ groups: newGroups })
           );
         }
+        return Promise.all(promises);
       });
-
-    return Promise.all(promises);
   }
 }
 
@@ -278,13 +277,13 @@ export async function validateGridDataLists({
 
     // iterate through timetables
     for (const timetable of timetables) {
-      let newGroups: TimetableGroup[] = timetable.groups.map((value) =>
+      const newGroups: TimetableGroup[] = timetable.groups.map((value) =>
         TimetableGroup.from(value)
       );
 
       // iterate through groups
       for (const group of timetable.groups) {
-        let newGroup: TimetableGroup = TimetableGroup.from(group);
+        const newGroup: TimetableGroup = TimetableGroup.from(group);
 
         // iterate through gridDataList
         for (const gridData of group.gridDataList) {
@@ -402,7 +401,7 @@ export async function validateGridDataLists({
           .doc(groupDocId)
           .collection("timetables")
           .doc(timetable.docId)
-          .update({ groups: newGroups })
+          .update({ groups: newGroups.map((group) => group.asFirestoreMap()) })
       );
     }
     return Promise.all(promises);

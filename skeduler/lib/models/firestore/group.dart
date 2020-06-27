@@ -107,6 +107,7 @@ class GroupStatus extends ChangeNotifier {
   Group _group;
   List<Member> _members;
   List<Subject> _subjects;
+  List<Timetable> _timetables;
 
   Member _me;
   String _memberDocId;
@@ -116,11 +117,13 @@ class GroupStatus extends ChangeNotifier {
     Group group,
     List<Member> members,
     List<Subject> subjects,
+    List<Timetable> timetables,
     Member me,
     Member memberDocId,
   })  : this._group = group,
         this._members = members ?? [],
         this._subjects = subjects ?? [],
+        this._timetables = timetables ?? [],
         this._me = me;
 
   // getter methods
@@ -130,6 +133,7 @@ class GroupStatus extends ChangeNotifier {
         subjects: this._subjects,
         subjectMetadatas: this._group._subjectMetadatas,
       );
+  List<Timetable> get timetables => this._timetables;
   Member get me => this._me;
   Member get member => this._members == null
       ? null
@@ -145,11 +149,13 @@ class GroupStatus extends ChangeNotifier {
     @required Group newGroup,
     @required List<Member> newMembers,
     @required List<Subject> newSubjects,
+    @required List<Timetable> newTimetables,
     @required Member newMe,
   }) {
     this._group = newGroup;
     this._members = newMembers;
     this._subjects = newSubjects;
+    this._timetables = newTimetables;
     this._me = newMe;
     this._memberDocId = this._members == null
         ? null
@@ -172,6 +178,7 @@ class GroupStatus extends ChangeNotifier {
     this._group = null;
     this._members = null;
     this._subjects = null;
+    this._timetables = null;
     this._me = null;
     this._memberDocId = null;
     notifyListeners();

@@ -17,12 +17,10 @@ class SchedulesExpansionTile extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _SchedulesExpansionTileState createState() =>
-      _SchedulesExpansionTileState();
+  _SchedulesExpansionTileState createState() => _SchedulesExpansionTileState();
 }
 
-class _SchedulesExpansionTileState
-    extends State<SchedulesExpansionTile> {
+class _SchedulesExpansionTileState extends State<SchedulesExpansionTile> {
   bool _expanded;
 
   bool _memberIsAvailableAtThisTime(BuildContext context, Schedule schedule) {
@@ -82,10 +80,11 @@ class _SchedulesExpansionTileState
           initiallyExpanded: _expanded ??
               (widget.timetable.startDate.millisecondsSinceEpoch <=
                       DateTime.now().millisecondsSinceEpoch &&
-                  widget.timetable.endDate.millisecondsSinceEpoch >=
-                      DateTime.now()
+                  widget.timetable.endDate
+                          .toDate()
                           .add(Duration(days: 1))
-                          .millisecondsSinceEpoch),
+                          .millisecondsSinceEpoch >=
+                      DateTime.now().millisecondsSinceEpoch),
           title: Container(
               padding: EdgeInsets.all(5.0),
               child: Row(

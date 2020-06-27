@@ -231,7 +231,7 @@ class TimetableGroup {
     // convert gridDataList
     if (this.gridDataList != null) {
       groupMap['gridDataList'] =
-          this.gridDataList.value.map((e) => e.asFirestoreMap());
+          this.gridDataList.value.map((e) => e.asFirestoreMap()).toList();
     }
 
     return groupMap;
@@ -588,7 +588,8 @@ class EditTimetable extends ChangeNotifier {
       }
     }
 
-    firestoreMap['groups'] = this.groups.map((e) => e.asFirestoreMap());
+    firestoreMap['groups'] =
+        this.groups.map((e) => e.asFirestoreMap()).toList();
 
     // return final map in firestore format
     return firestoreMap;

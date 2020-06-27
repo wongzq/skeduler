@@ -94,21 +94,6 @@ class DatabaseService {
             .map(_timetablesFromSnapshots);
   }
 
-  // get [Group][Timetable] data of today as stream
-  Stream<Timetable> streamGroupTimetableForToday(
-    String groupDocId,
-    String timetableIdForToday,
-  ) {
-    return groupDocId == null || groupDocId.trim() == ''
-        ? null
-        : groupsCollection
-            .document(groupDocId)
-            .collection('timetables')
-            .document(timetableIdForToday)
-            .snapshots()
-            .map(_timetableFromSnapshot);
-  }
-
   // get [Group][Member]s' data as stream
   Stream<List<Member>> streamGroupMembers(String groupDocId) {
     return groupDocId == null || groupDocId.trim() == ''
@@ -129,54 +114,6 @@ class DatabaseService {
             .collection('subjects')
             .snapshots()
             .map(_subjectsFromSnapshots);
-  }
-
-  // get [Group][Timetable] data
-  Future<Timetable> getGroupTimetable(
-    String groupDocId,
-    String timetableDocId,
-  ) async {
-    if (!(await dbCheckInternetConnection())) {
-      return null;
-    }
-
-    return groupDocId == null ||
-            groupDocId.trim() == '' ||
-            timetableDocId == null ||
-            timetableDocId.trim() == ''
-        ? null
-        : await groupsCollection
-            .document(groupDocId)
-            .collection('timetables')
-            .document(timetableDocId)
-            .get()
-            .then((timetable) async =>
-                timetable.exists ? _timetableFromSnapshot(timetable) : null);
-  }
-
-  Future<String> getGroupTimetableIdForToday(String groupDocId) async {
-    if (!(await dbCheckInternetConnection())) {
-      return null;
-    }
-
-    DocumentSnapshot group = await groupsCollection.document(groupDocId).get();
-
-    String timetableIdForToday;
-
-    for (TimetableMetadata metadata
-        in _timetableMetadatasFromDynamicList(group.data['timetables'] ?? [])) {
-      if (metadata.startDate.millisecondsSinceEpoch <=
-              DateTime.now().millisecondsSinceEpoch &&
-          metadata.endDate
-                  .toDate()
-                  .add(Duration(days: 1))
-                  .millisecondsSinceEpoch >=
-              DateTime.now().millisecondsSinceEpoch) {
-        timetableIdForToday = metadata.docId;
-      }
-    }
-
-    return timetableIdForToday;
   }
 
   // --------------------------------------------------------------------------------

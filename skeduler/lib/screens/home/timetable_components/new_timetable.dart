@@ -108,38 +108,34 @@ class _NewTimetableState extends State<NewTimetable> {
                     return popupOptions;
                   },
                   onSelected: (CopyTimetableData value) async {
-                    await dbService
-                        .getGroupTimetable(
-                      groupStatus.group.docId,
-                      value.ttbId,
-                    )
-                        .then((timetable) {
-                      if (value.copyType == CopyTimetableType.copyTimetable) {
-                        if (ttbStatus.temp.startDate != null &&
-                            ttbStatus.temp.endDate != null &&
-                            ttbStatus.temp.startDate
-                                .isBefore(ttbStatus.temp.endDate)) {
-                          setState(() {
-                            ttbStatus.temp.updateTimetableFromCopy(
-                                timetable, groupStatus.members);
-                          });
-                          Fluttertoast.showToast(
-                              msg: 'Successfully copied ' + value.ttbId);
-                        } else {
-                          Fluttertoast.showToast(
-                              msg: 'Please provide dates before copying');
-                        }
-                      } else if (value.copyType ==
-                          CopyTimetableType.copyTimetableAxes) {
-                        setState(() {
-                          ttbStatus.temp.updateTimetableFromCopyAxes(timetable);
-                        });
+                    Timetable timetable = groupStatus.timetables.firstWhere(
+                        (element) => element.docId == value.ttbId,
+                        orElse: () => null);
 
+                    if (value.copyType == CopyTimetableType.copyTimetable) {
+                      if (ttbStatus.temp.startDate != null &&
+                          ttbStatus.temp.endDate != null &&
+                          ttbStatus.temp.startDate
+                              .isBefore(ttbStatus.temp.endDate)) {
+                        setState(() {
+                          ttbStatus.temp.updateTimetableFromCopy(
+                              timetable, groupStatus.members);
+                        });
                         Fluttertoast.showToast(
-                            msg:
-                                'Successfully copied ' + value.ttbId + ' axes');
+                            msg: 'Successfully copied ' + value.ttbId);
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: 'Please provide dates before copying');
                       }
-                    });
+                    } else if (value.copyType ==
+                        CopyTimetableType.copyTimetableAxes) {
+                      setState(() {
+                        ttbStatus.temp.updateTimetableFromCopyAxes(timetable);
+                      });
+
+                      Fluttertoast.showToast(
+                          msg: 'Successfully copied ' + value.ttbId + ' axes');
+                    }
                   },
                 ),
               ],

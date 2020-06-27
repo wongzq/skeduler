@@ -190,14 +190,25 @@ export class Member {
     this.timesAvailable = [];
     this.timesUnavailable = [];
 
-    if (timesAvailable !== null) {
-      for (let time of timesAvailable) {
+    console.log(timesAvailable);
+    console.log(timesUnavailable);
+
+    if (
+      timesAvailable !== undefined &&
+      timesAvailable !== null &&
+      timesAvailable instanceof Array
+    ) {
+      for (const time of timesAvailable) {
         this.timesAvailable.push(new Time(time.startTime, time.endTime));
       }
     }
 
-    if (timesUnavailable !== null) {
-      for (let time of timesUnavailable) {
+    if (
+      timesUnavailable !== undefined &&
+      timesUnavailable !== null &&
+      timesUnavailable instanceof Array
+    ) {
+      for (const time of timesUnavailable) {
         this.timesUnavailable.push(new Time(time.startTime, time.endTime));
       }
     }
@@ -364,7 +375,7 @@ export class TimetableGridData {
       gridData.subject.display
     );
   }
-  
+
   static fromFirestoreField(gridData: any): TimetableGridData {
     return new TimetableGridData(
       gridData.ignore,
@@ -385,9 +396,9 @@ export class TimetableGridData {
       this.ignore === gridData.ignore &&
       this.available === gridData.available &&
       this.coord.day === gridData.coord.day &&
-      this.coord.time.startTime.valueOf() ==
+      this.coord.time.startTime.valueOf() ===
         gridData.coord.time.startTime.valueOf() &&
-      this.coord.time.endTime.valueOf() ==
+      this.coord.time.endTime.valueOf() ===
         gridData.coord.time.endTime.valueOf() &&
       this.coord.custom === gridData.coord.custom &&
       this.member.docId === gridData.member.docId &&

@@ -5,12 +5,10 @@ import 'package:skeduler/models/auxiliary/custom_enums.dart';
 import 'package:skeduler/models/auxiliary/origin_theme.dart';
 import 'package:skeduler/models/firestore/group.dart';
 import 'package:skeduler/models/firestore/member.dart';
-import 'package:skeduler/models/firestore/timetable.dart';
 import 'package:skeduler/navigation/home_drawer.dart';
 import 'package:skeduler/screens/home/group_components/conflict_list_tile.dart';
 import 'package:skeduler/screens/home/group_components/group_screen_options_owner.dart';
 import 'package:skeduler/screens/home/group_components/group_screen_options_admin.dart';
-import 'package:skeduler/services/database_service.dart';
 import 'package:skeduler/shared/widgets/loading.dart';
 import 'package:skeduler/shared/simple_widgets.dart';
 
@@ -25,7 +23,6 @@ class GroupScreen extends StatefulWidget {
 
 class _GroupScreenState extends State<GroupScreen> {
   OriginTheme _originTheme;
-  DatabaseService _dbService;
   GroupStatus _groupStatus;
 
   bool _showIgnored = false;
@@ -107,8 +104,10 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
     _originTheme = Provider.of<OriginTheme>(context);
-    _dbService = Provider.of<DatabaseService>(context);
     _groupStatus = Provider.of<GroupStatus>(context);
+
+    List<Conflict> conflicts = _sortConflicts(Conflict.generateConflicts(
+        timetables: _groupStatus.timetables, members: _groupStatus.members));
 
     return _groupStatus.group == null
         ? Stack(children: <Widget>[
@@ -132,26 +131,14 @@ class _GroupScreenState extends State<GroupScreen> {
                     : _groupStatus.me.role == MemberRole.admin
                         ? GroupScreenOptionsAdmin()
                         : null,
-            body: StreamBuilder<List<Timetable>>(
-                stream:
-                    _dbService.streamGroupTimetables(_groupStatus.group.docId),
-                builder: (context, snapshot) {
-                  List<Conflict> conflicts = _sortConflicts(
-                      Conflict.generateConflicts(
-                          timetables: snapshot.data ?? [],
-                          members: _groupStatus.members));
-
-                  return conflicts.length == 0
-                      ? EmptyPlaceholder(
-                          iconData: Icons.schedule,
-                          text: 'No schedule conflicts')
-                      : ListView.builder(
-                          physics: BouncingScrollPhysics(
-                              parent: AlwaysScrollableScrollPhysics()),
-                          itemCount: conflicts.length,
-                          itemBuilder: (context, index) =>
-                              ConflictListTile(conflict: conflicts[index]));
-                }),
-          );
+            body: conflicts.length == 0
+                ? EmptyPlaceholder(
+                    iconData: Icons.schedule, text: 'No schedule conflicts')
+                : ListView.builder(
+                    physics: BouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics()),
+                    itemCount: conflicts.length,
+                    itemBuilder: (context, index) =>
+                        ConflictListTile(conflict: conflicts[index])));
   }
 }

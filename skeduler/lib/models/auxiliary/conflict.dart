@@ -50,8 +50,7 @@ class Conflict {
             List<Time> timetableTimes = Time.generateTimes(
                 months: List.generate(
                     Month.values.length, (index) => Month.values[index]),
-                weekdays: List.generate(
-                    Weekday.values.length, (index) => Weekday.values[index]),
+                weekdays: [Weekday.values[gridData.coord.day.index]],
                 time: gridData.coord.time,
                 startDate: timetable.startDate,
                 endDate: timetable.endDate);
