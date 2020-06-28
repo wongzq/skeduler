@@ -130,7 +130,7 @@ export const updateGroupMember = functions.firestore
       // organize promises
       const changeNicknamePromise: Promise<any> | null =
         beforeData.nickname !== afterData.nickname
-          ? validateNickname({
+          ? validateMemberNickname({
               groupDocId: groupDocId,
               memberDocId: memberDocId,
               nickname: afterData.nickname,
@@ -154,17 +154,17 @@ export const updateGroupMember = functions.firestore
     }
   });
 
-interface ValidateNicknameArgs {
+interface ValidateMemberNicknameArgs {
   groupDocId: string;
   memberDocId: string;
   nickname: string;
 }
 
-export async function validateNickname({
+export async function validateMemberNickname({
   groupDocId,
   memberDocId,
   nickname,
-}: ValidateNicknameArgs): Promise<any> {
+}: ValidateMemberNicknameArgs): Promise<any> {
   if (groupDocId === undefined || groupDocId === null) {
     return null;
   } else {

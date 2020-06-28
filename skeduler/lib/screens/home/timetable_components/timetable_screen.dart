@@ -35,26 +35,30 @@ class _TimetableScreenState extends State<TimetableScreen> {
     TimetableStatus ttbStatus = Provider.of<TimetableStatus>(context);
     bool isPlaceholder = true;
 
-    String timetableIdForToday = groupStatus.group == null
-        ? ''
-        : groupStatus.group.timetableMetadatas
-            .firstWhere(
-                (metadata) =>
-                    metadata.startDate.millisecondsSinceEpoch <=
-                        DateTime.now().millisecondsSinceEpoch &&
-                    metadata.endDate
-                            .toDate()
-                            .add(Duration(days: 1))
-                            .millisecondsSinceEpoch >=
-                        DateTime.now().millisecondsSinceEpoch,
-                orElse: () => null)
-            .docId;
-
-    Timetable timetable = timetableIdForToday == null
+    TimetableMetadata timetableMetaForToday = groupStatus.group == null
         ? null
-        : groupStatus.timetables.firstWhere(
-            (element) => element.docId == timetableIdForToday,
+        : groupStatus.group.timetableMetadatas.firstWhere(
+            (metadata) =>
+                metadata.startDate.millisecondsSinceEpoch <=
+                    DateTime.now().millisecondsSinceEpoch &&
+                metadata.endDate
+                        .toDate()
+                        .add(Duration(days: 1))
+                        .millisecondsSinceEpoch >=
+                    DateTime.now().millisecondsSinceEpoch,
             orElse: () => null);
+
+    String timetableIdForToday =
+        groupStatus.group == null || timetableMetaForToday == null
+            ? ''
+            : timetableMetaForToday.docId;
+
+    Timetable timetable =
+        timetableIdForToday == null || groupStatus.timetables == null
+            ? null
+            : groupStatus.timetables.firstWhere(
+                (element) => element.docId == timetableIdForToday,
+                orElse: () => null);
 
     // if timetable is found
     if (timetable != null && timetable.isValid) {

@@ -110,34 +110,33 @@ class HomeDrawer extends StatelessWidget {
                 child: ListTile(
                   enabled: groupStatus.group != null ? true : false,
                   dense: true,
-                  trailing:
-                      Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                    Text(
-                      conflicts.length > 0 ? conflicts.length.toString() : '',
-                      style: TextStyle(
-                          color:
-                              Theme.of(context).brightness == Brightness.light
-                                  ? originTheme.primaryColorDark
-                                  : originTheme.accentColor,
-                          fontSize: 14.0),
-                    ),
-                    SizedBox(width: 5.0),
-                    groupStatus.me != null &&
-                            (groupStatus.me.role == MemberRole.owner ||
-                                groupStatus.me.role == MemberRole.admin)
-                        ? Icon(
-                            conflicts.length > 0
-                                ? Icons.notifications_active
-                                : Icons.notifications_none,
-                            color: conflicts.length > 0
-                                ? Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? originTheme.primaryColorDark
-                                    : originTheme.accentColor
-                                : null,
-                          )
-                        : null
-                  ]),
+                  trailing: groupStatus.me != null &&
+                          (groupStatus.me.role == MemberRole.owner ||
+                              groupStatus.me.role == MemberRole.admin)
+                      ? Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                          Text(
+                              conflicts.length > 0
+                                  ? conflicts.length.toString()
+                                  : '',
+                              style: TextStyle(
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? originTheme.primaryColorDark
+                                      : originTheme.accentColor,
+                                  fontSize: 14.0)),
+                          SizedBox(width: 5.0),
+                          Icon(
+                              conflicts.length > 0
+                                  ? Icons.notifications_active
+                                  : Icons.notifications_none,
+                              color: conflicts.length > 0
+                                  ? Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? originTheme.primaryColorDark
+                                      : originTheme.accentColor
+                                  : null)
+                        ])
+                      : null,
                   title: Text(
                     groupStatus.group != null
                         ? groupStatus.group.name ??
