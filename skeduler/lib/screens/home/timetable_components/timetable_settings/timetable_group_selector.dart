@@ -75,11 +75,17 @@ class _TimetableGroupSelectorState extends State<TimetableGroupSelector> {
               onPressed: () {
                 if (widget.valGetGroups().length < maxTimetableGroups) {
                   setState(() {
-                    if (widget.valSetGroups != null) {
+                    if (widget.valGetGroups != null) {
                       List<TimetableGroup> newGroups =
                           List.from(widget.valGetGroups());
-                      newGroups.add(TimetableGroup());
-                      widget.valSetGroups(newGroups);
+                      if (widget.valSetGroups != null) {
+                        newGroups.add(TimetableGroup());
+                        widget.valSetGroups(newGroups);
+                      }
+
+                      if (widget.valSetGroupSelected != null) {
+                        widget.valSetGroupSelected(newGroups.length - 1);
+                      }
                     }
                   });
                 }
