@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -35,41 +36,40 @@ class _TimetableEditorState extends State<TimetableEditor> {
           bool result;
 
           return await showDialog(
-            context: context,
-            builder: (context) {
-              return SimpleAlertDialog(
-                context: context,
-                contentDisplay: 'Exit without saving changes?',
-                cancelDisplay: 'EXIT',
-                cancelFunction: () {
-                  result = true;
-                  ttbStatus.edit = null;
-                  Navigator.of(context).maybePop();
-                },
-                confirmDisplay: 'SAVE',
-                confirmFunction: () async {
-                  _scaffoldKey.currentState.showSnackBar(
-                      LoadingSnackBar(context, 'Saving timetable . . .'));
+              context: context,
+              builder: (context) {
+                return SimpleAlertDialog(
+                    context: context,
+                    contentDisplay: 'Exit without saving changes?',
+                    cancelDisplay: 'EXIT',
+                    cancelFunction: () {
+                      result = true;
+                      ttbStatus.edit = null;
+                      Navigator.of(context).maybePop();
+                    },
+                    confirmDisplay: 'SAVE',
+                    confirmFunction: () async {
+                      _scaffoldKey.currentState.showSnackBar(
+                          LoadingSnackBar(context, 'Saving timetable . . .'));
 
-                  await dbService
-                      .updateGroupTimetable(
-                          groupStatus.group.docId, ttbStatus.edit)
-                      .then((_) {
-                    _scaffoldKey.currentState.hideCurrentSnackBar();
-                    Fluttertoast.showToast(msg: 'Successfully saved timetable');
-                    ttbStatus.editHasChanges = false;
-                    result = true;
-                    Navigator.of(context).maybePop();
-                  }).catchError((_) {
-                    _scaffoldKey.currentState.hideCurrentSnackBar();
-                    Fluttertoast.showToast(msg: 'Failed to save timetable');
-                    result = false;
-                    Navigator.of(context).maybePop();
-                  });
-                },
-              );
-            },
-          ).then((_) {
+                      await dbService
+                          .updateGroupTimetable(
+                              groupStatus.group.docId, ttbStatus.edit)
+                          .then((_) {
+                        _scaffoldKey.currentState.hideCurrentSnackBar();
+                        Fluttertoast.showToast(
+                            msg: 'Successfully saved timetable');
+                        ttbStatus.editHasChanges = false;
+                        result = true;
+                        Navigator.of(context).maybePop();
+                      }).catchError((_) {
+                        _scaffoldKey.currentState.hideCurrentSnackBar();
+                        Fluttertoast.showToast(msg: 'Failed to save timetable');
+                        result = false;
+                        Navigator.of(context).maybePop();
+                      });
+                    });
+              }).then((_) {
             return result ?? false;
           });
         } else {
@@ -82,73 +82,56 @@ class _TimetableEditorState extends State<TimetableEditor> {
         appBar: AppBar(
           elevation: 0.0,
           leading: IconButton(
-            icon: Icon(
-              Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back,
-            ),
-            onPressed: () {
-              Navigator.of(context).maybePop();
-            },
-          ),
+              icon: Icon(
+                  Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
+              onPressed: () => Navigator.of(context).maybePop()),
           title: AppBarTitle(
-            title: ttbStatus.edit == null ? null : ttbStatus.edit.docId,
-            alternateTitle: 'Timetable editor',
-            subtitle: 'Timetable editor',
-          ),
+              title: ttbStatus.edit == null ? null : ttbStatus.edit.docId,
+              alternateTitle: 'Timetable editor',
+              subtitle: 'Timetable editor'),
           actions: <Widget>[
             PopupMenuButton<TimetableEditorOption>(
               itemBuilder: (context) {
                 return [
                   PopupMenuItem(
-                    value: TimetableEditorOption.switchAxis,
-                    child: Text('Swap axis'),
-                  ),
+                      value: TimetableEditorOption.switchAxis,
+                      child: Text('Swap axis')),
                   PopupMenuItem(
-                    value: TimetableEditorOption.addSubject,
-                    child: Text('Add subject'),
-                  ),
+                      value: TimetableEditorOption.addSubject,
+                      child: Text('Add subject')),
                   PopupMenuItem(
-                    value: TimetableEditorOption.addDummy,
-                    child: Text('Add dummy'),
-                  ),
+                      value: TimetableEditorOption.addDummy,
+                      child: Text('Add dummy')),
                   PopupMenuItem(
-                    value: TimetableEditorOption.clearData,
-                    child: Text('Clear data'),
-                  ),
+                      value: TimetableEditorOption.clearData,
+                      child: Text('Clear data')),
                   PopupMenuDivider(),
                   PopupMenuItem(
-                    value: TimetableEditorOption.settings,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Icon(
-                          Icons.settings,
-                          color:
-                              Theme.of(context).brightness == Brightness.light
-                                  ? Colors.black
-                                  : Colors.white,
-                        ),
-                        SizedBox(width: 10.0),
-                        Text('Settings'),
-                      ],
-                    ),
-                  ),
+                      value: TimetableEditorOption.settings,
+                      child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(Icons.settings,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? Colors.black
+                                    : Colors.white),
+                            SizedBox(width: 10.0),
+                            Text('Settings')
+                          ])),
                   PopupMenuItem(
-                    value: TimetableEditorOption.save,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Icon(
-                          Icons.save,
-                          color:
-                              Theme.of(context).brightness == Brightness.light
-                                  ? Colors.black
-                                  : Colors.white,
-                        ),
-                        SizedBox(width: 10.0),
-                        Text('Save'),
-                      ],
-                    ),
-                  ),
+                      value: TimetableEditorOption.save,
+                      child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(Icons.save,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? Colors.black
+                                    : Colors.white),
+                            SizedBox(width: 10.0),
+                            Text('Save')
+                          ]))
                 ];
               },
               onSelected: (value) async {
@@ -204,21 +187,36 @@ class _TimetableEditorState extends State<TimetableEditor> {
                     break;
 
                   case TimetableEditorOption.save:
-                    _scaffoldKey.currentState.showSnackBar(
-                        LoadingSnackBar(context, 'Saving timetable . . .'));
+                    List<TimetableMetadata> timetableMetadatas =
+                        List.from(groupStatus.group.timetableMetadatas);
 
-                    await dbService
-                        .updateGroupTimetable(
-                            groupStatus.group.docId, ttbStatus.edit)
-                        .then((_) {
-                      ttbStatus.editHasChanges = false;
-                      Fluttertoast.showToast(
-                          msg: 'Successfully saved timetable');
-                    }).catchError((_) {
-                      Fluttertoast.showToast(msg: 'Failed to save timetable');
-                    });
+                    timetableMetadatas.removeWhere(
+                        (element) => element.docId == ttbStatus.edit.docId);
+                    timetableMetadatas.add(TimetableMetadata(
+                        docId: ttbStatus.edit.docId,
+                        startDate: Timestamp.fromDate(ttbStatus.edit.startDate),
+                        endDate: Timestamp.fromDate(ttbStatus.edit.endDate)));
 
-                    _scaffoldKey.currentState.hideCurrentSnackBar();
+                    if (isConsecutiveTimetables(timetableMetadatas)) {
+                      _scaffoldKey.currentState.showSnackBar(
+                          LoadingSnackBar(context, 'Saving timetable . . .'));
+
+                      await dbService
+                          .updateGroupTimetable(
+                              groupStatus.group.docId, ttbStatus.edit)
+                          .then((_) {
+                        ttbStatus.editHasChanges = false;
+                        Fluttertoast.showToast(
+                            msg: 'Successfully saved timetable');
+                      }).then((_) {
+                        _scaffoldKey.currentState.hideCurrentSnackBar();
+                      }).catchError((_) {
+                        _scaffoldKey.currentState.hideCurrentSnackBar();
+                        Fluttertoast.showToast(msg: 'Failed to save timetable');
+                      });
+                    } else {
+                      Fluttertoast.showToast(msg: 'Timetable dates clash');
+                    }
                     break;
 
                   default:

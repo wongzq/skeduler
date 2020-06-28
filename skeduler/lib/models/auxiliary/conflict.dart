@@ -36,7 +36,7 @@ class Conflict {
     List<Conflict> conflicts = [];
 
     // iterate through timetables
-    for (Timetable timetable in timetables) {
+    for (Timetable timetable in timetables ?? []) {
       // iterate through timetable groups
       for (TimetableGroup group in timetable.groups) {
         int groupIndex = timetable.groups.indexOf(group);
@@ -56,7 +56,7 @@ class Conflict {
                 endDate: timetable.endDate);
 
             // find member
-            Member member = members.firstWhere(
+            Member member = (members ?? []).firstWhere(
                 (elem) => elem.docId == gridData.dragData.member.docId,
                 orElse: () => null);
 

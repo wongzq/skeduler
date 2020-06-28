@@ -393,33 +393,33 @@ class EditTimetable extends ChangeNotifier {
   }
 
   // setter methods
-  set docId(String docId) {
-    this._docId = docId;
+  set docId(String value) {
+    this._docId = value;
     notifyListeners();
   }
 
-  set startDate(DateTime startDate) {
-    this._startDate = startDate;
+  set startDate(DateTime value) {
+    this._startDate = value;
     this._changed();
   }
 
-  set endDate(DateTime endDate) {
-    this._endDate = endDate;
+  set endDate(DateTime value) {
+    this._endDate = value;
     this._changed();
   }
 
-  set gridAxisOfDay(GridAxis gridAxis) {
-    this._gridAxisOfDay = gridAxis;
+  set gridAxisOfDay(GridAxis value) {
+    this._gridAxisOfDay = value;
     this._changed();
   }
 
-  set gridAxisOfTime(GridAxis gridAxis) {
-    this._gridAxisOfTime = gridAxis;
+  set gridAxisOfTime(GridAxis value) {
+    this._gridAxisOfTime = value;
     this._changed();
   }
 
-  set gridAxisOfCustom(GridAxis gridAxis) {
-    this._gridAxisOfCustom = gridAxis;
+  set gridAxisOfCustom(GridAxis value) {
+    this._gridAxisOfCustom = value;
     this._changed();
   }
 
@@ -428,18 +428,18 @@ class EditTimetable extends ChangeNotifier {
     this._changed();
   }
 
-  void setGroupAxisDay(int groupIndex, List<Weekday> axisDay) {
-    this._groups[groupIndex]._setAxisDay(axisDay);
+  void setGroupAxisDay(int groupIndex, List<Weekday> value) {
+    this._groups[groupIndex]._setAxisDay(value);
     this._changed();
   }
 
-  void setGroupAxisTime(int groupIndex, List<Time> axisTime) {
-    this._groups[groupIndex]._setAxisTime(axisTime);
+  void setGroupAxisTime(int groupIndex, List<Time> value) {
+    this._groups[groupIndex]._setAxisTime(value);
     this._changed();
   }
 
-  void setGroupAxisCustom(int groupIndex, List<String> axisCustom) {
-    this._groups[groupIndex]._setAxisCustom(axisCustom);
+  void setGroupAxisCustom(int groupIndex, List<String> value) {
+    this._groups[groupIndex]._setAxisCustom(value);
     this._changed();
   }
 

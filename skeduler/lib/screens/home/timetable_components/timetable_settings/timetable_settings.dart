@@ -26,6 +26,14 @@ class _TimetableSettingsState extends State<TimetableSettings> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   GlobalKey _key1 = GlobalKey();
   GlobalKey _key2 = GlobalKey();
+  int _startDateWeek;
+  int _endDateWeek;
+
+  String _weekAsDocId() {
+    return _startDateWeek == _endDateWeek
+        ? 'Week $_startDateWeek'
+        : 'Week $_startDateWeek - $_endDateWeek';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +49,21 @@ class _TimetableSettingsState extends State<TimetableSettings> {
 
     int index = ttbStatus.tempGroupIndex;
 
+    DateTime defaultDate = groupStatus.group.timetableMetadatas.isEmpty
+        ? DateTime(
+            DateTime.now().year, DateTime.now().month, DateTime.now().day)
+        : groupStatus.group.timetableMetadatas.last.endDate
+            .toDate()
+            .add(Duration(days: 1));
+
+    _startDateWeek = ttbStatus.temp.startDate == null
+        ? getWeekOfYear(defaultDate)
+        : getWeekOfYear(ttbStatus.temp.startDate);
+
+    _endDateWeek = ttbStatus.temp.endDate == null
+        ? getWeekOfYear(defaultDate)
+        : getWeekOfYear(ttbStatus.temp.endDate);
+
     return GestureDetector(
         onTap: () => unfocus(),
         child: Scaffold(
@@ -55,10 +78,9 @@ class _TimetableSettingsState extends State<TimetableSettings> {
                       Navigator.of(context).maybePop();
                     }),
                 title: AppBarTitle(
-                  title: ttbStatus.temp.docId,
-                  alternateTitle: 'Timetable settings',
-                  subtitle: 'Timetable settings',
-                )),
+                    title: ttbStatus.temp.docId,
+                    alternateTitle: 'Timetable settings',
+                    subtitle: 'Timetable settings')),
             floatingActionButton: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
@@ -73,6 +95,17 @@ class _TimetableSettingsState extends State<TimetableSettings> {
                       backgroundColor: Colors.green,
                       child: Icon(Icons.check, color: Colors.white),
                       onPressed: () async {
+                        ttbStatus.temp.docId = ttbStatus.temp.docId == null ||
+                                ttbStatus.temp.docId.trim() == ''
+                            ? _startDateWeek == _endDateWeek
+                                ? 'Week $_startDateWeek'
+                                : 'Week $_startDateWeek - $_endDateWeek'
+                            : ttbStatus.temp.docId;
+                        ttbStatus.temp.startDate = ttbStatus.temp.startDate ??
+                            getClosestMondayBefore(defaultDate, defaultDate);
+                        ttbStatus.temp.endDate = ttbStatus.temp.endDate ??
+                            getClosestSundayAfter(defaultDate, defaultDate);
+
                         if (_formKey.currentState.validate() &&
                             ttbStatus.temp.isValid &&
                             ttbStatus.temp.groupsAreValid) {
@@ -80,12 +113,11 @@ class _TimetableSettingsState extends State<TimetableSettings> {
                           // check if update same timetable (docId is same)
                           if (ttbStatus.edit.docId == ttbStatus.temp.docId) {
                             ttbStatus.edit.updateTimetableSettings(
-                              docId: ttbStatus.temp.docId,
-                              startDate: ttbStatus.temp.startDate,
-                              endDate: ttbStatus.temp.endDate,
-                              groups: ttbStatus.temp.groups,
-                              members: groupStatus.members,
-                            );
+                                docId: ttbStatus.temp.docId,
+                                startDate: ttbStatus.temp.startDate,
+                                endDate: ttbStatus.temp.endDate,
+                                groups: ttbStatus.temp.groups,
+                                members: groupStatus.members);
                             ttbStatus.update();
                             Navigator.of(context).maybePop();
                           }
@@ -139,34 +171,46 @@ class _TimetableSettingsState extends State<TimetableSettings> {
                         key: _key1,
                         label: 'Name',
                         formKey: _formKey,
-                        hintText: 'Timetable Name',
-                        initialValue: ttbStatus.temp.docId,
-                        valSetText: (text) => ttbStatus.temp.docId = text,
-                        validator: (text) {
-                          if (text == null || text.trim() == '') {
-                            return 'Timetable name cannot be empty';
-                          } else {
-                            return null;
-                          }
-                        })),
+                        hintText: ttbStatus.temp.docId ?? _weekAsDocId(),
+                        valSetText: (text) => setState(() =>
+                            ttbStatus.temp.docId =
+                                text == null || text.trim() == ''
+                                    ? _weekAsDocId()
+                                    : text),
+                        validator: (text) => null)),
                 SizedBox(height: 10.0),
+
                 // Date range
                 TimetableDateRange(
                     key: _key2,
-                    initialStartDate: ttbStatus.temp.startDate,
-                    initialEndDate: ttbStatus.temp.endDate,
-                    valSetStartDate: (startDate) {
-                      ttbStatus.temp.startDate = startDate;
-                      ttbStatus.temp
-                          .validateAllGridDataList(groupStatus.members);
-                      ttbStatus.update();
-                    },
-                    valSetEndDate: (endDate) {
-                      ttbStatus.temp.endDate = endDate;
-                      ttbStatus.temp
-                          .validateAllGridDataList(groupStatus.members);
-                      ttbStatus.update();
-                    }),
+                    initialStartDate: ttbStatus.temp.startDate ?? defaultDate,
+                    initialEndDate: ttbStatus.temp.endDate ?? defaultDate,
+                    valSetStartDate: (startDate) => setState(() {
+                          ttbStatus.temp.startDate = startDate;
+                          ttbStatus.temp
+                              .validateAllGridDataList(groupStatus.members);
+                          ttbStatus.update();
+
+                          if (ttbStatus.temp.docId == _weekAsDocId()) {
+                            _startDateWeek = ttbStatus.temp.startDate == null
+                                ? getWeekOfYear(defaultDate)
+                                : getWeekOfYear(ttbStatus.temp.startDate);
+                            ttbStatus.temp.docId = _weekAsDocId();
+                          }
+                        }),
+                    valSetEndDate: (endDate) => setState(() {
+                          ttbStatus.temp.endDate = endDate;
+                          ttbStatus.temp
+                              .validateAllGridDataList(groupStatus.members);
+                          ttbStatus.update();
+
+                          if (ttbStatus.temp.docId == _weekAsDocId()) {
+                            _endDateWeek = ttbStatus.temp.endDate == null
+                                ? getWeekOfYear(defaultDate)
+                                : getWeekOfYear(ttbStatus.temp.endDate);
+                            ttbStatus.temp.docId = _weekAsDocId();
+                          }
+                        })),
                 SizedBox(height: 10.0),
 
                 // Groups

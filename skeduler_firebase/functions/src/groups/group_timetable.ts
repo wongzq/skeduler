@@ -62,3 +62,63 @@ export const deleteGroupTimetable = functions.firestore
         });
     }
   });
+
+export const updateGroupTimetable = functions.firestore
+  .document("/groups/{groupDocId}/timetables/{timetableDocId}")
+  .onUpdate((change, context) => {
+    const groupDocId: string = context.params.groupDocId;
+    const timetableDocId: string = context.params.timetableDocId;
+
+    const beforeData:
+      | FirebaseFirestore.DocumentData
+      | undefined = change.before.data();
+    const afterData:
+      | FirebaseFirestore.DocumentData
+      | undefined = change.after.data();
+
+    if (
+      beforeData === undefined ||
+      beforeData === null ||
+      afterData === undefined ||
+      afterData === null
+    ) {
+      return null;
+    } else {
+      const promises: Promise<any>[] = [];
+
+      if (
+        beforeData.startDate !== afterData.startDate ||
+        beforeData.endDate !== afterData.endDate
+      ) {
+        promises.push(
+          admin
+            .firestore()
+            .collection("groups")
+            .doc(groupDocId)
+            .update({
+              timetables: admin.firestore.FieldValue.arrayRemove({
+                docId: timetableDocId,
+                startDate: beforeData.startDate,
+                endDate: beforeData.endDate,
+              }),
+            })
+        );
+
+        promises.push(
+          admin
+            .firestore()
+            .collection("groups")
+            .doc(groupDocId)
+            .update({
+              timetables: admin.firestore.FieldValue.arrayUnion({
+                docId: timetableDocId,
+                startDate: afterData.startDate,
+                endDate: afterData.endDate,
+              }),
+            })
+        );
+      }
+
+      return Promise.all(promises);
+    }
+  });

@@ -42,6 +42,8 @@ class Group {
     this._timetableMetadatas = List.from(timetableMetadatas);
     this._memberMetadatas = List.from(memberMetadatas);
     this._subjectMetadatas = List.from(subjectMetadatas);
+
+    this._timetableMetadatas.sort((a,b)=>a.startDate.compareTo(b.startDate));
   }
 
   // getter methods

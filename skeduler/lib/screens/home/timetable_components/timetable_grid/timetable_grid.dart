@@ -60,7 +60,9 @@ class _TimetableGridState extends State<TimetableGrid> {
       }
     }
 
-    return Container(height: height, child: Row(children: widgets));
+    return widgets.isEmpty
+        ? Container()
+        : Container(height: height, child: Row(children: widgets));
   }
 
   @override

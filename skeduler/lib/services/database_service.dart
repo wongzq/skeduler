@@ -592,64 +592,6 @@ class DatabaseService {
           });
   }
 
-  // get updated [Group]'s [timetablesSnapshot] after adding new [TimetableMetadata]
-  List<Map<String, dynamic>> _getUpdatedGroupTimetablesMetadatasAfterAdd({
-    List<dynamic> timetablesSnapshot = const [],
-    TimetableMetadata newTimetableMetadata,
-    TimetableMetadata oldTimetableMetadata,
-  }) {
-    // convert to [Lis<TimetableMetadata>]
-    List<TimetableMetadata> timetableMetadatas =
-        _timetableMetadatasFromDynamicList(timetablesSnapshot);
-
-    // remove previous metadata
-    timetableMetadatas.removeWhere((meta) {
-      if (oldTimetableMetadata != null) {
-        return meta.docId == oldTimetableMetadata.docId;
-      } else {
-        return meta.docId == newTimetableMetadata.docId;
-      }
-    });
-
-    // add new metadata
-    if (newTimetableMetadata != null) {
-      timetableMetadatas.add(
-        TimetableMetadata(
-          docId: newTimetableMetadata.docId,
-          startDate: newTimetableMetadata.startDate,
-          endDate: newTimetableMetadata.endDate,
-        ),
-      );
-    }
-
-    // update if timetable dates are consecutive
-    if (isConsecutiveTimetables(timetableMetadatas)) {
-      return List.generate(timetableMetadatas.length, (index) {
-        return timetableMetadatas[index].asMap;
-      });
-    } else {
-      return null;
-    }
-  }
-
-  // get updated [Group]'s [timetablesSnapshot] after removing [TimetableMetadata]
-  List<Map<String, dynamic>> _getUpdatedGroupTimetablesMetadataAfterRemove({
-    List<dynamic> timetablesSnapshot = const [],
-    String timetableId = '',
-  }) {
-    // convert to [Lis<TimetableMetadata>]
-    List<TimetableMetadata> timetableMetadatas =
-        _timetableMetadatasFromDynamicList(timetablesSnapshot);
-
-    timetableMetadatas.removeWhere((timetableMetadata) {
-      return timetableMetadata.docId == timetableId;
-    });
-
-    return List.generate(timetableMetadatas.length, (index) {
-      return timetableMetadatas[index].asMap;
-    });
-  }
-
   // update [Group][Timetable]'s documentID by cloning document with a new ID
   Future<OperationStatus> updateGroupTimetableDocId(
     String groupDocId,
@@ -671,36 +613,26 @@ class DatabaseService {
             // If there is another timetable with the same ID
             // Then, it doesn't replace the pre-existing timetable
             if (!groupData.exists) {
-              await timetablesRef
+              return timetablesRef
                   .document(oldTimetableMetadata.docId)
                   .get()
                   .then((groupData) async {
-                await timetablesRef
+                List<Future> futures = [];
+
+                futures.add(timetablesRef
                     .document(newTimetableMetadata.docId)
-                    .setData(groupData.data);
+                    .setData(groupData.data));
 
-                await timetablesRef
+                futures.add(timetablesRef
                     .document(oldTimetableMetadata.docId)
-                    .delete();
+                    .delete());
 
-                await groupsCollection
-                    .document(groupDocId)
-                    .get()
-                    .then((group) async {
-                  await groupsCollection.document(groupDocId).updateData({
-                    'timetables': _getUpdatedGroupTimetablesMetadatasAfterAdd(
-                      timetablesSnapshot: group.data['timetables'],
-                      newTimetableMetadata: newTimetableMetadata,
-                      oldTimetableMetadata: oldTimetableMetadata,
-                    )
-                  });
-                });
-              });
-              return OperationStatus(
-                  OperationResult.success, 'Successfully updated timetable');
+                return Future.wait(futures);
+              }).then((_) => OperationStatus(OperationResult.success,
+                      'Successfully updated timetable name'));
             } else {
               return OperationStatus(
-                  OperationResult.fail, 'Timetable ID already exists');
+                  OperationResult.fail, 'Timetable name already exists');
             }
           });
   }
@@ -719,13 +651,13 @@ class DatabaseService {
         .document(timetableId)
         .delete()
         .then((_) {
-      groupsCollection.document(groupDocId).get().then((group) async {
-        return groupsCollection.document(groupDocId).updateData({
-          'timetables': _getUpdatedGroupTimetablesMetadataAfterRemove(
-              timetablesSnapshot: group.data['timetables'],
-              timetableId: timetableId)
-        });
-      });
+      // groupsCollection.document(groupDocId).get().then((group) async {
+      //   return groupsCollection.document(groupDocId).updateData({
+      //     'timetables': _getUpdatedGroupTimetablesMetadataAfterRemove(
+      //         timetablesSnapshot: group.data['timetables'],
+      //         timetableId: timetableId)
+      //   });
+      // });
     });
   }
 

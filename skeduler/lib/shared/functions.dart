@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:quiver/time.dart';
 import 'package:skeduler/models/auxiliary/color_shade.dart';
 import 'package:skeduler/models/auxiliary/my_app_themes.dart';
@@ -131,4 +132,48 @@ DateTime getLastDayOfLastMonth(List<Month> months) {
   } else {
     return null;
   }
+}
+
+int getWeekOfYear(DateTime date) {
+  int dayOfYear = int.parse(DateFormat("D").format(date));
+  return ((dayOfYear - date.weekday + 10) / 7).floor();
+}
+
+DateTime getClosestMondayBefore(DateTime startDate, DateTime defaultDate) {
+  DateTime prevDateTime = startDate == null
+      ? defaultDate
+      : DateTime(
+          startDate.year,
+          startDate.month,
+          startDate.day,
+        );
+
+  if (prevDateTime.weekday != 1) {
+    while (true) {
+      prevDateTime = prevDateTime.subtract(Duration(days: 1));
+      if (prevDateTime.weekday == 1) {
+        break;
+      }
+    }
+  }
+  return prevDateTime;
+}
+
+DateTime getClosestSundayAfter(DateTime endDate, DateTime defaultDate) {
+  DateTime nextDateTime = endDate == null
+      ? defaultDate
+      : DateTime(
+          endDate.year,
+          endDate.month,
+          endDate.day,
+        );
+  if (nextDateTime.weekday != 7) {
+    while (true) {
+      nextDateTime = nextDateTime.add(Duration(days: 1));
+      if (nextDateTime.weekday == 7) {
+        break;
+      }
+    }
+  }
+  return nextDateTime;
 }
