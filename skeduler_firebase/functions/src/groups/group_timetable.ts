@@ -87,8 +87,8 @@ export const updateGroupTimetable = functions.firestore
       const promises: Promise<any>[] = [];
 
       if (
-        beforeData.startDate !== afterData.startDate ||
-        beforeData.endDate !== afterData.endDate
+        !beforeData.startDate.isEqual(afterData.startDate) ||
+        !beforeData.endDate.isEqual(afterData.endDate)
       ) {
         promises.push(
           admin
