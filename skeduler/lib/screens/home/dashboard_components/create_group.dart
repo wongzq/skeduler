@@ -44,38 +44,29 @@ class _CreateGroupState extends State<CreateGroup> {
     }
 
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).maybePop();
-          },
+        key: _scaffoldKey,
+        appBar: AppBar(
+          leading: IconButton(
+              icon: Icon(
+                  Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
+              onPressed: () {
+                Navigator.of(context).maybePop();
+              }),
+          title: AppBarTitle(title: 'Create group'),
         ),
-        title: AppBarTitle(title: 'Create group'),
-      ),
-
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
+        floatingActionButton:
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
           FloatingActionButton(
-            heroTag: 'Create Group Cancel',
-            backgroundColor: Colors.red,
-            child: Icon(
-              Icons.close,
-              color: Colors.white,
-            ),
-            onPressed: () => Navigator.of(context).maybePop(),
-          ),
+              heroTag: 'Create Group Cancel',
+              backgroundColor: Colors.red,
+              child: Icon(Icons.close, color: Colors.white),
+              onPressed: () => Navigator.of(context).maybePop()),
           SizedBox(width: 20.0),
           FloatingActionButton(
             heroTag: 'Create Group Confirm',
             backgroundColor:
                 _nameValid && _descValid ? Colors.green : Colors.grey,
-            child: Icon(
-              Icons.check,
-              color: Colors.white,
-            ),
+            child: Icon(Icons.check, color: Colors.white),
             onPressed: _nameValid && _descValid
                 ? () async {
                     unfocus();
@@ -97,70 +88,55 @@ class _CreateGroupState extends State<CreateGroup> {
                     });
                   }
                 : null,
-          ),
-        ],
-      ),
+          )
+        ]),
 
-      // Body
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => unfocus(),
-        child: Column(
-          children: <Widget>[
-            // Required fields
-            // Name
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: LabelTextInput(
-                hintText: 'Required',
-                label: 'Name',
-                valSetText: (value) {
-                  setState(() {
-                    _groupName = value;
-                    _nameValid = value == null ||
-                            value.trim().length == 0 ||
-                            value.trim().length > 30
-                        ? false
-                        : true;
-                  });
-                },
-              ),
-            ),
+        // Body
+        body: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => unfocus(),
+            child: Column(children: <Widget>[
+              // Required fields
+              // Name
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  child: LabelTextInput(
+                      hintText: 'Required',
+                      label: 'Name',
+                      valSetText: (value) {
+                        setState(() {
+                          _groupName = value;
+                          _nameValid = value == null ||
+                                  value.trim().length == 0 ||
+                                  value.trim().length > 30
+                              ? false
+                              : true;
+                        });
+                      })),
 
-            // Color
-            ColorSelector(
-              valSetColorShade: (value) {
+              // Color
+              ColorSelector(valSetColorShade: (value) {
                 setState(() => _groupColorShade = value);
-              },
-            ),
+              }),
 
-            SizedBox(height: 10.0),
-            Text(
-              'Preview in dashboard',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 15.0,
-                letterSpacing: 1.5,
-              ),
-            ),
-            SizedBox(height: 10.0),
+              SizedBox(height: 10.0),
+              Text('Preview in dashboard',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.grey, fontSize: 15.0, letterSpacing: 1.5)),
+              SizedBox(height: 10.0),
 
-            // Preview
-            GroupCard(
-              groupName: _groupName,
-              ownerName: _groupOwnerName,
-              groupColor: () {
-                if (_groupColorShade.color == null) {
-                  _groupColorShade.color = originTheme.primaryColor;
-                }
-                return _groupColorShade.color;
-              }(),
-              notifications: 3,
-            ),
-          ],
-        ),
-      ),
-    );
+              // Preview
+              GroupCard(
+                  groupName: _groupName,
+                  ownerName: _groupOwnerName,
+                  groupColor: () {
+                    if (_groupColorShade.color == null) {
+                      _groupColorShade.color = originTheme.primaryColor;
+                    }
+                    return _groupColorShade.color;
+                  }(),
+                  notifications: 3)
+            ])));
   }
 }
