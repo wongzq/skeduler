@@ -29,8 +29,10 @@ class _FormNameState extends State<FormName> {
         key: widget.formKeyName,
         child: TextFormField(
           inputFormatters: [
-            WhitelistingTextInputFormatter(
-                RegExp(r"^[a-zA-Z,.'-][a-zA-Z ,.'-]*"))
+            FilteringTextInputFormatter(
+              RegExp(r"^[a-zA-Z,.'-][a-zA-Z ,.'-]*"),
+              allow: true,
+            )
           ],
           initialValue: null,
           style: TextStyle(color: Colors.black, fontSize: 14.0),
