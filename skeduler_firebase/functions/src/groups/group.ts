@@ -22,7 +22,14 @@ export const createGroup = functions.firestore
         .doc(groupDocId)
         .collection("members")
         .doc(ownerEmail)
-        .set({ name: ownerName, nickname: ownerName, role: 4 });
+        .set({
+          name: ownerName,
+          nickname: ownerName,
+          role: 4,
+          alwaysAvailable: true,
+          timesAvailable: [],
+          timesUnavailable: [],
+        });
     }
   });
 

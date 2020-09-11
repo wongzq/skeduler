@@ -46,7 +46,6 @@ class _EditGroupState extends State<EditGroup> {
     OriginTheme originTheme = Provider.of<OriginTheme>(context);
     DatabaseService dbService = Provider.of<DatabaseService>(context);
     GlobalKey<FormState> _formKeyName = GlobalKey<FormState>();
-    GlobalKey<FormState> _formKeyDesc = GlobalKey<FormState>();
 
     return Scaffold(
       key: _scaffoldKey,
@@ -75,9 +74,8 @@ class _EditGroupState extends State<EditGroup> {
             backgroundColor: Colors.green,
             onPressed: () async {
               unfocus();
-              
-              if (_formKeyName.currentState.validate() &&
-                  _formKeyDesc.currentState.validate()) {
+
+              if (_formKeyName.currentState.validate()) {
                 if (_groupName.trim() != widget.group.name ||
                     _groupColorShade.themeId !=
                         widget.group.colorShade.themeId ||
