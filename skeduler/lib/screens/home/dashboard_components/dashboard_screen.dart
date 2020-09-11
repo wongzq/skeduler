@@ -145,7 +145,7 @@ class DashboardScreen extends StatelessWidget {
                                                                 Navigator.of(
                                                                         context)
                                                                     .popAndPushNamed(
-                                                                  '/group',
+                                                                  '/timetables',
                                                                   arguments:
                                                                       RouteArgs(),
                                                                 );

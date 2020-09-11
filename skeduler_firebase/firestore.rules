@@ -93,6 +93,25 @@ service cloud.firestore {
         request.resource.data.timesUnavailable is list &&
         request.resource.data.timesUnavailable == resource.data.timesUnavailable
         ) ||
+        // if I am Owner or Admin, updating admins
+        (
+        authenticated() &&
+        isOwnerOrAdmin() &&
+        resource.data.role == 3 &&
+        request.resource.data.role is int &&
+        request.resource.data.role >= 2 &&
+        request.resource.data.role <= 4 &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() <= 30 &&
+        request.resource.data.nickname is string &&
+        request.resource.data.nickname.size() <= 30 &&
+        request.resource.data.alwaysAvailable is bool &&
+        request.resource.data.alwaysAvailable == resource.data.alwaysAvailable &&
+        request.resource.data.timesAvailable is list &&
+        request.resource.data.timesAvailable == resource.data.timesAvailable &&
+        request.resource.data.timesUnavailable is list &&
+        request.resource.data.timesUnavailable == resource.data.timesUnavailable
+        ) ||
         // if I am Owner or Admin, updating dummies
         (
         authenticated() &&
