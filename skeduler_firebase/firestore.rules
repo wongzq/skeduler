@@ -16,7 +16,7 @@ service cloud.firestore {
       authenticated() &&
       userIsMe();
       
-    // user functions
+      // user functions
       function userIsMe() {
         return userID == request.auth.token.email;
       }
@@ -143,7 +143,12 @@ service cloud.firestore {
         
         allow delete: if
         authenticated() &&
-        isOwnerOrAdminOrMember();
+        (
+        isOwnerOrAdminOrMember() ||
+        (
+        isPending() && request.auth.token.email == resource.id
+        )
+        );
       }
       
       // group > subjects
@@ -211,7 +216,7 @@ service cloud.firestore {
         }
       }
       
-    // group functions
+      // group functions
       function isOwnerOrAdmin() {
         return isOwner() || isAdmin();
       }
@@ -252,7 +257,7 @@ service cloud.firestore {
       }
     }
     
-  // functions
+    // functions
     function authenticated() {
       return request.auth != null;
     }

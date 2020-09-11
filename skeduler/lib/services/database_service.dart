@@ -396,15 +396,11 @@ class DatabaseService {
 
     return groupDocId == null || groupDocId.trim() == ''
         ? null
-        : await groupsCollection.document(groupDocId).updateData({
-            'members': FieldValue.arrayRemove([userId])
-          }).then((_) async {
-            await groupsCollection
-                .document(groupDocId)
-                .collection('members')
-                .document(userId)
-                .delete();
-          });
+        : await groupsCollection
+            .document(groupDocId)
+            .collection('members')
+            .document(userId)
+            .delete();
   }
 
   // [Member] leaves [Group]

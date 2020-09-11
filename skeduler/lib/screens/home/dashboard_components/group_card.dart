@@ -32,95 +32,78 @@ class GroupCard extends StatelessWidget {
         children: <Widget>[
           // Header Section
           Padding(
-            padding: EdgeInsets.all(_padding),
-            child: AnimatedContainer(
-              duration: Duration(seconds: 1),
-              curve: Curves.easeOutCubic,
-              height: _dimension,
-              width: _dimension,
-              decoration: BoxDecoration(
-                // color: Colors.white,
-                color: groupColor ?? originTheme.primaryColor,
-                borderRadius: BorderRadius.circular(_radius),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    offset: Offset(0.0, 2.0),
-                    blurRadius: 5.0,
-                  ),
-                ],
-              ),
-              child: Stack(
-                children: <Widget>[
-                  // Image: Group image
-                  // Image.asset(''),
+              padding: EdgeInsets.all(_padding),
+              child: AnimatedContainer(
+                  duration: Duration(seconds: 1),
+                  curve: Curves.easeOutCubic,
+                  height: _dimension,
+                  width: _dimension,
+                  decoration: BoxDecoration(
+                      // color: Colors.white,
+                      color: groupColor ?? originTheme.primaryColor,
+                      borderRadius: BorderRadius.circular(_radius),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black26,
+                            offset: Offset(0.0, 2.0),
+                            blurRadius: 5.0)
+                      ]),
+                  child: Stack(children: <Widget>[
+                    // Image: Group image
+                    // Image.asset(''),
 
-                  // Title: Group name
-                  Container(
-                    height: _dimension * 0.65,
-                    child: Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Padding(
-                        padding: EdgeInsets.all(_padding),
-                        child: Text(
-                          groupName != null && groupName != ''
-                              ? groupName
-                              : 'Group name',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.w600,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 3.0,
-                                color: Colors.black,
-                                offset: Offset(1.0, 1.0),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                    // Title: Group name
+                    Container(
+                        height: _dimension * 0.65,
+                        child: Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Padding(
+                                padding: EdgeInsets.all(_padding),
+                                child: Text(
+                                    groupName != null && groupName != ''
+                                        ? groupName
+                                        : 'Group name',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w600,
+                                        shadows: [
+                                          Shadow(
+                                            blurRadius: 3.0,
+                                            color: Colors.black,
+                                            offset: Offset(1.0, 1.0),
+                                          )
+                                        ]))))),
 
-                  // Container: Notifications
-                  Visibility(
-                    visible: (notifications ?? 0) > 0,
-                    child: Align(
-                      alignment: Alignment.topRight,
-                      child: Padding(
-                        padding: EdgeInsets.all(_padding),
-                        child: Container(
-                          alignment: Alignment.topRight,
-                          height: 30.0,
-                          width: 30.0,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).accentColor,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                offset: Offset(0.0, 2.0),
-                                blurRadius: 5.0,
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Text(
-                              notifications.toString(),
-                              style: TextStyle(color: originTheme.textColor),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
+                    // Container: Notifications
+                    Visibility(
+                        visible: (notifications ?? 0) > 0,
+                        child: Align(
+                            alignment: Alignment.topRight,
+                            child: Padding(
+                                padding: EdgeInsets.all(_padding),
+                                child: Container(
+                                    alignment: Alignment.topRight,
+                                    height: 30.0,
+                                    width: 30.0,
+                                    decoration: BoxDecoration(
+                                        color: Theme.of(context).accentColor,
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: Colors.black26,
+                                              offset: Offset(0.0, 2.0),
+                                              blurRadius: 5.0)
+                                        ]),
+                                    child: Center(
+                                        child: Text(
+                                      notifications.toString(),
+                                      style: TextStyle(
+                                          color: originTheme.textColor),
+                                    ))))))
+                  ]))),
 
           // Footer section
           Positioned(
