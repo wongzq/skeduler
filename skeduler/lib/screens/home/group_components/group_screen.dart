@@ -51,8 +51,10 @@ class _GroupScreenState extends State<GroupScreen> {
                       ? 1
                       : a.conflictDates.first.compareTo(b.conflictDates.first));
     } else if (_sortBy == ConflictSort.member) {
-      conflicts.sort((a, b) => a.gridData.dragData.member.docId
-          .compareTo(b.gridData.dragData.member.docId));
+      conflicts.sort((a, b) {
+        return a.gridData.dragData.member.docId
+            .compareTo(b.gridData.dragData.member.docId);
+      });
     }
 
     return conflicts;
