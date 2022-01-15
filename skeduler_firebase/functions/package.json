@@ -19,7 +19,7 @@
     "firebase-tools": "^9.2.2",
     "lodash": ">=4.17.19",
     "node-fetch": ">=2.6.1",
-    "node-forge": ">=0.10.0",
+    "node-forge": ">=1.0.0",
     "websocket-extensions": ">=0.1.4"
   },
   "devDependencies": {
